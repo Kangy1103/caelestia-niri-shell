@@ -1,70 +1,50 @@
+import QtQuick
+import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.misc
 import qs.services
-import qs.config
-import QtQuick
-import QtQuick.Layouts
 
 GridLayout {
     id: root
 
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.margins: Appearance.padding.xl
+    anchors.margins: Tokens.padding.large
 
-    rowSpacing: Appearance.spacing.md
-    columnSpacing: Appearance.spacing.md
+    rowSpacing: Tokens.spacing.large
+    columnSpacing: Tokens.spacing.large
+    rows: 2
     columns: 2
 
     Ref {
         service: SystemUsage
     }
 
-    // Section label
-    RowLayout {
-        Layout.columnSpan: 2
-        Layout.fillWidth: true
-        Layout.topMargin: Appearance.padding.xl
-        Layout.bottomMargin: Appearance.spacing.xs
-        spacing: Appearance.spacing.xs
-
-        MaterialIcon {
-            text: "monitor_heart"
-            color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.labelLarge
-        }
-
-        StyledText {
-            text: qsTr("System")
-            color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.labelLarge
-            font.weight: Font.Medium
-            font.family: Appearance.font.family.mono
-        }
-    }
-
     Resource {
+        Layout.topMargin: Tokens.padding.large
         icon: "memory"
         value: SystemUsage.cpuPerc
         colour: Colours.palette.m3primary
     }
 
     Resource {
+        Layout.topMargin: Tokens.padding.large
         icon: "thermostat"
         value: Math.min(1, SystemUsage.cpuTemp / 90)
         colour: Colours.palette.m3secondary
     }
 
     Resource {
-        Layout.bottomMargin: Appearance.padding.xl
+        Layout.bottomMargin: Tokens.padding.large
         icon: "memory_alt"
         value: SystemUsage.memPerc
         colour: Colours.palette.m3secondary
     }
 
     Resource {
-        Layout.bottomMargin: Appearance.padding.xl
+        Layout.bottomMargin: Tokens.padding.large
         icon: "hard_disk"
         value: SystemUsage.storagePerc
         colour: Colours.palette.m3tertiary
@@ -81,17 +61,17 @@ GridLayout {
         implicitHeight: width
 
         color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
 
         CircularProgress {
             id: circ
 
             anchors.fill: parent
             value: res.value
-            padding: Appearance.padding.xl * 3
+            padding: Tokens.padding.large * 3
             fgColour: res.colour
             bgColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 3)
-            strokeWidth: width < 200 ? Appearance.padding.sm : Appearance.padding.md
+            strokeWidth: width < 200 ? Tokens.padding.smaller : Tokens.padding.normal
         }
 
         MaterialIcon {
@@ -106,7 +86,7 @@ GridLayout {
 
         Behavior on value {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
     }

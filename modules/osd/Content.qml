@@ -1,36 +1,36 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
 import qs.utils
-import QtQuick
-import QtQuick.Layouts
 
 Item {
     id: root
 
     required property Brightness.Monitor monitor
-    required property var visibilities
+    required property DrawerVisibilities visibilities
 
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.left: parent.left
+    required property real volume
+    required property bool muted
+    required property real sourceVolume
+    required property bool sourceMuted
+    required property real brightness
 
-    implicitWidth: layout.implicitWidth + Appearance.padding.xl * 2
-    implicitHeight: layout.implicitHeight + Appearance.padding.xl * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.large * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
 
     ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Appearance.spacing.lg
+        spacing: Tokens.spacing.normal
 
         // Speaker volume
         CustomMouseArea {
-            implicitWidth: Config.osd.sizes.sliderWidth
-            implicitHeight: Config.osd.sizes.sliderHeight
-
             function onWheel(event: WheelEvent) {
                 if (event.angleDelta.y > 0)
                     Audio.incrementVolume();
@@ -38,11 +38,15 @@ Item {
                     Audio.decrementVolume();
             }
 
+            implicitWidth: Tokens.sizes.osd.sliderWidth
+            implicitHeight: Tokens.sizes.osd.sliderHeight
+
             FilledSlider {
                 anchors.fill: parent
 
-                icon: Icons.getVolumeIcon(value, Audio.muted)
-                value: Audio.volume
+                icon: Icons.getVolumeIcon(value, root.muted)
+                value: root.volume
+                to: GlobalConfig.services.maxVolume
                 onMoved: Audio.setVolume(value)
             }
         }
@@ -52,9 +56,6 @@ Item {
             shouldBeActive: Config.osd.enableMicrophone && (!Config.osd.enableBrightness || !root.visibilities.session)
 
             sourceComponent: CustomMouseArea {
-                implicitWidth: Config.osd.sizes.sliderWidth
-                implicitHeight: Config.osd.sizes.sliderHeight
-
                 function onWheel(event: WheelEvent) {
                     if (event.angleDelta.y > 0)
                         Audio.incrementSourceVolume();
@@ -62,11 +63,15 @@ Item {
                         Audio.decrementSourceVolume();
                 }
 
+                implicitWidth: Tokens.sizes.osd.sliderWidth
+                implicitHeight: Tokens.sizes.osd.sliderHeight
+
                 FilledSlider {
                     anchors.fill: parent
 
-                    icon: Icons.getMicVolumeIcon(value, Audio.sourceMuted)
-                    value: Audio.sourceVolume
+                    icon: Icons.getMicVolumeIcon(value, root.sourceMuted)
+                    value: root.sourceVolume
+                    to: GlobalConfig.services.maxVolume
                     onMoved: Audio.setSourceVolume(value)
                 }
             }
@@ -77,24 +82,24 @@ Item {
             shouldBeActive: Config.osd.enableBrightness
 
             sourceComponent: CustomMouseArea {
-                implicitWidth: Config.osd.sizes.sliderWidth
-                implicitHeight: Config.osd.sizes.sliderHeight
-
                 function onWheel(event: WheelEvent) {
                     const monitor = root.monitor;
                     if (!monitor)
                         return;
                     if (event.angleDelta.y > 0)
-                        monitor.setBrightness(monitor.brightness + 0.1);
+                        monitor.setBrightness(monitor.brightness + GlobalConfig.services.brightnessIncrement);
                     else if (event.angleDelta.y < 0)
-                        monitor.setBrightness(monitor.brightness - 0.1);
+                        monitor.setBrightness(monitor.brightness - GlobalConfig.services.brightnessIncrement);
                 }
+
+                implicitWidth: Tokens.sizes.osd.sliderWidth
+                implicitHeight: Tokens.sizes.osd.sliderHeight
 
                 FilledSlider {
                     anchors.fill: parent
 
                     icon: `brightness_${(Math.round(value * 6) + 1)}`
-                    value: root.monitor?.brightness ?? 0
+                    value: root.brightness
                     onMoved: root.monitor?.setBrightness(value)
                 }
             }
@@ -104,15 +109,15 @@ Item {
     component WrappedLoader: Loader {
         required property bool shouldBeActive
 
-        Layout.preferredHeight: shouldBeActive ? Config.osd.sizes.sliderHeight : 0
+        asynchronous: true
+        Layout.preferredHeight: shouldBeActive ? Tokens.sizes.osd.sliderHeight : 0
         opacity: shouldBeActive ? 1 : 0
         active: opacity > 0
-        asynchronous: true
         visible: active
 
         Behavior on Layout.preferredHeight {
             Anim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                type: Anim.Emphasized
             }
         }
 

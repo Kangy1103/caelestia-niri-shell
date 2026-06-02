@@ -2,13 +2,13 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../../components"
-import qs.components
-import qs.components.controls
-import qs.components.containers
-import qs.services
-import qs.config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.components.containers
+import qs.components.controls
+import qs.services
 
 CollapsibleSection {
     id: root
@@ -17,10 +17,6 @@ CollapsibleSection {
 
     title: qsTr("Background")
     showBackground: true
-
-    ColumnLayout {
-        spacing: Appearance.spacing.sm
-        Layout.fillWidth: true
 
     SwitchRow {
         label: qsTr("Background enabled")
@@ -41,9 +37,9 @@ CollapsibleSection {
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.lg
+        Layout.topMargin: Tokens.spacing.normal
         text: qsTr("Desktop Clock")
-        font.pointSize: Appearance.font.size.bodyLarge
+        font.pointSize: Tokens.font.size.larger
         font.weight: 500
     }
 
@@ -59,9 +55,6 @@ CollapsibleSection {
     SectionContainer {
         id: posContainer
 
-        contentSpacing: Appearance.spacing.sm
-        z: 1
-
         readonly property var pos: (rootPane.desktopClockPosition || "top-left").split('-')
         readonly property string currentV: pos[0]
         readonly property string currentH: pos[1]
@@ -71,9 +64,12 @@ CollapsibleSection {
             rootPane.saveConfig();
         }
 
+        contentSpacing: Tokens.spacing.small
+        z: 1
+
         StyledText {
             text: qsTr("Positioning")
-            font.pointSize: Appearance.font.size.bodyLarge
+            font.pointSize: Tokens.font.size.larger
             font.weight: 500
         }
 
@@ -83,19 +79,22 @@ CollapsibleSection {
 
             menuItems: [
                 MenuItem {
+                    property string val: "top"
+
                     text: qsTr("Top")
                     icon: "vertical_align_top"
-                    property string val: "top"
                 },
                 MenuItem {
+                    property string val: "middle"
+
                     text: qsTr("Middle")
                     icon: "vertical_align_center"
-                    property string val: "middle"
                 },
                 MenuItem {
+                    property string val: "bottom"
+
                     text: qsTr("Bottom")
                     icon: "vertical_align_bottom"
-                    property string val: "bottom"
                 }
             ]
 
@@ -117,19 +116,22 @@ CollapsibleSection {
 
             menuItems: [
                 MenuItem {
+                    property string val: "left"
+
                     text: qsTr("Left")
                     icon: "align_horizontal_left"
-                    property string val: "left"
                 },
                 MenuItem {
+                    property string val: "center"
+
                     text: qsTr("Center")
                     icon: "align_horizontal_center"
-                    property string val: "center"
                 },
                 MenuItem {
+                    property string val: "right"
+
                     text: qsTr("Right")
                     icon: "align_horizontal_right"
-                    property string val: "right"
                 }
             ]
 
@@ -154,11 +156,11 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm
+        contentSpacing: Tokens.spacing.small
 
         StyledText {
             text: qsTr("Shadow")
-            font.pointSize: Appearance.font.size.bodyLarge
+            font.pointSize: Tokens.font.size.larger
             font.weight: 500
         }
 
@@ -172,7 +174,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Appearance.spacing.lg
+            contentSpacing: Tokens.spacing.normal
 
             SliderInput {
                 Layout.fillWidth: true
@@ -197,7 +199,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Appearance.spacing.lg
+            contentSpacing: Tokens.spacing.normal
 
             SliderInput {
                 Layout.fillWidth: true
@@ -223,11 +225,11 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm
+        contentSpacing: Tokens.spacing.small
 
         StyledText {
             text: qsTr("Background")
-            font.pointSize: Appearance.font.size.bodyLarge
+            font.pointSize: Tokens.font.size.larger
             font.weight: 500
         }
 
@@ -250,7 +252,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Appearance.spacing.lg
+            contentSpacing: Tokens.spacing.normal
 
             SliderInput {
                 Layout.fillWidth: true
@@ -276,9 +278,9 @@ CollapsibleSection {
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.lg
+        Layout.topMargin: Tokens.spacing.normal
         text: qsTr("Visualiser")
-        font.pointSize: Appearance.font.size.bodyLarge
+        font.pointSize: Tokens.font.size.larger
         font.weight: 500
     }
 
@@ -301,7 +303,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Tokens.spacing.normal
 
         SliderInput {
             Layout.fillWidth: true
@@ -326,7 +328,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Tokens.spacing.normal
 
         SliderInput {
             Layout.fillWidth: true
@@ -346,6 +348,4 @@ CollapsibleSection {
             }
         }
     }
-
-    } // end ColumnLayout wrapper
 }

@@ -1,7 +1,8 @@
+import QtQuick
+import Caelestia.Config
 import qs.components
 import qs.services
-import qs.config
-import QtQuick
+import qs.modules.launcher.services
 
 Item {
     id: root
@@ -9,50 +10,47 @@ Item {
     required property M3Variants.Variant modelData
     required property var list
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: Tokens.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Appearance.rounding.small
-
-        function onClicked(): void {
-            root.modelData?.onClicked(root.list);
-        }
+        radius: Tokens.rounding.normal
+        onClicked: root.modelData?.onClicked(root.list)
     }
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Appearance.padding.lg
-        anchors.rightMargin: Appearance.padding.lg
-        anchors.margins: Appearance.padding.sm
+        anchors.leftMargin: Tokens.padding.larger
+        anchors.rightMargin: Tokens.padding.larger
+        anchors.margins: Tokens.padding.smaller
 
         MaterialIcon {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            font.pointSize: Appearance.font.size.headlineLarge
+            font.pointSize: Tokens.font.size.extraLarge
 
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Column {
             anchors.left: icon.right
-            anchors.leftMargin: Appearance.spacing.xl
+            anchors.leftMargin: Tokens.spacing.larger
             anchors.verticalCenter: icon.verticalCenter
 
-            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Appearance.spacing.lg : 0)
+            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.normal : 0)
             spacing: 0
 
             StyledText {
                 text: root.modelData?.name ?? ""
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Tokens.font.size.normal
             }
 
             StyledText {
                 text: root.modelData?.description ?? ""
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Tokens.font.size.small
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight
@@ -64,16 +62,16 @@ Item {
         Loader {
             id: current
 
+            asynchronous: true
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
 
             active: root.modelData?.variant === Schemes.currentVariant
-            asynchronous: true
 
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Tokens.font.size.large
             }
         }
     }

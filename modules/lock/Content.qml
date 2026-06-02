@@ -1,64 +1,93 @@
-import qs.components
-import qs.services
-import qs.config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.services
 
-ColumnLayout {
+RowLayout {
     id: root
-    required property var lock
-    property bool showLeft: true
-    property bool showRight: true
-    spacing: 0
-    clip: true
 
-    Item {
-        visible: root.showLeft
+    required property var lock
+
+    spacing: Tokens.spacing.large * 2
+
+    ColumnLayout {
         Layout.fillWidth: true
-        implicitHeight: weather.implicitHeight
-        WeatherInfo { id: weather; rootHeight: root.height }
+        spacing: Tokens.spacing.normal
+
+        StyledRect {
+            Layout.fillWidth: true
+            implicitHeight: weather.implicitHeight
+
+            topLeftRadius: Tokens.rounding.large
+            radius: Tokens.rounding.small
+            color: Colours.tPalette.m3surfaceContainer
+
+            WeatherInfo {
+                id: weather
+
+                rootHeight: root.height
+            }
+        }
+
+        StyledRect {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            radius: Tokens.rounding.small
+            color: Colours.tPalette.m3surfaceContainer
+
+            Fetch {}
+        }
+
+        StyledClippingRect {
+            Layout.fillWidth: true
+            implicitHeight: media.implicitHeight
+
+            bottomLeftRadius: Tokens.rounding.large
+            radius: Tokens.rounding.small
+            color: Colours.tPalette.m3surfaceContainer
+
+            Media {
+                id: media
+
+                lock: root.lock
+            }
+        }
     }
-    Rectangle {
-        visible: root.showLeft
-        Layout.fillWidth: true
-        height: 1
-        color: Qt.alpha(Colours.palette.m3outlineVariant, 0.35)
+
+    Center {
+        lock: root.lock
     }
-    Item {
-        visible: root.showLeft
+
+    ColumnLayout {
         Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.minimumHeight: Appearance.padding.xl * 4
-        Fetch {}
-    }
-    Rectangle {
-        visible: root.showLeft && media.implicitHeight > 0
-        Layout.fillWidth: true
-        height: 1
-        color: Qt.alpha(Colours.palette.m3outlineVariant, 0.35)
-    }
-    Item {
-        visible: root.showLeft
-        Layout.fillWidth: true
-        implicitHeight: media.implicitHeight
-        Media { id: media; lock: root.lock }
-    }
-    Item {
-        visible: root.showRight
-        Layout.fillWidth: true
-        implicitHeight: resources.implicitHeight
-        Resources { id: resources }
-    }
-    Rectangle {
-        visible: root.showRight
-        Layout.fillWidth: true
-        height: 1
-        color: Qt.alpha(Colours.palette.m3outlineVariant, 0.35)
-    }
-    Item {
-        visible: root.showRight
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        NotifDock { anchors.fill: parent; lock: root.lock }
+        spacing: Tokens.spacing.normal
+
+        StyledRect {
+            Layout.fillWidth: true
+            implicitHeight: resources.implicitHeight
+
+            topRightRadius: Tokens.rounding.large
+            radius: Tokens.rounding.small
+            color: Colours.tPalette.m3surfaceContainer
+
+            Resources {
+                id: resources
+            }
+        }
+
+        StyledRect {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            bottomRightRadius: Tokens.rounding.large
+            radius: Tokens.rounding.small
+            color: Colours.tPalette.m3surfaceContainer
+
+            NotifDock {
+                lock: root.lock
+            }
+        }
     }
 }

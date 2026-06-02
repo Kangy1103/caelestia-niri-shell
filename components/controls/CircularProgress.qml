@@ -1,16 +1,17 @@
-import qs.services
-import qs.config
 import QtQuick
 import QtQuick.Shapes
+import Caelestia.Config
+import qs.components
+import qs.services
 
 Shape {
     id: root
 
     property real value
     property int startAngle: -90
-    property int strokeWidth: Appearance.padding.sm
+    property int strokeWidth: Tokens.padding.smaller
     property int padding: 0
-    property int spacing: Appearance.spacing.sm
+    property int spacing: Tokens.spacing.small
     property color fgColour: Colours.palette.m3primary
     property color bgColour: Colours.palette.m3secondaryContainer
 
@@ -26,7 +27,7 @@ Shape {
         fillColor: "transparent"
         strokeColor: root.bgColour
         strokeWidth: root.strokeWidth
-        capStyle: Appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+        capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
         PathAngleArc {
             startAngle: root.startAngle + 360 * root.vValue + root.gapAngle
@@ -38,10 +39,8 @@ Shape {
         }
 
         Behavior on strokeColor {
-            ColorAnimation {
-                duration: Appearance.anim.durations.large
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.standard
+            CAnim {
+                duration: Tokens.anim.durations.large
             }
         }
     }
@@ -50,7 +49,7 @@ Shape {
         fillColor: "transparent"
         strokeColor: root.fgColour
         strokeWidth: root.strokeWidth
-        capStyle: Appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+        capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
         PathAngleArc {
             startAngle: root.startAngle
@@ -62,10 +61,8 @@ Shape {
         }
 
         Behavior on strokeColor {
-            ColorAnimation {
-                duration: Appearance.anim.durations.large
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.standard
+            CAnim {
+                duration: Tokens.anim.durations.large
             }
         }
     }

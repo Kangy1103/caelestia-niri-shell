@@ -2,18 +2,19 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell.Services.UPower
+import Caelestia.Config
+import Caelestia.Internal
 import qs.components
 import qs.components.misc
-import qs.config
 import qs.services
 
 Item {
     id: root
 
-    readonly property int minWidth: 400 + 400 + Appearance.spacing.lg + 120 + Appearance.padding.xl * 2
+    readonly property int minWidth: 400 + 400 + Tokens.spacing.normal + 120 + Tokens.padding.large * 2
 
     function displayTemp(temp: real): string {
-        return `${Math.ceil(Config.services.useFahrenheit ? temp * 1.8 + 32 : temp)}°${Config.services.useFahrenheit ? "F" : "C"}`;
+        return `${Math.ceil(GlobalConfig.services.useFahrenheitPerformance ? temp * 1.8 + 32 : temp)}°${GlobalConfig.services.useFahrenheitPerformance ? "F" : "C"}`;
     }
 
     implicitWidth: Math.max(minWidth, content.implicitWidth)
@@ -25,32 +26,32 @@ Item {
         anchors.centerIn: parent
         width: 400
         height: 350
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
         visible: !Config.dashboard.performance.showCpu && !(Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE") && !Config.dashboard.performance.showMemory && !Config.dashboard.performance.showStorage && !Config.dashboard.performance.showNetwork && !(UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery)
 
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: Appearance.spacing.lg
+            spacing: Tokens.spacing.normal
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "tune"
-                font.pointSize: Appearance.font.size.headlineLarge * 2
+                font.pointSize: Tokens.font.size.extraLarge * 2
                 color: Colours.palette.m3onSurfaceVariant
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("No widgets enabled")
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Tokens.font.size.large
                 color: Colours.palette.m3onSurface
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enable widgets in dashboard settings")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Tokens.font.size.small
                 color: Colours.palette.m3onSurfaceVariant
             }
         }
@@ -61,7 +62,7 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: Appearance.spacing.lg
+        spacing: Tokens.spacing.normal
         visible: !placeholder.visible
 
         Ref {
@@ -72,11 +73,11 @@ Item {
             id: mainColumn
 
             Layout.fillWidth: true
-            spacing: Appearance.spacing.lg
+            spacing: Tokens.spacing.normal
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.lg
+                spacing: Tokens.spacing.normal
                 visible: Config.dashboard.performance.showCpu || (Config.dashboard.performance.showGpu && SystemUsage.gpuType !== "NONE")
 
                 HeroCard {
@@ -114,7 +115,7 @@ Item {
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.lg
+                spacing: Tokens.spacing.normal
                 visible: Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork
 
                 GaugeCard {
@@ -165,7 +166,7 @@ Item {
         property real animatedPercentage: 0
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         Component.onCompleted: animatedPercentage = percentage
         onPercentageChanged: animatedPercentage = percentage
 
@@ -180,13 +181,13 @@ Item {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl
-            spacing: Appearance.spacing.sm
+            anchors.margins: Tokens.padding.large
+            spacing: Tokens.spacing.small
 
             // Header Section
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.sm
+                spacing: Tokens.spacing.small
 
                 MaterialIcon {
                     text: {
@@ -213,14 +214,14 @@ Item {
 
                         return charging ? `battery_charging_${(level + 3) * 10}` : `battery_${level}_bar`;
                     }
-                    font.pointSize: Appearance.font.size.titleMedium
+                    font.pointSize: Tokens.font.size.large
                     color: batteryTank.accentColor
                 }
 
                 StyledText {
                     Layout.fillWidth: true
                     text: qsTr("Battery")
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                     color: Colours.palette.m3onSurface
                 }
             }
@@ -237,7 +238,7 @@ Item {
                 StyledText {
                     Layout.alignment: Qt.AlignRight
                     text: `${Math.round(batteryTank.percentage * 100)}%`
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Tokens.font.size.extraLarge
                     font.weight: Font.Medium
                     color: batteryTank.accentColor
                 }
@@ -262,7 +263,7 @@ Item {
 
                         return `${min}m`;
                     }
-                    font.pointSize: Appearance.font.size.bodySmall
+                    font.pointSize: Tokens.font.size.smaller
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -270,7 +271,7 @@ Item {
 
         Behavior on animatedPercentage {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
     }
@@ -281,21 +282,19 @@ Item {
         property color accentColor: Colours.palette.m3primary
 
         Layout.fillWidth: true
-        spacing: Appearance.spacing.sm
+        spacing: Tokens.spacing.small
 
         MaterialIcon {
             text: parent.icon
             fill: 1
             color: parent.accentColor
-            font.pointSize: Appearance.spacing.xxl
+            font.pointSize: Tokens.spacing.large
         }
 
         StyledText {
             Layout.fillWidth: true
             text: parent.title
-            font.pointSize: Appearance.font.size.bodySmall
-            font.weight: Font.Medium
-            color: Colours.palette.m3onSurface
+            font.pointSize: Tokens.font.size.normal
             elide: Text.ElideRight
         }
     }
@@ -309,7 +308,7 @@ Item {
         property real animatedValue: 0
 
         color: bgColor
-        radius: Appearance.rounding.full
+        radius: Tokens.rounding.full
         Component.onCompleted: animatedValue = value
         onValueChanged: animatedValue = value
 
@@ -319,12 +318,12 @@ Item {
             anchors.bottom: parent.bottom
             width: parent.width * progressBar.animatedValue
             color: progressBar.fgColor
-            radius: Appearance.rounding.full
+            radius: Tokens.rounding.full
         }
 
         Behavior on animatedValue {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
     }
@@ -347,7 +346,7 @@ Item {
         property real animatedTemp: 0
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         Component.onCompleted: {
             animatedUsage = usage;
             animatedTemp = tempProgress;
@@ -359,84 +358,79 @@ Item {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            width: parent.width * heroCard.animatedUsage
+            implicitWidth: parent.width * heroCard.animatedUsage
             color: Qt.alpha(heroCard.accentColor, 0.15)
         }
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: 140
-            anchors.topMargin: Appearance.padding.md
-            anchors.bottomMargin: Appearance.padding.md
-            spacing: Appearance.spacing.sm
+        CardHeader {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.leftMargin: Tokens.padding.large
+            anchors.topMargin: Math.round(Tokens.padding.large * 1.2)
 
-            CardHeader {
-                icon: heroCard.icon
-                title: heroCard.title
-                accentColor: heroCard.accentColor
+            width: parent.width - anchors.leftMargin - usageColumn.anchors.rightMargin - usageLabel.width - Tokens.spacing.normal
+            icon: heroCard.icon
+            title: heroCard.title
+            accentColor: heroCard.accentColor
+        }
+
+        Column {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: Math.round(Tokens.padding.large * 1.2)
+            anchors.bottomMargin: Math.round(Tokens.padding.large * 1.3)
+
+            spacing: Tokens.spacing.small
+
+            Row {
+                spacing: Tokens.spacing.small
+
+                StyledText {
+                    text: heroCard.secondaryValue
+                    font.pointSize: Tokens.font.size.normal
+                    font.weight: Font.Medium
+                }
+
+                StyledText {
+                    text: heroCard.secondaryLabel
+                    font.pointSize: Tokens.font.size.small
+                    color: Colours.palette.m3onSurfaceVariant
+                    anchors.baseline: parent.children[0].baseline
+                }
             }
 
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: Appearance.spacing.lg
-
-                Column {
-                    Layout.alignment: Qt.AlignBottom
-                    Layout.fillWidth: true
-                    spacing: Appearance.spacing.sm
-
-                    Row {
-                        spacing: Appearance.spacing.sm
-
-                        StyledText {
-                            text: heroCard.secondaryValue
-                            font.pointSize: Appearance.font.size.bodyMedium
-                            font.weight: Font.Medium
-                        }
-
-                        StyledText {
-                            text: heroCard.secondaryLabel
-                            font.pointSize: Appearance.font.size.labelLarge
-                            color: Colours.palette.m3onSurfaceVariant
-                            anchors.baseline: parent.children[0].baseline
-                        }
-                    }
-
-                    ProgressBar {
-                        width: parent.width * 0.5
-                        height: 6
-                        value: heroCard.tempProgress
-                        fgColor: heroCard.accentColor
-                        bgColor: Qt.alpha(heroCard.accentColor, 0.2)
-                    }
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
+            ProgressBar {
+                implicitWidth: parent.width * 0.5
+                implicitHeight: 6
+                value: heroCard.tempProgress
+                fgColor: heroCard.accentColor
+                bgColor: Qt.alpha(heroCard.accentColor, 0.2)
             }
         }
 
         Column {
+            id: usageColumn
+
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Appearance.padding.xl
+            anchors.margins: Tokens.padding.large
             anchors.rightMargin: 32
             spacing: 0
 
             StyledText {
+                id: usageLabel
+
                 anchors.right: parent.right
                 text: heroCard.mainLabel
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Tokens.font.size.normal
                 color: Colours.palette.m3onSurfaceVariant
             }
 
             StyledText {
                 anchors.right: parent.right
                 text: heroCard.mainValue
-                font.pointSize: Appearance.font.size.headlineLarge
+                font.pointSize: Tokens.font.size.extraLarge
                 font.weight: Font.Medium
                 color: heroCard.accentColor
             }
@@ -444,13 +438,13 @@ Item {
 
         Behavior on animatedUsage {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
 
         Behavior on animatedTemp {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
     }
@@ -468,15 +462,15 @@ Item {
         property real animatedPercentage: 0
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         clip: true
         Component.onCompleted: animatedPercentage = percentage
         onPercentageChanged: animatedPercentage = percentage
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl
-            spacing: Appearance.spacing.md
+            anchors.margins: Tokens.padding.large
+            spacing: Tokens.spacing.smaller
 
             CardHeader {
                 icon: gaugeCard.icon
@@ -488,57 +482,21 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                Canvas {
-                    id: gaugeCanvas
-
+                ArcGauge {
                     anchors.centerIn: parent
                     width: Math.min(parent.width, parent.height)
                     height: width
-                    onPaint: {
-                        const ctx = getContext("2d");
-                        ctx.reset();
-                        const cx = width / 2;
-                        const cy = height / 2;
-                        const radius = (Math.min(width, height) - 12) / 2;
-                        const lineWidth = 10;
-                        ctx.beginPath();
-                        ctx.arc(cx, cy, radius, gaugeCard.arcStartAngle, gaugeCard.arcStartAngle + gaugeCard.arcSweep);
-                        ctx.lineWidth = lineWidth;
-                        ctx.lineCap = "round";
-                        ctx.strokeStyle = Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
-                        ctx.stroke();
-                        if (gaugeCard.animatedPercentage > 0) {
-                            ctx.beginPath();
-                            ctx.arc(cx, cy, radius, gaugeCard.arcStartAngle, gaugeCard.arcStartAngle + gaugeCard.arcSweep * gaugeCard.animatedPercentage);
-                            ctx.lineWidth = lineWidth;
-                            ctx.lineCap = "round";
-                            ctx.strokeStyle = gaugeCard.accentColor;
-                            ctx.stroke();
-                        }
-                    }
-                    Component.onCompleted: requestPaint()
-
-                    Connections {
-                        function onAnimatedPercentageChanged() {
-                            gaugeCanvas.requestPaint();
-                        }
-
-                        target: gaugeCard
-                    }
-
-                    Connections {
-                        function onPaletteChanged() {
-                            gaugeCanvas.requestPaint();
-                        }
-
-                        target: Colours
-                    }
+                    percentage: gaugeCard.animatedPercentage
+                    accentColor: gaugeCard.accentColor
+                    trackColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+                    startAngle: gaugeCard.arcStartAngle
+                    sweepAngle: gaugeCard.arcSweep
                 }
 
                 StyledText {
                     anchors.centerIn: parent
                     text: `${Math.round(gaugeCard.percentage * 100)}%`
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Tokens.font.size.extraLarge
                     font.weight: Font.Medium
                     color: gaugeCard.accentColor
                 }
@@ -547,14 +505,14 @@ Item {
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: gaugeCard.subtitle
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Tokens.font.size.smaller
                 color: Colours.palette.m3onSurfaceVariant
             }
         }
 
         Behavior on animatedPercentage {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
     }
@@ -571,7 +529,7 @@ Item {
         property color accentColor: Colours.palette.m3secondary
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         clip: true
         Component.onCompleted: {
             diskCount = SystemUsage.disks.length;
@@ -609,8 +567,8 @@ Item {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl
-            spacing: Appearance.spacing.md
+            anchors.margins: Tokens.padding.large
+            spacing: Tokens.spacing.smaller
 
             CardHeader {
                 icon: "hard_disk"
@@ -627,7 +585,7 @@ Item {
                 MaterialIcon {
                     text: "unfold_more"
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                     visible: storageGaugeCard.diskCount > 1
                     opacity: 0.7
                     ToolTip.visible: hintHover.hovered
@@ -644,57 +602,21 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                Canvas {
-                    id: storageGaugeCanvas
-
+                ArcGauge {
                     anchors.centerIn: parent
                     width: Math.min(parent.width, parent.height)
                     height: width
-                    onPaint: {
-                        const ctx = getContext("2d");
-                        ctx.reset();
-                        const cx = width / 2;
-                        const cy = height / 2;
-                        const radius = (Math.min(width, height) - 12) / 2;
-                        const lineWidth = 10;
-                        ctx.beginPath();
-                        ctx.arc(cx, cy, radius, storageGaugeCard.arcStartAngle, storageGaugeCard.arcStartAngle + storageGaugeCard.arcSweep);
-                        ctx.lineWidth = lineWidth;
-                        ctx.lineCap = "round";
-                        ctx.strokeStyle = Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
-                        ctx.stroke();
-                        if (storageGaugeCard.animatedPercentage > 0) {
-                            ctx.beginPath();
-                            ctx.arc(cx, cy, radius, storageGaugeCard.arcStartAngle, storageGaugeCard.arcStartAngle + storageGaugeCard.arcSweep * storageGaugeCard.animatedPercentage);
-                            ctx.lineWidth = lineWidth;
-                            ctx.lineCap = "round";
-                            ctx.strokeStyle = storageGaugeCard.accentColor;
-                            ctx.stroke();
-                        }
-                    }
-                    Component.onCompleted: requestPaint()
-
-                    Connections {
-                        function onAnimatedPercentageChanged() {
-                            storageGaugeCanvas.requestPaint();
-                        }
-
-                        target: storageGaugeCard
-                    }
-
-                    Connections {
-                        function onPaletteChanged() {
-                            storageGaugeCanvas.requestPaint();
-                        }
-
-                        target: Colours
-                    }
+                    percentage: storageGaugeCard.animatedPercentage
+                    accentColor: storageGaugeCard.accentColor
+                    trackColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+                    startAngle: storageGaugeCard.arcStartAngle
+                    sweepAngle: storageGaugeCard.arcSweep
                 }
 
                 StyledText {
                     anchors.centerIn: parent
                     text: storageGaugeCard.currentDisk ? `${Math.round(storageGaugeCard.currentDisk.perc * 100)}%` : "—"
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Tokens.font.size.extraLarge
                     font.weight: Font.Medium
                     color: storageGaugeCard.accentColor
                 }
@@ -710,14 +632,14 @@ Item {
                     const totalFmt = SystemUsage.formatKib(storageGaugeCard.currentDisk.total);
                     return `${usedFmt.value.toFixed(1)} / ${Math.floor(totalFmt.value)} ${totalFmt.unit}`;
                 }
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Tokens.font.size.smaller
                 color: Colours.palette.m3onSurfaceVariant
             }
         }
 
         Behavior on animatedPercentage {
             Anim {
-                duration: Appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
         }
     }
@@ -728,7 +650,7 @@ Item {
         property color accentColor: Colours.palette.m3primary
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.large
+        radius: Tokens.rounding.large
         clip: true
 
         Ref {
@@ -737,8 +659,8 @@ Item {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl
-            spacing: Appearance.spacing.sm
+            anchors.margins: Tokens.padding.large
+            spacing: Tokens.spacing.small
 
             CardHeader {
                 icon: "swap_vert"
@@ -751,109 +673,44 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                Canvas {
-                    id: sparklineCanvas
+                SparklineItem {
+                    id: sparkline
 
-                    property var downHistory: NetworkUsage.downloadHistory
-                    property var upHistory: NetworkUsage.uploadHistory
                     property real targetMax: 1024
                     property real smoothMax: targetMax
-                    property real slideProgress: 0
-                    property int _tickCount: 0
-                    property int _lastTickCount: -1
-
-                    function checkAndAnimate(): void {
-                        const currentLength = (downHistory || []).length;
-                        if (currentLength > 0 && _tickCount !== _lastTickCount) {
-                            _lastTickCount = _tickCount;
-                            updateMax();
-                        }
-                    }
-
-                    function updateMax(): void {
-                        const downHist = downHistory || [];
-                        const upHist = upHistory || [];
-                        const allValues = downHist.concat(upHist);
-                        targetMax = Math.max(...allValues, 1024);
-                        requestPaint();
-                    }
 
                     anchors.fill: parent
-                    onDownHistoryChanged: checkAndAnimate()
-                    onUpHistoryChanged: checkAndAnimate()
-                    onSmoothMaxChanged: requestPaint()
-                    onSlideProgressChanged: requestPaint()
-
-                    onPaint: {
-                        const ctx = getContext("2d");
-                        ctx.reset();
-                        const w = width;
-                        const h = height;
-                        const downHist = downHistory || [];
-                        const upHist = upHistory || [];
-                        if (downHist.length < 2 && upHist.length < 2)
-                            return;
-
-                        const maxVal = smoothMax;
-
-                        const drawLine = (history, color, fillAlpha) => {
-                            if (history.length < 2)
-                                return;
-
-                            const len = history.length;
-                            const stepX = w / (NetworkUsage.historyLength - 1);
-                            const startX = w - (len - 1) * stepX - stepX * slideProgress + stepX;
-                            ctx.beginPath();
-                            ctx.moveTo(startX, h - (history[0] / maxVal) * h);
-                            for (let i = 1; i < len; i++) {
-                                const x = startX + i * stepX;
-                                const y = h - (history[i] / maxVal) * h;
-                                ctx.lineTo(x, y);
-                            }
-                            ctx.strokeStyle = color;
-                            ctx.lineWidth = 2;
-                            ctx.lineCap = "round";
-                            ctx.lineJoin = "round";
-                            ctx.stroke();
-                            ctx.lineTo(startX + (len - 1) * stepX, h);
-                            ctx.lineTo(startX, h);
-                            ctx.closePath();
-                            ctx.fillStyle = Qt.rgba(Qt.color(color).r, Qt.color(color).g, Qt.color(color).b, fillAlpha);
-                            ctx.fill();
-                        };
-
-                        drawLine(upHist, Colours.palette.m3secondary.toString(), 0.15);
-                        drawLine(downHist, Colours.palette.m3tertiary.toString(), 0.2);
-                    }
-
-                    Component.onCompleted: updateMax()
+                    line1: NetworkUsage.uploadBuffer // qmllint disable missing-type
+                    line1Color: Colours.palette.m3secondary
+                    line1FillAlpha: 0.15
+                    line2: NetworkUsage.downloadBuffer // qmllint disable missing-type
+                    line2Color: Colours.palette.m3tertiary
+                    line2FillAlpha: 0.2
+                    maxValue: smoothMax
+                    historyLength: NetworkUsage.historyLength
 
                     Connections {
-                        function onPaletteChanged() {
-                            sparklineCanvas.requestPaint();
+                        function onValuesChanged(): void {
+                            sparkline.targetMax = Math.max(NetworkUsage.downloadBuffer.maximum, NetworkUsage.uploadBuffer.maximum, 1024);
+                            slideAnim.restart();
                         }
 
-                        target: Colours
+                        target: NetworkUsage.downloadBuffer
                     }
 
-                    Timer {
-                        interval: Config.dashboard.resourceUpdateInterval
-                        running: true
-                        repeat: true
-                        onTriggered: sparklineCanvas._tickCount++
-                    }
+                    NumberAnimation {
+                        id: slideAnim
 
-                    NumberAnimation on slideProgress {
+                        target: sparkline
+                        property: "slideProgress"
                         from: 0
                         to: 1
-                        duration: Config.dashboard.resourceUpdateInterval
-                        loops: Animation.Infinite
-                        running: true
+                        duration: GlobalConfig.dashboard.resourceUpdateInterval
                     }
 
                     Behavior on smoothMax {
                         Anim {
-                            duration: Appearance.anim.durations.large
+                            type: Anim.StandardLarge
                         }
                     }
                 }
@@ -862,9 +719,9 @@ Item {
                 StyledText {
                     anchors.centerIn: parent
                     text: qsTr("Collecting data...")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Tokens.font.size.small
                     color: Colours.palette.m3onSurfaceVariant
-                    visible: NetworkUsage.downloadHistory.length < 2
+                    visible: NetworkUsage.downloadBuffer.count < 2
                     opacity: 0.6
                 }
             }
@@ -872,17 +729,17 @@ Item {
             // Download row
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.lg
+                spacing: Tokens.spacing.normal
 
                 MaterialIcon {
                     text: "download"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                 }
 
                 StyledText {
                     text: qsTr("Download")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Tokens.font.size.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -895,7 +752,7 @@ Item {
                         const fmt = NetworkUsage.formatBytes(NetworkUsage.downloadSpeed ?? 0);
                         return fmt ? `${fmt.value.toFixed(1)} ${fmt.unit}` : "0.0 B/s";
                     }
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                     font.weight: Font.Medium
                     color: Colours.palette.m3tertiary
                 }
@@ -904,17 +761,17 @@ Item {
             // Upload row
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.lg
+                spacing: Tokens.spacing.normal
 
                 MaterialIcon {
                     text: "upload"
                     color: Colours.palette.m3secondary
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                 }
 
                 StyledText {
                     text: qsTr("Upload")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Tokens.font.size.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -927,7 +784,7 @@ Item {
                         const fmt = NetworkUsage.formatBytes(NetworkUsage.uploadSpeed ?? 0);
                         return fmt ? `${fmt.value.toFixed(1)} ${fmt.unit}` : "0.0 B/s";
                     }
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                     font.weight: Font.Medium
                     color: Colours.palette.m3secondary
                 }
@@ -936,17 +793,17 @@ Item {
             // Session totals
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.lg
+                spacing: Tokens.spacing.normal
 
                 MaterialIcon {
                     text: "history"
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Tokens.font.size.normal
                 }
 
                 StyledText {
                     text: qsTr("Total")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Tokens.font.size.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -960,7 +817,7 @@ Item {
                         const up = NetworkUsage.formatBytesTotal(NetworkUsage.uploadTotal ?? 0);
                         return (down && up) ? `↓${down.value.toFixed(1)}${down.unit} ↑${up.value.toFixed(1)}${up.unit}` : "↓0.0B ↑0.0B";
                     }
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Tokens.font.size.small
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }

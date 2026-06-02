@@ -1,142 +1,146 @@
 pragma ComponentBehavior: Bound
 
-import qs.services
-import qs.config
-import qs.components
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
+import Quickshell
+import Caelestia.Config
+import qs.components
+import qs.services
 
-import "context"
-
-StyledRect {
+StyledClippingRect {
     id: root
 
-    // required property ShellScreen screen
+    required property ShellScreen screen
+    required property bool fullscreen
 
-    readonly property int activeWsId: Niri.focusedWorkspaceIndex + 1
-    readonly property var occupied: Niri.workspaceHasWindows
-    readonly property int groupOffset: Math.floor((Niri.focusedWorkspaceIndex) / Config.bar.workspaces.shown) * Config.bar.workspaces.shown
+    readonly property bool onSpecial: (GlobalConfig.bar.workspaces.perMonitorWorkspaces ? Hypr.monitorFor(screen) : Hypr.focusedMonitor)?.lastIpcObject.specialWorkspace?.name !== ""
+    readonly property int activeWsId: GlobalConfig.bar.workspaces.perMonitorWorkspaces ? (Hypr.monitorFor(screen).activeWorkspace?.id ?? 1) : Hypr.activeWsId
 
-    readonly property int focusedWindowId: Niri.focusedWindow?.id ?? -1
+    readonly property var occupied: {
+        const occ = {};
+        for (const ws of Hypr.workspaces.values)
+            occ[ws.id] = ws.lastIpcObject.windows > 0;
+        return occ;
+    }
+    readonly property int groupOffset: Math.floor((activeWsId - 1) / Config.bar.workspaces.shown) * Config.bar.workspaces.shown
 
-    implicitHeight: layout.implicitHeight + Appearance.padding.xs * 2
-    implicitWidth: Config.bar.sizes.innerWidth
+    property real blur: onSpecial ? 1 : 0
+
+    implicitWidth: Tokens.sizes.bar.innerWidth
+    implicitHeight: layout.implicitHeight + Tokens.padding.small * 2
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Appearance.rounding.full
+    radius: Tokens.rounding.full
 
-    signal requestWindowPopout
+    Item {
+        anchors.fill: parent
+        scale: root.onSpecial ? 0.8 : 1
+        opacity: root.onSpecial ? 0.5 : 1
+        visible: !root.fullscreen
 
-    Connections {
-        target: Niri
-        function onWsContextTypeChanged() {
-            if (Niri.wsContextType === "workspaces") {
-                Niri.wsContextAnchor = root;
+        layer.enabled: root.blur > 0
+        layer.effect: MultiEffect {
+            blurEnabled: true
+            blur: root.blur
+            blurMax: 32
+        }
+
+        Loader {
+            asynchronous: true
+            active: Config.bar.workspaces.occupiedBg
+
+            anchors.fill: parent
+            anchors.margins: Tokens.padding.small
+
+            sourceComponent: OccupiedBg {
+                workspaces: workspaces
+                occupied: root.occupied
+                groupOffset: root.groupOffset
             }
+        }
+
+        ColumnLayout {
+            id: layout
+
+            anchors.centerIn: parent
+            spacing: Math.floor(Tokens.spacing.small / 2)
+
+            Repeater {
+                id: workspaces
+
+                model: Config.bar.workspaces.shown
+
+                Workspace {
+                    activeWsId: root.activeWsId
+                    occupied: root.occupied
+                    groupOffset: root.groupOffset
+                }
+            }
+        }
+
+        Loader {
+            asynchronous: true
+            anchors.horizontalCenter: parent.horizontalCenter
+            active: Config.bar.workspaces.activeIndicator
+
+            sourceComponent: ActiveIndicator {
+                activeWsId: root.activeWsId
+                workspaces: workspaces
+                mask: layout
+                fullscreen: root.fullscreen
+            }
+        }
+
+        MouseArea {
+            anchors.fill: layout
+            onClicked: event => {
+                const ws = (layout.childAt(event.x, event.y) as Workspace)?.ws;
+                if (Hypr.activeWsId !== ws)
+                    Hypr.dispatch(`workspace ${ws}`);
+                else
+                    Hypr.dispatch("togglespecialworkspace special");
+            }
+        }
+
+        Behavior on scale {
+            Anim {}
+        }
+
+        Behavior on opacity {
+            Anim {}
         }
     }
 
     Loader {
-        active: Config.bar.workspaces.occupiedBg
+        id: specialWs
+
         asynchronous: true
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.xs
+        anchors.margins: Tokens.padding.small
 
-        sourceComponent: OccupiedBg {
-            workspaces: workspaces
-            occupied: {
-                let merged = Object.assign({}, root.occupied);
-                merged[root.activeWsId] = true;
-                return merged;
-            }
-            groupOffset: root.groupOffset
+        active: opacity > 0
+
+        scale: root.onSpecial ? 1 : 0.5
+        opacity: root.onSpecial ? 1 : 0
+
+        sourceComponent: SpecialWorkspaces {
+            screen: root.screen
+        }
+
+        Behavior on scale {
+            Anim {}
+        }
+
+        Behavior on opacity {
+            Anim {}
         }
     }
 
-    Loader {
-        // Right click on window context menu
-        active: Config.bar.workspaces.windowRighClickContext && Niri.wsContextType !== "none"
-        asynchronous: true
-
-        anchors.left: parent.left
-        anchors.leftMargin: Appearance.padding.xs
-
-        z: Niri.wsContextType === "workspaces" ? -10 : 0
-
-        sourceComponent: ContextBg {
-            groupOffset: root.groupOffset
-            wsOffset: root.y
-            anchorWs: Niri.wsContextAnchor
-        }
-    }
-
-    //TODO, For Niri, workspace context menu on right click.
-    // Loader {
-    //     active: Config.bar.workspaces.windowRighClickContext && Niri.wsContextType !== "none"
-    //     asynchronous: true
-    //     z: Niri.wsContextType === "item" ? 10 : 1
-
-    //     anchors.right: parent.right
-    //     anchors.rightMargin: -Appearance.padding.xs
-
-    //     sourceComponent: ContextIndicator {
-    //         groupOffset: root.groupOffset
-    //         wsOffset: root.y
-    //         anchorWs: Niri.wsContextAnchor
-    //     }
-    // }
-
-    ColumnLayout {
-        id: layout
-
-        z: 0
-
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Appearance.padding.xs
-        spacing: Math.floor(Appearance.spacing.sm / 2)
-
-        Repeater {
-            id: workspaces
-
-            model: Config.bar.workspaces.shown
-
-            Workspace {
-                activeWsId: root.activeWsId
-                occupied: root.occupied
-                groupOffset: root.groupOffset
-                focusedWindowId: root.focusedWindowId
-                windowPopoutSignal: root
-            }
-        }
-    }
-
-    Loader {
-        z: 1
-        anchors.left: parent.left
-        anchors.right: parent.right
-        active: Config.bar.workspaces.activeIndicator
-        asynchronous: true
-
-        sourceComponent: ActiveIndicator {
-            activeWsId: root.activeWsId
-            workspaces: workspaces
-            mask: layout
-            groupOffset: root.groupOffset
-        }
-    }
-
-    Loader {
-        id: pager
-        active: Config.bar.workspaces.pagerActive
-
-        anchors.top: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        z: -1
-
-        sourceComponent: Pager {
-            groupOffset: root.groupOffset
+    Behavior on blur {
+        Anim {
+            type: Anim.StandardSmall
         }
     }
 }

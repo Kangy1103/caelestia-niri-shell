@@ -1,22 +1,21 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Quickshell.Services.Pipewire
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
-import Quickshell
-import Quickshell.Services.Pipewire
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 
 Item {
     id: root
 
-    required property var wrapper
+    required property PopoutState popouts
 
-    implicitWidth: layout.implicitWidth + Appearance.padding.md * 2
-    implicitHeight: layout.implicitHeight + Appearance.padding.md * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.normal * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.normal * 2
 
     ButtonGroup {
         id: sinks
@@ -31,10 +30,9 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 0
+        spacing: Tokens.spacing.normal
 
         StyledText {
-            Layout.bottomMargin: Appearance.spacing.sm / 2
             text: qsTr("Output device")
             font.weight: 500
         }
@@ -55,8 +53,7 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Appearance.spacing.lg
-            Layout.bottomMargin: Appearance.spacing.sm / 2
+            Layout.topMargin: Tokens.spacing.smaller
             text: qsTr("Input device")
             font.weight: 500
         }
@@ -75,15 +72,15 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Appearance.spacing.lg
-            Layout.bottomMargin: Appearance.spacing.sm / 2
+            Layout.topMargin: Tokens.spacing.smaller
+            Layout.bottomMargin: -Tokens.spacing.small / 2
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font.weight: 500
         }
 
         CustomMouseArea {
             Layout.fillWidth: true
-            implicitHeight: Appearance.padding.md * 3
+            implicitHeight: Tokens.padding.normal * 3
 
             onWheel: event => {
                 if (event.angleDelta.y > 0)
@@ -106,43 +103,16 @@ Item {
             }
         }
 
-        StyledRect {
-            Layout.topMargin: Appearance.spacing.lg
-            visible: Config.general.apps.audio.length > 0
+        IconTextButton {
+            Layout.fillWidth: true
+            Layout.topMargin: Tokens.spacing.normal
+            inactiveColour: Colours.palette.m3primaryContainer
+            inactiveOnColour: Colours.palette.m3onPrimaryContainer
+            verticalPadding: Tokens.padding.small
+            text: qsTr("Open settings")
+            icon: "settings"
 
-            implicitWidth: expandBtn.implicitWidth + Appearance.padding.md * 2
-            implicitHeight: expandBtn.implicitHeight + Appearance.padding.xs
-
-            radius: Appearance.rounding.normal
-            color: Colours.palette.m3primaryContainer
-
-            StateLayer {
-                color: Colours.palette.m3onPrimaryContainer
-
-                function onClicked(): void {
-                    root.wrapper.hasCurrent = false;
-                    Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.audio]);
-                }
-            }
-
-            RowLayout {
-                id: expandBtn
-
-                anchors.centerIn: parent
-                spacing: Appearance.spacing.sm
-
-                StyledText {
-                    Layout.leftMargin: Appearance.padding.sm
-                    text: qsTr("Open settings")
-                    color: Colours.palette.m3onPrimaryContainer
-                }
-
-                MaterialIcon {
-                    text: "chevron_right"
-                    color: Colours.palette.m3onPrimaryContainer
-                    font.pointSize: Appearance.font.size.titleMedium
-                }
-            }
+            onClicked: root.popouts.detachRequested("audio")
         }
     }
 }

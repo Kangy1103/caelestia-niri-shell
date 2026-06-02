@@ -1,63 +1,55 @@
 pragma ComponentBehavior: Bound
 
 import ".."
+import QtQuick
+import Caelestia.Config
+import Caelestia.Models
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.components.images
 import qs.services
-import qs.config
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Effects
 
 GridView {
     id: root
 
     required property Session session
-    
-    Layout.fillWidth: true
-    Layout.fillHeight: true
-    Layout.minimumHeight: 400
-    
-    implicitHeight: Math.max(400, contentHeight)
-    interactive: false
-    height: contentHeight
 
-    readonly property int minCellWidth: 200 + Appearance.spacing.lg
+    readonly property int minCellWidth: 200 + Tokens.spacing.normal
     readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
 
     cellWidth: width / columnsCount
-    cellHeight: 140 + Appearance.spacing.lg
+    cellHeight: 140 + Tokens.spacing.normal
 
     model: Wallpapers.list
 
     clip: true
 
+    StyledScrollBar.vertical: StyledScrollBar {
+        flickable: root
+    }
+
     delegate: Item {
-        id: rootDelegate
         required property var modelData
         required property int index
+        readonly property bool isCurrent: modelData && modelData.path === Wallpapers.actualCurrent
+        readonly property real itemMargin: Tokens.spacing.normal / 2
+        readonly property real itemRadius: Tokens.rounding.normal
 
         width: root.cellWidth
         height: root.cellHeight
 
-        readonly property bool isCurrent: rootDelegate.modelData && rootDelegate.modelData.path === Wallpapers.actualCurrent
-        readonly property bool isVideo: Wallpapers.isPathVideo(rootDelegate.modelData.path)
-        readonly property real itemMargin: Appearance.spacing.lg / 2
-        readonly property real itemRadius: Appearance.rounding.normal
-
         StateLayer {
+            onClicked: {
+                Wallpapers.setWallpaper(modelData.path);
+            }
+
             anchors.fill: parent
             anchors.leftMargin: itemMargin
             anchors.rightMargin: itemMargin
             anchors.topMargin: itemMargin
             anchors.bottomMargin: itemMargin
             radius: itemRadius
-
-            function onClicked(): void {
-                Wallpapers.setWallpaper(rootDelegate.modelData.path);
-            }
         }
 
         StyledClippingRect {
@@ -77,7 +69,7 @@ GridView {
             CachingImage {
                 id: cachingImage
 
-                path: Wallpapers.getColorSource(rootDelegate.modelData.path)
+                path: modelData.path
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -96,29 +88,12 @@ GridView {
                 }
             }
 
-            // Play symbol overlay for videos
-            MaterialIcon {
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: font.pointSize * 0.1
-                text: "play_arrow"
-                color: "white"
-                font.pointSize: Appearance.font.size.headlineLarge * 2
-                visible: rootDelegate.isVideo
-
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowColor: Qt.alpha("black", 0.5)
-                    blurMax: 12
-                }
-            }
-
             // Fallback if CachingImage fails to load
             Image {
                 id: fallbackImage
 
                 anchors.fill: parent
-                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? Wallpapers.getColorSource(rootDelegate.modelData.path) : ""
+                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? modelData.path : ""
                 asynchronous: true
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -141,6 +116,7 @@ GridView {
                 id: fallbackTimer
 
                 property bool triggered: false
+
                 interval: 800
                 running: cachingImage.status === Image.Loading || cachingImage.status === Image.Null
                 onTriggered: triggered = true
@@ -154,7 +130,7 @@ GridView {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
 
-                implicitHeight: filenameText.implicitHeight + Appearance.padding.md * 1.5
+                implicitHeight: filenameText.implicitHeight + Tokens.padding.normal * 1.5
                 radius: 0
 
                 gradient: Gradient {
@@ -178,15 +154,15 @@ GridView {
 
                 opacity: 0
 
+                Component.onCompleted: {
+                    opacity = 1;
+                }
+
                 Behavior on opacity {
                     NumberAnimation {
                         duration: 1000
                         easing.type: Easing.OutCubic
                     }
-                }
-
-                Component.onCompleted: {
-                    opacity = 1;
                 }
             }
         }
@@ -214,26 +190,27 @@ GridView {
             MaterialIcon {
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.margins: Appearance.padding.xs
+                anchors.margins: Tokens.padding.small
 
                 visible: isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Tokens.font.size.large
             }
         }
 
         StyledText {
             id: filenameText
+
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: Appearance.padding.md + Appearance.spacing.lg / 2
-            anchors.rightMargin: Appearance.padding.md + Appearance.spacing.lg / 2
-            anchors.bottomMargin: Appearance.padding.md
+            anchors.leftMargin: Tokens.padding.normal + Tokens.spacing.normal / 2
+            anchors.rightMargin: Tokens.padding.normal + Tokens.spacing.normal / 2
+            anchors.bottomMargin: Tokens.padding.normal
 
-            text: rootDelegate.modelData.name
-            font.pointSize: Appearance.font.size.bodySmall
+            text: modelData.name
+            font.pointSize: Tokens.font.size.smaller
             font.weight: 500
             color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
             elide: Text.ElideMiddle
@@ -242,15 +219,15 @@ GridView {
 
             opacity: 0
 
+            Component.onCompleted: {
+                opacity = 1;
+            }
+
             Behavior on opacity {
                 NumberAnimation {
                     duration: 1000
                     easing.type: Easing.OutCubic
                 }
-            }
-
-            Component.onCompleted: {
-                opacity = 1;
             }
         }
     }

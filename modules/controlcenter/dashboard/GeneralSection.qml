@@ -1,11 +1,11 @@
 import ".."
 import "../components"
+import QtQuick
+import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
-import QtQuick
-import QtQuick.Layouts
 
 SectionContainer {
     id: root
@@ -17,7 +17,7 @@ SectionContainer {
 
     StyledText {
         text: qsTr("General Settings")
-        font.pointSize: Appearance.font.size.bodyMedium
+        font.pointSize: Tokens.font.size.normal
     }
 
     SwitchRow {
@@ -38,53 +38,91 @@ SectionContainer {
         }
     }
 
-    SwitchRow {
-        label: qsTr("Wallpaper as avatar")
-        checked: root.rootItem.useWallpaperAvatar
-        onToggled: checked => {
-            root.rootItem.useWallpaperAvatar = checked;
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Tokens.spacing.normal
+
+        SwitchRow {
+            Layout.fillWidth: true
+            label: qsTr("Show Dashboard tab")
+            checked: root.rootItem.showDashboard
+            onToggled: checked => {
+                root.rootItem.showDashboard = checked;
+                root.rootItem.saveConfig();
+            }
+        }
+
+        SwitchRow {
+            Layout.fillWidth: true
+            label: qsTr("Show Media tab")
+            checked: root.rootItem.showMedia
+            onToggled: checked => {
+                root.rootItem.showMedia = checked;
+                root.rootItem.saveConfig();
+            }
+        }
+
+        SwitchRow {
+            Layout.fillWidth: true
+            label: qsTr("Show Performance tab")
+            checked: root.rootItem.showPerformance
+            onToggled: checked => {
+                root.rootItem.showPerformance = checked;
+                root.rootItem.saveConfig();
+            }
+        }
+
+        SwitchRow {
+            Layout.fillWidth: true
+            label: qsTr("Show Weather tab")
+            checked: root.rootItem.showWeather
+            onToggled: checked => {
+                root.rootItem.showWeather = checked;
+                root.rootItem.saveConfig();
+            }
+        }
+    }
+
+    SliderInput {
+        Layout.fillWidth: true
+
+        label: qsTr("Media update interval")
+        value: root.rootItem.mediaUpdateInterval
+        from: 100
+        to: 10000
+        stepSize: 100
+        suffix: "ms"
+        validator: IntValidator {
+            bottom: 100
+            top: 10000
+        }
+        formatValueFunction: val => Math.round(val).toString()
+        parseValueFunction: text => parseInt(text)
+
+        onValueModified: newValue => {
+            root.rootItem.mediaUpdateInterval = Math.round(newValue);
             root.rootItem.saveConfig();
         }
     }
 
-    SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+    SliderInput {
+        Layout.fillWidth: true
 
-        SliderInput {
-            Layout.fillWidth: true
-            
-            label: qsTr("Update interval")
-            value: root.rootItem.updateInterval
-            from: 100
-            to: 10000
-            stepSize: 100
-            suffix: "ms"
-            validator: IntValidator { bottom: 100; top: 10000 }
-            formatValueFunction: (val) => Math.round(val).toString()
-            parseValueFunction: (text) => parseInt(text)
-            
-            onValueModified: (newValue) => {
-                root.rootItem.updateInterval = Math.round(newValue);
-                root.rootItem.saveConfig();
-            }
+        label: qsTr("Drag threshold")
+        value: root.rootItem.dragThreshold
+        from: 0
+        to: 100
+        suffix: "px"
+        validator: IntValidator {
+            bottom: 0
+            top: 100
         }
+        formatValueFunction: val => Math.round(val).toString()
+        parseValueFunction: text => parseInt(text)
 
-        SliderInput {
-            Layout.fillWidth: true
-            
-            label: qsTr("Drag threshold")
-            value: root.rootItem.dragThreshold
-            from: 0
-            to: 100
-            suffix: "px"
-            validator: IntValidator { bottom: 0; top: 100 }
-            formatValueFunction: (val) => Math.round(val).toString()
-            parseValueFunction: (text) => parseInt(text)
-            
-            onValueModified: (newValue) => {
-                root.rootItem.dragThreshold = Math.round(newValue);
-                root.rootItem.saveConfig();
-            }
+        onValueModified: newValue => {
+            root.rootItem.dragThreshold = Math.round(newValue);
+            root.rootItem.saveConfig();
         }
     }
 }

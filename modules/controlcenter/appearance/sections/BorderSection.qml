@@ -2,13 +2,13 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../../components"
-import qs.components
-import qs.components.controls
-import qs.components.containers
-import qs.services
-import qs.config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.components.containers
+import qs.components.controls
+import qs.services
 
 CollapsibleSection {
     id: root
@@ -18,12 +18,8 @@ CollapsibleSection {
     title: qsTr("Border")
     showBackground: true
 
-    ColumnLayout {
-        spacing: Appearance.spacing.sm
-        Layout.fillWidth: true
-
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Tokens.spacing.normal
 
         SliderInput {
             Layout.fillWidth: true
@@ -47,14 +43,14 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Tokens.spacing.normal
 
         SliderInput {
             Layout.fillWidth: true
 
             label: qsTr("Border thickness")
             value: rootPane.borderThickness
-            from: 0.1
+            from: 0
             to: 100
             decimals: 1
             suffix: "px"
@@ -69,6 +65,4 @@ CollapsibleSection {
             }
         }
     }
-
-    } // end ColumnLayout wrapper
 }
