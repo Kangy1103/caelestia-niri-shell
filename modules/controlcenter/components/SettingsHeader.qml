@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 
+import qs.components
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
 
 Item {
     id: root
@@ -18,19 +18,19 @@ Item {
         id: column
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.normal
+        spacing: Appearance.spacing.lg
 
         MaterialIcon {
             Layout.alignment: Qt.AlignHCenter
             text: root.icon
-            font.pointSize: Tokens.font.size.extraLarge * 3
+            font.pointSize: Appearance.font.size.headlineLarge * 3
             font.bold: true
         }
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
             text: root.title
-            font.pointSize: Tokens.font.size.large
+            font.pointSize: Appearance.font.size.titleMedium
             font.bold: true
         }
     }

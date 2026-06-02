@@ -1,25 +1,27 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Quickshell.Widgets
-import Caelestia.Config
 import qs.components
 import qs.components.effects
+import qs.config
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Layouts
 
 RowLayout {
     id: root
 
+    spacing: 0
+
     property Component leftContent: null
     property Component rightContent: null
+
     property real leftWidthRatio: 0.4
     property int leftMinimumWidth: 420
     property var leftLoaderProperties: ({})
     property var rightLoaderProperties: ({})
+
     property alias leftLoader: leftLoader
     property alias rightLoader: rightLoader
-
-    spacing: 0
 
     Item {
         id: leftPane
@@ -32,9 +34,9 @@ RowLayout {
             id: leftClippingRect
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.normal
+            anchors.margins: Appearance.padding.md
             anchors.leftMargin: 0
-            anchors.rightMargin: Tokens.padding.normal / 2
+            anchors.rightMargin: Appearance.padding.md / 2
 
             radius: leftBorder.innerRadius
             color: "transparent"
@@ -43,11 +45,10 @@ RowLayout {
                 id: leftLoader
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.large + Tokens.padding.normal
-                anchors.leftMargin: Tokens.padding.large
-                anchors.rightMargin: Tokens.padding.large + Tokens.padding.normal / 2
+                anchors.margins: Appearance.padding.xl + Appearance.padding.md
+                anchors.leftMargin: Appearance.padding.xl
+                anchors.rightMargin: Appearance.padding.xl + Appearance.padding.md / 2
 
-                asynchronous: true
                 sourceComponent: root.leftContent
 
                 Component.onCompleted: {
@@ -62,7 +63,7 @@ RowLayout {
             id: leftBorder
 
             leftThickness: 0
-            rightThickness: Tokens.padding.normal / 2
+            rightThickness: Appearance.padding.md / 2
         }
     }
 
@@ -76,9 +77,9 @@ RowLayout {
             id: rightClippingRect
 
             anchors.fill: parent
-            anchors.margins: Tokens.padding.normal
+            anchors.margins: Appearance.padding.md
             anchors.leftMargin: 0
-            anchors.rightMargin: Tokens.padding.normal / 2
+            anchors.rightMargin: Appearance.padding.md / 2
 
             radius: rightBorder.innerRadius
             color: "transparent"
@@ -87,9 +88,8 @@ RowLayout {
                 id: rightLoader
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.large * 2
+                anchors.margins: Appearance.padding.xl * 2
 
-                asynchronous: true
                 sourceComponent: root.rightContent
 
                 Component.onCompleted: {
@@ -103,7 +103,7 @@ RowLayout {
         InnerBorder {
             id: rightBorder
 
-            leftThickness: Tokens.padding.normal / 2
+            leftThickness: Appearance.padding.md / 2
         }
     }
 }

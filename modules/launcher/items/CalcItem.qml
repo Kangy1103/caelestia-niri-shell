@@ -1,48 +1,46 @@
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Caelestia
-import Caelestia.Config
 import qs.components
 import qs.services
+import qs.config
+import Caelestia
+import Quickshell
+import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
 
     required property var list
-    readonly property string math: list.search.text.slice(`${GlobalConfig.launcher.actionPrefix}calc `.length)
+    readonly property string math: list.search.text.slice(`${Config.launcher.actionPrefix}calc `.length)
 
     function onClicked(): void {
-        Quickshell.execDetached(["wl-copy", Qalculator.rawResult]);
+        Quickshell.execDetached(["wl-copy", Qalculator.eval(math, false)]);
         root.list.visibilities.launcher = false;
     }
 
-    onMathChanged: {
-        if (math.length > 0)
-            Qalculator.evalAsync(math);
-    }
-
-    implicitHeight: Tokens.sizes.launcher.itemHeight
+    implicitHeight: Config.launcher.sizes.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Tokens.rounding.normal
-        onClicked: root.onClicked()
+        radius: Appearance.rounding.full
+
+        function onClicked(): void {
+            root.onClicked();
+        }
     }
 
     RowLayout {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Tokens.padding.larger
+        anchors.margins: Appearance.padding.lg
 
-        spacing: Tokens.spacing.normal
+        spacing: Appearance.spacing.lg
 
         MaterialIcon {
             text: "function"
-            font.pointSize: Tokens.font.size.extraLarge
+            font.pointSize: Appearance.font.size.headlineLarge
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -57,7 +55,7 @@ Item {
                 return Colours.palette.m3onSurface;
             }
 
-            text: root.math.length > 0 ? (Qalculator.result || qsTr("Calculating...")) : qsTr("Type an expression to calculate")
+            text: root.math.length > 0 ? Qalculator.eval(root.math) : qsTr("Type an expression to calculate")
             elide: Text.ElideLeft
 
             Layout.fillWidth: true
@@ -66,23 +64,23 @@ Item {
 
         StyledRect {
             color: Colours.palette.m3tertiary
-            radius: Tokens.rounding.normal
+            radius: Appearance.rounding.normal
             clip: true
 
-            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.normal * 2
-            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.small * 2
+            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Appearance.padding.md * 2
+            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Appearance.padding.xs * 2
 
             Layout.alignment: Qt.AlignVCenter
 
             StateLayer {
                 id: stateLayer
 
-                onClicked: {
-                    Quickshell.execDetached(["app2unit", "--", ...GlobalConfig.general.apps.terminal, "fish", "-C", `exec qalc -i '${root.math}'`]);
+                color: Colours.palette.m3onTertiary
+
+                function onClicked(): void {
+                    Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.terminal, "fish", "-C", `exec qalc -i '${root.math}'`]);
                     root.list.visibilities.launcher = false;
                 }
-
-                color: Colours.palette.m3onTertiary
             }
 
             StyledText {
@@ -90,11 +88,11 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: icon.left
-                anchors.rightMargin: Tokens.spacing.small
+                anchors.rightMargin: Appearance.spacing.sm
 
                 text: qsTr("Open in calculator")
                 color: Colours.palette.m3onTertiary
-                font.pointSize: Tokens.font.size.normal
+                font.pointSize: Appearance.font.size.bodyMedium
 
                 opacity: stateLayer.containsMouse ? 1 : 0
 
@@ -108,16 +106,16 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Tokens.padding.normal
+                anchors.rightMargin: Appearance.padding.md
 
                 text: "open_in_new"
                 color: Colours.palette.m3onTertiary
-                font.pointSize: Tokens.font.size.large
+                font.pointSize: Appearance.font.size.titleMedium
             }
 
             Behavior on implicitWidth {
                 Anim {
-                    type: Anim.Emphasized
+                    easing.bezierCurve: Appearance.anim.curves.emphasized
                 }
             }
         }

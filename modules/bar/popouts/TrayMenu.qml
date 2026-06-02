@@ -1,21 +1,21 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Controls
-import Quickshell
-import Quickshell.Widgets
-import Caelestia.Config
 import qs.components
 import qs.services
+import qs.config
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Controls
 
 StackView {
     id: root
 
-    required property PopoutState popouts
+    required property Item popouts
     required property QsMenuHandle trayItem
 
-    implicitWidth: currentItem?.implicitWidth ?? 0
-    implicitHeight: currentItem?.implicitHeight ?? 0
+    implicitWidth: currentItem.implicitWidth
+    implicitHeight: currentItem.implicitHeight
 
     initialItem: SubMenu {
         handle: root.trayItem
@@ -26,11 +26,9 @@ StackView {
     popEnter: NoAnim {}
     popExit: NoAnim {}
 
-    Component {
-        id: subMenuComp
-
-        SubMenu {}
-    }
+    // FocusGrab removed - HyprlandFocusGrab is Hyprland-specific
+    // Menu closing is handled by the popouts state management
+    // TODO: Implement compositor-agnostic focus grab if needed
 
     component NoAnim: Transition {
         NumberAnimation {
@@ -45,8 +43,8 @@ StackView {
         property bool isSubMenu
         property bool shown
 
-        padding: Tokens.padding.smaller
-        spacing: Tokens.spacing.small
+        padding: Appearance.padding.sm
+        spacing: Appearance.spacing.sm
 
         opacity: shown ? 1 : 0
         scale: shown ? 1 : 0.8
@@ -78,33 +76,33 @@ StackView {
 
                 required property QsMenuEntry modelData
 
-                implicitWidth: Tokens.sizes.bar.trayMenuWidth
+                implicitWidth: Config.bar.sizes.trayMenuWidth
                 implicitHeight: modelData.isSeparator ? 1 : children.implicitHeight
 
-                radius: Tokens.rounding.full
+                radius: Appearance.rounding.full
                 color: modelData.isSeparator ? Colours.palette.m3outlineVariant : "transparent"
 
                 Loader {
                     id: children
 
-                    asynchronous: true
                     anchors.left: parent.left
                     anchors.right: parent.right
 
                     active: !item.modelData.isSeparator
+                    asynchronous: true
 
                     sourceComponent: Item {
                         implicitHeight: label.implicitHeight
 
                         StateLayer {
-                            anchors.margins: -Tokens.padding.small / 2
-                            anchors.leftMargin: -Tokens.padding.smaller
-                            anchors.rightMargin: -Tokens.padding.smaller
+                            anchors.margins: -Appearance.padding.xs / 2
+                            anchors.leftMargin: -Appearance.padding.sm
+                            anchors.rightMargin: -Appearance.padding.sm
 
                             radius: item.radius
                             disabled: !item.modelData.enabled
 
-                            onClicked: {
+                            function onClicked(): void {
                                 const entry = item.modelData;
                                 if (entry.hasChildren)
                                     root.push(subMenuComp.createObject(null, {
@@ -121,13 +119,12 @@ StackView {
                         Loader {
                             id: icon
 
-                            asynchronous: true
                             anchors.left: parent.left
 
                             active: item.modelData.icon !== ""
+                            asynchronous: true
 
                             sourceComponent: IconImage {
-                                asynchronous: true
                                 implicitSize: label.implicitHeight
 
                                 source: item.modelData.icon
@@ -138,7 +135,7 @@ StackView {
                             id: label
 
                             anchors.left: icon.right
-                            anchors.leftMargin: icon.active ? Tokens.spacing.smaller : 0
+                            anchors.leftMargin: icon.active ? Appearance.spacing.md : 0
 
                             text: labelMetrics.elidedText
                             color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
@@ -152,17 +149,17 @@ StackView {
                             font.family: label.font.family
 
                             elide: Text.ElideRight
-                            elideWidth: root.Tokens.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + root.Tokens.spacing.normal : 0)
+                            elideWidth: Config.bar.sizes.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Appearance.spacing.lg : 0)
                         }
 
                         Loader {
                             id: expand
 
-                            asynchronous: true
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.right: parent.right
 
                             active: item.modelData.hasChildren
+                            asynchronous: true
 
                             sourceComponent: MaterialIcon {
                                 text: "chevron_right"
@@ -175,12 +172,12 @@ StackView {
         }
 
         Loader {
-            asynchronous: true
             active: menu.isSubMenu
+            asynchronous: true
 
             sourceComponent: Item {
                 implicitWidth: back.implicitWidth
-                implicitHeight: back.implicitHeight + Tokens.spacing.small / 2
+                implicitHeight: back.implicitHeight + Appearance.spacing.sm / 2
 
                 Item {
                     anchors.bottom: parent.bottom
@@ -189,17 +186,20 @@ StackView {
 
                     StyledRect {
                         anchors.fill: parent
-                        anchors.margins: -Tokens.padding.small / 2
-                        anchors.leftMargin: -Tokens.padding.smaller
-                        anchors.rightMargin: -Tokens.padding.smaller * 2
+                        anchors.margins: -Appearance.padding.xs / 2
+                        anchors.leftMargin: -Appearance.padding.sm
+                        anchors.rightMargin: -Appearance.padding.sm * 2
 
-                        radius: Tokens.rounding.full
+                        radius: Appearance.rounding.full
                         color: Colours.palette.m3secondaryContainer
 
                         StateLayer {
                             radius: parent.radius
                             color: Colours.palette.m3onSecondaryContainer
-                            onClicked: root.pop()
+
+                            function onClicked(): void {
+                                root.pop();
+                            }
                         }
                     }
 
@@ -223,5 +223,11 @@ StackView {
                 }
             }
         }
+    }
+
+    Component {
+        id: subMenuComp
+
+        SubMenu {}
     }
 }

@@ -1,10 +1,11 @@
 pragma Singleton
 
-import QtQuick
+import qs.config
+
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import Caelestia.Internal
+
+import QtQuick
 
 Singleton {
     id: root
@@ -19,9 +20,9 @@ Singleton {
     readonly property real downloadTotal: _downloadTotal
     readonly property real uploadTotal: _uploadTotal
 
-    // History buffers for sparkline
-    readonly property CircularBuffer downloadBuffer: _downloadBuffer
-    readonly property CircularBuffer uploadBuffer: _uploadBuffer
+    // History of speeds for sparkline (most recent at end)
+    readonly property var downloadHistory: _downloadHistory
+    readonly property var uploadHistory: _uploadHistory
     readonly property int historyLength: 30
 
     // Private properties
@@ -29,6 +30,8 @@ Singleton {
     property real _uploadSpeed: 0
     property real _downloadTotal: 0
     property real _uploadTotal: 0
+    property var _downloadHistory: []
+    property var _uploadHistory: []
 
     // Previous readings for calculating speed
     property real _prevRxBytes: 0
@@ -136,26 +139,13 @@ Singleton {
         };
     }
 
-    CircularBuffer {
-        id: _downloadBuffer
-
-        capacity: root.historyLength + 1
-    }
-
-    CircularBuffer {
-        id: _uploadBuffer
-
-        capacity: root.historyLength + 1
-    }
-
     FileView {
         id: netDevFile
-
         path: "/proc/net/dev"
     }
 
     Timer {
-        interval: GlobalConfig.dashboard.resourceUpdateInterval
+        interval: Config.dashboard.resourceUpdateInterval
         running: root.refCount > 0
         repeat: true
         triggeredOnStart: true
@@ -199,11 +189,25 @@ Singleton {
                 root._downloadSpeed = rxDelta / timeDelta;
                 root._uploadSpeed = txDelta / timeDelta;
 
-                if (root._downloadSpeed >= 0 && isFinite(root._downloadSpeed))
-                    _downloadBuffer.push(root._downloadSpeed);
+                const maxHistory = root.historyLength + 1;
 
-                if (root._uploadSpeed >= 0 && isFinite(root._uploadSpeed))
-                    _uploadBuffer.push(root._uploadSpeed);
+                if (root._downloadSpeed >= 0 && isFinite(root._downloadSpeed)) {
+                    let newDownHist = root._downloadHistory.slice();
+                    newDownHist.push(root._downloadSpeed);
+                    if (newDownHist.length > maxHistory) {
+                        newDownHist.shift();
+                    }
+                    root._downloadHistory = newDownHist;
+                }
+
+                if (root._uploadSpeed >= 0 && isFinite(root._uploadSpeed)) {
+                    let newUpHist = root._uploadHistory.slice();
+                    newUpHist.push(root._uploadSpeed);
+                    if (newUpHist.length > maxHistory) {
+                        newUpHist.shift();
+                    }
+                    root._uploadHistory = newUpHist;
+                }
             }
 
             // Calculate totals with overflow handling

@@ -1,11 +1,14 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.services
+import qs.config
+import qs.utils
+import QtQuick
+import QtQuick.Layouts
 
+// Weather widget — top slot of the left lock panel.
+// Horizontal inset: padding.xl on each side, matching Media.qml / Resources.qml.
 ColumnLayout {
     id: root
 
@@ -13,155 +16,128 @@ ColumnLayout {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.margins: Tokens.padding.large * 2
+    anchors.leftMargin: Appearance.padding.xl
+    anchors.rightMargin: Appearance.padding.xl
 
-    spacing: Tokens.spacing.small
+    spacing: 0
 
-    Loader {
-        asynchronous: true
-        Layout.topMargin: Tokens.padding.large * 2
-        Layout.bottomMargin: -Tokens.padding.large
-        Layout.alignment: Qt.AlignHCenter
-
-        active: root.rootHeight > 610
-        visible: active
-
-        sourceComponent: StyledText {
-            text: qsTr("Weather")
-            color: Colours.palette.m3primary
-            font.pointSize: Tokens.font.size.extraLarge
-            font.weight: 500
-        }
-    }
-
+    // ── Section label + current temp ───────────────────────────────────────────
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.large
+        Layout.topMargin: Appearance.padding.xl
+        Layout.bottomMargin: Appearance.padding.xl
+        spacing: Appearance.spacing.xs
 
         MaterialIcon {
+            text: "partly_cloudy_day"
+            color: Colours.palette.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.labelLarge
+        }
+
+        StyledText {
+            text: qsTr("Weather")
+            color: Colours.palette.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.labelLarge
+            font.weight: Font.Medium
+            font.family: Appearance.font.family.mono
+        }
+
+        Item { Layout.fillWidth: true }
+
+        // Temperature is the primary data — larger and accented
+        StyledText {
             animate: true
-            text: Weather.icon
-            color: Colours.palette.m3secondary
-            font.pointSize: Tokens.font.size.extraLarge * 2.5
-        }
-
-        ColumnLayout {
-            spacing: Tokens.spacing.small
-
-            StyledText {
-                Layout.fillWidth: true
-
-                animate: true
-                text: Weather.description
-                color: Colours.palette.m3secondary
-                font.pointSize: Tokens.font.size.large
-                font.weight: 500
-                elide: Text.ElideRight
-            }
-
-            StyledText {
-                Layout.fillWidth: true
-
-                animate: true
-                text: qsTr("Humidity: %1%").arg(Weather.humidity)
-                color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Tokens.font.size.normal
-                elide: Text.ElideRight
-            }
-        }
-
-        Loader {
-            asynchronous: true
-            Layout.rightMargin: Tokens.padding.smaller
-            active: root.width > 400
-            visible: active
-
-            sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.small
-
-                StyledText {
-                    Layout.fillWidth: true
-
-                    animate: true
-                    text: Weather.temp
-                    color: Colours.palette.m3primary
-                    horizontalAlignment: Text.AlignRight
-                    font.pointSize: Tokens.font.size.extraLarge
-                    font.weight: 500
-                    elide: Text.ElideLeft
-                }
-
-                StyledText {
-                    Layout.fillWidth: true
-
-                    animate: true
-                    text: qsTr("Feels like: %1").arg(Weather.feelsLike)
-                    color: Colours.palette.m3outline
-                    horizontalAlignment: Text.AlignRight
-                    font.pointSize: Tokens.font.size.smaller
-                    elide: Text.ElideLeft
-                }
-            }
+            text: Weather.temp
+            color: Colours.palette.m3primary
+            font.pointSize: Appearance.font.size.bodyLarge
+            font.weight: Font.Bold
         }
     }
 
+    // ── Current conditions row ─────────────────────────────────────────────────
+    RowLayout {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Appearance.padding.xl
+        spacing: Appearance.spacing.sm
+
+        MaterialIcon {
+            text: Weather.icon || "cloud"
+            color: Colours.palette.m3secondary
+            font.pointSize: Appearance.font.size.bodyMedium
+        }
+
+        StyledText {
+            Layout.fillWidth: true
+            text: Weather.description
+            color: Colours.palette.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.bodySmall
+            font.family: Appearance.font.family.mono
+            elide: Text.ElideRight
+        }
+
+        MaterialIcon {
+            text: "water_drop"
+            color: Colours.palette.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.labelMedium
+            visible: Weather.humidity > 0
+        }
+
+        StyledText {
+            text: Weather.humidity ? `${Weather.humidity}% humidity` : ""
+            color: Colours.palette.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.bodySmall
+            font.family: Appearance.font.family.mono
+        }
+    }
+
+    // ── Hourly forecast ────────────────────────────────────────────────────────
     Loader {
-        id: forecastLoader
+        Layout.fillWidth: true
+        Layout.bottomMargin: Appearance.padding.xl
 
         asynchronous: true
-        Layout.topMargin: Tokens.spacing.smaller
-        Layout.bottomMargin: Tokens.padding.large * 2
-        Layout.fillWidth: true
-
-        active: root.rootHeight > 820
+        active: (Weather.forecast?.length ?? 0) > 0
         visible: active
 
-        sourceComponent: RowLayout {
-            spacing: Tokens.spacing.large
+        sourceComponent: Item {
+            implicitHeight: forecastRow.implicitHeight
 
-            Repeater {
-                model: {
-                    const forecast = Weather.hourlyForecast;
-                    const count = root.width < 320 ? 3 : root.width < 400 ? 4 : 5;
-                    if (!forecast)
-                        return Array.from({
-                            length: count
-                        }, () => null);
+            RowLayout {
+                id: forecastRow
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: Appearance.spacing.lg
 
-                    return forecast.slice(0, count);
-                }
+                Repeater {
+                    model: Weather.forecast.slice(0, 6)
 
-                ColumnLayout {
-                    id: forecastHour
+                    ColumnLayout {
+                        required property var modelData
+                        spacing: Appearance.spacing.sm
 
-                    required property var modelData
-
-                    Layout.fillWidth: true
-                    spacing: Tokens.spacing.small
-
-                    StyledText {
-                        Layout.fillWidth: true
-                        text: {
-                            const hour = forecastHour.modelData?.hour ?? 0;
-                            return hour > 12 ? `${(hour - 12).toString().padStart(2, "0")} PM` : `${hour.toString().padStart(2, "0")} AM`;
+                        MaterialIcon {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: modelData.icon || "cloud"
+                            color: Colours.palette.m3onSurfaceVariant
+                            font.pointSize: Appearance.font.size.bodyMedium
                         }
-                        color: Colours.palette.m3outline
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pointSize: Tokens.font.size.larger
-                    }
 
-                    MaterialIcon {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: forecastHour.modelData?.icon ?? "cloud_alert"
-                        font.pointSize: Tokens.font.size.extraLarge * 1.5
-                        font.weight: 500
-                    }
+                        StyledText {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: Config.services.useFahrenheit
+                                ? `${modelData.maxTempF}°`
+                                : `${modelData.maxTempC}°`
+                            color: Colours.palette.m3onSurface
+                            font.pointSize: Appearance.font.size.bodySmall
+                            font.family: Appearance.font.family.mono
+                        }
 
-                    StyledText {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: GlobalConfig.services.useFahrenheit ? `${forecastHour.modelData?.tempF ?? 0}°F` : `${forecastHour.modelData?.tempC ?? 0}°C`
-                        color: Colours.palette.m3secondary
-                        font.pointSize: Tokens.font.size.larger
+                        StyledText {
+                            Layout.alignment: Qt.AlignHCenter
+                            text: Qt.formatDate(new Date(modelData.date), "ddd")
+                            color: Colours.palette.m3onSurfaceVariant
+                            font.pointSize: Appearance.font.size.labelMedium
+                            font.family: Appearance.font.family.mono
+                        }
                     }
                 }
             }
@@ -172,7 +148,7 @@ ColumnLayout {
         running: true
         triggeredOnStart: true
         repeat: true
-        interval: 900000 // 15 minutes
+        interval: 900000
         onTriggered: Weather.reload()
     }
 }

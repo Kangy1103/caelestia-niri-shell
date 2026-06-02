@@ -1,104 +1,90 @@
-import QtQuick
-import Quickshell
-import Caelestia.Config
-import qs.components
-import qs.modules.bar as Bar
-import qs.modules.dashboard as Dashboard
-import qs.modules.launcher as Launcher
-import qs.modules.notifications as Notifications
+import qs.config
 import qs.modules.osd as Osd
+import qs.modules.notifications as Notifications
 import qs.modules.session as Session
-import qs.modules.sidebar as Sidebar
-import qs.modules.utilities as Utilities
+import qs.modules.launcher as Launcher
+import qs.modules.dashboard as Dashboard
 import qs.modules.bar.popouts as BarPopouts
+import qs.modules.utilities as Utilities
 import qs.modules.utilities.toasts as Toasts
+import qs.modules.quicktoggles as QuickToggles
+import qs.modules.manga as MangaModule
+import qs.modules.novel as NovelModule
+import Quickshell
+import QtQuick
 
 Item {
     id: root
 
     required property ShellScreen screen
-    required property DrawerVisibilities visibilities
-    required property Bar.BarWrapper bar
-    required property real borderThickness
+    required property PersistentProperties visibilities
+    required property Item bar
 
-    readonly property alias osd: osd
-    readonly property alias osdWrapper: osdWrapper
-    readonly property alias notifications: notifications
-    readonly property alias session: session
-    readonly property alias sessionWrapper: sessionWrapper
-    readonly property alias launcher: launcher
-    readonly property alias dashboard: dashboard
-    readonly property alias popouts: popoutsWrapper.content
-    readonly property alias popoutsWrapper: popoutsWrapper
-    readonly property alias utilities: utilities
-    readonly property alias toasts: toasts
-    readonly property alias sidebar: sidebar
+    readonly property Osd.Wrapper osd: osd
+    readonly property Notifications.Wrapper notifications: notifications
+    readonly property Session.Wrapper session: session
+    readonly property Launcher.Wrapper launcher: launcher
+    readonly property Dashboard.Wrapper dashboard: dashboard
+    readonly property BarPopouts.Wrapper popouts: popouts
+    readonly property Utilities.Wrapper utilities: utilities
+    readonly property QuickToggles.Wrapper quicktoggles: quicktoggles
+    readonly property MangaModule.Wrapper manga: manga
+    readonly property NovelModule.Wrapper novel: novel
 
     anchors.fill: parent
-    anchors.margins: borderThickness
+    anchors.margins: Config.border.thickness
     anchors.leftMargin: bar.implicitWidth
 
-    Item {
-        id: osdWrapper
+    MangaModule.Wrapper {
+        id: manga
+        visibilities: root.visibilities
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+    }
+
+    NovelModule.Wrapper {
+        id: novel
+        visibilities: root.visibilities
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+    }
+
+    Osd.Wrapper {
+        id: osd
+
+        clip: root.visibilities.session
+        screen: root.screen
+        visibilities: root.visibilities
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
-        clip: sidebar.visible || session.visible
-
-        implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
-        implicitHeight: osd.implicitHeight
-
-        Osd.Wrapper {
-            id: osd
-
-            screen: root.screen
-            visibilities: root.visibilities
-            sidebarOrSessionVisible: sidebar.visible || session.visible
-
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-        }
+        anchors.rightMargin: session.width
     }
 
     Notifications.Wrapper {
         id: notifications
 
         visibilities: root.visibilities
-        sidebarPanel: sidebar
-        osdPanel: osdWrapper
-        sessionPanel: sessionWrapper
+        panel: root
 
         anchors.top: parent.top
         anchors.right: parent.right
     }
 
-    Item {
-        id: sessionWrapper
+    Session.Wrapper {
+        id: session
+
+        visibilities: root.visibilities
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
-        clip: sidebar.visible
-
-        implicitWidth: session.implicitWidth * (1 - session.offsetScale)
-        implicitHeight: session.implicitHeight
-
-        Session.Wrapper {
-            id: session
-
-            visibilities: root.visibilities
-            sidebarVisible: sidebar.visible
-
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-        }
     }
 
     Launcher.Wrapper {
         id: launcher
 
-        screen: root.screen
         visibilities: root.visibilities
         panels: root
 
@@ -115,19 +101,38 @@ Item {
         anchors.top: parent.top
     }
 
-    BarPopouts.ClipWrapper {
-        id: popoutsWrapper
+    BarPopouts.Wrapper {
+        id: popouts
 
         screen: root.screen
-        borderThickness: root.borderThickness
+
+        x: isDetached ? (root.width - nonAnimWidth) / 2 : 0
+        y: {
+            if (isDetached)
+                return (root.height - nonAnimHeight) / 2;
+
+            const off = currentCenter - Config.border.thickness - nonAnimHeight / 2;
+            const diff = root.height - Math.floor(off + nonAnimHeight);
+            if (diff < 0)
+                return off + diff;
+            return Math.max(off, 0);
+        }
     }
 
     Utilities.Wrapper {
         id: utilities
 
+        visibility: root.visibilities.utilities
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+
+    QuickToggles.Wrapper {
+        id: quicktoggles
+
         visibilities: root.visibilities
-        sidebar: sidebar
-        popouts: popoutsWrapper.content
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
@@ -136,18 +141,9 @@ Item {
     Toasts.Toasts {
         id: toasts
 
-        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
-        anchors.right: sidebar.left
-        anchors.margins: Tokens.padding.normal
-    }
-
-    Sidebar.Wrapper {
-        id: sidebar
-
-        visibilities: root.visibilities
-
-        anchors.top: notifications.bottom
-        anchors.bottom: utilities.top
+        width: implicitWidth
+        anchors.bottom: parent.bottom
         anchors.right: parent.right
+        anchors.margins: Appearance.padding.md
     }
 }

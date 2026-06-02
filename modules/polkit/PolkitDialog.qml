@@ -12,7 +12,7 @@ import Quickshell
 import Quickshell.Wayland
 
 /**
- * PolkitDialog — authentication prompt overlay for caelestia-niri-shell.
+ * PolkitDialog — authentication prompt overlay for niri-caelestia-shell.
  *
  * Shown as a full-screen layer-shell surface on the Overlay layer whenever
  * PolkitService.active is true.  The card design mirrors the lock screen's

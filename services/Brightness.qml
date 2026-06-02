@@ -1,73 +1,92 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import QtQuick
+import qs.components.misc
+import qs.services
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.components.misc
+import QtQuick
+
+// Compositor-agnostic brightness service
+// Works with Niri, Hyprland, or any Wayland compositor
 
 Singleton {
     id: root
 
     property list<var> ddcMonitors: []
-    readonly property var ddcMonitorMap: {
-        const map = {};
-        for (const m of ddcMonitors)
-            map[m.connector] = m;
-        return map;
-    }
-    readonly property list<Monitor> monitors: variants.instances // qmllint disable incompatible-type
+    readonly property list<Monitor> monitors: variants.instances
     property bool appleDisplayPresent: false
+    property bool _ddcAvailable: false
+    property bool _ddcChecked: false
 
     function getMonitorForScreen(screen: ShellScreen): var {
-        return monitors.find(m => m.modelData === screen); // qmllint disable missing-property
+        return monitors.find(m => m.modelData === screen);
+    }
+
+    // Get the currently focused/active monitor name
+    // Uses Niri service if available, falls back to first screen
+    function getActiveMonitorName(): string {
+        // Try Niri service first
+        if (typeof Niri !== "undefined" && Niri.niriAvailable && Niri.focusedMonitorName) {
+            return Niri.focusedMonitorName;
+        }
+        // Fallback: return first screen's name
+        if (monitors.length > 0) {
+            return monitors[0].modelData.name;
+        }
+        return "";
     }
 
     function getMonitor(query: string): var {
         if (query === "active") {
-            return monitors.find(m => Hypr.monitorFor(m.modelData)?.focused); // qmllint disable missing-property
+            const activeName = getActiveMonitorName();
+            if (activeName) {
+                return monitors.find(m => m.modelData.name === activeName);
+            }
+            // Ultimate fallback: first monitor
+            return monitors.length > 0 ? monitors[0] : null;
         }
 
         if (query.startsWith("model:")) {
             const model = query.slice(6);
-            return monitors.find(m => m.modelData.model === model); // qmllint disable missing-property
+            return monitors.find(m => m.modelData.model === model);
         }
 
         if (query.startsWith("serial:")) {
             const serial = query.slice(7);
-            return monitors.find(m => m.modelData.serialNumber === serial); // qmllint disable missing-property
+            return monitors.find(m => m.modelData.serialNumber === serial);
         }
 
-        if (query.startsWith("id:")) {
-            const id = parseInt(query.slice(3), 10);
-            return monitors.find(m => Hypr.monitorFor(m.modelData)?.id === id); // qmllint disable missing-property
+        if (query.startsWith("name:")) {
+            const name = query.slice(5);
+            return monitors.find(m => m.modelData.name === name);
         }
 
-        return monitors.find(m => m.modelData.name === query); // qmllint disable missing-property
+        // Direct name match
+        return monitors.find(m => m.modelData.name === query);
     }
 
     function increaseBrightness(): void {
         const monitor = getMonitor("active");
         if (monitor)
-            monitor.setBrightness(monitor.brightness + GlobalConfig.services.brightnessIncrement);
+            monitor.setBrightness(monitor.brightness + 0.1);
     }
 
     function decreaseBrightness(): void {
         const monitor = getMonitor("active");
         if (monitor)
-            monitor.setBrightness(monitor.brightness - GlobalConfig.services.brightnessIncrement);
+            monitor.setBrightness(monitor.brightness - 0.1);
     }
 
     onMonitorsChanged: {
         ddcMonitors = [];
-        ddcProc.running = true;
+        if (_ddcAvailable) ddcProc.running = true;
     }
 
     Variants {
         id: variants
 
-        model: Quickshell.screens // Don't respect excluded screens cause ipc
+        model: Quickshell.screens
 
         Monitor {}
     }
@@ -78,6 +97,24 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: root.appleDisplayPresent = text.trim().length > 0
         }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                root.appleDisplayPresent = false;
+            }
+        }
+    }
+
+    Process {
+        id: ddcCheck
+        running: true
+        command: ["which", "ddcutil"]
+        onExited: (exitCode) => {
+            root._ddcChecked = true;
+            root._ddcAvailable = exitCode === 0;
+            if (root._ddcAvailable) {
+                ddcProc.running = true;
+            }
+        }
     }
 
     Process {
@@ -85,30 +122,63 @@ Singleton {
 
         command: ["ddcutil", "detect", "--brief"]
         stdout: StdioCollector {
-            onStreamFinished: root.ddcMonitors = text.trim().split("\n\n").filter(d => d.startsWith("Display ")).map(d => ({
-                        busNum: d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/)[1],
-                        connector: d.match(/DRM connector:\s+(.*)/)[1].replace(/^card\d+-/, "") // strip "card1-"
-                    }))
+            onStreamFinished: {
+                const parts = text.trim().split("\n\n").filter(d => d.startsWith("Display "));
+                const results = [];
+                for (const d of parts) {
+                    const lines = d.split("\n");
+                    let busNum = "";
+                    let connector = "";
+                    for (const line of lines) {
+                        const t = line.trim();
+                        if (t.startsWith("I2C bus:")) {
+                            const i2cMatch = t.split("/dev/i2c-");
+                            if (i2cMatch.length > 1) {
+                                busNum = i2cMatch[1].trim();
+                            }
+                        } else if (t.startsWith("DRM connector:")) {
+                            const connSplit = t.split("DRM connector:");
+                            if (connSplit.length > 1) {
+                                let c = connSplit[1].trim();
+                                if (c.startsWith("card")) {
+                                    const hyphenIdx = c.indexOf("-");
+                                    if (hyphenIdx !== -1) {
+                                        c = c.substring(hyphenIdx + 1);
+                                    }
+                                }
+                                connector = c;
+                            }
+                        }
+                    }
+                    if (busNum && connector) {
+                        results.push({ busNum, connector });
+                    }
+                }
+                root.ddcMonitors = results;
+            }
+        }
+        onExited: (exitCode) => {
+            if (exitCode !== 0) {
+                console.log("Brightness: ddcutil detect exited with code", exitCode, "(DDC monitors unavailable)");
+            }
         }
     }
 
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "brightnessUp"
-        description: "Increase brightness"
-        onPressed: root.increaseBrightness()
-    }
-
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "brightnessDown"
-        description: "Decrease brightness"
-        onPressed: root.decreaseBrightness()
-    }
+    // CustomShortcut {
+    //     name: "brightnessUp"
+    //     description: "Increase brightness"
+    //     onPressed: root.increaseBrightness()
+    // }
+    //
+    // CustomShortcut {
+    //     name: "brightnessDown"
+    //     description: "Decrease brightness"
+    //     onPressed: root.decreaseBrightness()
+    // }
 
     IpcHandler {
+        target: "brightness"
+
         function get(): real {
             return getFor("active");
         }
@@ -157,17 +227,14 @@ Singleton {
 
             return `Set monitor ${monitor.modelData.name} brightness to ${+monitor.brightness.toFixed(2)}`;
         }
-
-        target: "brightness"
     }
 
     component Monitor: QtObject {
         id: monitor
 
         required property ShellScreen modelData
-        readonly property var ddcInfo: root.ddcMonitorMap[modelData.name] ?? null
-        readonly property bool isDdc: ddcInfo !== null
-        readonly property string busNum: ddcInfo?.busNum ?? ""
+        readonly property bool isDdc: root.ddcMonitors.some(m => m.connector === modelData.name)
+        readonly property string busNum: root.ddcMonitors.find(m => m.connector === modelData.name)?.busNum ?? ""
         readonly property bool isAppleDisplay: root.appleDisplayPresent && modelData.model.startsWith("StudioDisplay")
         property real brightness
         property real queuedBrightness: NaN
@@ -175,13 +242,30 @@ Singleton {
         readonly property Process initProc: Process {
             stdout: StdioCollector {
                 onStreamFinished: {
-                    if (monitor.isAppleDisplay) {
-                        const val = parseInt(text.trim());
-                        monitor.brightness = val / 101;
-                    } else {
-                        const [, , , cur, max] = text.split(" ");
-                        monitor.brightness = parseInt(cur) / parseInt(max);
+                    try {
+                        if (monitor.isAppleDisplay) {
+                            const val = parseInt(text.trim());
+                            monitor.brightness = isNaN(val) ? 0.5 : val / 101;
+                        } else {
+                            const parts = text.split(" ");
+                            if (parts.length >= 5) {
+                                const cur = parseInt(parts[3]);
+                                const max = parseInt(parts[4]);
+                                monitor.brightness = (isNaN(cur) || isNaN(max) || max === 0) ? 0.5 : cur / max;
+                            } else {
+                                monitor.brightness = 0.5;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Brightness: Failed to parse brightness value:", e);
+                        monitor.brightness = 0.5;
                     }
+                }
+            }
+            onExited: (exitCode) => {
+                if (exitCode !== 0) {
+                    console.log("Brightness: Failed to get brightness for", monitor.modelData?.name ?? "unknown");
+                    monitor.brightness = 0.5; // Default fallback
                 }
             }
         }

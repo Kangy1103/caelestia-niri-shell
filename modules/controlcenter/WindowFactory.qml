@@ -1,9 +1,9 @@
 pragma Singleton
 
-import QtQuick
-import Quickshell
 import qs.components
 import qs.services
+import Quickshell
+import QtQuick
 
 Singleton {
     id: root
@@ -40,15 +40,18 @@ Singleton {
             maximumSize.width: implicitWidth
             maximumSize.height: implicitHeight
 
-            title: qsTr("Caelestia Settings - %1").arg(cc.active.slice(0, 1).toUpperCase() + cc.active.slice(1))
+            title: qsTr("Settings — %1").arg(cc.active.slice(0, 1).toUpperCase() + cc.active.slice(1))
 
             ControlCenter {
                 id: cc
 
                 anchors.fill: parent
                 screen: win.screen
-                onClose: win.destroy()
                 floating: true
+
+                function close(): void {
+                    win.destroy();
+                }
             }
 
             Behavior on color {

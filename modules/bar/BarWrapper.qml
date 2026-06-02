@@ -1,44 +1,34 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import Quickshell
-import Caelestia.Config
 import qs.components
-import qs.utils
-import qs.modules.bar.popouts as BarPopouts
+import qs.config
+import "popouts" as BarPopouts
+import Quickshell
+import QtQuick
 
 Item {
     id: root
 
     required property ShellScreen screen
-    required property DrawerVisibilities visibilities
+    required property PersistentProperties visibilities
     required property BarPopouts.Wrapper popouts
-    required property bool fullscreen
 
-    readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)
-
-    readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)
-    readonly property int padding: Math.max(Tokens.padding.smaller, Config.border.thickness)
-    readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
-    readonly property int exclusiveZone: !disabled && (Config.bar.persistent || visibilities.bar) ? contentWidth : Config.border.thickness
-    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
+    readonly property int padding: Math.max(Appearance.padding.sm, Config.border.thickness)
+    readonly property int contentWidth: Config.bar.sizes.innerWidth + padding * 2
+    readonly property int exclusiveZone: Config.bar.persistent || visibilities.bar ? contentWidth : Config.border.thickness
+    readonly property bool shouldBeVisible: Config.bar.persistent || visibilities.bar || isHovered
     property bool isHovered
 
-    function closeTray(): void {
-        (content.item as Bar)?.closeTray();
-    }
-
     function checkPopout(y: real): void {
-        (content.item as Bar)?.checkPopout(y);
+        content.item?.checkPopout(y);
     }
 
     function handleWheel(y: real, angleDelta: point): void {
-        (content.item as Bar)?.handleWheel(y, angleDelta);
+        content.item?.handleWheel(y, angleDelta);
     }
 
-    clip: true
-    visible: width > 0
-    implicitWidth: fullscreen ? 0 : Config.border.thickness
+    visible: width > Config.border.thickness
+    implicitWidth: Config.border.thickness
 
     states: State {
         name: "visible"
@@ -57,7 +47,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                type: Anim.DefaultSpatial
+                duration: Appearance.anim.durations.normal
+                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
             }
         },
         Transition {
@@ -67,7 +58,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                type: Anim.Emphasized
+                duration: Appearance.anim.durations.small
+                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
             }
         }
     ]
@@ -85,8 +77,7 @@ Item {
             width: root.contentWidth
             screen: root.screen
             visibilities: root.visibilities
-            popouts: root.popouts // qmllint disable incompatible-type
-            fullscreen: root.fullscreen
+            popouts: root.popouts
         }
     }
 }

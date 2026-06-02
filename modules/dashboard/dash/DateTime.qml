@@ -1,17 +1,19 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
 
+    readonly property list<string> timeComponents: Time.format(Config.services.useTwelveHourClock ? "hh:mm:A" : "hh:mm").split(":")
+
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    implicitWidth: Tokens.sizes.dashboard.dateTimeWidth
+    implicitWidth: Config.dashboard.sizes.dateTimeWidth
 
     ColumnLayout {
         anchors.left: parent.left
@@ -22,10 +24,10 @@ Item {
         StyledText {
             Layout.bottomMargin: -(font.pointSize * 0.4)
             Layout.alignment: Qt.AlignHCenter
-            text: Time.hourStr
+            text: root.timeComponents[0]
             color: Colours.palette.m3secondary
-            font.pointSize: Tokens.font.size.extraLarge
-            font.family: Tokens.font.family.clock
+            font.pointSize: Appearance.font.size.headlineLarge
+            font.family: Appearance.font.family.clock
             font.weight: 600
         }
 
@@ -33,32 +35,32 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             text: "•••"
             color: Colours.palette.m3primary
-            font.pointSize: Tokens.font.size.extraLarge * 0.9
-            font.family: Tokens.font.family.clock
+            font.pointSize: Appearance.font.size.headlineLarge * 0.9
+            font.family: Appearance.font.family.clock
         }
 
         StyledText {
             Layout.topMargin: -(font.pointSize * 0.4)
             Layout.alignment: Qt.AlignHCenter
-            text: Time.minuteStr
+            text: root.timeComponents[1]
             color: Colours.palette.m3secondary
-            font.pointSize: Tokens.font.size.extraLarge
-            font.family: Tokens.font.family.clock
+            font.pointSize: Appearance.font.size.headlineLarge
+            font.family: Appearance.font.family.clock
             font.weight: 600
         }
 
         Loader {
-            asynchronous: true
             Layout.alignment: Qt.AlignHCenter
 
-            active: GlobalConfig.services.useTwelveHourClock
+            asynchronous: true
+            active: Config.services.useTwelveHourClock
             visible: active
 
             sourceComponent: StyledText {
-                text: Time.amPmStr
+                text: root.timeComponents[2] ?? ""
                 color: Colours.palette.m3primary
-                font.pointSize: Tokens.font.size.large
-                font.family: Tokens.font.family.clock
+                font.pointSize: Appearance.font.size.titleMedium
+                font.family: Appearance.font.family.clock
                 font.weight: 600
             }
         }

@@ -1,35 +1,32 @@
 pragma ComponentBehavior: Bound
 
 import "items"
-import QtQuick
-import Quickshell
-import Caelestia.Config
-import qs.components.controls
 import qs.services
+import qs.config
+import Quickshell
+import QtQuick
+import QtQuick.Controls
 
 PathView {
     id: root
 
-    required property StyledTextField search
-    required property var visibilities
+    required property TextField search
+    required property PersistentProperties visibilities
     required property var panels
-    required property var content
+    required property var wrapper
 
-    readonly property int itemWidth: Tokens.sizes.launcher.wallpaperWidth * 0.8 + Tokens.padding.larger * 2
+    readonly property int itemWidth: Config.launcher.sizes.wallpaperWidth * 0.8 + Appearance.padding.lg * 2
 
     readonly property int numItems: {
-        const screen = (QsWindow.window as QsWindow)?.screen;
+        const screen = QsWindow.window?.screen;
         if (!screen)
             return 0;
 
         // Screen width - 4x outer rounding - 2x max side thickness (cause centered)
-        const barMargins = Math.max(Config.border.thickness, panels.bar.implicitWidth);
-        let outerMargins = 0;
-        if (panels.popouts.hasCurrent && panels.popouts.currentCenter + panels.popouts.nonAnimHeight / 2 > screen.height - content.implicitHeight - Config.border.thickness * 2)
-            outerMargins = panels.popouts.nonAnimWidth;
-        if ((visibilities.utilities || visibilities.sidebar) && panels.utilities.implicitWidth > outerMargins)
-            outerMargins = panels.utilities.implicitWidth;
-        const maxWidth = screen.width - Config.border.rounding * 4 - (barMargins + outerMargins) * 2;
+        let outerMargins = Math.max(Config.border.thickness, panels.bar.implicitWidth);
+        if (panels.popouts.hasCurrent && panels.popouts.currentCenter + panels.popouts.nonAnimHeight / 2 > screen.height - wrapper.implicitHeight - Config.border.thickness * 2)
+            outerMargins = panels.bar.implicitWidth + panels.popouts.nonAnimWidth;
+        const maxWidth = screen.width - Config.border.rounding * 4 - outerMargins * 2;
 
         if (maxWidth <= 0)
             return 0;
@@ -56,9 +53,18 @@ PathView {
     Component.onCompleted: currentIndex = Wallpapers.list.findIndex(w => w.path === Wallpapers.actualCurrent)
     Component.onDestruction: Wallpapers.stopPreview()
 
+    Timer {
+        id: previewDebounce
+        interval: 250
+        onTriggered: {
+            if (root.currentItem)
+                Wallpapers.preview(root.currentItem.modelData.path);
+        }
+    }
+
     onCurrentItemChanged: {
         if (currentItem)
-            Wallpapers.preview((currentItem as WallpaperItem).modelData.path);
+            previewDebounce.restart();
     }
 
     implicitWidth: Math.min(numItems, count) * itemWidth

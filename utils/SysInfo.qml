@@ -1,10 +1,8 @@
 pragma Singleton
 
-import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import qs.utils
+import QtQuick
 
 Singleton {
     id: root
@@ -13,7 +11,7 @@ Singleton {
     property string osPrettyName
     property string osId
     property list<string> osIdLike
-    property string osLogo: Qt.resolvedUrl(`${Quickshell.shellDir}/assets/logo.svg`)
+    property string osLogo: `file://${Quickshell.shellDir}/assets/logo.svg`
     property bool isDefaultLogo: true
 
     property string uptime
@@ -36,32 +34,41 @@ Singleton {
             root.osIdLike = fd("ID_LIKE").split(" ");
 
             const logo = Quickshell.iconPath(fd("LOGO"), true);
-            if (GlobalConfig.general.logo === "caelestia") {
-                root.osLogo = Qt.resolvedUrl(`${Quickshell.shellDir}/assets/logo.svg`);
-                root.isDefaultLogo = true;
-            } else if (GlobalConfig.general.logo) {
-                root.osLogo = Quickshell.iconPath(GlobalConfig.general.logo, true) || "file://" + Paths.absolutePath(GlobalConfig.general.logo);
-                root.isDefaultLogo = false;
-            } else if (logo) {
+            if (logo) {
                 root.osLogo = logo;
                 root.isDefaultLogo = false;
             }
         }
     }
 
-    Connections {
-        function onLogoChanged(): void {
-            osRelease.reload();
-        }
+    // Read uptime once at startup and compute it from elapsed time thereafter
+    property real _bootUptimeSecs: 0
 
-        target: GlobalConfig.general
+    function formatUptime(totalSecs: real): string {
+        const up = Math.floor(totalSecs);
+        const days = Math.floor(up / 86400);
+        const hours = Math.floor((up % 86400) / 3600);
+        const minutes = Math.floor((up % 3600) / 60);
+
+        let str = "";
+        if (days > 0)
+            str += `${days} day${days === 1 ? "" : "s"}`;
+        if (hours > 0)
+            str += `${str ? ", " : ""}${hours} hour${hours === 1 ? "" : "s"}`;
+        if (minutes > 0 || !str)
+            str += `${str ? ", " : ""}${minutes} minute${minutes === 1 ? "" : "s"}`;
+        return str;
     }
 
     Timer {
-        running: true
+        running: root._bootUptimeSecs > 0
         repeat: true
-        interval: 15000
-        onTriggered: fileUptime.reload()
+        interval: 60000
+        onTriggered: {
+            // Add elapsed minutes to initial reading
+            root._bootUptimeSecs += 60;
+            root.uptime = root.formatUptime(root._bootUptimeSecs);
+        }
     }
 
     FileView {
@@ -69,20 +76,8 @@ Singleton {
 
         path: "/proc/uptime"
         onLoaded: {
-            const up = parseInt(text().split(" ")[0] ?? 0);
-
-            const days = Math.floor(up / 86400);
-            const hours = Math.floor((up % 86400) / 3600);
-            const minutes = Math.floor((up % 3600) / 60);
-
-            let str = "";
-            if (days > 0)
-                str += `${days} day${days === 1 ? "" : "s"}`;
-            if (hours > 0)
-                str += `${str ? ", " : ""}${hours} hour${hours === 1 ? "" : "s"}`;
-            if (minutes > 0 || !str)
-                str += `${str ? ", " : ""}${minutes} minute${minutes === 1 ? "" : "s"}`;
-            root.uptime = str;
+            root._bootUptimeSecs = parseFloat(text().split(" ")[0] ?? 0);
+            root.uptime = root.formatUptime(root._bootUptimeSecs);
         }
     }
 }

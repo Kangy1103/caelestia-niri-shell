@@ -1,9 +1,9 @@
-import QtQuick
-import QtQuick.Shapes
-import QtQuick.Templates
-import Caelestia.Config
-import qs.components
+import ".."
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Shapes
 
 Switch {
     id: root
@@ -14,21 +14,21 @@ Switch {
     implicitHeight: implicitIndicatorHeight
 
     indicator: StyledRect {
-        radius: Tokens.rounding.full
+        radius: Appearance.rounding.full
         color: root.checked ? Colours.palette.m3primary : Colours.layer(Colours.palette.m3surfaceContainerHighest, root.cLayer)
 
         implicitWidth: implicitHeight * 1.7
-        implicitHeight: Tokens.font.size.normal + Tokens.padding.smaller * 2
+        implicitHeight: Appearance.font.size.bodyMedium + Appearance.padding.sm * 2
 
         StyledRect {
             readonly property real nonAnimWidth: root.pressed ? implicitHeight * 1.3 : implicitHeight
 
-            radius: Tokens.rounding.full
+            radius: Appearance.rounding.full
             color: root.checked ? Colours.palette.m3onPrimary : Colours.layer(Colours.palette.m3outline, root.cLayer + 1)
 
-            x: root.checked ? parent.implicitWidth - nonAnimWidth - Tokens.padding.small / 2 : Tokens.padding.small / 2
+            x: root.checked ? parent.implicitWidth - nonAnimWidth - Appearance.padding.xs / 2 : Appearance.padding.xs / 2
             implicitWidth: nonAnimWidth
-            implicitHeight: parent.implicitHeight - Tokens.padding.small
+            implicitHeight: parent.implicitHeight - Appearance.padding.xs
             anchors.verticalCenter: parent.verticalCenter
 
             StyledRect {
@@ -83,15 +83,15 @@ Switch {
 
                 anchors.centerIn: parent
                 width: height
-                height: parent.implicitHeight - Tokens.padding.small * 2
+                height: parent.implicitHeight - Appearance.padding.xs * 2
                 preferredRendererType: Shape.CurveRenderer
                 asynchronous: true
 
                 ShapePath {
-                    strokeWidth: root.Tokens.font.size.larger * 0.15
+                    strokeWidth: Appearance.font.size.bodyLarge * 0.15
                     strokeColor: root.checked ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHighest
                     fillColor: "transparent"
-                    capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+                    capStyle: Appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
                     startX: icon.start1.x
                     startY: icon.start1.y
@@ -145,7 +145,8 @@ Switch {
     }
 
     component PropAnim: PropertyAnimation {
-        duration: Tokens.anim.durations.normal
-        easing: Tokens.anim.standard
+        duration: Appearance.anim.durations.normal
+        easing.type: Easing.BezierSpline
+        easing.bezierCurve: Appearance.anim.curves.standard
     }
 }

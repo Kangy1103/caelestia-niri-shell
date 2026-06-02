@@ -1,13 +1,13 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Effects
+import qs.components
+import qs.services
+import qs.config
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import Caelestia
-import qs.components
-import qs.services
+import QtQuick
+import QtQuick.Effects
 
 MouseArea {
     id: root
@@ -15,10 +15,14 @@ MouseArea {
     required property LazyLoader loader
     required property ShellScreen screen
 
+    // Niri doesn't expose border/rounding config, use sensible defaults
+    property int borderWidth: 2
+    property int rounding: 8
+
     property bool onClient
 
-    property real realBorderWidth: onClient ? (Hypr.options["general:border_size"] ?? 1) : 2
-    property real realRounding: onClient ? (Hypr.options["decoration:rounding"] ?? 0) : 0
+    property real realBorderWidth: onClient ? borderWidth : 2
+    property real realRounding: onClient ? rounding : 0
 
     property real ssx
     property real ssy
@@ -33,33 +37,72 @@ MouseArea {
     property real sw: Math.abs(sx - ex)
     property real sh: Math.abs(sy - ey)
 
-    property list<var> clients: {
-        const mon = Hypr.monitorFor(screen);
-        if (!mon)
-            return [];
-
-        const special = mon.lastIpcObject.specialWorkspace;
-        const wsId = special.name ? special.id : mon.activeWorkspace.id;
-
-        return Hypr.toplevels.values.filter(c => c.workspace?.id === wsId).sort((a, b) => {
-            // Pinned first, then fullscreen, then floating, then any other
-            const ac = a.lastIpcObject;
-            const bc = b.lastIpcObject;
-            return (bc.pinned - ac.pinned) || ((bc.fullscreen !== 0) - (ac.fullscreen !== 0)) || (bc.floating - ac.floating);
+    // Get windows in current workspace using Niri service
+    property var clients: {
+        if (!Niri.niriAvailable) return [];
+        // Get windows filtered to current workspace
+        const wsWindows = Niri.getActiveWorkspaceWindows();
+        // Sort by layout position (column, then row)
+        return wsWindows.slice().sort((a, b) => {
+            const aPos = a.layout?.pos_in_scrolling_layout || [0, 0];
+            const bPos = b.layout?.pos_in_scrolling_layout || [0, 0];
+            // Sort by column first, then row
+            if (aPos[0] !== bPos[0]) return aPos[0] - bPos[0];
+            return aPos[1] - bPos[1];
         });
+    }
+
+    // Get window geometry from Niri's layout data
+    // Niri provides window_size in layout but not absolute position on screen
+    // We need to compute position based on the focused window and layout offsets
+    function getWindowGeometry(window) {
+        if (!window?.layout?.window_size) return null;
+        
+        const size = window.layout.window_size;
+        const pos = window.layout.pos_in_scrolling_layout ?? [0, 0];
+        
+        // For Niri, we estimate window position based on layout
+        // This is approximate since Niri uses scrolling layout
+        const focusedWindow = Niri.focusedWindow;
+        if (!focusedWindow?.layout?.pos_in_scrolling_layout) {
+            // Fallback: center the window
+            return {
+                x: (screen.width - size[0]) / 2,
+                y: (screen.height - size[1]) / 2,
+                w: size[0],
+                h: size[1]
+            };
+        }
+        
+        const focusedPos = focusedWindow.layout.pos_in_scrolling_layout;
+        const focusedSize = focusedWindow.layout.window_size ?? [screen.width, screen.height];
+        
+        // Calculate offset from focused window
+        const colOffset = pos[0] - focusedPos[0];
+        const rowOffset = pos[1] - focusedPos[1];
+        
+        // Estimate focused window's screen position (centered or left-aligned)
+        const focusedX = focusedSize[0] < screen.width ? (screen.width - focusedSize[0]) / 2 : 0;
+        const focusedY = focusedSize[1] < screen.height ? (screen.height - focusedSize[1]) / 2 : 0;
+        
+        return {
+            x: focusedX + (colOffset * size[0]),
+            y: focusedY + (rowOffset * size[1]),
+            w: size[0],
+            h: size[1]
+        };
     }
 
     function checkClientRects(x: real, y: real): void {
         for (const client of clients) {
-            if (!client)
-                continue;
-
-            let {
-                at: [cx, cy],
-                size: [cw, ch]
-            } = client.lastIpcObject;
-            cx -= screen.x;
-            cy -= screen.y;
+            const geom = getWindowGeometry(client);
+            if (!geom) continue;
+            
+            const cx = geom.x;
+            const cy = geom.y;
+            const cw = geom.w;
+            const ch = geom.h;
+            
             if (cx <= x && cy <= y && cx + cw >= x && cy + ch >= y) {
                 onClient = true;
                 sx = cx;
@@ -71,29 +114,15 @@ MouseArea {
         }
     }
 
-    function save(): void {
-        const tmpfile = Qt.resolvedUrl(`/tmp/caelestia-picker-${Quickshell.processId}-${Date.now()}.png`);
-        CUtils.saveItem(screencopy, tmpfile, Qt.rect(Math.ceil(rsx), Math.ceil(rsy), Math.floor(sw), Math.floor(sh)), path => {
-            if (root.loader.clipboardOnly) {
-                Quickshell.execDetached(["sh", "-c", "wl-copy --type image/png < " + path]);
-                Quickshell.execDetached(["notify-send", "-a", "caelestia-cli", "-i", path, "Screenshot taken", "Screenshot copied to clipboard"]);
-            } else {
-                Quickshell.execDetached(["swappy", "-f", path]);
-            }
-            closeAnim.start();
-        });
-    }
-
-    onClientsChanged: checkClientRects(mouseX, mouseY)
-
     anchors.fill: parent
     opacity: 0
     hoverEnabled: true
-    cursorShape: Qt.CrossCursor
+    cursorShape: Qt.BlankCursor
+
+    property real cursorX: 0
+    property real cursorY: 0
 
     Component.onCompleted: {
-        Hypr.extras.refreshOptions();
-
         // Break binding if frozen
         if (loader.freeze)
             clients = clients;
@@ -102,13 +131,19 @@ MouseArea {
 
         const c = clients[0];
         if (c) {
-            const cx = c.lastIpcObject.at[0] - screen.x;
-            const cy = c.lastIpcObject.at[1] - screen.y;
-            onClient = true;
-            sx = cx;
-            sy = cy;
-            ex = cx + c.lastIpcObject.size[0];
-            ey = cy + c.lastIpcObject.size[1];
+            const geom = getWindowGeometry(c);
+            if (geom) {
+                onClient = true;
+                sx = geom.x;
+                sy = geom.y;
+                ex = geom.x + geom.w;
+                ey = geom.y + geom.h;
+            } else {
+                sx = screen.width / 2 - 100;
+                sy = screen.height / 2 - 100;
+                ex = screen.width / 2 + 100;
+                ey = screen.height / 2 + 100;
+            }
         } else {
             sx = screen.width / 2 - 100;
             sy = screen.height / 2 - 100;
@@ -126,16 +161,22 @@ MouseArea {
         if (closeAnim.running)
             return;
 
-        if (root.loader.freeze) {
-            save();
+        const geom = `${screen.x + Math.ceil(rsx)},${screen.y + Math.ceil(rsy)} ${Math.floor(sw)}x${Math.floor(sh)}`;
+        const scriptsDir = Quickshell.shellDir + "/scripts/areaPicker";
+
+        if (loader.mode === "ocr") {
+            Quickshell.execDetached(["sh", scriptsDir + "/region_ocr.sh", geom]);
+        } else if (loader.mode === "lens") {
+            Quickshell.execDetached(["sh", scriptsDir + "/region_search.sh", geom]);
         } else {
-            overlay.visible = border.visible = false;
-            screencopy.visible = false;
-            screencopy.active = true;
+            Quickshell.execDetached(["sh", "-c", `grim -l 0 -g '${geom}' - | swappy -f -`]);
         }
+        closeAnim.start();
     }
 
     onPositionChanged: event => {
+        cursorX = event.x;
+        cursorY = event.y;
         const x = event.x;
         const y = event.y;
 
@@ -166,7 +207,7 @@ MouseArea {
                 target: root
                 property: "opacity"
                 to: 0
-                type: Anim.StandardLarge
+                duration: Appearance.anim.durations.large
             }
             ExAnim {
                 target: root
@@ -191,40 +232,125 @@ MouseArea {
         }
     }
 
-    Process {
-        running: true
-        command: ["hyprctl", "cursorpos", "-j"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const pos = JSON.parse(text);
-                root.checkClientRects(pos.x - root.screen.x, pos.y - root.screen.y);
-            }
+    // Listen for workspace changes via Niri service
+    Connections {
+        target: Niri
+
+        function onFocusedWorkspaceIdChanged(): void {
+            root.checkClientRects(root.mouseX, root.mouseY);
         }
     }
 
-    Loader {
-        id: screencopy
+    // Niri config loading via niri msg
+    // Note: Niri doesn't expose border/rounding config via IPC, using defaults above
+    // If you want to read from niri config file, you'd need to parse ~/.config/niri/config.kdl
 
-        asynchronous: true
+    Loader {
         anchors.fill: parent
 
         active: root.loader.freeze
+        asynchronous: true
 
         sourceComponent: ScreencopyView {
             captureSource: root.screen
+        }
+    }
 
-            onHasContentChanged: {
-                if (hasContent && !root.loader.freeze) {
-                    overlay.visible = border.visible = true;
-                    root.save();
+    // Custom cursor with mode indicator
+    Item {
+        id: cursorIndicator
+        x: root.cursorX - crosshair.width / 2
+        y: root.cursorY - crosshair.height / 2
+        z: 100
+        visible: !root.pressed
+
+        // Crosshair
+        Rectangle {
+            id: crosshair
+            width: 24
+            height: 24
+            color: "transparent"
+
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 2
+                height: parent.height
+                color: Colours.palette.m3onSurface
+                opacity: 0.9
+            }
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                height: 2
+                color: Colours.palette.m3onSurface
+                opacity: 0.9
+            }
+        }
+
+        // Mode badge
+        StyledRect {
+            x: crosshair.width / 2 + 8
+            y: crosshair.height / 2 + 8
+            radius: Appearance.rounding.full
+            color: {
+                switch (root.loader.mode) {
+                case "ocr": return Colours.palette.m3tertiaryContainer;
+                case "lens": return Colours.palette.m3secondaryContainer;
+                default: return Colours.palette.m3primaryContainer;
+                }
+            }
+
+            implicitWidth: badgeRow.implicitWidth + Appearance.padding.md * 2
+            implicitHeight: badgeRow.implicitHeight + Appearance.padding.xs * 2
+
+            Row {
+                id: badgeRow
+                anchors.centerIn: parent
+                spacing: Appearance.spacing.xs
+
+                MaterialIcon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: {
+                        switch (root.loader.mode) {
+                        case "ocr": return "document_scanner";
+                        case "lens": return "image_search";
+                        default: return "crop";
+                        }
+                    }
+                    color: {
+                        switch (root.loader.mode) {
+                        case "ocr": return Colours.palette.m3onTertiaryContainer;
+                        case "lens": return Colours.palette.m3onSecondaryContainer;
+                        default: return Colours.palette.m3onPrimaryContainer;
+                        }
+                    }
+                    font.pointSize: Appearance.font.size.labelLarge
+                }
+
+                StyledText {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: {
+                        switch (root.loader.mode) {
+                        case "ocr": return qsTr("OCR");
+                        case "lens": return qsTr("Lens");
+                        default: return qsTr("Screenshot");
+                        }
+                    }
+                    color: {
+                        switch (root.loader.mode) {
+                        case "ocr": return Colours.palette.m3onTertiaryContainer;
+                        case "lens": return Colours.palette.m3onSecondaryContainer;
+                        default: return Colours.palette.m3onPrimaryContainer;
+                        }
+                    }
+                    font.pointSize: Appearance.font.size.labelMedium
+                    font.bold: true
                 }
             }
         }
     }
 
     StyledRect {
-        id: overlay
-
         anchors.fill: parent
         color: Colours.palette.m3secondaryContainer
         opacity: 0.3
@@ -258,8 +384,6 @@ MouseArea {
     }
 
     Rectangle {
-        id: border
-
         color: "transparent"
         radius: root.realRounding > 0 ? root.realRounding + root.realBorderWidth : 0
         border.width: root.realBorderWidth
@@ -277,7 +401,7 @@ MouseArea {
 
     Behavior on opacity {
         Anim {
-            type: Anim.StandardLarge
+            duration: Appearance.anim.durations.large
         }
     }
 
@@ -306,6 +430,7 @@ MouseArea {
     }
 
     component ExAnim: Anim {
-        type: Anim.DefaultSpatial
+        duration: Appearance.anim.durations.expressiveDefaultSpatial
+        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
     }
 }

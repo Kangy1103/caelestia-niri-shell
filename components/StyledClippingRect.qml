@@ -1,5 +1,5 @@
-import QtQuick
 import Quickshell.Widgets
+import QtQuick
 
 ClippingRectangle {
     id: root

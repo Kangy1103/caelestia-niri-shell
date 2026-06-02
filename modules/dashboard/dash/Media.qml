@@ -1,40 +1,40 @@
+import qs.components
+import qs.components.misc
+import qs.services
+import qs.config
+import qs.utils
+import Caelestia.Services
 import QtQuick
 import QtQuick.Shapes
-import Quickshell
-import Caelestia.Config
-import Caelestia.Services
-import qs.components
-import qs.services
-import qs.utils
 
 Item {
     id: root
 
     property real playerProgress: {
         const active = Players.active;
-        return active?.length ? (active.position % active.length) / active.length : 0;
+        return active?.length ? active.position / active.length : 0;
     }
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    implicitWidth: Tokens.sizes.dashboard.mediaWidth
+    implicitWidth: Config.dashboard.sizes.mediaWidth
 
     Behavior on playerProgress {
         Anim {
-            type: Anim.StandardLarge
+            duration: Appearance.anim.durations.large
         }
     }
 
     Timer {
         running: Players.active?.isPlaying ?? false
-        interval: GlobalConfig.dashboard.mediaUpdateInterval
+        interval: Config.dashboard.mediaUpdateInterval
         triggeredOnStart: true
         repeat: true
         onTriggered: Players.active?.positionChanged()
     }
 
     ServiceRef {
-        service: Audio.beatTracker
+        service: BeatTracker
     }
 
     Shape {
@@ -43,16 +43,16 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            strokeWidth: root.Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: Config.dashboard.sizes.mediaProgressThickness
+            capStyle: Appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
             PathAngleArc {
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                radiusY: (cover.height + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: root.Tokens.sizes.dashboard.mediaProgressSweep
+                radiusX: (cover.width + Config.dashboard.sizes.mediaProgressThickness) / 2 + Appearance.spacing.sm
+                radiusY: (cover.height + Config.dashboard.sizes.mediaProgressThickness) / 2 + Appearance.spacing.sm
+                startAngle: -90 - Config.dashboard.sizes.mediaProgressSweep / 2
+                sweepAngle: Config.dashboard.sizes.mediaProgressSweep
             }
 
             Behavior on strokeColor {
@@ -63,16 +63,16 @@ Item {
         ShapePath {
             fillColor: "transparent"
             strokeColor: Colours.palette.m3primary
-            strokeWidth: root.Tokens.sizes.dashboard.mediaProgressThickness
-            capStyle: root.Tokens.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: Config.dashboard.sizes.mediaProgressThickness
+            capStyle: Appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
 
             PathAngleArc {
                 centerX: cover.x + cover.width / 2
                 centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                radiusY: (cover.height + root.Tokens.sizes.dashboard.mediaProgressThickness) / 2 + root.Tokens.spacing.small
-                startAngle: -90 - root.Tokens.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: root.Tokens.sizes.dashboard.mediaProgressSweep * root.playerProgress
+                radiusX: (cover.width + Config.dashboard.sizes.mediaProgressThickness) / 2 + Appearance.spacing.sm
+                radiusY: (cover.height + Config.dashboard.sizes.mediaProgressThickness) / 2 + Appearance.spacing.sm
+                startAngle: -90 - Config.dashboard.sizes.mediaProgressSweep / 2
+                sweepAngle: Config.dashboard.sizes.mediaProgressSweep * root.playerProgress
             }
 
             Behavior on strokeColor {
@@ -87,7 +87,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large + Tokens.sizes.dashboard.mediaProgressThickness + Tokens.spacing.small
+        anchors.margins: Appearance.padding.xl + Config.dashboard.sizes.mediaProgressThickness + Appearance.spacing.sm
 
         implicitHeight: width
         color: Colours.tPalette.m3surfaceContainerHigh
@@ -107,13 +107,11 @@ Item {
 
             anchors.fill: parent
 
-            source: Players.getArtUrl(Players.active)
+            source: Players.active?.trackArtUrl ?? ""
             asynchronous: true
             fillMode: Image.PreserveAspectCrop
-            sourceSize: {
-                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-                return Qt.size(width * dpr, height * dpr);
-            }
+            sourceSize.width: width
+            sourceSize.height: height
         }
     }
 
@@ -122,15 +120,15 @@ Item {
 
         anchors.top: cover.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Tokens.spacing.normal
+        anchors.topMargin: Appearance.spacing.lg
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
         color: Colours.palette.m3primary
-        font.pointSize: Tokens.font.size.normal
+        font.pointSize: Appearance.font.size.bodyMedium
 
-        width: parent.implicitWidth - Tokens.padding.large * 2
+        width: parent.implicitWidth - Appearance.padding.xl * 2
         elide: Text.ElideRight
     }
 
@@ -139,15 +137,15 @@ Item {
 
         anchors.top: title.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Tokens.spacing.small
+        anchors.topMargin: Appearance.spacing.sm
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackAlbum ?? qsTr("No media")) || qsTr("Unknown album")
         color: Colours.palette.m3outline
-        font.pointSize: Tokens.font.size.small
+        font.pointSize: Appearance.font.size.labelLarge
 
-        width: parent.implicitWidth - Tokens.padding.large * 2
+        width: parent.implicitWidth - Appearance.padding.xl * 2
         elide: Text.ElideRight
     }
 
@@ -156,14 +154,14 @@ Item {
 
         anchors.top: album.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Tokens.spacing.small
+        anchors.topMargin: Appearance.spacing.sm
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackArtist ?? qsTr("No media")) || qsTr("Unknown artist")
         color: Colours.palette.m3secondary
 
-        width: parent.implicitWidth - Tokens.padding.large * 2
+        width: parent.implicitWidth - Appearance.padding.xl * 2
         elide: Text.ElideRight
     }
 
@@ -172,26 +170,35 @@ Item {
 
         anchors.top: artist.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Tokens.spacing.smaller
+        anchors.topMargin: Appearance.spacing.md
 
-        spacing: Tokens.spacing.small
+        spacing: Appearance.spacing.sm
 
-        PlayerControl {
+        Control {
             icon: "skip_previous"
             canUse: Players.active?.canGoPrevious ?? false
-            onClicked: Players.active?.previous()
+
+            function onClicked(): void {
+                Players.active?.previous();
+            }
         }
 
-        PlayerControl {
+        Control {
             icon: Players.active?.isPlaying ? "pause" : "play_arrow"
             canUse: Players.active?.canTogglePlaying ?? false
-            onClicked: Players.active?.togglePlaying()
+
+            function onClicked(): void {
+                Players.active?.togglePlaying();
+            }
         }
 
-        PlayerControl {
+        Control {
             icon: "skip_next"
             canUse: Players.active?.canGoNext ?? false
-            onClicked: Players.active?.next()
+
+            function onClicked(): void {
+                Players.active?.next();
+            }
         }
     }
 
@@ -202,32 +209,35 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Tokens.spacing.small
-        anchors.bottomMargin: Tokens.padding.large
-        anchors.margins: Tokens.padding.large * 2
+        anchors.topMargin: Appearance.spacing.sm
+        anchors.bottomMargin: Appearance.padding.xl
+        anchors.margins: Appearance.padding.xl * 2
 
         playing: Players.active?.isPlaying ?? false
-        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
+        speed: BeatTracker.bpm / 300
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit
     }
 
-    component PlayerControl: StyledRect {
+    component Control: StyledRect {
         id: control
 
         required property string icon
         required property bool canUse
+        function onClicked(): void {
+        }
 
-        signal clicked
-
-        implicitWidth: Math.max(icon.implicitHeight, icon.implicitHeight) + Tokens.padding.small
+        implicitWidth: Math.max(icon.implicitHeight, icon.implicitHeight) + Appearance.padding.xs
         implicitHeight: implicitWidth
 
         StateLayer {
             disabled: !control.canUse
-            radius: Tokens.rounding.full
-            onClicked: control.clicked()
+            radius: Appearance.rounding.full
+
+            function onClicked(): void {
+                control.onClicked();
+            }
         }
 
         MaterialIcon {
@@ -239,7 +249,7 @@ Item {
             animate: true
             text: control.icon
             color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.large
+            font.pointSize: Appearance.font.size.titleMedium
         }
     }
 }

@@ -1,22 +1,21 @@
+import ".."
 import "../effects"
-import QtQuick
-import QtQuick.Templates
-import Caelestia.Config
-import qs.components
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Controls
 
 Slider {
     id: root
 
     required property string icon
     property real oldValue
-    property bool initialized
 
     orientation: Qt.Vertical
 
     background: StyledRect {
-        color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
-        radius: Tokens.rounding.full
+        color: Colours.tPalette.m3surfaceContainer
+        radius: Appearance.rounding.full
 
         StyledRect {
             anchors.left: parent.left
@@ -33,7 +32,7 @@ Slider {
     handle: Item {
         id: handle
 
-        property alias moving: icon.moving
+        property bool moving
 
         y: root.visualPosition * (root.availableHeight - height)
         implicitWidth: root.width
@@ -51,7 +50,7 @@ Slider {
             anchors.fill: parent
 
             color: Colours.palette.m3inverseSurface
-            radius: Tokens.rounding.full
+            radius: Appearance.rounding.full
 
             MouseArea {
                 id: handleInteraction
@@ -65,49 +64,41 @@ Slider {
             MaterialIcon {
                 id: icon
 
-                property bool moving
+                property bool moving: handle.moving
 
                 function update(): void {
                     animate = !moving;
-                    binding.when = moving;
-                    font.pointSize = moving ? Tokens.font.size.small : Tokens.font.size.larger;
-                    font.family = moving ? Tokens.font.family.sans : Tokens.font.family.material;
+                    text = moving ? Qt.binding(() => Math.round(root.value * 100)) : Qt.binding(() => root.icon);
+                    font.pointSize = moving ? Appearance.font.size.labelLarge : Appearance.font.size.bodyLarge;
+                    font.family = moving ? Appearance.font.family.sans : Appearance.font.family.material;
                 }
 
+                animate: true
                 text: root.icon
                 color: Colours.palette.m3inverseOnSurface
                 anchors.centerIn: parent
 
-                onMovingChanged: anim.restart()
-
-                Binding {
-                    id: binding
-
-                    target: icon
-                    property: "text"
-                    value: Math.round(root.value * 100)
-                    when: false
-                }
-
-                SequentialAnimation {
-                    id: anim
-
-                    Anim {
-                        target: icon
-                        property: "scale"
-                        to: 0
-                        duration: Tokens.anim.durations.normal / 2
-                        easing: Tokens.anim.standardAccel
-                    }
-                    ScriptAction {
-                        script: icon.update()
-                    }
-                    Anim {
-                        target: icon
-                        property: "scale"
-                        to: 1
-                        duration: Tokens.anim.durations.normal / 2
-                        easing: Tokens.anim.standardDecel
+                Behavior on moving {
+                    SequentialAnimation {
+                        Anim {
+                            target: icon
+                            property: "scale"
+                            from: 1
+                            to: 0
+                            duration: Appearance.anim.durations.normal / 2
+                            easing.bezierCurve: Appearance.anim.curves.standardAccel
+                        }
+                        ScriptAction {
+                            script: icon.update()
+                        }
+                        Anim {
+                            target: icon
+                            property: "scale"
+                            from: 0
+                            to: 1
+                            duration: Appearance.anim.durations.normal / 2
+                            easing.bezierCurve: Appearance.anim.curves.standardDecel
+                        }
                     }
                 }
             }
@@ -117,10 +108,6 @@ Slider {
     onPressedChanged: handle.moving = pressed
 
     onValueChanged: {
-        if (!initialized) {
-            initialized = true;
-            return;
-        }
         if (Math.abs(value - oldValue) < 0.01)
             return;
         oldValue = value;
@@ -140,7 +127,7 @@ Slider {
 
     Behavior on value {
         Anim {
-            type: Anim.StandardLarge
+            duration: Appearance.anim.durations.large
         }
     }
 }

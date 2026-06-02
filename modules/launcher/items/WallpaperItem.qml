@@ -1,33 +1,38 @@
-import QtQuick
-import Quickshell
-import Caelestia.Config
-import Caelestia.Models
 import qs.components
 import qs.components.effects
 import qs.components.images
 import qs.services
+import qs.config
+import Caelestia.Models
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Effects
 
 Item {
     id: root
 
     required property FileSystemEntry modelData
-    required property DrawerVisibilities visibilities
+    required property PersistentProperties visibilities
+
+    readonly property bool isVideo: Wallpapers.isPathVideo(modelData.path)
 
     scale: 0.5
     opacity: 0
-    z: PathView.z ?? 0 // qmllint disable missing-property
+    z: PathView.z ?? 0
 
     Component.onCompleted: {
         scale = Qt.binding(() => PathView.isCurrentItem ? 1 : PathView.onPath ? 0.8 : 0);
         opacity = Qt.binding(() => PathView.onPath ? 1 : 0);
     }
 
-    implicitWidth: image.width + Tokens.padding.larger * 2
-    implicitHeight: image.height + label.height + Tokens.spacing.small / 2 + Tokens.padding.large + Tokens.padding.normal
+    implicitWidth: image.width + Appearance.padding.lg * 2
+    implicitHeight: image.height + label.height + Appearance.spacing.sm / 2 + Appearance.padding.xl + Appearance.padding.md
 
     StateLayer {
-        radius: Tokens.rounding.normal
-        onClicked: {
+        radius: Appearance.rounding.normal
+
+        function onClicked(): void {
             Wallpapers.setWallpaper(root.modelData.path);
             root.visibilities.launcher = false;
         }
@@ -48,28 +53,44 @@ Item {
         id: image
 
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Tokens.padding.large
+        y: Appearance.padding.xl
         color: Colours.tPalette.m3surfaceContainer
-        radius: Tokens.rounding.normal
+        radius: Appearance.rounding.normal
 
-        implicitWidth: Tokens.sizes.launcher.wallpaperWidth
+        implicitWidth: Config.launcher.sizes.wallpaperWidth
         implicitHeight: implicitWidth / 16 * 9
 
         MaterialIcon {
             anchors.centerIn: parent
-            text: "image"
+            text: root.isVideo ? "movie" : "image"
             color: Colours.tPalette.m3outline
-            font.pointSize: Tokens.font.size.extraLarge * 2
+            font.pointSize: Appearance.font.size.headlineLarge * 2
             font.weight: 600
         }
 
         CachingImage {
-            anchors.fill: parent
-            path: root.modelData.path
+            path: Wallpapers.getColorSource(root.modelData.path)
             smooth: !root.PathView.view.moving
-            sourceSize: {
-                const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-                return Qt.size(image.implicitWidth * dpr, image.implicitHeight * dpr);
+            sourceSize.width: image.implicitWidth * 2
+            sourceSize.height: image.implicitHeight * 2
+
+            anchors.fill: parent
+        }
+
+        // Play symbol overlay for videos
+        MaterialIcon {
+            anchors.centerIn: parent
+            anchors.horizontalCenterOffset: font.pointSize * 0.1 // Adjust for play icon visual centering
+            text: "play_arrow"
+            color: "white"
+            font.pointSize: Appearance.font.size.headlineLarge * 2
+            visible: root.isVideo
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: Qt.alpha("black", 0.5)
+                blurMax: 12
             }
         }
     }
@@ -78,15 +99,15 @@ Item {
         id: label
 
         anchors.top: image.bottom
-        anchors.topMargin: Tokens.spacing.small / 2
+        anchors.topMargin: Appearance.spacing.sm / 2
         anchors.horizontalCenter: parent.horizontalCenter
 
-        width: image.width - Tokens.padding.normal * 2
+        width: image.width - Appearance.padding.md * 2
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         renderType: Text.QtRendering
         text: root.modelData.relativePath
-        font.pointSize: Tokens.font.size.normal
+        font.pointSize: Appearance.font.size.bodyMedium
     }
 
     Behavior on scale {

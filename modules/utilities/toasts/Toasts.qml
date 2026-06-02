@@ -1,34 +1,24 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import Quickshell
-import Caelestia
-import Caelestia.Config
 import qs.components
+import qs.config
 import qs.services
+import Caelestia
+import Quickshell
+import QtQuick
 
 Item {
     id: root
 
-    readonly property int spacing: Tokens.spacing.small
+    readonly property int spacing: Appearance.spacing.sm
     property bool flag
 
-    function shouldShowToast(toast: Toast): bool {
-        if (!Notifs.hasFullscreen())
-            return true;
-        if (Config.utilities.toasts.fullscreen === "all")
-            return true;
-        if (Config.utilities.toasts.fullscreen === "important")
-            return toast.type === Toast.Warning || toast.type === Toast.Error;
-        return false;
-    }
-
-    implicitWidth: Tokens.sizes.utilities.toastWidth - Tokens.padding.normal * 2
+    implicitWidth: Config.utilities.sizes.toastWidth - Appearance.padding.md * 2
     implicitHeight: {
         let h = -spacing;
         for (let i = 0; i < repeater.count; i++) {
-            const item = repeater.itemAt(i) as ToastWrapper;
-            if (!item.modelData.closed && !item.previewHidden)
+            const item = repeater.itemAt(i);
+            if (item && !item.modelData.closed && !item.previewHidden)
                 h += item.implicitHeight + spacing;
         }
         return h;
@@ -42,12 +32,10 @@ Item {
                 const toasts = [];
                 let count = 0;
                 for (const toast of Toaster.toasts) {
-                    if (!root.shouldShowToast(toast))
-                        continue;
                     toasts.push(toast);
                     if (!toast.closed) {
                         count++;
-                        if (count > root.Config.utilities.maxToasts)
+                        if (count > Config.utilities.maxToasts)
                             break;
                     }
                 }
@@ -85,7 +73,7 @@ Item {
             root.flag; // Force update
             let y = 0;
             for (let i = 0; i < index; i++) {
-                const item = repeater.itemAt(i) as ToastWrapper;
+                const item = repeater.itemAt(i);
                 if (item && !item.modelData.closed && !item.previewHidden)
                     y += item.implicitHeight + root.spacing;
             }
@@ -111,7 +99,8 @@ Item {
             properties: "opacity,scale"
             from: 0
             to: 1
-            type: Anim.DefaultSpatial
+            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
         }
 
         ParallelAnimation {
@@ -147,7 +136,8 @@ Item {
 
         Behavior on anchors.bottomMargin {
             Anim {
-                type: Anim.DefaultSpatial
+                duration: Appearance.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
             }
         }
     }

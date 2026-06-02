@@ -1,26 +1,26 @@
-import QtQuick
-import Caelestia.Config
 import qs.components
 import qs.components.effects
-import qs.components.filedialog
 import qs.components.images
 import qs.services
+import qs.config
 import qs.utils
+import Quickshell
+import QtQuick
 
 Row {
     id: root
 
-    required property DrawerVisibilities visibilities
-    required property FileDialog facePicker
+    required property PersistentProperties visibilities
+    required property PersistentProperties state
 
-    padding: Tokens.padding.large
-    spacing: Tokens.spacing.normal
+    padding: Appearance.padding.xl
+    spacing: Appearance.spacing.lg
 
     StyledClippingRect {
         implicitWidth: info.implicitHeight
         implicitHeight: info.implicitHeight
 
-        radius: Tokens.rounding.large
+        radius: Appearance.rounding.large
         color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
         MaterialIcon {
@@ -30,7 +30,6 @@ Row {
             fill: 1
             grade: 200
             font.pointSize: Math.floor(info.implicitHeight / 2) || 1
-            visible: pfp.status !== Image.Ready
         }
 
         CachingImage {
@@ -38,6 +37,14 @@ Row {
 
             anchors.fill: parent
             path: `${Paths.home}/.face`
+        }
+
+        CachingImage {
+            id: wallpaperFallback
+
+            anchors.fill: parent
+            path: Wallpapers.getColorSource(Wallpapers.current)
+            visible: pfp.status !== Image.Ready && Config.dashboard.useWallpaperAvatar
         }
 
         MouseArea {
@@ -52,7 +59,7 @@ Row {
 
                 Behavior on opacity {
                     Anim {
-                        duration: Tokens.anim.durations.expressiveFastSpatial
+                        duration: Appearance.anim.durations.expressiveFastSpatial
                     }
                 }
             }
@@ -60,19 +67,20 @@ Row {
             StyledRect {
                 anchors.centerIn: parent
 
-                implicitWidth: selectIcon.implicitHeight + Tokens.padding.small * 2
-                implicitHeight: selectIcon.implicitHeight + Tokens.padding.small * 2
+                implicitWidth: selectIcon.implicitHeight + Appearance.padding.xs * 2
+                implicitHeight: selectIcon.implicitHeight + Appearance.padding.xs * 2
 
-                radius: Tokens.rounding.normal
+                radius: Appearance.rounding.normal
                 color: Colours.palette.m3primary
                 scale: parent.containsMouse ? 1 : 0.5
                 opacity: parent.containsMouse ? 1 : 0
 
                 StateLayer {
                     color: Colours.palette.m3onPrimary
-                    onClicked: {
+
+                    function onClicked(): void {
                         root.visibilities.launcher = false;
-                        root.facePicker.open();
+                        root.state.facePicker.open();
                     }
                 }
 
@@ -84,18 +92,19 @@ Row {
 
                     text: "frame_person"
                     color: Colours.palette.m3onPrimary
-                    font.pointSize: Tokens.font.size.extraLarge
+                    font.pointSize: Appearance.font.size.headlineLarge
                 }
 
                 Behavior on scale {
                     Anim {
-                        type: Anim.FastSpatial
+                        duration: Appearance.anim.durations.expressiveFastSpatial
+                        easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
                     }
                 }
 
                 Behavior on opacity {
                     Anim {
-                        duration: Tokens.anim.durations.expressiveFastSpatial
+                        duration: Appearance.anim.durations.expressiveFastSpatial
                     }
                 }
             }
@@ -106,7 +115,7 @@ Row {
         id: info
 
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Tokens.spacing.normal
+        spacing: Appearance.spacing.lg
 
         Item {
             id: line
@@ -118,10 +127,10 @@ Row {
                 id: icon
 
                 anchors.left: parent.left
-                anchors.leftMargin: (Tokens.sizes.dashboard.infoIconSize - implicitWidth) / 2
+                anchors.leftMargin: (Config.dashboard.sizes.infoIconSize - implicitWidth) / 2
 
                 source: SysInfo.osLogo
-                implicitSize: Math.floor(Tokens.font.size.normal * 1.34)
+                implicitSize: Math.floor(Appearance.font.size.bodyMedium * 1.34)
                 colour: Colours.palette.m3primary
             }
 
@@ -132,9 +141,9 @@ Row {
                 anchors.left: icon.right
                 anchors.leftMargin: icon.anchors.leftMargin
                 text: `:  ${SysInfo.osPrettyName || SysInfo.osName}`
-                font.pointSize: Tokens.font.size.normal
+                font.pointSize: Appearance.font.size.bodyMedium
 
-                width: Tokens.sizes.dashboard.infoWidth
+                width: Config.dashboard.sizes.infoWidth
                 elide: Text.ElideRight
             }
         }
@@ -168,12 +177,12 @@ Row {
             id: icon
 
             anchors.left: parent.left
-            anchors.leftMargin: (Tokens.sizes.dashboard.infoIconSize - implicitWidth) / 2
+            anchors.leftMargin: (Config.dashboard.sizes.infoIconSize - implicitWidth) / 2
 
             fill: 1
             text: line.icon
             color: line.colour
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
         }
 
         StyledText {
@@ -183,9 +192,9 @@ Row {
             anchors.left: icon.right
             anchors.leftMargin: icon.anchors.leftMargin
             text: `:  ${line.text}`
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
 
-            width: Tokens.sizes.dashboard.infoWidth
+            width: Config.dashboard.sizes.infoWidth
             elide: Text.ElideRight
         }
     }

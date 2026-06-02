@@ -2,20 +2,20 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../components"
+import qs.components
+import qs.components.controls
+import qs.components.containers
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
-import qs.components.containers
-import qs.components.controls
-import qs.services
 
 DeviceList {
     id: root
 
     required property Session session
 
-    title: qsTr("Devices (%1)").arg(Nmcli.ethernetDevices.length)
+    title: qsTr("Devices (%1)").arg(Nmcli.ethernetDevices ? Nmcli.ethernetDevices.length : 0)
     description: qsTr("All available ethernet devices")
     activeItem: session.ethernet.active
 
@@ -23,11 +23,11 @@ DeviceList {
 
     headerComponent: Component {
         RowLayout {
-            spacing: Tokens.spacing.smaller
+            spacing: Appearance.spacing.md
 
             StyledText {
                 text: qsTr("Settings")
-                font.pointSize: Tokens.font.size.large
+                font.pointSize: Appearance.font.size.titleMedium
                 font.weight: 500
             }
 
@@ -39,9 +39,9 @@ DeviceList {
                 toggled: !root.session.ethernet.active
                 icon: "settings"
                 accent: "Primary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                iconSize: Appearance.font.size.bodyMedium
+                horizontalPadding: Appearance.padding.md
+                verticalPadding: Appearance.padding.sm
 
                 onClicked: {
                     if (root.session.ethernet.active)
@@ -62,15 +62,15 @@ DeviceList {
             readonly property bool isActive: root.activeItem && modelData && root.activeItem.interface === modelData.interface
 
             width: ListView.view ? ListView.view.width : undefined
-            implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
+            implicitHeight: rowLayout.implicitHeight + Appearance.padding.md * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, ethernetItem.isActive ? Colours.tPalette.m3surfaceContainer.a : 0)
-            radius: Tokens.rounding.normal
+            radius: Appearance.rounding.normal
 
             StateLayer {
                 id: stateLayer
 
-                onClicked: {
+                function onClicked(): void {
                     root.session.ethernet.active = modelData;
                 }
             }
@@ -79,15 +79,15 @@ DeviceList {
                 id: rowLayout
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.normal
+                anchors.margins: Appearance.padding.md
 
-                spacing: Tokens.spacing.normal
+                spacing: Appearance.spacing.lg
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: icon.implicitHeight + Appearance.padding.md * 2
 
-                    radius: Tokens.rounding.normal
+                    radius: Appearance.rounding.normal
                     color: modelData.connected ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     StyledRect {
@@ -101,7 +101,7 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: "cable"
-                        font.pointSize: Tokens.font.size.large
+                        font.pointSize: Appearance.font.size.titleMedium
                         fill: modelData.connected ? 1 : 0
                         color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
 
@@ -124,13 +124,13 @@ DeviceList {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Tokens.spacing.smaller
+                        spacing: Appearance.spacing.md
 
                         StyledText {
                             Layout.fillWidth: true
                             text: modelData.connected ? qsTr("Connected") : qsTr("Disconnected")
                             color: modelData.connected ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font.pointSize: Tokens.font.size.small
+                            font.pointSize: Appearance.font.size.labelLarge
                             font.weight: modelData.connected ? 500 : 400
                             elide: Text.ElideRight
                         }
@@ -141,21 +141,21 @@ DeviceList {
                     id: connectBtn
 
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.smaller * 2
+                    implicitHeight: connectIcon.implicitHeight + Appearance.padding.sm * 2
 
-                    radius: Tokens.rounding.full
+                    radius: Appearance.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.connected ? 1 : 0)
 
                     StateLayer {
-                        onClicked: {
+                        color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
+
+                        function onClicked(): void {
                             if (modelData.connected && modelData.connection) {
                                 Nmcli.disconnectEthernet(modelData.connection, () => {});
                             } else {
                                 Nmcli.connectEthernet(modelData.connection || "", modelData.interface || "", () => {});
                             }
                         }
-
-                        color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
 
                     MaterialIcon {

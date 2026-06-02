@@ -1,8 +1,8 @@
+import ".."
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
-import qs.services
 
 Row {
     id: root
@@ -12,8 +12,8 @@ Row {
         Tonal
     }
 
-    property real horizontalPadding: Tokens.padding.normal
-    property real verticalPadding: Tokens.padding.smaller
+    property real horizontalPadding: Appearance.padding.md
+    property real verticalPadding: Appearance.padding.sm
     property int type: SplitButton.Filled
     property bool disabled
     property bool menuOnTop
@@ -33,12 +33,12 @@ Row {
     property color disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.1)
     property color disabledTextColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
 
-    spacing: Math.floor(Tokens.spacing.small / 2)
+    spacing: Math.floor(Appearance.spacing.sm / 2)
 
     StyledRect {
-        radius: implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
-        topRightRadius: Tokens.rounding.small / 2
-        bottomRightRadius: Tokens.rounding.small / 2
+        radius: implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
+        topRightRadius: Appearance.rounding.small / 2
+        bottomRightRadius: Appearance.rounding.small / 2
         color: root.disabled ? root.disabledColour : root.colour
 
         implicitWidth: textRow.implicitWidth + root.horizontalPadding * 2
@@ -51,7 +51,10 @@ Row {
             rect.bottomRightRadius: parent.bottomRightRadius
             color: root.textColour
             disabled: root.disabled
-            onClicked: root.active?.clicked()
+
+            function onClicked(): void {
+                root.active?.clicked();
+            }
         }
 
         RowLayout {
@@ -59,7 +62,7 @@ Row {
 
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: Math.floor(root.verticalPadding / 4)
-            spacing: Tokens.spacing.small
+            spacing: Appearance.spacing.sm
 
             MaterialIcon {
                 id: iconLabel
@@ -83,7 +86,7 @@ Row {
 
                 Behavior on Layout.preferredWidth {
                     Anim {
-                        type: Anim.Emphasized
+                        easing.bezierCurve: Appearance.anim.curves.emphasized
                     }
                 }
             }
@@ -93,9 +96,9 @@ Row {
     StyledRect {
         id: expandBtn
 
-        property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, Tokens.rounding.scale) : Tokens.rounding.small / 2
+        property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, Appearance.rounding.scale) : Appearance.rounding.small / 2
 
-        radius: implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+        radius: implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
         topLeftRadius: rad
         bottomLeftRadius: rad
         color: root.disabled ? root.disabledColour : root.colour
@@ -110,7 +113,10 @@ Row {
             rect.bottomLeftRadius: parent.bottomLeftRadius
             color: root.textColour
             disabled: root.disabled
-            onClicked: root.expanded = !root.expanded
+
+            function onClicked(): void {
+                root.expanded = !root.expanded;
+            }
         }
 
         MaterialIcon {
@@ -135,14 +141,24 @@ Row {
         Behavior on rad {
             Anim {}
         }
-    }
 
-    Menu {
-        id: menu
+        Menu {
+            id: menu
 
-        attachTo: expandBtn
-        attachSideY: root.menuOnTop ? Menu.Top : Menu.Bottom
-        thisSideY: root.menuOnTop ? Menu.Bottom : Menu.Top
-        marginY: Tokens.spacing.small * (root.menuOnTop ? -1 : 1)
+            states: State {
+                when: root.menuOnTop
+
+                AnchorChanges {
+                    target: menu
+                    anchors.top: undefined
+                    anchors.bottom: expandBtn.top
+                }
+            }
+
+            anchors.top: parent.bottom
+            anchors.right: parent.right
+            anchors.topMargin: Appearance.spacing.sm
+            anchors.bottomMargin: Appearance.spacing.sm
+        }
     }
 }

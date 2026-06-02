@@ -1,11 +1,10 @@
 pragma ComponentBehavior: Bound
 
+import ".."
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
-import qs.components.filedialog
-import qs.services
 
 StyledRect {
     id: root
@@ -13,7 +12,7 @@ StyledRect {
     required property var dialog
 
     implicitWidth: Sizes.sidebarWidth
-    implicitHeight: inner.implicitHeight + Tokens.padding.normal * 2
+    implicitHeight: inner.implicitHeight + Appearance.padding.md * 2
 
     color: Colours.tPalette.m3surfaceContainer
 
@@ -23,16 +22,16 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Tokens.padding.normal
-        spacing: Tokens.spacing.small / 2
+        anchors.margins: Appearance.padding.md
+        spacing: Appearance.spacing.sm / 2
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.padding.small / 2
-            Layout.bottomMargin: Tokens.spacing.normal
+            Layout.topMargin: Appearance.padding.xs / 2
+            Layout.bottomMargin: Appearance.spacing.lg
             text: qsTr("Files")
             color: Colours.palette.m3onSurface
-            font.pointSize: Tokens.font.size.larger
+            font.pointSize: Appearance.font.size.bodyLarge
             font.bold: true
         }
 
@@ -46,14 +45,15 @@ StyledRect {
                 readonly property bool selected: modelData === root.dialog.cwd[root.dialog.cwd.length - 1]
 
                 Layout.fillWidth: true
-                implicitHeight: placeInner.implicitHeight + Tokens.padding.normal * 2
+                implicitHeight: placeInner.implicitHeight + Appearance.padding.md * 2
 
-                radius: Tokens.rounding.full
+                radius: Appearance.rounding.full
                 color: Qt.alpha(Colours.palette.m3secondaryContainer, selected ? 1 : 0)
 
                 StateLayer {
                     color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                    onClicked: {
+
+                    function onClicked(): void {
                         if (place.modelData === "Home")
                             root.dialog.cwd = ["Home"];
                         else
@@ -65,11 +65,11 @@ StyledRect {
                     id: placeInner
 
                     anchors.fill: parent
-                    anchors.margins: Tokens.padding.normal
-                    anchors.leftMargin: Tokens.padding.large
-                    anchors.rightMargin: Tokens.padding.large
+                    anchors.margins: Appearance.padding.md
+                    anchors.leftMargin: Appearance.padding.xl
+                    anchors.rightMargin: Appearance.padding.xl
 
-                    spacing: Tokens.spacing.normal
+                    spacing: Appearance.spacing.lg
 
                     MaterialIcon {
                         text: {
@@ -91,7 +91,7 @@ StyledRect {
                             return "folder";
                         }
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Tokens.font.size.large
+                        font.pointSize: Appearance.font.size.titleMedium
                         fill: place.selected ? 1 : 0
 
                         Behavior on fill {
@@ -103,7 +103,7 @@ StyledRect {
                         Layout.fillWidth: true
                         text: place.modelData
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Tokens.font.size.normal
+                        font.pointSize: Appearance.font.size.bodyMedium
                         elide: Text.ElideRight
                     }
                 }

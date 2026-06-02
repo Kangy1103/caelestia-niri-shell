@@ -1,11 +1,11 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.services
+import qs.config
+import Quickshell
+import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
@@ -20,6 +20,8 @@ Item {
     clip: true
 
     Connections {
+        target: root.pam
+
         function onBufferChanged(): void {
             if (root.pam.buffer.length > root.buffer.length) {
                 charList.bindImWidth();
@@ -30,8 +32,6 @@ Item {
 
             root.buffer = root.pam.buffer;
         }
-
-        target: root.pam
     }
 
     StyledText {
@@ -42,15 +42,13 @@ Item {
         text: {
             if (root.pam.passwd.active)
                 return qsTr("Loading...");
-            if (root.pam.state === "max")
-                return qsTr("You have reached the maximum number of tries");
-            return qsTr("Enter your password");
+            return "";
         }
 
         animate: true
         color: root.pam.passwd.active ? Colours.palette.m3secondary : Colours.palette.m3outline
-        font.pointSize: Tokens.font.size.normal
-        font.family: Tokens.font.family.mono
+        font.pointSize: Appearance.font.size.bodySmall
+        font.family: Appearance.font.family.mono
 
         opacity: root.buffer ? 0 : 1
 
@@ -74,10 +72,10 @@ Item {
         anchors.horizontalCenterOffset: implicitWidth > root.width ? -(implicitWidth - root.width) / 2 : 0
 
         implicitWidth: fullWidth
-        implicitHeight: Tokens.font.size.normal
+        implicitHeight: Appearance.font.size.bodyMedium
 
         orientation: Qt.Horizontal
-        spacing: Tokens.spacing.small / 2
+        spacing: Appearance.spacing.sm / 2
         interactive: false
 
         model: ScriptModel {
@@ -91,7 +89,7 @@ Item {
             implicitHeight: charList.implicitHeight
 
             color: Colours.palette.m3onSurface
-            radius: Tokens.rounding.small / 2
+            radius: Appearance.rounding.small / 2
 
             opacity: 0
             scale: 0
@@ -134,7 +132,8 @@ Item {
 
             Behavior on scale {
                 Anim {
-                    type: Anim.FastSpatial
+                    duration: Appearance.anim.durations.expressiveFastSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
                 }
             }
         }

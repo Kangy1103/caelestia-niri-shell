@@ -3,27 +3,21 @@ pragma ComponentBehavior: Bound
 import ".."
 import "../components"
 import "."
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Caelestia.Config
 import qs.components
-import qs.components.containers
 import qs.components.controls
+import qs.components.containers
 import qs.components.effects
 import qs.services
+import qs.config
 import qs.utils
+import Quickshell
+import QtQuick
+import QtQuick.Layouts
 
 DeviceList {
     id: root
 
     required property Session session
-
-    function checkSavedProfileForNetwork(ssid: string): void {
-        if (ssid && ssid.length > 0) {
-            Nmcli.loadSavedConnections(() => {});
-        }
-    }
 
     title: qsTr("Networks (%1)").arg(Nmcli.networks.length)
     description: qsTr("All available WiFi networks")
@@ -34,7 +28,7 @@ DeviceList {
             visible: Nmcli.scanning
             text: qsTr("Scanning...")
             color: Colours.palette.m3primary
-            font.pointSize: Tokens.font.size.small
+            font.pointSize: Appearance.font.size.labelLarge
         }
     }
 
@@ -48,11 +42,11 @@ DeviceList {
 
     headerComponent: Component {
         RowLayout {
-            spacing: Tokens.spacing.smaller
+            spacing: Appearance.spacing.md
 
             StyledText {
                 text: qsTr("Settings")
-                font.pointSize: Tokens.font.size.large
+                font.pointSize: Appearance.font.size.titleMedium
                 font.weight: 500
             }
 
@@ -64,9 +58,9 @@ DeviceList {
                 toggled: Nmcli.wifiEnabled
                 icon: "wifi"
                 accent: "Tertiary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                iconSize: Appearance.font.size.bodyMedium
+                horizontalPadding: Appearance.padding.md
+                verticalPadding: Appearance.padding.sm
 
                 onClicked: {
                     Nmcli.toggleWifi(null);
@@ -77,9 +71,9 @@ DeviceList {
                 toggled: Nmcli.scanning
                 icon: "wifi_find"
                 accent: "Secondary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                iconSize: Appearance.font.size.bodyMedium
+                horizontalPadding: Appearance.padding.md
+                verticalPadding: Appearance.padding.sm
 
                 onClicked: {
                     Nmcli.rescanWifi();
@@ -90,9 +84,9 @@ DeviceList {
                 toggled: !root.session.network.active
                 icon: "settings"
                 accent: "Primary"
-                iconSize: Tokens.font.size.normal
-                horizontalPadding: Tokens.padding.normal
-                verticalPadding: Tokens.padding.smaller
+                iconSize: Appearance.font.size.bodyMedium
+                horizontalPadding: Appearance.padding.md
+                verticalPadding: Appearance.padding.sm
 
                 onClicked: {
                     if (root.session.network.active)
@@ -110,13 +104,12 @@ DeviceList {
             required property var modelData
 
             width: ListView.view ? ListView.view.width : undefined
-            implicitHeight: rowLayout.implicitHeight + Tokens.padding.normal * 2
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
-            radius: Tokens.rounding.normal
+            radius: Appearance.rounding.normal
 
             StateLayer {
-                onClicked: {
+                function onClicked(): void {
                     root.session.network.active = modelData;
                     if (modelData && modelData.ssid) {
                         root.checkSavedProfileForNetwork(modelData.ssid);
@@ -130,15 +123,15 @@ DeviceList {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Tokens.padding.normal
+                anchors.margins: Appearance.padding.md
 
-                spacing: Tokens.spacing.normal
+                spacing: Appearance.spacing.lg
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: icon.implicitHeight + Tokens.padding.normal * 2
+                    implicitHeight: icon.implicitHeight + Appearance.padding.md * 2
 
-                    radius: Tokens.rounding.normal
+                    radius: Appearance.rounding.normal
                     color: modelData.active ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     MaterialIcon {
@@ -146,7 +139,7 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
-                        font.pointSize: Tokens.font.size.large
+                        font.pointSize: Appearance.font.size.titleMedium
                         fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
@@ -167,7 +160,7 @@ DeviceList {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Tokens.spacing.smaller
+                        spacing: Appearance.spacing.md
 
                         StyledText {
                             Layout.fillWidth: true
@@ -182,7 +175,7 @@ DeviceList {
                                 return qsTr("Open");
                             }
                             color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font.pointSize: Tokens.font.size.small
+                            font.pointSize: Appearance.font.size.labelLarge
                             font.weight: modelData.active ? 500 : 400
                             elide: Text.ElideRight
                         }
@@ -191,13 +184,13 @@ DeviceList {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Tokens.padding.smaller * 2
+                    implicitHeight: connectIcon.implicitHeight + Appearance.padding.sm * 2
 
-                    radius: Tokens.rounding.full
+                    radius: Appearance.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.active ? 1 : 0)
 
                     StateLayer {
-                        onClicked: {
+                        function onClicked(): void {
                             if (modelData.active) {
                                 Nmcli.disconnectFromNetwork();
                             } else {
@@ -215,6 +208,8 @@ DeviceList {
                     }
                 }
             }
+
+            implicitHeight: rowLayout.implicitHeight + Appearance.padding.md * 2
         }
     }
 
@@ -222,6 +217,12 @@ DeviceList {
         session.network.active = item;
         if (item && item.ssid) {
             checkSavedProfileForNetwork(item.ssid);
+        }
+    }
+
+    function checkSavedProfileForNetwork(ssid: string): void {
+        if (ssid && ssid.length > 0) {
+            Nmcli.loadSavedConnections(() => {});
         }
     }
 }

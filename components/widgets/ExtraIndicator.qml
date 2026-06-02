@@ -1,20 +1,20 @@
+import ".."
 import "../effects"
-import QtQuick
-import Caelestia.Config
-import qs.components
 import qs.services
+import qs.config
+import QtQuick
 
 StyledRect {
     required property int extra
 
     anchors.right: parent.right
-    anchors.margins: Tokens.padding.normal
+    anchors.margins: Appearance.padding.md
 
     color: Colours.palette.m3tertiary
-    radius: Tokens.rounding.small
+    radius: Appearance.rounding.small
 
-    implicitWidth: count.implicitWidth + Tokens.padding.normal * 2
-    implicitHeight: count.implicitHeight + Tokens.padding.small * 2
+    implicitWidth: count.implicitWidth + Appearance.padding.md * 2
+    implicitHeight: count.implicitHeight + Appearance.padding.xs * 2
 
     opacity: extra > 0 ? 1 : 0
     scale: extra > 0 ? 1 : 0.5
@@ -38,13 +38,14 @@ StyledRect {
 
     Behavior on opacity {
         Anim {
-            duration: Tokens.anim.durations.expressiveFastSpatial
+            duration: Appearance.anim.durations.expressiveFastSpatial
         }
     }
 
     Behavior on scale {
         Anim {
-            type: Anim.FastSpatial
+            duration: Appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
         }
     }
 }

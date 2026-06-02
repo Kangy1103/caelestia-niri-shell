@@ -2,20 +2,20 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../components"
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 ColumnLayout {
     id: root
 
     required property Session session
 
-    spacing: Tokens.spacing.normal
+    spacing: Appearance.spacing.lg
 
     SettingsHeader {
         icon: "wifi"
@@ -23,7 +23,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Appearance.spacing.xxl
         title: qsTr("WiFi status")
         description: qsTr("General WiFi settings")
     }
@@ -39,13 +39,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Tokens.spacing.large
+        Layout.topMargin: Appearance.spacing.xxl
         title: qsTr("Network information")
         description: qsTr("Current network connection")
     }
 
     SectionContainer {
-        contentSpacing: Tokens.spacing.small / 2
+        contentSpacing: Appearance.spacing.sm / 2
 
         PropertyRow {
             label: qsTr("Connected network")

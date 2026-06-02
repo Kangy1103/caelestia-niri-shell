@@ -1,15 +1,14 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Quickshell.Widgets
-import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.effects
 import qs.services
-import qs.utils
+import qs.config
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Layouts
 
 ColumnLayout {
     id: root
@@ -17,15 +16,15 @@ ColumnLayout {
     required property var lock
 
     anchors.fill: parent
-    anchors.margins: Tokens.padding.large
+    anchors.margins: Appearance.padding.xl
 
-    spacing: Tokens.spacing.smaller
+    spacing: Appearance.spacing.md
 
     StyledText {
         Layout.fillWidth: true
         text: Notifs.list.length > 0 ? qsTr("%1 notification%2").arg(Notifs.list.length).arg(Notifs.list.length === 1 ? "" : "s") : qsTr("Notifications")
         color: Colours.palette.m3outline
-        font.family: Tokens.font.family.mono
+        font.family: Appearance.font.family.mono
         font.weight: 500
         elide: Text.ElideRight
     }
@@ -36,23 +35,23 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        radius: Tokens.rounding.small
+        radius: Appearance.rounding.small
         color: "transparent"
 
         Loader {
-            asynchronous: true
             anchors.centerIn: parent
+            asynchronous: true
             active: opacity > 0
-            opacity: Notifs.list.length > 0 && !Config.lock.hideNotifs ? 0 : 1
+            opacity: Notifs.list.length > 0 ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.large
+                spacing: Appearance.spacing.xxl
 
                 Image {
                     asynchronous: true
-                    source: Paths.absolutePath(Config.paths.lockNoNotifsPic)
+                    source: `file://${Quickshell.shellDir}/assets/dino.png`
                     fillMode: Image.PreserveAspectFit
-                    sourceSize.width: clipRect.width * 0.8 * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
+                    sourceSize.width: clipRect.width * 0.8
 
                     layer.enabled: true
                     layer.effect: Colouriser {
@@ -63,32 +62,29 @@ ColumnLayout {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Config.lock.hideNotifs ? qsTr("Unlock for Notifications") : qsTr("No Notifications")
+                    text: qsTr("No Notifications")
                     color: Colours.palette.m3outlineVariant
-                    font.pointSize: Tokens.font.size.large
-                    font.family: Tokens.font.family.mono
+                    font.pointSize: Appearance.font.size.titleMedium
+                    font.family: Appearance.font.family.mono
                     font.weight: 500
                 }
             }
 
             Behavior on opacity {
                 Anim {
-                    type: Anim.StandardExtraLarge
+                    duration: Appearance.anim.durations.extraLarge
                 }
             }
         }
 
         StyledListView {
             anchors.fill: parent
-            visible: !Config.lock.hideNotifs
-            spacing: Tokens.spacing.small
+
+            spacing: Appearance.spacing.sm
             clip: true
 
             model: ScriptModel {
-                values: {
-                    const list = Notifs.notClosed.map(n => [n.appName, null]);
-                    return [...new Map(list).keys()];
-                }
+                values: Notifs.appNameList
             }
 
             delegate: NotifGroup {}
@@ -103,7 +99,8 @@ ColumnLayout {
                     property: "scale"
                     from: 0
                     to: 1
-                    type: Anim.DefaultSpatial
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
             }
 
@@ -125,7 +122,8 @@ ColumnLayout {
                 }
                 Anim {
                     property: "y"
-                    type: Anim.DefaultSpatial
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
             }
 
@@ -136,7 +134,8 @@ ColumnLayout {
                 }
                 Anim {
                     property: "y"
-                    type: Anim.DefaultSpatial
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
             }
         }

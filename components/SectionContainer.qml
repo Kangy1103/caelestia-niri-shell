@@ -1,20 +1,21 @@
+import qs.components
+import qs.components.effects
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
-import qs.services
 
 StyledRect {
     id: root
 
     default property alias content: contentColumn.data
-    property real contentSpacing: Tokens.spacing.larger
+    property real contentSpacing: Appearance.spacing.xl
     property bool alignTop: false
 
     Layout.fillWidth: true
-    implicitHeight: contentColumn.implicitHeight + Tokens.padding.large * 2
+    implicitHeight: contentColumn.implicitHeight + Appearance.padding.xl * 2
 
-    radius: Tokens.rounding.normal
+    radius: Appearance.rounding.normal
     color: Colours.transparency.enabled ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : Colours.palette.m3surfaceContainerHigh
 
     ColumnLayout {
@@ -24,7 +25,7 @@ StyledRect {
         anchors.right: parent.right
         anchors.top: root.alignTop ? parent.top : undefined
         anchors.verticalCenter: root.alignTop ? undefined : parent.verticalCenter
-        anchors.margins: Tokens.padding.large
+        anchors.margins: Appearance.padding.xl
 
         spacing: root.contentSpacing
     }

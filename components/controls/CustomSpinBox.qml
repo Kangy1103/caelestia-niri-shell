@@ -1,95 +1,45 @@
 pragma ComponentBehavior: Bound
 
+import ".."
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
-import qs.services
 
 RowLayout {
     id: root
 
-    property real value
+    property int value
     property real max: Infinity
     property real min: -Infinity
-    property real step: 1
     property alias repeatRate: timer.interval
 
-    property bool isEditing: false
-    property string displayText: root.value.toString()
+    signal valueModified(value: int)
 
-    signal valueModified(value: real)
-
-    spacing: Tokens.spacing.small
-
-    onValueChanged: {
-        if (!root.isEditing) {
-            root.displayText = root.value.toString();
-        }
-    }
+    spacing: Appearance.spacing.sm
 
     StyledTextField {
-        id: textField
-
         inputMethodHints: Qt.ImhFormattedNumbersOnly
-        text: root.isEditing ? text : root.displayText
-        validator: DoubleValidator {
-            bottom: root.min
-            top: root.max
-            decimals: root.step < 1 ? Math.max(1, Math.ceil(-Math.log10(root.step))) : 0
-        }
-        onActiveFocusChanged: {
-            if (activeFocus) {
-                root.isEditing = true;
-            } else {
-                root.isEditing = false;
-                root.displayText = root.value.toString();
-            }
-        }
-        onAccepted: {
-            const numValue = parseFloat(text);
-            if (!isNaN(numValue)) {
-                const clampedValue = Math.max(root.min, Math.min(root.max, numValue));
-                root.value = clampedValue;
-                root.displayText = clampedValue.toString();
-                root.valueModified(clampedValue);
-            } else {
-                text = root.displayText;
-            }
-            root.isEditing = false;
-        }
-        onEditingFinished: {
-            if (text !== root.displayText) {
-                const numValue = parseFloat(text);
-                if (!isNaN(numValue)) {
-                    const clampedValue = Math.max(root.min, Math.min(root.max, numValue));
-                    root.value = clampedValue;
-                    root.displayText = clampedValue.toString();
-                    root.valueModified(clampedValue);
-                } else {
-                    text = root.displayText;
-                }
-            }
-            root.isEditing = false;
-        }
+        text: root.value
+        onAccepted: root.valueModified(text)
 
-        padding: Tokens.padding.small
-        leftPadding: Tokens.padding.normal
-        rightPadding: Tokens.padding.normal
+        padding: Appearance.padding.xs
+        leftPadding: Appearance.padding.md
+        rightPadding: Appearance.padding.md
 
         background: StyledRect {
             implicitWidth: 100
-            radius: Tokens.rounding.small
+            radius: Appearance.rounding.small
             color: Colours.tPalette.m3surfaceContainerHigh
         }
     }
 
     StyledRect {
-        radius: Tokens.rounding.small
+        radius: Appearance.rounding.small
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: upIcon.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: upIcon.implicitHeight + Appearance.padding.xs * 2
 
         StateLayer {
             id: upState
@@ -99,14 +49,8 @@ RowLayout {
             onPressAndHold: timer.start()
             onReleased: timer.stop()
 
-            onClicked: {
-                let newValue = Math.min(root.max, root.value + root.step);
-                // Round to avoid floating point precision errors
-                const decimals = root.step < 1 ? Math.max(1, Math.ceil(-Math.log10(root.step))) : 0;
-                newValue = Math.round(newValue * Math.pow(10, decimals)) / Math.pow(10, decimals);
-                root.value = newValue;
-                root.displayText = newValue.toString();
-                root.valueModified(newValue);
+            function onClicked(): void {
+                root.valueModified(Math.min(root.max, root.value + 1));
             }
         }
 
@@ -120,29 +64,23 @@ RowLayout {
     }
 
     StyledRect {
-        radius: Tokens.rounding.small
+        radius: Appearance.rounding.small
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: downIcon.implicitHeight + Tokens.padding.small * 2
+        implicitHeight: downIcon.implicitHeight + Appearance.padding.xs * 2
 
         StateLayer {
             id: downState
-
-            onClicked: {
-                let newValue = Math.max(root.min, root.value - root.step);
-                // Round to avoid floating point precision errors
-                const decimals = root.step < 1 ? Math.max(1, Math.ceil(-Math.log10(root.step))) : 0;
-                newValue = Math.round(newValue * Math.pow(10, decimals)) / Math.pow(10, decimals);
-                root.value = newValue;
-                root.displayText = newValue.toString();
-                root.valueModified(newValue);
-            }
 
             color: Colours.palette.m3onPrimary
 
             onPressAndHold: timer.start()
             onReleased: timer.stop()
+
+            function onClicked(): void {
+                root.valueModified(Math.max(root.min, root.value - 1));
+            }
         }
 
         MaterialIcon {
@@ -162,9 +100,9 @@ RowLayout {
         triggeredOnStart: true
         onTriggered: {
             if (upState.pressed)
-                upState.clicked();
+                upState.onClicked();
             else if (downState.pressed)
-                downState.clicked();
+                downState.onClicked();
         }
     }
 }

@@ -1,18 +1,18 @@
 pragma ComponentBehavior: Bound
 
+import ".."
+import qs.services
+import qs.config
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
-import qs.components
-import qs.services
 
 StyledRect {
     id: root
 
     required property var dialog
 
-    implicitWidth: inner.implicitWidth + Tokens.padding.normal * 2
-    implicitHeight: inner.implicitHeight + Tokens.padding.normal * 2
+    implicitWidth: inner.implicitWidth + Appearance.padding.md * 2
+    implicitHeight: inner.implicitHeight + Appearance.padding.md * 2
 
     color: Colours.tPalette.m3surfaceContainer
 
@@ -20,17 +20,20 @@ StyledRect {
         id: inner
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
-        spacing: Tokens.spacing.small
+        anchors.margins: Appearance.padding.md
+        spacing: Appearance.spacing.sm
 
         Item {
             implicitWidth: implicitHeight
-            implicitHeight: upIcon.implicitHeight + Tokens.padding.small * 2
+            implicitHeight: upIcon.implicitHeight + Appearance.padding.xs * 2
 
             StateLayer {
-                radius: Tokens.rounding.small
+                radius: Appearance.rounding.small
                 disabled: root.dialog.cwd.length === 1
-                onClicked: root.dialog.cwd.pop()
+
+                function onClicked(): void {
+                    root.dialog.cwd.pop();
+                }
             }
 
             MaterialIcon {
@@ -46,7 +49,7 @@ StyledRect {
         StyledRect {
             Layout.fillWidth: true
 
-            radius: Tokens.rounding.small
+            radius: Appearance.rounding.small
             color: Colours.tPalette.m3surfaceContainerHigh
 
             implicitHeight: pathComponents.implicitHeight + pathComponents.anchors.margins * 2
@@ -55,10 +58,10 @@ StyledRect {
                 id: pathComponents
 
                 anchors.fill: parent
-                anchors.margins: Tokens.padding.small / 2
+                anchors.margins: Appearance.padding.xs / 2
                 anchors.leftMargin: 0
 
-                spacing: Tokens.spacing.small
+                spacing: Appearance.spacing.sm
 
                 Repeater {
                     model: root.dialog.cwd
@@ -72,9 +75,9 @@ StyledRect {
                         spacing: 0
 
                         Loader {
-                            asynchronous: true
-                            Layout.rightMargin: Tokens.spacing.small
+                            Layout.rightMargin: Appearance.spacing.sm
                             active: folder.index > 0
+                            asynchronous: true
                             sourceComponent: StyledText {
                                 text: "/"
                                 color: Colours.palette.m3onSurfaceVariant
@@ -83,32 +86,31 @@ StyledRect {
                         }
 
                         Item {
-                            implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? Tokens.padding.small : 0) + folderName.implicitWidth + Tokens.padding.normal * 2
-                            implicitHeight: folderName.implicitHeight + Tokens.padding.small * 2
+                            implicitWidth: homeIcon.implicitWidth + (homeIcon.active ? Appearance.padding.xs : 0) + folderName.implicitWidth + Appearance.padding.md * 2
+                            implicitHeight: folderName.implicitHeight + Appearance.padding.xs * 2
 
                             Loader {
-                                asynchronous: true
                                 anchors.fill: parent
                                 active: folder.index < root.dialog.cwd.length - 1
+                                asynchronous: true
                                 sourceComponent: StateLayer {
-                                    onClicked: {
+                                    radius: Appearance.rounding.small
+
+                                    function onClicked(): void {
                                         root.dialog.cwd = root.dialog.cwd.slice(0, folder.index + 1);
                                     }
-
-                                    radius: Tokens.rounding.small
                                 }
                             }
 
                             Loader {
                                 id: homeIcon
 
-                                asynchronous: true
-
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: Tokens.padding.normal
+                                anchors.leftMargin: Appearance.padding.md
 
                                 active: folder.index === 0 && folder.modelData === "Home"
+                                asynchronous: true
                                 sourceComponent: MaterialIcon {
                                     text: "home"
                                     color: root.dialog.cwd.length === 1 ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant
@@ -121,7 +123,7 @@ StyledRect {
 
                                 anchors.left: homeIcon.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: homeIcon.active ? Tokens.padding.small : 0
+                                anchors.leftMargin: homeIcon.active ? Appearance.padding.xs : 0
 
                                 text: folder.modelData
                                 color: folder.index < root.dialog.cwd.length - 1 ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurface

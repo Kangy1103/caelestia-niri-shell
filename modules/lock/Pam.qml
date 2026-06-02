@@ -1,9 +1,9 @@
-import QtQuick
+import qs.config
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
-import Caelestia.Config
+import QtQuick
 
 Scope {
     id: root
@@ -31,8 +31,7 @@ Scope {
             } else {
                 buffer = buffer.slice(0, -1);
             }
-        } else if (/^[^\x00-\x1F\x7F-\x9F]+$/.test(event.text)) {
-            // Allow anything except control characters
+        } else if (event.text.length > 0 && event.text.charCodeAt(0) >= 0x20) {
             buffer += event.text;
         }
     }
@@ -82,7 +81,7 @@ Scope {
         property int errorTries
 
         function checkAvail(): void {
-            if (!available || !GlobalConfig.lock.enableFprint || !root.lock.secure) {
+            if (!available || !Config.lock.enableFprint || !root.lock.secure) {
                 abort();
                 return;
             }
@@ -113,7 +112,7 @@ Scope {
                 // Isn't actually the real max tries as pam only reports completed
                 // when max tries is reached.
                 tries++;
-                if (tries < GlobalConfig.lock.maxFprintTries) {
+                if (tries < Config.lock.maxFprintTries) {
                     // Restart if not actually real max tries
                     root.fprintState = "fail";
                     start();
@@ -132,7 +131,7 @@ Scope {
         id: availProc
 
         command: ["sh", "-c", "fprintd-list $USER"]
-        onExited: code => { // qmllint disable signal-handler-parameters
+        onExited: code => {
             fprint.available = code === 0;
             fprint.checkAvail();
         }
@@ -166,6 +165,8 @@ Scope {
     }
 
     Connections {
+        target: root.lock
+
         function onSecureChanged(): void {
             if (root.lock.secure) {
                 availProc.running = true;
@@ -179,15 +180,13 @@ Scope {
         function onUnlock(): void {
             fprint.abort();
         }
-
-        target: root.lock
     }
 
     Connections {
+        target: Config.lock
+
         function onEnableFprintChanged(): void {
             fprint.checkAvail();
         }
-
-        target: GlobalConfig.lock
     }
 }

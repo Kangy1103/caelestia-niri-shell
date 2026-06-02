@@ -1,11 +1,11 @@
 import ".."
 import "../components"
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 ColumnLayout {
     id: root
@@ -17,16 +17,16 @@ ColumnLayout {
     property string suffix: ""
     property bool readonly: false
 
-    spacing: Tokens.spacing.small
+    spacing: Appearance.spacing.sm
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Appearance.spacing.lg
 
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
             color: root.readonly ? Colours.palette.m3outline : Colours.palette.m3onSurface
         }
 
@@ -38,20 +38,20 @@ ColumnLayout {
             visible: root.readonly
             text: "lock"
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.small
+            font.pointSize: Appearance.font.size.labelLarge
         }
 
         StyledText {
             text: Math.round(root.value) + (root.suffix !== "" ? " " + root.suffix : "")
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
             color: root.readonly ? Colours.palette.m3outline : Colours.palette.m3onSurface
         }
     }
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: Tokens.padding.normal
-        radius: Tokens.rounding.full
+        implicitHeight: Appearance.padding.md
+        radius: Appearance.rounding.full
         color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 1)
         opacity: root.readonly ? 0.5 : 1.0
 

@@ -1,34 +1,34 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
+import qs.config
+import Quickshell
+import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
 
     required property ShellScreen screen
-    readonly property int rounding: floating ? 0 : Tokens.rounding.large
+    readonly property int rounding: floating ? 0 : Appearance.rounding.normal
 
     property alias floating: session.floating
     property alias active: session.active
     property alias navExpanded: session.navExpanded
 
-    readonly property bool initialOpeningComplete: panes.initialOpeningComplete
     readonly property Session session: Session {
         id: session
 
         root: root
     }
 
-    signal close
+    function close(): void {
+    }
 
-    implicitWidth: implicitHeight * Tokens.sizes.controlCenter.ratio
-    implicitHeight: screen.height * Tokens.sizes.controlCenter.heightMult
+    implicitWidth: implicitHeight * Config.controlCenter.sizes.ratio
+    implicitHeight: screen.height * Config.controlCenter.sizes.heightMult
 
     GridLayout {
         anchors.fill: parent
@@ -42,7 +42,6 @@ Item {
             Layout.fillWidth: true
             Layout.columnSpan: 2
 
-            asynchronous: true
             active: root.floating
             visible: active
 
@@ -61,8 +60,9 @@ Item {
             color: Colours.tPalette.m3surfaceContainer
 
             CustomMouseArea {
+                anchors.fill: parent
+
                 function onWheel(event: WheelEvent): void {
-                    // Prevent tab switching during initial opening animation to avoid blank pages
                     if (!panes.initialOpeningComplete) {
                         return;
                     }
@@ -72,8 +72,6 @@ Item {
                     else if (event.angleDelta.y > 0)
                         root.session.activeIndex = Math.max(root.session.activeIndex - 1, 0);
                 }
-
-                anchors.fill: parent
             }
 
             NavRail {
@@ -82,6 +80,16 @@ Item {
                 screen: root.screen
                 session: root.session
                 initialOpeningComplete: root.initialOpeningComplete
+            }
+
+            Rectangle {
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.topMargin: Appearance.padding.xl
+                anchors.bottomMargin: Appearance.padding.xl
+                width: 1
+                color: Qt.alpha(Colours.palette.m3outlineVariant, 0.3)
             }
         }
 
@@ -96,4 +104,6 @@ Item {
             session: root.session
         }
     }
+
+    readonly property bool initialOpeningComplete: panes.initialOpeningComplete
 }

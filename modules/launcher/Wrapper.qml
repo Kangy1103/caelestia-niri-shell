@@ -1,62 +1,57 @@
-pragma ComponentBehavior: Bound
-
-import QtQuick
-import Quickshell
-import Caelestia.Config
 import qs.components
-import qs.modules.launcher.services
+import qs.config
+import Quickshell
+import QtQuick
 
 Item {
     id: root
 
-    required property ShellScreen screen
-    required property DrawerVisibilities visibilities
+    required property PersistentProperties visibilities
     required property var panels
 
-    readonly property bool shouldBeActive: visibilities.launcher && Config.launcher.enabled
+    visible: height > 0
+    implicitHeight: 0
+    implicitWidth: content.implicitWidth
 
-    readonly property real maxHeight: {
-        let max = screen.height - Config.border.thickness * 2 - Tokens.spacing.large;
-        if (visibilities.dashboard)
-            max -= panels.dashboard.nonAnimHeight;
-        return max;
-    }
+    states: State {
+        name: "visible"
+        when: root.visibilities.launcher && Config.launcher.enabled
 
-    property real offsetScale: shouldBeActive ? 0 : 1
-
-    onShouldBeActiveChanged: {
-        if (shouldBeActive)
-            implicitHeight = Qt.binding(() => content.implicitHeight);
-        else
-            implicitHeight = implicitHeight; // Break binding during close anim
-    }
-
-    visible: offsetScale < 1
-    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
-    implicitHeight: content.implicitHeight
-    implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
-
-    Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
-
-    Behavior on offsetScale {
-        Anim {
-            type: Anim.DefaultSpatial
+        PropertyChanges {
+            root.implicitHeight: content.implicitHeight
         }
     }
 
-    Loader {
+    transitions: [
+        Transition {
+            from: ""
+            to: "visible"
+
+            Anim {
+                target: root
+                property: "implicitHeight"
+                duration: Appearance.anim.durations.normal
+                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+            }
+        },
+        Transition {
+            from: "visible"
+            to: ""
+
+            Anim {
+                target: root
+                property: "implicitHeight"
+                duration: Appearance.anim.durations.small
+                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
+            }
+        }
+    ]
+
+    Content {
         id: content
 
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        active: root.shouldBeActive || root.visible
-
-        sourceComponent: Content {
-            visibilities: root.visibilities
-            panels: root.panels
-            maxHeight: root.maxHeight
-        }
+        wrapper: root
+        visibilities: root.visibilities
+        panels: root.panels
     }
 }

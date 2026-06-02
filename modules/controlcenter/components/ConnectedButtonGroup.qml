@@ -1,23 +1,22 @@
 import ".."
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 StyledRect {
     id: root
 
-    property var options: [] // Array of {label: string, propertyName: string, onToggled: function, state: bool?}
+    property var options: [] // Array of {label: string, propertyName: string, onToggled: function}
     property var rootItem: null // The root item that contains the properties we want to bind to
     property string title: "" // Optional title text
-    property int rows: 1 // Number of rows
 
     Layout.fillWidth: true
-    implicitHeight: layout.implicitHeight + Tokens.padding.large * 2
-    radius: Tokens.rounding.normal
+    implicitHeight: layout.implicitHeight + Appearance.padding.xl * 2
+    radius: Appearance.rounding.normal
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
     clip: true
 
@@ -29,48 +28,41 @@ StyledRect {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
-        spacing: Tokens.spacing.normal
+        anchors.margins: Appearance.padding.xl
+        spacing: Appearance.spacing.lg
 
         StyledText {
             visible: root.title !== ""
             text: root.title
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
         }
 
-        GridLayout {
-            id: buttonGrid
-
+        RowLayout {
+            id: buttonRow
             Layout.alignment: Qt.AlignHCenter
-            rowSpacing: Tokens.spacing.small
-            columnSpacing: Tokens.spacing.small
-            rows: root.rows
-            columns: Math.ceil(root.options.length / root.rows)
+            spacing: Appearance.spacing.sm
 
             Repeater {
                 id: repeater
-
                 model: root.options
 
                 delegate: TextButton {
                     id: button
-
                     required property int index
                     required property var modelData
 
-                    property bool _checked: false
-
                     Layout.fillWidth: true
                     text: modelData.label
+
+                    property bool _checked: false
+
                     checked: _checked
                     toggle: false
                     type: TextButton.Tonal
 
                     // Create binding in Component.onCompleted
                     Component.onCompleted: {
-                        if (modelData.state !== undefined && modelData.state) {
-                            _checked = modelData.state;
-                        } else if (root.rootItem && modelData.propertyName) {
+                        if (root.rootItem && modelData.propertyName) {
                             const propName = modelData.propertyName;
                             const rootItem = root.rootItem;
                             _checked = Qt.binding(function () {
@@ -81,13 +73,13 @@ StyledRect {
 
                     // Match utilities Toggles radius styling
                     // Each button has full rounding (not connected) since they have spacing
-                    radius: stateLayer.pressed ? Tokens.rounding.small / 2 : internalChecked ? Tokens.rounding.small : Tokens.rounding.normal
+                    radius: stateLayer.pressed ? Appearance.rounding.small / 2 : internalChecked ? Appearance.rounding.small : Appearance.rounding.normal
 
                     // Match utilities Toggles inactive color
                     inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
 
                     // Adjust width similar to utilities toggles
-                    Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Tokens.padding.large : internalChecked ? Tokens.padding.smaller : 0)
+                    Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Appearance.padding.xl : internalChecked ? Appearance.padding.sm : 0)
 
                     onClicked: {
                         if (modelData.onToggled && root.rootItem && modelData.propertyName) {
@@ -98,13 +90,15 @@ StyledRect {
 
                     Behavior on Layout.preferredWidth {
                         Anim {
-                            type: Anim.FastSpatial
+                            duration: Appearance.anim.durations.expressiveFastSpatial
+                            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
                         }
                     }
 
                     Behavior on radius {
                         Anim {
-                            type: Anim.FastSpatial
+                            duration: Appearance.anim.durations.expressiveFastSpatial
+                            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
+import qs.config
 import QtQuick
-import Caelestia.Config
 
 SequentialAnimation {
     id: root
@@ -20,8 +20,9 @@ SequentialAnimation {
             property: "opacity"
             from: root.opacityFrom
             to: root.opacityTo
-            duration: Tokens.anim.durations.normal / 2
-            easing: Tokens.anim.standardAccel
+            duration: Appearance.anim.durations.normal / 2
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Appearance.anim.curves.standardAccel
         }
 
         NumberAnimation {
@@ -29,8 +30,9 @@ SequentialAnimation {
             property: "scale"
             from: root.scaleFrom
             to: root.scaleTo
-            duration: Tokens.anim.durations.normal / 2
-            easing: Tokens.anim.standardAccel
+            duration: Appearance.anim.durations.normal / 2
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Appearance.anim.curves.standardAccel
         }
     }
 
@@ -51,8 +53,9 @@ SequentialAnimation {
             property: "opacity"
             from: root.opacityTo
             to: root.opacityFrom
-            duration: Tokens.anim.durations.normal / 2
-            easing: Tokens.anim.standardDecel
+            duration: Appearance.anim.durations.normal / 2
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Appearance.anim.curves.standardDecel
         }
 
         NumberAnimation {
@@ -60,8 +63,9 @@ SequentialAnimation {
             property: "scale"
             from: root.scaleTo
             to: root.scaleFrom
-            duration: Tokens.anim.durations.normal / 2
-            easing: Tokens.anim.standardDecel
+            duration: Appearance.anim.durations.normal / 2
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Appearance.anim.curves.standardDecel
         }
     }
 }

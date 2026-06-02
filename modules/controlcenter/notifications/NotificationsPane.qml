@@ -2,419 +2,289 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../components"
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Quickshell.Widgets
-import Caelestia.Config
 import qs.components
-import qs.components.containers
 import qs.components.controls
 import qs.components.effects
+import qs.components.containers
 import qs.services
+import qs.config
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
 
     required property Session session
 
-    property bool notificationsExpire: GlobalConfig.notifs.expire ?? true
-    property string notificationsFullscreen: GlobalConfig.notifs.fullscreen ?? "on"
-    property bool notificationsOpenExpanded: Config.notifs.openExpanded ?? false
-    property int notificationsDefaultExpireTimeout: GlobalConfig.notifs.defaultExpireTimeout ?? 5000
-    property int notificationsGroupPreviewNum: Config.notifs.groupPreviewNum ?? 3
-
-    property int maxToasts: Config.utilities.maxToasts ?? 4
-    property string toastsFullscreen: Config.utilities.toasts.fullscreen ?? "off"
-    property bool chargingChanged: GlobalConfig.utilities.toasts.chargingChanged ?? true
-    property bool gameModeChanged: GlobalConfig.utilities.toasts.gameModeChanged ?? true
-    property bool dndChanged: GlobalConfig.utilities.toasts.dndChanged ?? true
-    property bool audioOutputChanged: GlobalConfig.utilities.toasts.audioOutputChanged ?? true
-    property bool audioInputChanged: GlobalConfig.utilities.toasts.audioInputChanged ?? true
-    property bool capsLockChanged: GlobalConfig.utilities.toasts.capsLockChanged ?? true
-    property bool numLockChanged: GlobalConfig.utilities.toasts.numLockChanged ?? true
-    property bool kbLayoutChanged: GlobalConfig.utilities.toasts.kbLayoutChanged ?? true
-    property bool vpnChanged: GlobalConfig.utilities.toasts.vpnChanged ?? true
-    property bool nowPlaying: GlobalConfig.utilities.toasts.nowPlaying ?? false
-
-    function saveConfig(): void {
-        GlobalConfig.notifs.expire = root.notificationsExpire;
-        GlobalConfig.notifs.fullscreen = root.notificationsFullscreen;
-        GlobalConfig.notifs.openExpanded = root.notificationsOpenExpanded;
-        GlobalConfig.notifs.defaultExpireTimeout = root.notificationsDefaultExpireTimeout;
-        GlobalConfig.notifs.groupPreviewNum = root.notificationsGroupPreviewNum;
-
-        GlobalConfig.utilities.maxToasts = root.maxToasts;
-        GlobalConfig.utilities.toasts.fullscreen = root.toastsFullscreen;
-        GlobalConfig.utilities.toasts.chargingChanged = root.chargingChanged;
-        GlobalConfig.utilities.toasts.gameModeChanged = root.gameModeChanged;
-        GlobalConfig.utilities.toasts.dndChanged = root.dndChanged;
-        GlobalConfig.utilities.toasts.audioOutputChanged = root.audioOutputChanged;
-        GlobalConfig.utilities.toasts.audioInputChanged = root.audioInputChanged;
-        GlobalConfig.utilities.toasts.capsLockChanged = root.capsLockChanged;
-        GlobalConfig.utilities.toasts.numLockChanged = root.numLockChanged;
-        GlobalConfig.utilities.toasts.kbLayoutChanged = root.kbLayoutChanged;
-        GlobalConfig.utilities.toasts.vpnChanged = root.vpnChanged;
-        GlobalConfig.utilities.toasts.nowPlaying = root.nowPlaying;
-    }
+    property bool expire: Config.notifs.expire ?? true
+    property int defaultExpireTimeout: Config.notifs.defaultExpireTimeout ?? 5000
+    property real clearThreshold: Config.notifs.clearThreshold ?? 0.3
+    property bool actionOnClick: Config.notifs.actionOnClick ?? false
+    property int groupPreviewNum: Config.notifs.groupPreviewNum ?? 3
+    property int expandThreshold: Config.notifs.expandThreshold ?? 20
+    property int popupWidth: Config.notifs.sizes.width ?? 400
+    property int imageSize: Config.notifs.sizes.image ?? 41
+    property int badgeSize: Config.notifs.sizes.badge ?? 20
 
     anchors.fill: parent
 
+    function saveConfig() {
+        Config.notifs.expire = root.expire;
+        Config.notifs.defaultExpireTimeout = root.defaultExpireTimeout;
+        Config.notifs.clearThreshold = root.clearThreshold;
+        Config.notifs.actionOnClick = root.actionOnClick;
+        Config.notifs.groupPreviewNum = root.groupPreviewNum;
+        Config.notifs.expandThreshold = root.expandThreshold;
+        Config.notifs.sizes.width = root.popupWidth;
+        Config.notifs.sizes.image = root.imageSize;
+        Config.notifs.sizes.badge = root.badgeSize;
+        Config.markDirty("notifs");
+    }
+
     ClippingRectangle {
-        id: notificationsClippingRect
-
+        id: notifsClippingRect
         anchors.fill: parent
-        anchors.margins: Tokens.padding.normal
+        anchors.margins: Appearance.padding.md
         anchors.leftMargin: 0
-        anchors.rightMargin: Tokens.padding.normal
+        anchors.rightMargin: Appearance.padding.md
 
+        radius: notifsBorder.innerRadius
         color: "transparent"
-        radius: notificationsBorder.innerRadius
 
         Loader {
-            id: notificationsLoader
-
+            id: notifsLoader
             anchors.fill: parent
-            anchors.margins: Tokens.padding.large + Tokens.padding.normal
-            anchors.leftMargin: Tokens.padding.large
-            anchors.rightMargin: Tokens.padding.large
+            anchors.margins: Appearance.padding.xl + Appearance.padding.md
+            anchors.leftMargin: Appearance.padding.xl
+            anchors.rightMargin: Appearance.padding.xl
 
-            sourceComponent: notificationsContentComponent
+            sourceComponent: notifsContentComponent
         }
     }
 
     InnerBorder {
-        id: notificationsBorder
-
+        id: notifsBorder
         leftThickness: 0
-        rightThickness: Tokens.padding.normal
+        rightThickness: Appearance.padding.md
     }
 
     Component {
-        id: notificationsContentComponent
+        id: notifsContentComponent
 
         StyledFlickable {
-            id: notificationsFlickable
-
+            id: notifsFlickable
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: notificationsLayout.height
+            contentHeight: notifsLayout.height
 
             StyledScrollBar.vertical: StyledScrollBar {
-                flickable: notificationsFlickable
+                flickable: notifsFlickable
             }
 
-            RowLayout {
-                id: notificationsLayout
-
+            ColumnLayout {
+                id: notifsLayout
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Tokens.spacing.normal
+                spacing: Appearance.spacing.lg
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.maximumWidth: 500
-                    Layout.alignment: Qt.AlignTop
-                    spacing: Tokens.spacing.normal
+                RowLayout {
+                    spacing: Appearance.spacing.md
+
+                    StyledText {
+                        text: qsTr("Notifications")
+                        font.pointSize: Appearance.font.size.titleMedium
+                        font.weight: 500
+                    }
+                }
+
+                // Behaviour Section
+                SectionContainer {
+                    alignTop: true
+
+                    StyledText {
+                        text: qsTr("Behaviour")
+                        font.pointSize: Appearance.font.size.bodyMedium
+                    }
+
+                    SwitchRow {
+                        label: qsTr("Auto-expire notifications")
+                        checked: root.expire
+                        onToggled: checked => {
+                            root.expire = checked;
+                            root.saveConfig();
+                        }
+                    }
+
+                    SwitchRow {
+                        label: qsTr("Single action on click")
+                        checked: root.actionOnClick
+                        onToggled: checked => {
+                            root.actionOnClick = checked;
+                            root.saveConfig();
+                        }
+                    }
 
                     SectionContainer {
-                        Layout.fillWidth: true
-                        alignTop: true
+                        contentSpacing: Appearance.spacing.lg
 
-                        StyledText {
-                            text: qsTr("Notifications")
-                            font.pointSize: Tokens.font.size.normal
-                        }
+                        SliderInput {
+                            Layout.fillWidth: true
 
-                        SplitButtonRow {
-                            id: notificationsFullscreenSelector
+                            label: qsTr("Expire timeout")
+                            value: root.defaultExpireTimeout
+                            from: 1000
+                            to: 30000
+                            stepSize: 500
+                            suffix: "ms"
+                            validator: IntValidator { bottom: 1000; top: 30000 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
 
-                            function syncActiveItem(): void {
-                                active = root.notificationsFullscreen === "off" ? notificationsFullscreenOffItem : notificationsFullscreenOnItem;
-                            }
-
-                            label: qsTr("Show in fullscreen")
-                            menuItems: [notificationsFullscreenOffItem, notificationsFullscreenOnItem]
-
-                            Component.onCompleted: syncActiveItem()
-
-                            Connections {
-                                function onNotificationsFullscreenChanged(): void {
-                                    notificationsFullscreenSelector.syncActiveItem();
-                                }
-
-                                target: root
-                            }
-
-                            MenuItem {
-                                id: notificationsFullscreenOffItem
-
-                                text: qsTr("Off")
-                                icon: "notifications_off"
-                                activeText: qsTr("Off")
-                                onClicked: {
-                                    root.notificationsFullscreen = "off";
-                                    root.saveConfig();
-                                }
-                            }
-
-                            MenuItem {
-                                id: notificationsFullscreenOnItem
-
-                                text: qsTr("On")
-                                icon: "notifications"
-                                activeText: qsTr("On")
-                                onClicked: {
-                                    root.notificationsFullscreen = "on";
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-
-                        SwitchRow {
-                            label: qsTr("Expire automatically")
-                            checked: root.notificationsExpire
-                            onToggled: checked => {
-                                root.notificationsExpire = checked;
-                                root.saveConfig();
-                            }
-                        }
-
-                        SwitchRow {
-                            label: qsTr("Open expanded")
-                            checked: root.notificationsOpenExpanded
-                            onToggled: checked => {
-                                root.notificationsOpenExpanded = checked;
-                                root.saveConfig();
-                            }
-                        }
-
-                        SpinBoxRow {
-                            label: qsTr("Default timeout")
-                            value: root.notificationsDefaultExpireTimeout
-                            min: 1000
-                            max: 60000
-                            step: 500
-                            onValueModified: value => {
-                                root.notificationsDefaultExpireTimeout = value;
-                                root.saveConfig();
-                            }
-                        }
-
-                        SpinBoxRow {
-                            label: qsTr("Group preview count")
-                            value: root.notificationsGroupPreviewNum
-                            min: 1
-                            max: 10
-                            step: 1
-                            onValueModified: value => {
-                                root.notificationsGroupPreviewNum = value;
+                            onValueModified: newValue => {
+                                root.defaultExpireTimeout = Math.round(newValue);
                                 root.saveConfig();
                             }
                         }
                     }
                 }
 
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignTop
-                    spacing: Tokens.spacing.normal
+                // Gestures Section
+                SectionContainer {
+                    alignTop: true
+
+                    StyledText {
+                        text: qsTr("Gestures")
+                        font.pointSize: Appearance.font.size.bodyMedium
+                    }
 
                     SectionContainer {
-                        Layout.fillWidth: true
-                        alignTop: true
+                        contentSpacing: Appearance.spacing.lg
 
-                        StyledText {
-                            text: qsTr("Toast settings")
-                            font.pointSize: Tokens.font.size.normal
-                        }
-
-                        SplitButtonRow {
-                            id: toastFullscreenSelector
-
-                            function syncActiveItem(): void {
-                                if (root.toastsFullscreen === "all") {
-                                    active = toastFullscreenAllItem;
-                                    return;
-                                }
-
-                                if (root.toastsFullscreen === "important") {
-                                    active = toastFullscreenImportantItem;
-                                    return;
-                                }
-
-                                active = toastFullscreenOffItem;
-                            }
-
+                        SliderInput {
                             Layout.fillWidth: true
-                            z: expanded ? 100 : 0
-                            label: qsTr("Show in fullscreen")
-                            menuItems: [toastFullscreenOffItem, toastFullscreenImportantItem, toastFullscreenAllItem]
 
-                            Component.onCompleted: syncActiveItem()
+                            label: qsTr("Swipe dismiss threshold")
+                            value: root.clearThreshold * 100
+                            from: 10
+                            to: 90
+                            suffix: "%"
+                            validator: IntValidator { bottom: 10; top: 90 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
 
-                            Connections {
-                                function onToastsFullscreenChanged(): void {
-                                    toastFullscreenSelector.syncActiveItem();
-                                }
-
-                                target: root
-                            }
-
-                            MenuItem {
-                                id: toastFullscreenOffItem
-
-                                text: qsTr("Off")
-                                icon: "notifications_off"
-                                activeText: qsTr("Off")
-                                onClicked: {
-                                    root.toastsFullscreen = "off";
-                                    root.saveConfig();
-                                }
-                            }
-
-                            MenuItem {
-                                id: toastFullscreenImportantItem
-
-                                text: qsTr("Important")
-                                icon: "priority_high"
-                                activeText: qsTr("Important")
-                                onClicked: {
-                                    root.toastsFullscreen = "important";
-                                    root.saveConfig();
-                                }
-                            }
-
-                            MenuItem {
-                                id: toastFullscreenAllItem
-
-                                text: qsTr("On")
-                                icon: "notifications"
-                                activeText: qsTr("On")
-                                onClicked: {
-                                    root.toastsFullscreen = "all";
-                                    root.saveConfig();
-                                }
-                            }
-                        }
-
-                        SpinBoxRow {
-                            Layout.fillWidth: true
-                            label: qsTr("Visible toasts")
-                            value: root.maxToasts
-                            min: 1
-                            max: 10
-                            step: 1
-                            onValueModified: value => {
-                                root.maxToasts = value;
+                            onValueModified: newValue => {
+                                root.clearThreshold = newValue / 100;
                                 root.saveConfig();
                             }
                         }
 
-                        GridLayout {
+                        SliderInput {
                             Layout.fillWidth: true
-                            columns: 2
-                            columnSpacing: Tokens.spacing.normal
-                            rowSpacing: Tokens.spacing.normal
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Charging changes")
-                                checked: root.chargingChanged
-                                onToggled: checked => {
-                                    root.chargingChanged = checked;
-                                    root.saveConfig();
-                                }
+                            label: qsTr("Expand threshold")
+                            value: root.expandThreshold
+                            from: 10
+                            to: 100
+                            stepSize: 5
+                            suffix: "px"
+                            validator: IntValidator { bottom: 10; top: 100 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
+
+                            onValueModified: newValue => {
+                                root.expandThreshold = Math.round(newValue);
+                                root.saveConfig();
                             }
+                        }
+                    }
+                }
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Game mode changes")
-                                checked: root.gameModeChanged
-                                onToggled: checked => {
-                                    root.gameModeChanged = checked;
-                                    root.saveConfig();
-                                }
+                // Display Section
+                SectionContainer {
+                    alignTop: true
+
+                    StyledText {
+                        text: qsTr("Display")
+                        font.pointSize: Appearance.font.size.bodyMedium
+                    }
+
+                    SectionContainer {
+                        contentSpacing: Appearance.spacing.lg
+
+                        SliderInput {
+                            Layout.fillWidth: true
+
+                            label: qsTr("Group preview count")
+                            value: root.groupPreviewNum
+                            from: 1
+                            to: 10
+                            stepSize: 1
+                            validator: IntValidator { bottom: 1; top: 10 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
+
+                            onValueModified: newValue => {
+                                root.groupPreviewNum = Math.round(newValue);
+                                root.saveConfig();
                             }
+                        }
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Do not disturb")
-                                checked: root.dndChanged
-                                onToggled: checked => {
-                                    root.dndChanged = checked;
-                                    root.saveConfig();
-                                }
+                        SliderInput {
+                            Layout.fillWidth: true
+
+                            label: qsTr("Popup width")
+                            value: root.popupWidth
+                            from: 200
+                            to: 800
+                            stepSize: 25
+                            suffix: "px"
+                            validator: IntValidator { bottom: 200; top: 800 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
+
+                            onValueModified: newValue => {
+                                root.popupWidth = Math.round(newValue);
+                                root.saveConfig();
                             }
+                        }
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Audio output changes")
-                                checked: root.audioOutputChanged
-                                onToggled: checked => {
-                                    root.audioOutputChanged = checked;
-                                    root.saveConfig();
-                                }
+                        SliderInput {
+                            Layout.fillWidth: true
+
+                            label: qsTr("Image size")
+                            value: root.imageSize
+                            from: 16
+                            to: 96
+                            stepSize: 1
+                            suffix: "px"
+                            validator: IntValidator { bottom: 16; top: 96 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
+
+                            onValueModified: newValue => {
+                                root.imageSize = Math.round(newValue);
+                                root.saveConfig();
                             }
+                        }
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Audio input changes")
-                                checked: root.audioInputChanged
-                                onToggled: checked => {
-                                    root.audioInputChanged = checked;
-                                    root.saveConfig();
-                                }
-                            }
+                        SliderInput {
+                            Layout.fillWidth: true
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Caps lock changes")
-                                checked: root.capsLockChanged
-                                onToggled: checked => {
-                                    root.capsLockChanged = checked;
-                                    root.saveConfig();
-                                }
-                            }
+                            label: qsTr("Badge size")
+                            value: root.badgeSize
+                            from: 10
+                            to: 48
+                            stepSize: 1
+                            suffix: "px"
+                            validator: IntValidator { bottom: 10; top: 48 }
+                            formatValueFunction: val => Math.round(val).toString()
+                            parseValueFunction: text => parseInt(text)
 
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Num lock changes")
-                                checked: root.numLockChanged
-                                onToggled: checked => {
-                                    root.numLockChanged = checked;
-                                    root.saveConfig();
-                                }
-                            }
-
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Keyboard layout changes")
-                                checked: root.kbLayoutChanged
-                                onToggled: checked => {
-                                    root.kbLayoutChanged = checked;
-                                    root.saveConfig();
-                                }
-                            }
-
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("VPN changes")
-                                checked: root.vpnChanged
-                                onToggled: checked => {
-                                    root.vpnChanged = checked;
-                                    root.saveConfig();
-                                }
-                            }
-
-                            SwitchRow {
-                                Layout.fillWidth: true
-                                label: qsTr("Now playing")
-                                checked: root.nowPlaying
-                                onToggled: checked => {
-                                    root.nowPlaying = checked;
-                                    root.saveConfig();
-                                }
+                            onValueModified: newValue => {
+                                root.badgeSize = Math.round(newValue);
+                                root.saveConfig();
                             }
                         }
                     }

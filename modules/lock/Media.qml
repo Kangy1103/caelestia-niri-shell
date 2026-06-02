@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.services
+import qs.config
+import Quickshell
+import QtQuick
+import QtQuick.Layouts
 
 Item {
     id: root
@@ -19,25 +19,26 @@ Item {
 
     Image {
         anchors.fill: parent
-        source: Players.getArtUrl(Players.active)
+        source: Players.active?.trackArtUrl ?? ""
 
         asynchronous: true
         fillMode: Image.PreserveAspectCrop
-        sourceSize: {
-            const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-            return Qt.size(width * dpr, height * dpr);
-        }
+        sourceSize.width: width
+        sourceSize.height: height
 
         layer.enabled: true
-        layer.effect: OpacityMask {
-            maskSource: mask
+        layer.effect: ShaderEffect {
+            required property Item source
+            readonly property Item maskSource: mask
+
+            fragmentShader: `file://${Quickshell.shellDir}/assets/shaders/opacitymask.frag.qsb`
         }
 
         opacity: status === Image.Ready ? 1 : 0
 
         Behavior on opacity {
             Anim {
-                type: Anim.StandardExtraLarge
+                duration: Appearance.anim.durations.extraLarge
             }
         }
     }
@@ -72,14 +73,14 @@ Item {
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Tokens.padding.large
+        anchors.margins: Appearance.padding.xl
 
         StyledText {
-            Layout.topMargin: Tokens.padding.large
-            Layout.bottomMargin: Tokens.spacing.larger
+            Layout.topMargin: Appearance.padding.xl
+            Layout.bottomMargin: Appearance.spacing.xl
             text: qsTr("Now playing")
             color: Colours.palette.m3onSurfaceVariant
-            font.family: Tokens.font.family.mono
+            font.family: Appearance.font.family.mono
             font.weight: 500
         }
 
@@ -89,8 +90,8 @@ Item {
             text: Players.active?.trackArtist ?? qsTr("No media")
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: Tokens.font.size.large
-            font.family: Tokens.font.family.mono
+            font.pointSize: Appearance.font.size.titleMedium
+            font.family: Appearance.font.family.mono
             font.weight: 600
             elide: Text.ElideRight
         }
@@ -100,21 +101,22 @@ Item {
             animate: true
             text: Players.active?.trackTitle ?? qsTr("No media")
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: Tokens.font.size.larger
-            font.family: Tokens.font.family.mono
+            font.pointSize: Appearance.font.size.bodyLarge
+            font.family: Appearance.font.family.mono
             elide: Text.ElideRight
         }
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Tokens.spacing.large * 1.2
-            Layout.bottomMargin: Tokens.padding.large
+            Layout.topMargin: Appearance.spacing.xxl * 1.2
+            Layout.bottomMargin: Appearance.padding.xl
 
-            spacing: Tokens.spacing.large
+            spacing: Appearance.spacing.xxl
 
             PlayerControl {
                 icon: "skip_previous"
-                onClicked: {
+
+                function onClicked(): void {
                     if (Players.active?.canGoPrevious)
                         Players.active.previous();
                 }
@@ -126,7 +128,8 @@ Item {
                 colour: "Primary"
                 level: active ? 2 : 1
                 active: Players.active?.isPlaying ?? false
-                onClicked: {
+
+                function onClicked(): void {
                     if (Players.active?.canTogglePlaying)
                         Players.active.togglePlaying();
                 }
@@ -134,7 +137,8 @@ Item {
 
             PlayerControl {
                 icon: "skip_next"
-                onClicked: {
+
+                function onClicked(): void {
                     if (Players.active?.canGoNext)
                         Players.active.next();
                 }
@@ -151,14 +155,15 @@ Item {
         property string colour: "Secondary"
         property int level: 1
 
-        signal clicked
+        function onClicked(): void {
+        }
 
-        Layout.preferredWidth: implicitWidth + (controlState.pressed ? Tokens.padding.normal * 2 : active ? Tokens.padding.small * 2 : 0)
-        implicitWidth: controlIcon.implicitWidth + Tokens.padding.large * 2
-        implicitHeight: controlIcon.implicitHeight + Tokens.padding.normal * 2
+        Layout.preferredWidth: implicitWidth + (controlState.pressed ? Appearance.padding.md * 2 : active ? Appearance.padding.xs * 2 : 0)
+        implicitWidth: controlIcon.implicitWidth + Appearance.padding.xl * 2
+        implicitHeight: controlIcon.implicitHeight + Appearance.padding.md * 2
 
         color: active ? Colours.palette[`m3${colour.toLowerCase()}`] : Colours.palette[`m3${colour.toLowerCase()}Container`]
-        radius: active || controlState.pressed ? Tokens.rounding.normal : Math.min(implicitWidth, implicitHeight) / 2 * Math.min(1, Tokens.rounding.scale)
+        radius: active || controlState.pressed ? Appearance.rounding.normal : Math.min(implicitWidth, implicitHeight) / 2 * Math.min(1, Appearance.rounding.scale)
 
         Elevation {
             anchors.fill: parent
@@ -171,7 +176,10 @@ Item {
             id: controlState
 
             color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            onClicked: control.clicked()
+
+            function onClicked(): void {
+                control.onClicked();
+            }
         }
 
         MaterialIcon {
@@ -179,7 +187,7 @@ Item {
 
             anchors.centerIn: parent
             color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            font.pointSize: Tokens.font.size.large
+            font.pointSize: Appearance.font.size.titleMedium
             fill: control.active ? 1 : 0
 
             Behavior on fill {
@@ -189,13 +197,15 @@ Item {
 
         Behavior on Layout.preferredWidth {
             Anim {
-                type: Anim.FastSpatial
+                duration: Appearance.anim.durations.expressiveFastSpatial
+                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
             }
         }
 
         Behavior on radius {
             Anim {
-                type: Anim.FastSpatial
+                duration: Appearance.anim.durations.expressiveFastSpatial
+                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
             }
         }
     }

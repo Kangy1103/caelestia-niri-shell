@@ -1,12 +1,12 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 ColumnLayout {
     id: root
@@ -21,9 +21,6 @@ ColumnLayout {
     property int decimals: 1 // Number of decimal places to show (default: 1)
     property var formatValueFunction: null // Optional custom format function
     property var parseValueFunction: null // Optional custom parse function
-    property bool _initialized: false
-
-    signal valueModified(real newValue)
 
     function formatValue(val: real): string {
         if (formatValueFunction) {
@@ -52,7 +49,11 @@ ColumnLayout {
         return parseFloat(text);
     }
 
-    spacing: Tokens.spacing.small
+    signal valueModified(real newValue)
+
+    property bool _initialized: false
+
+    spacing: Appearance.spacing.sm
 
     Component.onCompleted: {
         // Set initialized flag after a brief delay to allow component to fully load
@@ -61,22 +62,14 @@ ColumnLayout {
         });
     }
 
-    // Update input field when value changes externally (slider is already bound)
-    onValueChanged: {
-        // Only update if component is initialized to avoid issues during creation
-        if (root._initialized && !inputField.hasFocus) {
-            inputField.text = root.formatValue(root.value);
-        }
-    }
-
     RowLayout {
         Layout.fillWidth: true
-        spacing: Tokens.spacing.normal
+        spacing: Appearance.spacing.lg
 
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
         }
 
         Item {
@@ -85,7 +78,6 @@ ColumnLayout {
 
         StyledInputField {
             id: inputField
-
             Layout.preferredWidth: 70
             validator: root.validator
 
@@ -138,7 +130,7 @@ ColumnLayout {
             visible: root.suffix !== ""
             text: root.suffix
             color: Colours.palette.m3outline
-            font.pointSize: Tokens.font.size.normal
+            font.pointSize: Appearance.font.size.bodyMedium
         }
     }
 
@@ -146,11 +138,19 @@ ColumnLayout {
         id: slider
 
         Layout.fillWidth: true
-        implicitHeight: Tokens.padding.normal * 3
+        implicitHeight: Appearance.padding.md * 3
 
         from: root.from
         to: root.to
         stepSize: root.stepSize
+
+        // Use Binding to allow slider to move freely during dragging
+        Binding {
+            target: slider
+            property: "value"
+            value: root.value
+            when: !slider.pressed
+        }
 
         onValueChanged: {
             // Update input field text in real-time as slider moves during dragging
@@ -168,13 +168,13 @@ ColumnLayout {
                 inputField.text = root.formatValue(newValue);
             }
         }
+    }
 
-        // Use Binding to allow slider to move freely during dragging
-        Binding {
-            target: slider
-            property: "value"
-            value: root.value
-            when: !slider.pressed
+    // Update input field when value changes externally (slider is already bound)
+    onValueChanged: {
+        // Only update if component is initialized to avoid issues during creation
+        if (root._initialized && !inputField.hasFocus) {
+            inputField.text = root.formatValue(root.value);
         }
     }
 }

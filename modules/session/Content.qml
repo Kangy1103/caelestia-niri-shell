@@ -1,44 +1,51 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import Quickshell
-import Caelestia.Config
 import qs.components
 import qs.services
+import qs.config
 import qs.utils
+import Quickshell
+import QtQuick
 
 Column {
     id: root
 
-    required property DrawerVisibilities visibilities
+    required property PersistentProperties visibilities
 
-    padding: Tokens.padding.large
-    spacing: Tokens.spacing.large
+    padding: Appearance.padding.xl
+
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.left
+
+    spacing: Appearance.spacing.xxl
 
     SessionButton {
         id: logout
 
-        icon: Config.session.icons.logout
+        icon: "logout"
         command: Config.session.commands.logout
 
         KeyNavigation.down: shutdown
 
-        Component.onCompleted: forceActiveFocus()
-
         Connections {
-            function onLauncherChanged(): void {
-                if (!root.visibilities.launcher)
-                    logout.forceActiveFocus();
+            target: root.visibilities
+
+            function onSessionChanged(): void {
+                if (root.visibilities.session)
+                    logout.focus = true;
             }
 
-            target: root.visibilities
+            function onLauncherChanged(): void {
+                if (root.visibilities.session && !root.visibilities.launcher)
+                    logout.focus = true;
+            }
         }
     }
 
     SessionButton {
         id: shutdown
 
-        icon: Config.session.icons.shutdown
+        icon: "power_settings_new"
         command: Config.session.commands.shutdown
 
         KeyNavigation.up: logout
@@ -46,21 +53,21 @@ Column {
     }
 
     AnimatedImage {
-        width: Tokens.sizes.session.button
-        height: Tokens.sizes.session.button
-        sourceSize.width: width * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
+        width: Config.session.sizes.button
+        height: Config.session.sizes.button
+        sourceSize.width: width
+        sourceSize.height: height
 
         playing: visible
         asynchronous: true
-        speed: Config.general.sessionGifSpeed
+        speed: 0.7
         source: Paths.absolutePath(Config.paths.sessionGif)
-        fillMode: AnimatedImage.PreserveAspectFit
     }
 
     SessionButton {
         id: hibernate
 
-        icon: Config.session.icons.hibernate
+        icon: "downloading"
         command: Config.session.commands.hibernate
 
         KeyNavigation.up: shutdown
@@ -70,7 +77,7 @@ Column {
     SessionButton {
         id: reboot
 
-        icon: Config.session.icons.reboot
+        icon: "cached"
         command: Config.session.commands.reboot
 
         KeyNavigation.up: hibernate
@@ -82,24 +89,24 @@ Column {
         required property string icon
         required property list<string> command
 
-        implicitWidth: Tokens.sizes.session.button
-        implicitHeight: Tokens.sizes.session.button
+        implicitWidth: Config.session.sizes.button
+        implicitHeight: Config.session.sizes.button
 
-        radius: Tokens.rounding.large
+        radius: Appearance.rounding.large
         color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
 
         Keys.onEnterPressed: Quickshell.execDetached(button.command)
         Keys.onReturnPressed: Quickshell.execDetached(button.command)
         Keys.onEscapePressed: root.visibilities.session = false
         Keys.onPressed: event => {
-            if (!Config.session.vimKeybinds)
+            // ...existing code...
                 return;
 
             if (event.modifiers & Qt.ControlModifier) {
-                if ((event.key === Qt.Key_J || event.key === Qt.Key_N) && KeyNavigation.down) {
+                if (event.key === Qt.Key_J && KeyNavigation.down) {
                     KeyNavigation.down.focus = true;
                     event.accepted = true;
-                } else if ((event.key === Qt.Key_K || event.key === Qt.Key_P) && KeyNavigation.up) {
+                } else if (event.key === Qt.Key_K && KeyNavigation.up) {
                     KeyNavigation.up.focus = true;
                     event.accepted = true;
                 }
@@ -117,7 +124,10 @@ Column {
         StateLayer {
             radius: parent.radius
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            onClicked: Quickshell.execDetached(button.command)
+
+            function onClicked(): void {
+                Quickshell.execDetached(button.command);
+            }
         }
 
         MaterialIcon {
@@ -125,7 +135,7 @@ Column {
 
             text: button.icon
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            font.pointSize: Tokens.font.size.extraLarge
+            font.pointSize: Appearance.font.size.headlineLarge
             font.weight: 500
         }
     }

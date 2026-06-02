@@ -2,14 +2,14 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import "../components"
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
 import qs.components
-import qs.components.containers
 import qs.components.controls
 import qs.components.effects
+import qs.components.containers
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 DeviceDetails {
     id: root
@@ -43,7 +43,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Appearance.spacing.lg
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -69,7 +69,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Appearance.spacing.lg
 
                 SectionHeader {
                     title: qsTr("Device properties")
@@ -77,7 +77,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Tokens.spacing.small / 2
+                    contentSpacing: Appearance.spacing.sm / 2
 
                     PropertyRow {
                         label: qsTr("Interface")
@@ -100,7 +100,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Tokens.spacing.normal
+                spacing: Appearance.spacing.lg
 
                 SectionHeader {
                     title: qsTr("Connection information")

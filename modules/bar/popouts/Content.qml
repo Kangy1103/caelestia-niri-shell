@@ -1,33 +1,35 @@
 pragma ComponentBehavior: Bound
 
-import "./kblayout"
-import QtQuick
+import qs.components
+import qs.config
 import Quickshell
 import Quickshell.Services.SystemTray
-import Caelestia.Config
-import qs.components
+import QtQuick
 
 Item {
     id: root
 
-    required property PopoutState popouts
-    readonly property Popout currentPopout: content.children.find(c => c.shouldBeActive) ?? null
-    readonly property Item current: currentPopout?.item ?? null
+    required property Item wrapper
 
-    implicitWidth: (currentPopout?.implicitWidth ?? 0) + Tokens.padding.large * 2
-    implicitHeight: (currentPopout?.implicitHeight ?? 0) + Tokens.padding.large * 2
+    anchors.centerIn: parent
+
+    implicitWidth: (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Appearance.padding.xl * 2
+    implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.xl * 2
+
+    // Persistent storage for the password network - survives network popout deactivation
+    property var pendingPasswordNetwork: null
 
     Item {
         id: content
 
         anchors.fill: parent
-        anchors.margins: Tokens.padding.large
+        anchors.margins: Appearance.padding.xl
 
         Popout {
-            name: "activewindow"
-            sourceComponent: ActiveWindow {
-                popouts: root.popouts
-            }
+            name: "wsWindow"
+            sourceComponent:
+            // Bind y to currentCenter for dynamic following
+            WsContextPopout {}
         }
 
         Popout {
@@ -35,16 +37,13 @@ Item {
 
             name: "network"
             sourceComponent: Network {
-                popouts: root.popouts
-                view: "wireless"
-            }
-        }
-
-        Popout {
-            name: "ethernet"
-            sourceComponent: Network {
-                popouts: root.popouts
-                view: "ethernet"
+                wrapper: root.wrapper
+                onPasswordNetworkChanged: {
+                    // Capture network to persistent storage whenever it changes
+                    if (passwordNetwork) {
+                        root.pendingPasswordNetwork = passwordNetwork;
+                    }
+                }
             }
         }
 
@@ -53,82 +52,44 @@ Item {
 
             name: "wirelesspassword"
             sourceComponent: WirelessPassword {
-                id: passwordComponent
-
-                popouts: root.popouts
-                network: (networkPopout.item as Network)?.passwordNetwork ?? null
-            }
-
-            Connections {
-                function onCurrentNameChanged() {
-                    // Update network immediately when password popout becomes active
-                    if (root.popouts.currentName === "wirelesspassword") {
-                        // Set network immediately if available
-                        if ((networkPopout.item as Network)?.passwordNetwork) {
-                            if (passwordPopout.item) {
-                                (passwordPopout.item as WirelessPassword).network = (networkPopout.item as Network).passwordNetwork;
-                            }
-                        }
-                        // Also try after a short delay in case networkPopout.item wasn't ready
-                        Qt.callLater(() => {
-                            if (passwordPopout.item && (networkPopout.item as Network)?.passwordNetwork) {
-                                (passwordPopout.item as WirelessPassword).network = (networkPopout.item as Network).passwordNetwork;
-                            }
-                        }, 100);
-                    }
-                }
-
-                target: root.popouts
-            }
-
-            Connections {
-                function onItemChanged() {
-                    // When network popout loads, update password popout if it's active
-                    if (root.popouts.currentName === "wirelesspassword" && passwordPopout.item) {
-                        Qt.callLater(() => {
-                            if ((networkPopout.item as Network)?.passwordNetwork) {
-                                (passwordPopout.item as WirelessPassword).network = (networkPopout.item as Network).passwordNetwork;
-                            }
-                        });
-                    }
-                }
-
-                target: networkPopout
+                wrapper: root.wrapper
+                // Use the persistent copy, not a binding to the network popout's item
+                network: root.pendingPasswordNetwork
             }
         }
 
         Popout {
             name: "bluetooth"
             sourceComponent: Bluetooth {
-                popouts: root.popouts
+                wrapper: root.wrapper
             }
         }
 
         Popout {
             name: "battery"
-            sourceComponent: Battery {}
+            source: "Battery.qml"
         }
 
         Popout {
             name: "audio"
             sourceComponent: Audio {
-                popouts: root.popouts
+                wrapper: root.wrapper
             }
         }
 
         Popout {
             name: "kblayout"
-            sourceComponent: KbLayout {}
+            source: "KbLayout.qml"
         }
 
         Popout {
             name: "lockstatus"
-            sourceComponent: LockStatus {}
+            source: "LockStatus.qml"
         }
 
         Repeater {
             model: ScriptModel {
-                values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
+                values: [...SystemTray.items.values]
             }
 
             Popout {
@@ -141,22 +102,22 @@ Item {
                 sourceComponent: trayMenuComp
 
                 Connections {
+                    target: root.wrapper
+
                     function onHasCurrentChanged(): void {
-                        if (root.popouts.hasCurrent && trayMenu.shouldBeActive) {
+                        if (root.wrapper.hasCurrent && trayMenu.shouldBeActive) {
                             trayMenu.sourceComponent = null;
                             trayMenu.sourceComponent = trayMenuComp;
                         }
                     }
-
-                    target: root.popouts
                 }
 
                 Component {
                     id: trayMenuComp
 
                     TrayMenu {
-                        popouts: root.popouts
-                        trayItem: trayMenu.modelData.menu // qmllint disable unresolved-type
+                        popouts: root.wrapper
+                        trayItem: trayMenu.modelData.menu
                     }
                 }
             }
@@ -167,10 +128,12 @@ Item {
         id: popout
 
         required property string name
-        readonly property bool shouldBeActive: root.popouts.currentName === name
+        property bool shouldBeActive: root.wrapper.currentName === name
 
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
 
+        asynchronous: true
         opacity: 0
         scale: 0.8
         active: false
@@ -194,7 +157,7 @@ Item {
                 SequentialAnimation {
                     Anim {
                         properties: "opacity,scale"
-                        type: Anim.StandardSmall
+                        duration: Appearance.anim.durations.small
                     }
                     PropertyAction {
                         target: popout

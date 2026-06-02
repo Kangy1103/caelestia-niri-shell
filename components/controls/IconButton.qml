@@ -1,7 +1,7 @@
-import QtQuick
-import Caelestia.Config
-import qs.components
+import ".."
 import qs.services
+import qs.config
+import QtQuick
 
 StyledRect {
     id: root
@@ -15,10 +15,12 @@ StyledRect {
     property alias icon: label.text
     property bool checked
     property bool toggle
-    property real padding: type === IconButton.Text ? Tokens.padding.small / 2 : Tokens.padding.smaller
+    property real padding: type === IconButton.Text ? Appearance.padding.xs / 2 : Appearance.padding.sm
     property alias font: label.font
     property int type: IconButton.Filled
     property bool disabled
+
+    readonly property bool hovered: stateLayer.containsMouse
 
     property alias stateLayer: stateLayer
     property alias label: label
@@ -44,7 +46,7 @@ StyledRect {
 
     onCheckedChanged: internalChecked = checked
 
-    radius: internalChecked ? Tokens.rounding.small : implicitHeight / 2 * Math.min(1, Tokens.rounding.scale)
+    radius: internalChecked ? Appearance.rounding.small : implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
     color: type === IconButton.Text ? "transparent" : disabled ? disabledColour : internalChecked ? activeColour : inactiveColour
 
     implicitWidth: implicitHeight
@@ -55,7 +57,8 @@ StyledRect {
 
         color: root.internalChecked ? root.activeOnColour : root.inactiveOnColour
         disabled: root.disabled
-        onClicked: {
+
+        function onClicked(): void {
             if (root.toggle)
                 root.internalChecked = !root.internalChecked;
             root.clicked();

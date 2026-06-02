@@ -1,11 +1,11 @@
-pragma ComponentBehavior: Bound
-
-import QtQuick
-import QtQuick.Layouts
-import Caelestia.Config
+import ".."
 import qs.components
 import qs.components.controls
+import qs.components.effects
 import qs.services
+import qs.config
+import QtQuick
+import QtQuick.Layouts
 
 StyledRect {
     id: root
@@ -14,45 +14,50 @@ StyledRect {
     property string icon
     property string label
     property string accent: "Secondary"
-    property real iconSize: Tokens.font.size.large
-    property real horizontalPadding: Tokens.padding.large
-    property real verticalPadding: Tokens.padding.normal
+    property real iconSize: Appearance.font.size.titleMedium
+    property real horizontalPadding: Appearance.padding.xl
+    property real verticalPadding: Appearance.padding.md
     property string tooltip: ""
-    property bool hovered: false
 
+    property bool hovered: false
     signal clicked
 
-    Component.onCompleted: hovered = toggleStateLayer.containsMouse
-
-    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Tokens.padding.normal * 2 : toggled ? Tokens.padding.small * 2 : 0)
-    implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
-    implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
-    radius: toggled || toggleStateLayer.pressed ? Tokens.rounding.small : Math.min(width, height) / 2 * Math.min(1, Tokens.rounding.scale)
-    color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
+    Component.onCompleted: {
+        hovered = toggleStateLayer.containsMouse;
+    }
 
     Connections {
+        target: toggleStateLayer
         function onContainsMouseChanged() {
             const newHovered = toggleStateLayer.containsMouse;
-            if (root.hovered !== newHovered) {
-                root.hovered = newHovered;
+            if (hovered !== newHovered) {
+                hovered = newHovered;
             }
         }
-
-        target: toggleStateLayer
     }
+
+    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Appearance.padding.md * 2 : toggled ? Appearance.padding.xs * 2 : 0)
+    implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
+    implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
+
+    radius: toggled || toggleStateLayer.pressed ? Appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Appearance.rounding.scale)
+    color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
 
     StateLayer {
         id: toggleStateLayer
 
         color: root.toggled ? Colours.palette[`m3on${root.accent}`] : Colours.palette[`m3on${root.accent}Container`]
-        onClicked: root.clicked()
+
+        function onClicked(): void {
+            root.clicked();
+        }
     }
 
     RowLayout {
         id: toggleBtnInner
 
         anchors.centerIn: parent
-        spacing: Tokens.spacing.normal
+        spacing: Appearance.spacing.lg
 
         MaterialIcon {
             id: toggleBtnIcon
@@ -69,7 +74,6 @@ StyledRect {
         }
 
         Loader {
-            asynchronous: true
             active: !!root.label
             visible: active
 
@@ -82,21 +86,21 @@ StyledRect {
 
     Behavior on radius {
         Anim {
-            type: Anim.FastSpatial
+            duration: Appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
         }
     }
 
     Behavior on Layout.preferredWidth {
         Anim {
-            type: Anim.FastSpatial
+            duration: Appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
         }
     }
 
     // Tooltip - positioned absolutely, doesn't affect layout
     Loader {
         id: tooltipLoader
-
-        asynchronous: true
         active: root.tooltip !== ""
         z: 10000
         width: 0

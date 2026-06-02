@@ -1,47 +1,66 @@
-import QtQuick
-import Quickshell
-import Quickshell.Widgets
-import Caelestia.Config
-import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
+import qs.config
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
 
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
-    required property Item osdPanel
-    required property Item sessionPanel
-    readonly property int padding: Tokens.padding.large
+    required property PersistentProperties visibilities
+    required property Item panel
+    readonly property int padding: Appearance.padding.xl
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
-    implicitWidth: Tokens.sizes.notifs.width + padding * 2
-    implicitHeight: {
+    implicitWidth: Config.notifs.sizes.width + padding * 2
+
+    property real _cachedContentHeight: 0
+
+    function _recalcContentHeight(): void {
         const count = list.count;
-        if (count === 0)
+        if (count === 0) {
+            _cachedContentHeight = 0;
+            return;
+        }
+
+        let height = (count - 1) * Appearance.spacing.md;
+        for (let i = 0; i < count; i++)
+            height += list.itemAtIndex(i)?.nonAnimHeight ?? 0;
+
+        _cachedContentHeight = height;
+    }
+
+    Connections {
+        target: list
+        function onCountChanged() { root._recalcContentHeight(); }
+    }
+
+    implicitHeight: {
+        const height = _cachedContentHeight;
+        if (height === 0)
             return 0;
 
-        let height = (count - 1) * Tokens.spacing.smaller;
-        for (let i = 0; i < count; i++)
-            height += (list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0;
+        let h = height;
+        if (visibilities && panel) {
+            if (visibilities.osd) {
+                const maxH = panel.osd.y - Config.border.rounding * 2 - padding * 2;
+                if (h > maxH)
+                    h = maxH;
+            }
 
-        if (visibilities.osd) {
-            const h = osdPanel.y - Config.border.rounding * 2 - padding * 2;
-            if (height > h)
-                height = h;
+            if (visibilities.session) {
+                const maxH = panel.session.y - Config.border.rounding * 2 - padding * 2;
+                if (h > maxH)
+                    h = maxH;
+            }
         }
 
-        if (visibilities.session) {
-            const h = sessionPanel.y - Config.border.rounding * 2 - padding * 2;
-            if (height > h)
-                height = h;
-        }
-
-        return Math.min(((QsWindow.window as QsWindow)?.screen?.height ?? 0) - Config.border.thickness * 2, height + padding * 2);
+        return Math.min((QsWindow.window?.screen?.height ?? 0) - Config.border.thickness * 2, h + padding * 2);
     }
 
     ClippingWrapperRectangle {
@@ -49,22 +68,92 @@ Item {
         anchors.margins: root.padding
 
         color: "transparent"
-        radius: Tokens.rounding.normal
+        radius: Appearance.rounding.normal
 
         StyledListView {
             id: list
 
             model: ScriptModel {
-                values: Notifs.popups.filter(n => !n.closed)
+                values: [...Notifs.popups].reverse()
             }
 
             anchors.fill: parent
 
             orientation: Qt.Vertical
             spacing: 0
-            cacheBuffer: (QsWindow.window as QsWindow)?.screen.height ?? 0
+            cacheBuffer: QsWindow.window?.screen.height ?? 0
 
-            delegate: NotifWrapper {}
+            delegate: Item {
+                id: wrapper
+
+                required property Notifs.Notif modelData
+                required property int index
+                readonly property alias nonAnimHeight: notif.nonAnimHeight
+                property int idx
+
+                onIndexChanged: {
+                    if (index !== -1)
+                        idx = index;
+                }
+
+                implicitWidth: notif.implicitWidth
+                implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Appearance.spacing.md)
+
+                ListView.onRemove: removeAnim.start()
+
+                SequentialAnimation {
+                    id: removeAnim
+
+                    PropertyAction {
+                        target: wrapper
+                        property: "ListView.delayRemove"
+                        value: true
+                    }
+                    PropertyAction {
+                        target: wrapper
+                        property: "enabled"
+                        value: false
+                    }
+                    PropertyAction {
+                        target: wrapper
+                        property: "implicitHeight"
+                        value: 0
+                    }
+                    PropertyAction {
+                        target: wrapper
+                        property: "z"
+                        value: 1
+                    }
+                    Anim {
+                        target: notif
+                        property: "x"
+                        to: (notif.x >= 0 ? Config.notifs.sizes.width : -Config.notifs.sizes.width) * 2
+                        duration: Appearance.anim.durations.normal
+                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                    }
+                    PropertyAction {
+                        target: wrapper
+                        property: "ListView.delayRemove"
+                        value: false
+                    }
+                }
+
+                ClippingRectangle {
+                    anchors.top: parent.top
+                    anchors.topMargin: wrapper.idx === 0 ? 0 : Appearance.spacing.md
+
+                    color: "transparent"
+                    radius: notif.radius
+                    implicitWidth: notif.implicitWidth
+                    implicitHeight: notif.implicitHeight
+
+                    Notification {
+                        id: notif
+
+                        modelData: wrapper.modelData
+                    }
+                }
+            }
 
             move: Transition {
                 Anim {
@@ -89,9 +178,9 @@ Item {
 
                     let height = 0;
                     for (let i = 0; i < count; i++) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.smaller;
+                        height += (list.itemAtIndex(i)?.nonAnimHeight ?? 0) + Appearance.spacing.md;
 
-                        if (height - Tokens.spacing.smaller >= scrollY)
+                        if (height - Appearance.spacing.md >= scrollY)
                             return i;
                     }
 
@@ -110,9 +199,9 @@ Item {
 
                     let height = 0;
                     for (let i = count - 1; i >= 0; i--) {
-                        height += ((list.itemAtIndex(i) as NotifWrapper)?.nonAnimHeight ?? 0) + Tokens.spacing.smaller;
+                        height += (list.itemAtIndex(i)?.nonAnimHeight ?? 0) + Appearance.spacing.md;
 
-                        if (height - Tokens.spacing.smaller >= scrollY)
+                        if (height - Appearance.spacing.md >= scrollY)
                             return count - i - 1;
                     }
 
@@ -126,80 +215,9 @@ Item {
         Anim {}
     }
 
-    component NotifWrapper: Item {
-        id: wrapper
-
-        required property NotifData modelData
-        required property int index
-        readonly property alias nonAnimHeight: notif.nonAnimHeight
-        property int idx
-
-        onIndexChanged: {
-            if (index !== -1)
-                idx = index;
-        }
-
-        implicitWidth: notif.implicitWidth
-        implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Tokens.spacing.smaller)
-
-        ListView.onRemove: removeAnim.start()
-
-        SequentialAnimation {
-            id: removeAnim
-
-            PropertyAction {
-                target: wrapper
-                property: "ListView.delayRemove"
-                value: true
-            }
-            PropertyAction {
-                target: wrapper
-                property: "enabled"
-                value: false
-            }
-            PropertyAction {
-                target: wrapper
-                property: "implicitHeight"
-                value: 0
-            }
-            PropertyAction {
-                target: wrapper
-                property: "z"
-                value: 1
-            }
-            Anim {
-                target: notif
-                property: "x"
-                to: (notif.x >= 0 ? wrapper.Tokens.sizes.notifs.width : -wrapper.Tokens.sizes.notifs.width) * 2
-                duration: Tokens.anim.durations.normal
-                easing: Tokens.anim.emphasized
-            }
-            PropertyAction {
-                target: wrapper
-                property: "ListView.delayRemove"
-                value: false
-            }
-        }
-
-        ClippingRectangle {
-            anchors.top: parent.top
-            anchors.topMargin: wrapper.idx === 0 ? 0 : Tokens.spacing.smaller
-
-            color: "transparent"
-            radius: notif.radius
-            implicitWidth: notif.implicitWidth
-            implicitHeight: notif.implicitHeight
-
-            Notification {
-                id: notif
-
-                modelData: wrapper.modelData
-            }
-        }
-    }
-
     component Anim: NumberAnimation {
-        duration: Tokens.anim.durations.expressiveDefaultSpatial
-        easing: Tokens.anim.expressiveDefaultSpatial
+        duration: Appearance.anim.durations.expressiveDefaultSpatial
+        easing.type: Easing.BezierSpline
+        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
     }
 }

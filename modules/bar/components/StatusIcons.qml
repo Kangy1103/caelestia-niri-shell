@@ -1,14 +1,14 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Layouts
-import Quickshell
-import Quickshell.Bluetooth
-import Quickshell.Services.UPower
-import Caelestia.Config
 import qs.components
 import qs.services
 import qs.utils
+import qs.config
+import Quickshell
+import Quickshell.Bluetooth
+import Quickshell.Services.UPower
+import QtQuick
+import QtQuick.Layouts
 
 StyledRect {
     id: root
@@ -17,11 +17,11 @@ StyledRect {
     readonly property alias items: iconColumn
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Tokens.rounding.full
+    radius: Appearance.rounding.full
 
     clip: true
-    implicitWidth: Tokens.sizes.bar.innerWidth
-    implicitHeight: iconColumn.implicitHeight + Tokens.padding.normal * 2 - (Config.bar.status.showLockStatus && !Hypr.capsLock && !Hypr.numLock ? iconColumn.spacing : 0)
+    implicitWidth: Config.bar.sizes.innerWidth
+    implicitHeight: iconColumn.implicitHeight + Appearance.padding.md * 2 - (Config.bar.status.showLockStatus && !Niri.capsLock && !Niri.numLock ? iconColumn.spacing : 0)
 
     ColumnLayout {
         id: iconColumn
@@ -29,9 +29,9 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Tokens.padding.normal
+        anchors.bottomMargin: Appearance.padding.md
 
-        spacing: Tokens.spacing.smaller / 2
+        spacing: Appearance.spacing.md / 2
 
         // Lock keys status
         WrappedLoader {
@@ -43,15 +43,15 @@ StyledRect {
 
                 Item {
                     implicitWidth: capslockIcon.implicitWidth
-                    implicitHeight: Hypr.capsLock ? capslockIcon.implicitHeight : 0
+                    implicitHeight: Niri.capsLock ? capslockIcon.implicitHeight : 0
 
                     MaterialIcon {
                         id: capslockIcon
 
                         anchors.centerIn: parent
 
-                        scale: Hypr.capsLock ? 1 : 0.5
-                        opacity: Hypr.capsLock ? 1 : 0
+                        scale: Niri.capsLock ? 1 : 0.5
+                        opacity: Niri.capsLock ? 1 : 0
 
                         text: "keyboard_capslock_badge"
                         color: root.colour
@@ -71,18 +71,18 @@ StyledRect {
                 }
 
                 Item {
-                    Layout.topMargin: Hypr.capsLock && Hypr.numLock ? iconColumn.spacing : 0
+                    Layout.topMargin: Niri.capsLock && Niri.numLock ? iconColumn.spacing : 0
 
                     implicitWidth: numlockIcon.implicitWidth
-                    implicitHeight: Hypr.numLock ? numlockIcon.implicitHeight : 0
+                    implicitHeight: Niri.numLock ? numlockIcon.implicitHeight : 0
 
                     MaterialIcon {
                         id: numlockIcon
 
                         anchors.centerIn: parent
 
-                        scale: Hypr.numLock ? 1 : 0.5
-                        opacity: Hypr.numLock ? 1 : 0
+                        scale: Niri.numLock ? 1 : 0.5
+                        opacity: Niri.numLock ? 1 : 0
 
                         text: "looks_one"
                         color: root.colour
@@ -134,32 +134,20 @@ StyledRect {
 
             sourceComponent: StyledText {
                 animate: true
-                text: Hypr.kbLayout
+                text: Niri.kbLayout
                 color: root.colour
-                font.family: Tokens.font.family.mono
+                font.family: Appearance.font.family.mono
             }
         }
 
         // Network icon
         WrappedLoader {
             name: "network"
-            active: Config.bar.status.showNetwork && (!Nmcli.activeEthernet || Config.bar.status.showWifi)
+            active: Config.bar.status.showNetwork
 
             sourceComponent: MaterialIcon {
                 animate: true
-                text: Nmcli.active ? Icons.getNetworkIcon(Nmcli.active.strength ?? 0) : "wifi_off"
-                color: root.colour
-            }
-        }
-
-        // Ethernet icon
-        WrappedLoader {
-            name: "ethernet"
-            active: Config.bar.status.showNetwork && Nmcli.activeEthernet
-
-            sourceComponent: MaterialIcon {
-                animate: true
-                text: "cable"
+                text: Network.active ? Icons.getNetworkIcon(Network.active.strength ?? 0) : "wifi_off"
                 color: root.colour
             }
         }
@@ -172,15 +160,15 @@ StyledRect {
             active: Config.bar.status.showBluetooth
 
             sourceComponent: ColumnLayout {
-                spacing: Tokens.spacing.smaller / 2
+                spacing: Appearance.spacing.md / 2
 
                 // Bluetooth icon
                 MaterialIcon {
                     animate: true
                     text: {
-                        if (!Bluetooth.defaultAdapter?.enabled) // qmllint disable unresolved-type
+                        if (!Bluetooth.defaultAdapter?.enabled)
                             return "bluetooth_disabled";
-                        if (Bluetooth.devices.values.some(d => d.connected)) // qmllint disable unresolved-type
+                        if (Bluetooth.devices.values.some(d => d.connected))
                             return "bluetooth_connected";
                         return "bluetooth";
                     }
@@ -190,7 +178,7 @@ StyledRect {
                 // Connected bluetooth devices
                 Repeater {
                     model: ScriptModel {
-                        values: Bluetooth.devices.values.filter(d => d.state !== BluetoothDeviceState.Disconnected) // qmllint disable unresolved-type
+                        values: Bluetooth.devices.values.filter(d => d.state !== BluetoothDeviceState.Disconnected)
                     }
 
                     MaterialIcon {
@@ -199,26 +187,26 @@ StyledRect {
                         required property BluetoothDevice modelData
 
                         animate: true
-                        text: Icons.getBluetoothIcon(modelData?.icon)
+                        text: Icons.getBluetoothIcon(modelData.icon)
                         color: root.colour
                         fill: 1
 
                         SequentialAnimation on opacity {
-                            running: device.modelData?.state !== BluetoothDeviceState.Connected // qmllint disable unresolved-type
+                            running: device.modelData.state !== BluetoothDeviceState.Connected
                             alwaysRunToEnd: true
                             loops: Animation.Infinite
 
                             Anim {
                                 from: 1
                                 to: 0
-                                duration: Tokens.anim.durations.large
-                                easing: Tokens.anim.standardAccel
+                                duration: Appearance.anim.durations.large
+                                easing.bezierCurve: Appearance.anim.curves.standardAccel
                             }
                             Anim {
                                 from: 0
                                 to: 1
-                                duration: Tokens.anim.durations.large
-                                easing: Tokens.anim.standardDecel
+                                duration: Appearance.anim.durations.large
+                                easing.bezierCurve: Appearance.anim.curves.standardDecel
                             }
                         }
                     }
@@ -247,7 +235,7 @@ StyledRect {
                     }
 
                     const perc = UPower.displayDevice.percentage;
-                    const charging = [UPowerDeviceState.Charging, UPowerDeviceState.FullyCharged, UPowerDeviceState.PendingCharge].includes(UPower.displayDevice.state);
+                    const charging = !UPower.onBattery;
                     if (perc === 1)
                         return charging ? "battery_charging_full" : "battery_full";
                     let level = Math.floor(perc * 7);
@@ -264,8 +252,8 @@ StyledRect {
     component WrappedLoader: Loader {
         required property string name
 
-        asynchronous: true
         Layout.alignment: Qt.AlignHCenter
+        asynchronous: true
         visible: active
     }
 }

@@ -1,106 +1,77 @@
 pragma Singleton
 
-import QtQml
+// import qs.components.misc
+import qs.config
+import qs.services
+import Caelestia
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
-import Caelestia
-import Caelestia.Config
-import qs.components.misc
+import QtQuick
 
 Singleton {
     id: root
 
     readonly property list<MprisPlayer> list: Mpris.players.values
-    readonly property MprisPlayer active: props.manualActive ?? list.find(p => getIdentity(p) === GlobalConfig.services.defaultPlayer) ?? list[0] ?? null
-    property alias manualActive: props.manualActive
+    readonly property MprisPlayer active: manualActive ?? list.find(p => getIdentity(p) === Config.services.defaultPlayer) ?? list[0] ?? null
+    property MprisPlayer manualActive
 
     function getIdentity(player: MprisPlayer): string {
-        const alias = GlobalConfig.services.playerAliases.find(a => a.from === player.identity);
+        const alias = Config.services.playerAliases.find(a => a.from === player.identity);
         return alias?.to ?? player.identity;
     }
 
-    function getArtUrl(player: MprisPlayer): string {
-        if (!player)
-            return "";
-        if (player.trackArtUrl)
-            return player.trackArtUrl;
-
-        const url = player.metadata["xesam:url"] ?? "";
-        if (url.startsWith("https://www.youtube.com/watch")) {
-            // Fallback for youtube
-            const id = url.match(/[?&]v=([\w-]{11})/)?.[1];
-            return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
-        }
-        return "";
-    }
-
     Connections {
-        function onPostTrackChanged() {
-            if (!GlobalConfig.utilities.toasts.nowPlaying) {
-                return;
-            }
-            if (root.active.trackArtist != "" && root.active.trackTitle != "") {
-                Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(root.active.trackArtist).arg(root.active.trackTitle), "music_note");
-            }
-        }
-
         target: root.active
-    }
 
-    PersistentProperties {
-        id: props
-
-        property MprisPlayer manualActive
-
-        reloadableId: "players"
-    }
-
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "mediaToggle"
-        description: "Toggle media playback"
-        onPressed: {
-            const active = root.active;
-            if (active && active.canTogglePlaying)
-                active.togglePlaying();
+        function onTrackChanged(): void {
+            if (!Config.utilities.toasts.nowPlaying)
+                return;
+            if (root.active)
+                Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(root.active.trackArtist).arg(root.active.trackTitle), "music_note");
         }
     }
 
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "mediaPrev"
-        description: "Previous track"
-        onPressed: {
-            const active = root.active;
-            if (active && active.canGoPrevious)
-                active.previous();
-        }
-    }
+    // Niri does not have global shortcuts yet ;).
+    // CustomShortcut {
+    //     name: "mediaToggle"
+    //     description: "Toggle media playback"
+    //     onPressed: {
+    //         const active = root.active;
+    //         if (active && active.canTogglePlaying)
+    //             active.togglePlaying();
+    //     }
+    // }
 
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "mediaNext"
-        description: "Next track"
-        onPressed: {
-            const active = root.active;
-            if (active && active.canGoNext)
-                active.next();
-        }
-    }
+    // CustomShortcut {
+    //     name: "mediaPrev"
+    //     description: "Previous track"
+    //     onPressed: {
+    //         const active = root.active;
+    //         if (active && active.canGoPrevious)
+    //             active.previous();
+    //     }
+    // }
 
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "mediaStop"
-        description: "Stop media playback"
-        onPressed: root.active?.stop()
-    }
+    // CustomShortcut {
+    //     name: "mediaNext"
+    //     description: "Next track"
+    //     onPressed: {
+    //         const active = root.active;
+    //         if (active && active.canGoNext)
+    //             active.next();
+    //     }
+    // }
+
+    // CustomShortcut {
+    //     name: "mediaStop"
+    //     description: "Stop media playback"
+    //     onPressed: root.active?.stop()
+    // }
 
     IpcHandler {
+        target: "mpris"
+
         function getActive(prop: string): string {
             const active = root.active;
             return active ? active[prop] ?? "Invalid property" : "No active player";
@@ -143,7 +114,5 @@ Singleton {
         function stop(): void {
             root.active?.stop();
         }
-
-        target: "mpris"
     }
 }

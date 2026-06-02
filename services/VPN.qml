@@ -1,26 +1,21 @@
 pragma Singleton
 
-import QtQuick
 import Quickshell
 import Quickshell.Io
 import Caelestia
-import Caelestia.Config
+import QtQuick
+import qs.config
+import qs.services
 
 Singleton {
     id: root
 
     property bool connected: false
-    property var status: ({
-            connected: false,
-            state: "disconnected",
-            reason: "",
-            authUrl: ""
-        })
 
     readonly property bool connecting: connectProc.running || disconnectProc.running
-    readonly property bool enabled: GlobalConfig.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false)
+    readonly property bool enabled: Config.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false)
     readonly property var providerInput: {
-        const enabledProvider = GlobalConfig.utilities.vpn.provider.find(p => typeof p === "object" ? (p.enabled === true) : false);
+        const enabledProvider = Config.utilities.vpn.provider.find(p => typeof p === "object" ? (p.enabled === true) : false);
         return enabledProvider || "wireguard";
     }
     readonly property bool isCustomProvider: typeof providerInput === "object"
@@ -59,7 +54,7 @@ Singleton {
                 displayName: "Warp"
             },
             "netbird": {
-                connectCmd: ["netbird", "up", "--no-browser"],
+                connectCmd: ["netbird", "up"],
                 disconnectCmd: ["netbird", "down"],
                 interface: "wt0",
                 displayName: "NetBird"
@@ -81,10 +76,6 @@ Singleton {
     }
 
     function connect(): void {
-        if (status.state === "needs-auth" && status.authUrl) {
-            emitStatusToast(status);
-            return;
-        }
         if (!connected && !connecting && root.currentConfig && root.currentConfig.connectCmd) {
             connectProc.exec(root.currentConfig.connectCmd);
         }
@@ -97,7 +88,11 @@ Singleton {
     }
 
     function toggle(): void {
-        connected ? disconnect() : connect();
+        if (connected) {
+            disconnect();
+        } else {
+            connect();
+        }
     }
 
     function checkStatus(): void {
@@ -106,221 +101,16 @@ Singleton {
         }
     }
 
-    function getStatusCommand(): var {
-        switch (providerName) {
-        case "tailscale":
-            return ["tailscale", "status", "--json"];
-        case "netbird":
-            return ["netbird", "status", "--json"];
-        case "warp":
-            return ["warp-cli", "status"];
-        case "wireguard":
-            return ["ip", "link", "show"];
-        default:
-            return ["ip", "link", "show"];
-        }
-    }
-
-    function parseTailscaleStatus(output: string): var {
-        const status = {
-            connected: false,
-            state: "disconnected",
-            reason: "",
-            authUrl: ""
-        };
-
-        // Handle empty or whitespace-only output
-        if (!output || output.trim().length === 0) {
-            return status;
-        }
-
-        // Check for common non-JSON states first
-        if (output.includes("Logged out") || output.includes("Stopped") || output.includes("not running") || output.includes("Tailscale is not running")) {
-            status.state = "disconnected";
-            return status;
-        }
-
-        // Try to parse as JSON
-        try {
-            const data = JSON.parse(output);
-            const backendState = data.BackendState || "";
-
-            if (backendState === "Running") {
-                status.connected = true;
-                status.state = "connected";
-            } else if (backendState === "Starting") {
-                status.state = "connecting";
-            } else if (backendState === "NeedsLogin" || backendState === "NeedsMachineAuth") {
-                status.state = "needs-auth";
-                status.reason = backendState === "NeedsLogin" ? "Login required" : "Machine authorization required";
-                status.authUrl = data.AuthURL || "";
-            }
-        } catch (e) {
-            // JSON parsing failed - treat as disconnected unless it looks like an error
-            if (output.includes("error") || output.includes("Error") || output.includes("failed")) {
-                status.state = "disconnected";
-                status.reason = "Tailscale may not be running";
-            } else {
-                status.state = "disconnected";
-            }
-        }
-        return status;
-    }
-
-    function parseNetBirdStatus(output: string): var {
-        const status = {
-            connected: false,
-            state: "disconnected",
-            reason: "",
-            authUrl: ""
-        };
-        try {
-            const data = JSON.parse(output);
-            const mgmtConnected = data.management?.connected;
-            const signalConnected = data.signal?.connected;
-
-            if (mgmtConnected && signalConnected) {
-                status.connected = true;
-                status.state = "connected";
-            } else if (data.management?.error) {
-                const error = data.management.error;
-                if (error.includes("auth") || error.includes("login")) {
-                    status.state = "needs-auth";
-                    status.reason = "Authentication required";
-                } else {
-                    status.reason = error;
-                }
-            }
-        } catch (e) {
-            status.state = "error";
-            status.reason = "Failed to parse status";
-        }
-        return status;
-    }
-
-    function parseWarpStatus(output: string): var {
-        const status = {
-            connected: false,
-            state: "disconnected",
-            reason: "",
-            authUrl: ""
-        };
-
-        if (output.includes("Connected")) {
-            status.connected = true;
-            status.state = "connected";
-        } else if (output.includes("Connecting")) {
-            status.state = "connecting";
-        } else if (output.includes("Unable") || output.includes("Registration Missing") || output.includes("registration") || output.includes("register")) {
-            status.state = "needs-auth";
-            status.reason = "WARP registration required";
-        } else if (!output.includes("Disconnected")) {
-            status.state = "error";
-            status.reason = "Unknown WARP status";
-        }
-        return status;
-    }
-
-    function parseWireGuardStatus(output: string): var {
-        const status = {
-            connected: false,
-            state: "disconnected",
-            reason: "",
-            authUrl: ""
-        };
-        const iface = root.currentConfig?.interface || "";
-
-        if (iface && output.includes(iface + ":")) {
-            status.connected = true;
-            status.state = "connected";
-        }
-        return status;
-    }
-
-    function parseStatusOutput(output: string): var {
-        switch (providerName) {
-        case "tailscale":
-            return parseTailscaleStatus(output);
-        case "netbird":
-            return parseNetBirdStatus(output);
-        case "warp":
-            return parseWarpStatus(output);
-        case "wireguard":
-        default:
-            return parseWireGuardStatus(output);
-        }
-    }
-
-    function extractAuthUrl(text: string): string {
-        const urlMatch = text.match(/(https?:\/\/[^\s]+)/);
-        return urlMatch ? urlMatch[1] : "";
-    }
-
-    function createAuthStatus(authUrl: string): var {
-        return {
-            connected: false,
-            state: "needs-auth",
-            reason: "Authentication required",
-            authUrl: authUrl
-        };
-    }
-
-    function updateStatus(newStatus: var): void {
-        const oldState = status.state;
-        if (newStatus.state === "needs-auth" && !newStatus.authUrl && status.authUrl) {
-            newStatus.authUrl = status.authUrl;
-        }
-        status = newStatus;
-        root.connected = newStatus.connected;
-
-        if (oldState !== newStatus.state) {
-            emitStatusToast(newStatus);
-        }
-    }
-
-    function emitStatusToast(statusObj: var): void {
-        if (!GlobalConfig.utilities.toasts.vpnChanged)
+    onConnectedChanged: {
+        if (!Config.utilities.toasts.vpnChanged)
             return;
 
         const displayName = root.currentConfig ? (root.currentConfig.displayName || "VPN") : "VPN";
-
-        switch (statusObj.state) {
-        case "connected":
+        if (connected) {
             Toaster.toast(qsTr("VPN connected"), qsTr("Connected to %1").arg(displayName), "vpn_key");
-            break;
-        case "disconnected":
-            if (status.connected) {
-                Toaster.toast(qsTr("VPN disconnected"), qsTr("Disconnected from %1").arg(displayName), "vpn_key_off");
-            }
-            break;
-        case "needs-auth":
-            const authMsg = statusObj.reason || "Authentication required";
-            Toaster.toast(qsTr("VPN authentication required"), qsTr("%1: %2").arg(displayName).arg(authMsg), "vpn_lock");
-            break;
-        case "error":
-            if (status.state === "connected" || status.state === "connecting" || status.state === "needs-auth") {
-                const errMsg = statusObj.reason || "Unknown error";
-                Toaster.toast(qsTr("VPN error"), qsTr("%1: %2").arg(displayName).arg(errMsg), "error");
-            }
-            break;
+        } else {
+            Toaster.toast(qsTr("VPN disconnected"), qsTr("Disconnected from %1").arg(displayName), "vpn_key_off");
         }
-    }
-
-    onStatusChanged: {
-        if (providerName === "warp" && status.state === "needs-auth" && status.reason.includes("registration")) {
-            warpRegisterProc.exec(["warp-cli", "registration", "new"]);
-        }
-    }
-
-    onProviderNameChanged: {
-        status = {
-            connected: false,
-            state: "disconnected",
-            reason: "",
-            authUrl: ""
-        };
-        root.connected = false;
-        statusCheckTimer.start();
     }
 
     Component.onCompleted: root.enabled && statusCheckTimer.start()
@@ -338,47 +128,15 @@ Singleton {
     Process {
         id: statusProc
 
-        command: root.getStatusCommand()
-        // qmllint disable incompatible-type
+        command: ["ip", "link", "show"]
         environment: ({
-                // qmllint enable incompatible-type
                 LANG: "C.UTF-8",
                 LC_ALL: "C.UTF-8"
             })
         stdout: StdioCollector {
             onStreamFinished: {
-                const newStatus = root.parseStatusOutput(text);
-                root.updateStatus(newStatus);
-            }
-        }
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.trim().length > 0) {
-                    if (text.includes("doesn't appear to be running") || text.includes("failed to connect to local tailscaled") || text.includes("daemon is not running") || text.includes("not running") && (text.includes("netbird") || text.includes("warp"))) {
-                        let cmd = "sudo systemctl start ";
-                        switch (root.providerName) {
-                        case "tailscale":
-                            cmd += "tailscaled";
-                            break;
-                        case "netbird":
-                            cmd += "netbird";
-                            break;
-                        case "warp":
-                            cmd += "warp-svc";
-                            break;
-                        default:
-                            cmd += root.providerName + "d";
-                            break;
-                        }
-                        const errorStatus = {
-                            connected: false,
-                            state: "disconnected",
-                            reason: `Service not running (run: ${cmd})`,
-                            authUrl: ""
-                        };
-                        root.updateStatus(errorStatus);
-                    }
-                }
+                const iface = root.currentConfig ? root.currentConfig.interface : "";
+                root.connected = iface && text.includes(iface + ":");
             }
         }
     }
@@ -386,59 +144,12 @@ Singleton {
     Process {
         id: connectProc
 
-        onExited: exitCode => { // qmllint disable signal-handler-parameters
-            if (exitCode !== 0) {
-                return;
-            }
-
-            if (root.providerName === "tailscale") {
-                Qt.callLater(() => {
-                    if (root.status.state !== "needs-auth") {
-                        statusCheckTimer.start();
-                    }
-                });
-            } else if (root.status.state !== "needs-auth") {
-                statusCheckTimer.start();
-            }
-        }
-        stdout: SplitParser {
-            onRead: data => {
-                const authUrl = root.extractAuthUrl(data);
-                if (authUrl) {
-                    root.updateStatus(root.createAuthStatus(authUrl));
-                }
-            }
-        }
+        onExited: statusCheckTimer.start()
         stderr: StdioCollector {
             onStreamFinished: {
                 const error = text.trim();
-
-                if (error.includes("Access denied") || error.includes("checkprefs access denied")) {
-                    const errorStatus = {
-                        connected: false,
-                        state: "disconnected",
-                        reason: "Permission denied. Run in terminal: sudo tailscale set --operator=$USER",
-                        authUrl: ""
-                    };
-                    root.updateStatus(errorStatus);
-                    return;
-                }
-
-                if (error.includes("Unknown device type") || error.includes("Protocol not supported")) {
-                    const errorStatus = {
-                        connected: false,
-                        state: "disconnected",
-                        reason: "WireGuard module not loaded. Run: sudo modprobe wireguard",
-                        authUrl: ""
-                    };
-                    root.updateStatus(errorStatus);
-                    return;
-                }
-
-                const authUrl = root.extractAuthUrl(error);
-
-                if (authUrl) {
-                    root.updateStatus(root.createAuthStatus(authUrl));
+                if (error && !error.includes("[#]") && !error.includes("already exists")) {
+                    console.warn("VPN connection error:", error);
                 } else if (error.includes("already exists")) {
                     root.connected = true;
                 }
@@ -449,23 +160,13 @@ Singleton {
     Process {
         id: disconnectProc
 
-        onExited: statusCheckTimer.start() // qmllint disable signal-handler-parameters
+        onExited: statusCheckTimer.start()
         stderr: StdioCollector {
             onStreamFinished: {
                 const error = text.trim();
                 if (error && !error.includes("[#]")) {
-                    console.warn(lc, "Disconnection error:", error);
+                    console.warn("VPN disconnection error:", error);
                 }
-            }
-        }
-    }
-
-    Process {
-        id: warpRegisterProc
-
-        onExited: exitCode => { // qmllint disable signal-handler-parameters
-            if (exitCode === 0) {
-                statusCheckTimer.start();
             }
         }
     }
@@ -475,12 +176,5 @@ Singleton {
 
         interval: 500
         onTriggered: root.checkStatus()
-    }
-
-    LoggingCategory {
-        id: lc
-
-        name: "caelestia.qml.services.vpn"
-        defaultLogLevel: LoggingCategory.Info
     }
 }

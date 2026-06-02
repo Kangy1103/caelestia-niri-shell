@@ -21,6 +21,8 @@ Singleton {
     property var pendingConnection: null
     property list<string> savedConnections: []
     property list<string> savedConnectionSsids: []
+    property bool isconnectionFailed: false
+    property string _currentssid: ""
 
     signal connectionFailed(string ssid)
 
@@ -50,7 +52,37 @@ Singleton {
         Nmcli.rescanWifi();
     }
 
-    function connectToNetwork(ssid: string, password: string, bssid: string, callback: var): void {
+    // Bar-compatible: single-arg connect
+    function connectToNetwork(ssid: string): void {
+        isconnectionFailed = false;
+        _currentssid = ssid;
+        Nmcli.connectToNetworkWithPasswordCheck(ssid, true, result => {
+            if (result && result.success) {
+                // connected
+            } else if (result && result.needsPassword) {
+                isconnectionFailed = true;
+            } else {
+                isconnectionFailed = true;
+                root.connectionFailed(ssid);
+            }
+        }, "");
+    }
+
+    // Bar-compatible: connect with password
+    function connectToSecureNetwork(ssid: string, password: string): void {
+        isconnectionFailed = false;
+        _currentssid = ssid;
+        Nmcli.connectToNetwork(ssid, password, "", result => {
+            if (result && result.success) {
+                // connected
+            } else {
+                isconnectionFailed = true;
+                root.connectionFailed(ssid);
+            }
+        });
+    }
+
+    function connectToNetworkFull(ssid: string, password: string, bssid: string, callback: var): void {
         // Set up pending connection tracking if callback provided
         if (callback) {
             const hasBssid = bssid !== undefined && bssid !== null && bssid.length > 0;
@@ -280,7 +312,7 @@ Singleton {
         }, 100);
     }
 
-    // Sync saved connections from Nmcli when they're updated
+    // Sync saved connections and networks from Nmcli when they're updated
     Connections {
         function onSavedConnectionsChanged() {
             root.savedConnections = Nmcli.savedConnections;
@@ -288,6 +320,24 @@ Singleton {
 
         function onSavedConnectionSsidsChanged() {
             root.savedConnectionSsids = Nmcli.savedConnectionSsids;
+        }
+
+        function onNetworksChanged() {
+            syncNetworksFromNmcli();
+        }
+
+        function onActiveChanged() {
+            syncNetworksFromNmcli();
+            // Reset connection failed state on successful connection
+            if (Nmcli.active && Nmcli.active.ssid === root._currentssid) {
+                root.isconnectionFailed = false;
+                root._currentssid = "";
+            }
+        }
+
+        function onConnectionFailed(ssid) {
+            root.isconnectionFailed = true;
+            root.connectionFailed(ssid);
         }
 
         target: Nmcli

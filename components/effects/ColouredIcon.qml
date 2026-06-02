@@ -1,35 +1,26 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import Quickshell.Widgets
 import Caelestia
+import Quickshell.Widgets
+import QtQuick
 
 IconImage {
     id: root
 
     required property color colour
+    property alias dominantColour: analyser.dominantColour
 
     asynchronous: true
+    visible: status === Image.Ready || status === Image.Loading
 
-    layer.enabled: true
+    layer.enabled: status === Image.Ready
     layer.effect: Colouriser {
-        sourceColor: analyser.dominantColour
+        sourceColor: root.dominantColour
         colorizationColor: root.colour
-    }
-
-    layer.onEnabledChanged: {
-        if (layer.enabled && status === Image.Ready)
-            analyser.requestUpdate();
-    }
-
-    onStatusChanged: {
-        if (layer.enabled && status === Image.Ready)
-            analyser.requestUpdate();
     }
 
     ImageAnalyser {
         id: analyser
-
-        sourceItem: root
+        sourceItem: root.status === Image.Ready ? root : null
     }
 }
