@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260602
+
 pragma ComponentBehavior: Bound
 
 import qs.components
@@ -24,7 +27,9 @@ Item {
         const end = start + Config.bar.workspaces.shown;
         for (const [ws, occ] of Object.entries(occupied)) {
             if (ws > start && ws <= end && occ) {
-                if (!occupied[ws - 1]) {
+                const isFirstInGroup = Number(ws) === start + 1;
+                const isLastInGroup = Number(ws) === end;
+                if (isFirstInGroup || !occupied[ws - 1]) {
                     if (pills[count])
                         pills[count].start = ws;
                     else
@@ -33,7 +38,7 @@ Item {
                         }));
                     count++;
                 }
-                if (!occupied[ws + 1])
+                if ((isLastInGroup || !occupied[ws + 1]) && pills[count - 1])
                     pills[count - 1].end = ws;
             }
         }

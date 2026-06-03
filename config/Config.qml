@@ -148,6 +148,7 @@ Singleton {
     function serializeBackground(): var {
         return {
             enabled: background.enabled,
+            backdropEnabled: background.backdropEnabled,
             wallpaperEnabled: background.wallpaperEnabled,
             desktopClock: {
                 enabled: background.desktopClock.enabled,

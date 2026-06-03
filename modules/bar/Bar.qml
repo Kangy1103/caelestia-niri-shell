@@ -131,8 +131,17 @@ ColumnLayout {
             }
             DelegateChoice {
                 roleValue: "workspaces"
-                delegate: WrappedLoader {
+                delegate: Loader {
+                    required property string id
+                    required property int index
+                    asynchronous: false
+                    active: true
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: root.firstEnabled === this ? root.vPadding : 0
+                    Layout.bottomMargin: root.lastEnabled === this ? root.vPadding : 0
+                    Layout.preferredHeight: item ? item.implicitHeight : 120
                     sourceComponent: Workspaces {
+                        screen: root.screen
 
                         property var anchorItem: Niri.wsContextAnchor && Niri.wsContextType !== "none" ? Niri.wsContextAnchor : null
 

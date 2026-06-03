@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260603
+
 import qs.components
 import qs.components.effects
 import qs.services
@@ -40,6 +43,8 @@ Item {
         ColouredIcon {
             source:  SysInfo.osLogo
             implicitSize: Math.round(Appearance.font.size.large * 1.2)
+            width: implicitWidth
+            height: implicitHeight
             colour: Colours.palette.m3tertiary
         }
     }
