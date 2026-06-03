@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260603
+
 pragma ComponentBehavior: Bound
 
 import qs.components
@@ -38,12 +41,21 @@ Item {
             name: "network"
             sourceComponent: Network {
                 wrapper: root.wrapper
+                view: "wireless"
                 onPasswordNetworkChanged: {
                     // Capture network to persistent storage whenever it changes
                     if (passwordNetwork) {
                         root.pendingPasswordNetwork = passwordNetwork;
                     }
                 }
+            }
+        }
+
+        Popout {
+            name: "ethernet"
+            sourceComponent: Network {
+                wrapper: root.wrapper
+                view: "ethernet"
             }
         }
 

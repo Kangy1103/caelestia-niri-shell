@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.2-20260603
+
 pragma ComponentBehavior: Bound
 
 import qs.components
@@ -15,13 +18,34 @@ ColumnLayout {
     required property Item wrapper
 
     property string connectingToSsid: ""
+    property string view: "wireless" // "wireless" or "ethernet"
     property var passwordNetwork: null
     property bool showPasswordDialog: false
 
     spacing: Appearance.spacing.sm
     width: Config.bar.sizes.networkWidth
 
+    ScriptModel {
+        id: wifiNetworks
+        values: [...Nmcli.networks].sort((a, b) => {
+            if (a.active !== b.active)
+                return b.active - a.active;
+            return b.strength - a.strength;
+        }).slice(0, 8)
+    }
+
+    ScriptModel {
+        id: ethernetDevicesModel
+        values: [...Nmcli.ethernetDevices].sort((a, b) => {
+            if (a.connected !== b.connected)
+                return b.connected - a.connected;
+            return (a.interface || "").localeCompare(b.interface || "");
+        }).slice(0, 8)
+    }
+
     StyledText {
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: Appearance.padding.md
         Layout.rightMargin: Appearance.padding.xs
         text: qsTr("Wifi %1").arg(Nmcli.wifiEnabled ? "enabled" : "disabled")
@@ -29,12 +53,16 @@ ColumnLayout {
     }
 
     Toggle {
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
         label: qsTr("Enabled")
         checked: Nmcli.wifiEnabled
         toggle.onToggled: Nmcli.enableWifi(checked)
     }
 
     StyledText {
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: Appearance.spacing.sm
         Layout.rightMargin: Appearance.padding.xs
         text: qsTr("%1 networks available").arg(Nmcli.networks.length)
@@ -43,13 +71,7 @@ ColumnLayout {
     }
 
     Repeater {
-        model: ScriptModel {
-            values: [...Nmcli.networks].sort((a, b) => {
-                if (a.active !== b.active)
-                    return b.active - a.active;
-                return b.strength - a.strength;
-            }).slice(0, 8)
-        }
+        model: root.view === "wireless" ? wifiNetworks : 0
 
         RowLayout {
             id: networkItem
@@ -148,6 +170,8 @@ ColumnLayout {
     }
 
     StyledRect {
+        visible: root.view === "wireless"
+        Layout.preferredHeight: visible ? implicitHeight : 0
         Layout.topMargin: Appearance.spacing.sm
         Layout.fillWidth: true
         implicitHeight: rescanBtn.implicitHeight + Appearance.padding.xs * 2
@@ -195,6 +219,114 @@ ColumnLayout {
             bgColour: "transparent"
             implicitHeight: parent.implicitHeight - Appearance.padding.sm * 2
             running: Nmcli.scanning
+        }
+    }
+
+    // Ethernet section
+    StyledText {
+        visible: root.view === "ethernet"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.padding.md : 0
+        Layout.rightMargin: Appearance.padding.xs
+        text: qsTr("Ethernet")
+        font.weight: 500
+    }
+
+    StyledText {
+        visible: root.view === "ethernet"
+        Layout.preferredHeight: visible ? implicitHeight : 0
+        Layout.topMargin: visible ? Appearance.spacing.sm : 0
+        Layout.rightMargin: Appearance.padding.xs
+        text: qsTr("%1 devices available").arg(Nmcli.ethernetDevices.length)
+        color: Colours.palette.m3onSurfaceVariant
+        font.pointSize: Appearance.font.size.labelLarge
+    }
+
+    Repeater {
+        visible: root.view === "ethernet"
+        model: root.view === "ethernet" ? ethernetDevicesModel : 0
+
+        RowLayout {
+            id: ethItem
+            required property var modelData
+            readonly property bool loading: false
+
+            Layout.fillWidth: true
+            Layout.rightMargin: Appearance.padding.xs
+            spacing: Appearance.spacing.sm
+
+            opacity: 0
+            scale: 0.7
+
+            Component.onCompleted: {
+                opacity = 1;
+                scale = 1;
+            }
+
+            Behavior on opacity {
+                Anim {}
+            }
+
+            Behavior on scale {
+                Anim {}
+            }
+
+            MaterialIcon {
+                text: "cable"
+                color: ethItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
+            }
+
+            StyledText {
+                Layout.leftMargin: Appearance.spacing.sm / 2
+                Layout.rightMargin: Appearance.spacing.sm / 2
+                Layout.fillWidth: true
+                text: ethItem.modelData.connection || ethItem.modelData.interface || qsTr("Unknown")
+                elide: Text.ElideRight
+                font.weight: ethItem.modelData.connected ? 500 : 400
+                color: ethItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurface
+            }
+
+            StyledRect {
+                implicitWidth: implicitHeight
+                implicitHeight: connectIcon.implicitHeight + Appearance.padding.xs
+
+                radius: Appearance.rounding.full
+                color: Qt.alpha(Colours.palette.m3primary, ethItem.modelData.connected ? 1 : 0)
+
+                StyledBusyIndicator {
+                    anchors.fill: parent
+                    running: ethItem.loading
+                }
+
+                StateLayer {
+                    color: ethItem.modelData.connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    disabled: ethItem.loading
+
+                    function onClicked(): void {
+                        if (ethItem.modelData.connected && ethItem.modelData.connection) {
+                            Nmcli.disconnectEthernet(ethItem.modelData.connection, () => {});
+                        } else {
+                            Nmcli.connectEthernet(ethItem.modelData.connection || "", ethItem.modelData.interface || "", () => {});
+                        }
+                    }
+                }
+
+                MaterialIcon {
+                    id: connectIcon
+
+                    anchors.centerIn: parent
+                    animate: true
+                    text: ethItem.modelData.connected ? "link" : "link_off"
+                    color: ethItem.modelData.connected ? "#131317" : Colours.palette.m3onSurfaceVariant
+                    fill: 1
+
+                    opacity: ethItem.loading ? 0 : 1
+
+                    Behavior on opacity {
+                        Anim {}
+                    }
+                }
+            }
         }
     }
 
