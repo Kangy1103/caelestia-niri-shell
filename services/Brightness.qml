@@ -233,26 +233,26 @@ Singleton {
                     try {
                         if (monitor.isAppleDisplay) {
                             const val = parseInt(text.trim());
-                            monitor.brightness = isNaN(val) ? 0.5 : val / 101;
+                            monitor.brightness = isNaN(val) ? 1.0 : val / 101;
                         } else {
                             const parts = text.split(" ");
                             if (parts.length >= 5) {
                                 const cur = parseInt(parts[3]);
                                 const max = parseInt(parts[4]);
-                                monitor.brightness = (isNaN(cur) || isNaN(max) || max === 0) ? 0.5 : cur / max;
+                                monitor.brightness = (isNaN(cur) || isNaN(max) || max === 0) ? 1.0 : cur / max;
                             } else {
-                                monitor.brightness = 0.5;
+                                monitor.brightness = 1.0;
                             }
                         }
                     } catch (e) {
                         console.warn("Brightness: Failed to parse brightness value:", e);
-                        monitor.brightness = 0.5;
+                        monitor.brightness = 1.0;
                     }
                 }
             }
             onExited: (exitCode) => {
                 if (exitCode !== 0) {
-                    monitor.brightness = 0.5;
+                    monitor.brightness = 1.0;
                 }
             }
         }
