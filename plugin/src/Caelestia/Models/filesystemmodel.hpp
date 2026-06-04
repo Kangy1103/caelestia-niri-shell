@@ -78,14 +78,14 @@ private:
     const QString m_path;
     const QString m_relativePath;
 
-    bool m_isImage;
-    bool m_isImageInitialised;
+    bool m_isImage = false;
+    bool m_isImageInitialised = false;
 
-    bool m_isVideo;
-    bool m_isVideoInitialised;
+    bool m_isVideo = false;
+    bool m_isVideoInitialised = false;
 
     QString m_mimeType;
-    bool m_mimeTypeInitialised;
+    bool m_mimeTypeInitialised = false;
 };
 
 class FileSystemModel : public QAbstractListModel {

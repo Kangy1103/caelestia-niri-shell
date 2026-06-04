@@ -38,7 +38,6 @@ ColumnLayout {
         Layout.bottomMargin: root.backgroundMargins >= 0 ? root.backgroundMargins : root.backgroundMarginBottom
 
         color: root.backgroundColor
-        // color: "transparent"
         radius: Appearance.rounding.small
 
         // Height is header + description (if shown) + content (if expanded) + margins
@@ -122,8 +121,6 @@ ColumnLayout {
                 Layout.preferredHeight: root.expanded ? contentLoader.implicitHeight + topMargin + bottomMargin : 0
                 clip: true
 
-                // topMargin: Appearance.spacing.md
-                // bottomMargin: Appearance.spacing.md
                 bottomMargin: Appearance.padding.xl
 
                 Loader {

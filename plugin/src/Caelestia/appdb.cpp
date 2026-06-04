@@ -295,12 +295,15 @@ void AppDb::updateApps() {
         newIds.insert(entry->property("id").toString());
     }
 
+    QList<QString> staleIds;
     for (auto it = m_apps.keyBegin(); it != m_apps.keyEnd(); ++it) {
-        const auto& id = *it;
-        if (!newIds.contains(id)) {
-            dirty = true;
-            m_apps.take(id)->deleteLater();
-        }
+        if (!newIds.contains(*it))
+            staleIds.append(*it);
+    }
+
+    for (const auto& id : staleIds) {
+        dirty = true;
+        m_apps.take(id)->deleteLater();
     }
 
     if (dirty) {

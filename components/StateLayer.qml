@@ -34,7 +34,13 @@ MouseArea {
         rippleAnim.restart();
     }
 
-    onClicked: event => !disabled && onClicked(event)
+    Component.onCompleted: {
+        clicked.connect(event => {
+            if (disabled)
+                return;
+            root.onClicked(event);
+        });
+    }
 
     SequentialAnimation {
         id: rippleAnim

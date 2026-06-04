@@ -226,10 +226,9 @@ void CachingImageManager::createCache(
     evictIfNeeded();
 
     // Limit concurrent scaling tasks
-    QThreadPool::globalInstance()->setMaxThreadCount(
-        qMin(2, QThread::idealThreadCount()));
-
-    QThreadPool::globalInstance()->start([path, cache, fillMode, size, this] {
+    static QThreadPool s_cachePool;
+    s_cachePool.setMaxThreadCount(qMin(2, QThread::idealThreadCount()));
+    s_cachePool.start([path, cache, fillMode, size, this] {
         QImage image(path);
 
         if (image.isNull()) {

@@ -90,8 +90,6 @@ Singleton {
     readonly property bool inOverview: NiriIpc.inOverview
     signal windowOpenedOrChanged(var windowData)
 
-
-
     // --- Outputs ---
     readonly property var outputs: NiriIpc.outputs
     
@@ -138,8 +136,6 @@ Singleton {
             root.windowOpenedOrChanged(windowData);
         }
     }
-
-    Component.onCompleted: {}  
 
     // --- Workspace Functions ---
     function getWorkspaceIdxById(workspaceId) {

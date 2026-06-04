@@ -3,16 +3,6 @@ import qs.config
 import QtQuick
 import QtQuick.Effects
 
-// RectangularShadow {
-//     anchors.fill: myRectangle
-//     offset.x: -10
-//     offset.y: -5
-//     radius: myRectangle.radius
-//     blur: 30
-//     spread: 10
-//     color: Qt.darker(myRectangle.color, 1.6)
-// }
-
 RectangularShadow {
     property int level
     property real dp: [0, 1, 3, 6, 8, 12][level]

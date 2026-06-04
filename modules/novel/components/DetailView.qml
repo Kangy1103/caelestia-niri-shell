@@ -30,7 +30,6 @@ Item {
     property string _chapterFilter: ""
 
     function reset() {
-        console.log("[NovelDetailView] Resetting filters")
         _chapterFilter = ""
         _sortAscending = false
     }

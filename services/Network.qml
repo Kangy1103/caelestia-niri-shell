@@ -154,7 +154,7 @@ Singleton {
             Nmcli.getNetworks(() => {
                 syncNetworksFromNmcli();
             });
-        }, 500);
+        });
     }
 
     function forgetNetwork(ssid: string): void {
@@ -167,7 +167,7 @@ Singleton {
                     Nmcli.getNetworks(() => {
                         syncNetworksFromNmcli();
                     });
-                }, 500);
+                });
             }
         });
     }
@@ -248,7 +248,7 @@ Singleton {
                     if (activeDevice && activeDevice.interface) {
                         updateEthernetDeviceDetails(activeDevice.interface);
                     }
-                }, 1000);
+                });
             }
         });
     }
@@ -309,7 +309,7 @@ Singleton {
         // Sync networks from Nmcli on startup
         Qt.callLater(() => {
             syncNetworksFromNmcli();
-        }, 100);
+        });
     }
 
     // Sync saved connections and networks from Nmcli when they're updated

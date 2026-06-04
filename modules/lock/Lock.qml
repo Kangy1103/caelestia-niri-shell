@@ -23,18 +23,6 @@ Scope {
         lock: lock
     }
 
-    // CustomShortcut {
-    //     name: "lock"
-    //     description: "Lock the current session"
-    //     onPressed: lock.locked = true
-    // }
-
-    // CustomShortcut {
-    //     name: "unlock"
-    //     description: "Unlock the current session"
-    //     onPressed: lock.unlock()
-    // }
-
     IpcHandler {
         target: "lock"
 

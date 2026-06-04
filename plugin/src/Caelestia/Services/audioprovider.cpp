@@ -46,6 +46,11 @@ AudioProvider::~AudioProvider() {
         m_thread->quit();
         m_thread->wait();
     }
+    if (m_processor) {
+        m_processor->moveToThread(QThread::currentThread());
+        delete m_processor;
+        m_processor = nullptr;
+    }
 }
 
 void AudioProvider::init() {

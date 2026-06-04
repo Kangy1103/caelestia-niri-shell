@@ -35,7 +35,7 @@ Singleton {
             if (!UPower.onBattery)
                 return;
 
-            const p = UPower.displayDevice.percentage * 100;
+            const p = UPower.displayDevice.percentage;
             for (const level of root.warnLevels) {
                 if (p <= level.level && !level.warned) {
                     level.warned = true;

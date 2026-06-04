@@ -32,7 +32,6 @@ Item {
     property string selectedMangaId: ""
 
     function reset() {
-        console.log("[MangaReader] Resetting state")
         root.tabIndex = 0
         root.browseStack = 0
         root.libraryStack = 0

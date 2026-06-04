@@ -34,7 +34,7 @@ Slider {
 
         property bool moving
 
-        y: root.visualPosition * (root.availableHeight - height)
+        y: root.visualPosition * (root.availableHeight - implicitHeight)
         implicitWidth: root.width
         implicitHeight: root.width
 

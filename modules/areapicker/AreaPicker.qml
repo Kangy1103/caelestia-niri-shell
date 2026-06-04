@@ -76,24 +76,4 @@ Scope {
             root.activeAsync = true;
         }
     }
-
-    // CustomShortcut {
-    //     name: "screenshot"
-    //     description: "Open screenshot tool"
-    //     onPressed: {
-    //         root.freeze = false;
-    //         root.closing = false;
-    //         root.activeAsync = true;
-    //     }
-    // }
-    //
-    // CustomShortcut {
-    //     name: "screenshotFreeze"
-    //     description: "Open screenshot tool (freeze mode)"
-    //     onPressed: {
-    //         root.freeze = true;
-    //         root.closing = false;
-    //         root.activeAsync = true;
-    //     }
-    // }
 }

@@ -24,6 +24,7 @@ private:
     pw_main_loop* m_loop;
     pw_stream* m_stream;
     spa_source* m_timer;
+    spa_source* m_safetyTimer;
     bool m_idle;
 
     std::stop_token m_token;
@@ -32,6 +33,7 @@ private:
     void cleanup();
 
     static void handleTimeout(void* data, uint64_t expirations);
+    static void handleSafetyTimeout(void* data, uint64_t expirations);
     void streamStateChanged(pw_stream_state state);
     void processStream();
     void processSamples(const int16_t* samples, uint32_t count);

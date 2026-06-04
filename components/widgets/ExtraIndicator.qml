@@ -8,6 +8,7 @@ StyledRect {
     required property int extra
 
     anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
     anchors.margins: Appearance.padding.md
 
     color: Colours.palette.m3tertiary

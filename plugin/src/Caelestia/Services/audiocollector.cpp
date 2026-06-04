@@ -32,6 +32,10 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
     m_timer = pw_loop_add_timer(pw_main_loop_get_loop(m_loop), handleTimeout, this);
     pw_loop_update_timer(pw_main_loop_get_loop(m_loop), m_timer, &timeout, &timeout, false);
 
+    timespec safetyTimeout = { 5, 0 };
+    m_safetyTimer = pw_loop_add_timer(pw_main_loop_get_loop(m_loop), handleSafetyTimeout, this);
+    pw_loop_update_timer(pw_main_loop_get_loop(m_loop), m_safetyTimer, &safetyTimeout, &safetyTimeout, false);
+
     auto props = pw_properties_new(
         PW_KEY_MEDIA_TYPE, "Audio", PW_KEY_MEDIA_CATEGORY, "Capture", PW_KEY_MEDIA_ROLE, "Music", nullptr);
     pw_properties_set(props, PW_KEY_STREAM_CAPTURE_SINK, "true");
@@ -94,6 +98,14 @@ void PipeWireWorker::handleTimeout(void* data, uint64_t expirations) {
             timespec timeout = { 0, 500 * SPA_NSEC_PER_MSEC };
             pw_loop_update_timer(pw_main_loop_get_loop(self->m_loop), self->m_timer, &timeout, &timeout, false);
         }
+    }
+}
+
+void PipeWireWorker::handleSafetyTimeout(void* data, uint64_t) {
+    auto* self = static_cast<PipeWireWorker*>(data);
+
+    if (self->m_token.stop_requested()) {
+        pw_main_loop_quit(self->m_loop);
     }
 }
 

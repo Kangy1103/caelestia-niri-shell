@@ -228,7 +228,7 @@ Item {
         function onClicked(): void {
         }
 
-        implicitWidth: Math.max(icon.implicitHeight, icon.implicitHeight) + Appearance.padding.xs
+        implicitWidth: Math.max(icon.implicitWidth, icon.implicitHeight) + Appearance.padding.xs
         implicitHeight: implicitWidth
 
         StateLayer {

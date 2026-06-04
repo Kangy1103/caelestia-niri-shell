@@ -82,7 +82,7 @@ if args.path is not None:
     hct = Hct.from_int(argb)
     if(args.smart):
         if(hct.chroma < 20):
-            args.scheme = 'neutral'
+            args.scheme = 'scheme-neutral'
 elif args.color is not None:
     argb = hex_to_argb(args.color)
     hct = Hct.from_int(argb)
@@ -139,7 +139,7 @@ if args.termscheme is not None:
 
     primary_color_argb = hex_to_argb(material_colors['primary_paletteKeyColor'])
     for color, val in term_source_colors.items():
-        if(args.scheme == 'monochrome') :
+        if(args.scheme == 'scheme-monochrome') :
             term_colors[color] = val
             continue
         if args.blend_bg_fg and color == "term0":

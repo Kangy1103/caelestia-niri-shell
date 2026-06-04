@@ -8,7 +8,7 @@ Loader {
     id: root
 
     // Required properties that must be bound by parent
-    required property string id
+    required property string itemId
     required property int index
 
     // Optional: reference to parent repeater for first/last detection

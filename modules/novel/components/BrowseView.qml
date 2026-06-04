@@ -17,7 +17,6 @@ Item {
     signal novelSelected(string novelId)
 
     function reset() {
-        console.log("[NovelBrowseView] Resetting search and filters")
         searchBar.text = ""
         searchBar.isSearchActive = false
         currentFilter = "hot"

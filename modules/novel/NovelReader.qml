@@ -30,7 +30,6 @@ Item {
     property int libraryStack: 0
 
     function reset() {
-        console.log("[NovelReader] Resetting state")
         root.tabIndex = 0
         root.browseStack = 0
         root.libraryStack = 0

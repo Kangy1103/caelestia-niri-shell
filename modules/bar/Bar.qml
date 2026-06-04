@@ -38,7 +38,7 @@ ColumnLayout {
                 popouts.hasCurrent = false;
                 return;
             }
-            popouts.currentCenter = Qt.binding(() => Math.round(anchor.mapToItem(root, anchor.width, (anchor.height) / 2).y));
+            popouts.currentCenter = Qt.binding(() => Math.round(anchor.mapToItem(root, 0, anchor.height / 2).y));
             return;
         }
 
@@ -190,12 +190,6 @@ ColumnLayout {
                     }
                 }
             }
-            // DelegateChoice {
-            //     roleValue: "idleInhibitor"
-            //     delegate: WrappedLoader {
-            //         sourceComponent: IdleInhibitor {}
-            //     }
-            // }
         }
     }
 

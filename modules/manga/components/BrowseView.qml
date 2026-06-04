@@ -19,7 +19,6 @@ Item {
     signal mangaSelected(string mangaId)
 
     function reset() {
-        console.log("[MangaBrowseView] Resetting search and filters")
         searchBar.text = ""
         searchBar.isSearchActive = false
         currentTagId = ""
