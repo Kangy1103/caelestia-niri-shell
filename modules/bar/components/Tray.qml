@@ -1,6 +1,7 @@
 import qs.components
 import qs.services
 import qs.config
+import Quickshell.Io
 import Quickshell.Services.SystemTray
 import QtQuick
 
@@ -62,5 +63,18 @@ StyledRect {
         Anim {
             easing.bezierCurve: Appearance.anim.curves.emphasized
         }
+    }
+
+    // Refresh tray items after startup — recovers icons that don't
+    // automatically re-register with the StatusNotifierWatcher on reload
+    Timer {
+        interval: 3000
+        running: true
+        onTriggered: refreshTrayProcess.running = true
+    }
+
+    Process {
+        id: refreshTrayProcess
+        command: ["bash", "/home/kangy/.config/quickshell/caelestia-niri-shell/scripts/refresh-tray.sh"]
     }
 }

@@ -210,17 +210,17 @@ CustomMouseArea {
     }
 
     // Monitor individual visibility changes
+    function _onPanelVisibility(name: string, panel: Item, inPanelFn: var): void {
+        if (root.visibilities[name]) {
+            if (!inPanelFn(panel, root.mouseX, root.mouseY))
+                root.setShortcutPanel(name);
+        } else {
+            root.clearShortcutPanel(name);
+        }
+    }
+
     Connections {
         target: root.visibilities
-
-        function _onPanelVisibility(name: string, panel: Item, inPanelFn: Function): void {
-            if (root.visibilities[name]) {
-                if (!inPanelFn(panel, root.mouseX, root.mouseY))
-                    root.setShortcutPanel(name);
-            } else {
-                root.clearShortcutPanel(name);
-            }
-        }
 
         function onDashboardChanged(): void {
             root._onPanelVisibility("dashboard", root.panels.dashboard, root.inTopPanel);
