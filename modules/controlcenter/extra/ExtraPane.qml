@@ -19,14 +19,7 @@ Item {
 
     required property Session session
 
-    property bool mangaEnabled: Config.extra.manga ?? true
-    property bool novelEnabled: Config.extra.novel ?? true
-
-    anchors.fill: parent
-
-    function saveConfig() {
-        Config.extra.manga = root.mangaEnabled;
-        Config.extra.novel = root.novelEnabled;
+    function saveConfig(): void {
         Config.markDirty("extra");
     }
 
@@ -93,24 +86,6 @@ Item {
                     StyledText {
                         text: qsTr("Features")
                         font.pointSize: Appearance.font.size.bodyMedium
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Manga")
-                        checked: root.mangaEnabled
-                        onToggled: checked => {
-                            root.mangaEnabled = checked;
-                            root.saveConfig();
-                        }
-                    }
-
-                    SwitchRow {
-                        label: qsTr("Novel")
-                        checked: root.novelEnabled
-                        onToggled: checked => {
-                            root.novelEnabled = checked;
-                            root.saveConfig();
-                        }
                     }
                 }
             }

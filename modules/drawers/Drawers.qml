@@ -108,8 +108,6 @@ Variants {
                 property bool keybinds
                 property bool editingWeatherLocation
                 property bool notifsExpanded
-                property bool manga
-                property bool novel
 
                 Component.onCompleted: Visibilities.screens[scope.modelData.name] = this
             }
