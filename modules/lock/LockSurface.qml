@@ -215,8 +215,7 @@ WlSessionLockSurface {
         }
 
         onStatusChanged: {
-            if (status === Image.Error)
-                console.log("Wallpaper failed to load, falling back to solid color");
+            if (status === Image.Error) { }
         }
     }
 

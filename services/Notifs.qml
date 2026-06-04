@@ -395,13 +395,12 @@ Singleton {
             root.idOffset = maxId;
 
             root._onListChanged();
-            console.log("[Notifs] Loaded", root.list.length, "notification(s) from file, idOffset =", root.idOffset);
+
             root.initDone();
         }
 
         onLoadFailed: error => {
             if (error === FileViewError.FileNotFound) {
-                console.log("[Notifs] No saved notifications file, starting fresh.");
                 root.list = [];
                 root._saveToFile();
             } else {

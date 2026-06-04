@@ -34,13 +34,12 @@ Singleton {
                 }
                 const familyList = Array.from(familySet).sort();
                 root.families = familyList;
-                console.log("Fonts service: Loaded " + familyList.length + " fonts.");
             }
         }
 
         onExited: (exitCode) => {
             if (exitCode !== 0) {
-                console.error("Fonts service: fc-list failed with exit code " + exitCode);
+                console.warn("Fonts: fc-list failed with exit code " + exitCode);
             }
         }
     }

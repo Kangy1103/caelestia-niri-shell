@@ -112,7 +112,6 @@ Singleton {
         root.transitioning = true;
         const colours = isPreview ? preview : current;
         const scheme = JSON.parse(data);
-        console.log("Colours.load called, isPreview:", isPreview, "scheme name:", scheme.name);
 
         if (!isPreview) {
             root.scheme = scheme.name;
@@ -130,7 +129,7 @@ Singleton {
                 loadedCount++;
             }
         }
-        console.log("Colours.load: loaded", loadedCount, "colors out of", Object.keys(scheme.colours).length);
+
         // Recompute tPalette after batch color changes
         requestUpdate();
         transitionTimer.restart();

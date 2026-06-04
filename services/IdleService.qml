@@ -41,7 +41,6 @@ Singleton {
                 root.isIdle = idleSeconds >= root.idleThresholdSeconds;
 
                 if (wasIdle !== root.isIdle) {
-                    console.log("IdleService: System idle state changed to:", root.isIdle ? "idle" : "active", "(" + idleSeconds + "s)");
                     root.idleChanged(root.isIdle);
                 }
             }
@@ -55,7 +54,6 @@ Singleton {
     }
 
     Component.onCompleted: {
-        console.log("IdleService: Initialized with", root.idleThresholdSeconds + "s threshold");
         checkIdleState();
     }
 }

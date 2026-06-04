@@ -19,9 +19,6 @@ Item {
     anchors.fill: parent
 
     Component.onCompleted: {
-        console.log("Wallpaper.qml - source:", source);
-        console.log("Wallpaper.qml - Wallpapers.current:", Wallpapers.current);
-        console.log("Wallpaper.qml - Wallpapers.actualCurrent:", Wallpapers.actualCurrent);
     }
 
     // Delayed initial load to ensure CachingImageManager is ready
@@ -30,7 +27,6 @@ Item {
         interval: 200
         running: root.source !== ""
         onTriggered: {
-            console.log("Initial load timer triggered, source:", root.source);
             if (root.source && one.path === "" && two.path === "") {
                 one.path = root.source;
             }
@@ -38,7 +34,6 @@ Item {
     }
 
     onSourceChanged: {
-        console.log("Wallpaper.qml - source changed to:", source);
         if (!source)
             current = null;
         else if (current === one)
@@ -131,9 +126,7 @@ Item {
         property string path: ""
 
         function update(): void {
-            console.log("Img.update()", item.id === "one" ? "one" : "two", "path:", path, "target:", root.source);
             if (path === root.source) {
-                console.log("Path matches, setting current immediately");
                 root.current = item;
             } else {
                 path = root.source;
@@ -150,7 +143,6 @@ Item {
             target: Wallpapers
             function onFrameReady(p): void {
                 if (p === item.path && item.isVideo) {
-                    console.log("Img: frame ready, force-updating fallback");
                     const old = frameFallback.path;
                     frameFallback.path = "";
                     frameFallback.path = old;
@@ -160,13 +152,10 @@ Item {
 
         onPathChanged: {
             const video = Wallpapers.isPathVideo(path);
-            console.log("Img path changed:", path, "isPathVideo:", video);
             if (video && path !== "") {
                 if (root.current === item) {
-                    console.log("Path changed for current item, playing video");
                     player.play();
                 } else {
-                    console.log("Path changed for non-current item, setting current");
                     root.current = item;
                 }
             }
@@ -200,7 +189,6 @@ Item {
             z: 2
             onStatusChanged: {
                 if (status === Image.Ready && !item.isVideo) {
-                    console.log("Image ready, setting current");
                     root.current = item;
                 }
             }
@@ -222,7 +210,6 @@ Item {
             onErrorOccurred: (error, errorString) => console.error("MediaPlayer Error:", errorString)
             onMediaStatusChanged: {
                 if (mediaStatus === MediaPlayer.LoadedMedia && root.current === item && item.isVideo) {
-                    console.log("MediaPlayer loaded for current item, playing");
                     player.play();
                 }
             }
@@ -245,10 +232,7 @@ Item {
 
                 StateChangeScript {
                     script: {
-                        console.log("Img visible state activated for", item.path);
                         if (item.isVideo) {
-                            console.log("Starting video playback");
-                            // Small delay to ensure source is applied before play()
                             Qt.callLater(() => player.play());
                         }
                     }
@@ -266,7 +250,6 @@ Item {
                 StateChangeScript {
                     script: {
                         if (item.isVideo) {
-                            console.log("Releasing video resources for hidden item");
                             player.stop();
                             player.source = "";
                         }

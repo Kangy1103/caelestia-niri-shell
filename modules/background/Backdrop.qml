@@ -34,7 +34,6 @@ Variants {
             target: Wallpapers
             function onFrameReady(path): void {
                 if (path === Wallpapers.current) {
-                    console.log("Backdrop: frame ready, force-updating source");
                     const old = bgImage.source;
                     bgImage.source = "";
                     bgImage.source = old;

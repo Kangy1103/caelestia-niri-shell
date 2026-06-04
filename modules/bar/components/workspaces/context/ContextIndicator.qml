@@ -46,28 +46,6 @@ Item {
         x: 0
         y: root.anchorWs?.mapToItem(root, 0, 0).y - root.padding / 2
 
-        // onYChanged: {
-        //     // cancel any existing countdown
-        //     wsAnchorClearTimer.stop();
-
-        //     root.activated = false;
-
-        //     // only start timer if it’s null
-        //     if (root.activated === false) {
-        //         wsAnchorClearTimer.start();
-        //     }
-        // }
-
-        // property Timer wsAnchorClearTimer: Timer {
-        //     interval: 1 // ms, adjust as you like
-        //     repeat: false
-        //     onTriggered: {
-        //         if (root.activated === false) {
-        //             root.activated = true;
-        //         }
-        //     }
-        // }
-
         // Two corners: top & bottom
         Repeater {
             model: [3, 1] // top, bottom

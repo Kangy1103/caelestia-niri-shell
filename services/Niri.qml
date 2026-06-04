@@ -139,7 +139,7 @@ Singleton {
         }
     }
 
-    Component.onCompleted: console.log("NiriService: Using native C++ IPC (NiriIpc)")
+    Component.onCompleted: {}  
 
     // --- Workspace Functions ---
     function getWorkspaceIdxById(workspaceId) {

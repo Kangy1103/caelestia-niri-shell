@@ -197,8 +197,4 @@ Item {
             }
         ]
     }
-    // for debug
-    // Component.onCompleted: {
-    // root.detach("winfo");
-    // }
 }

@@ -26,7 +26,6 @@ RowLayout {
 
         icon: root.client.is_floating ? "grid_view" : "picture_in_picture"
         function onClicked(): void {
-            console.log("Toggling floating for", root.client?.id);
             Niri.toggleWindowFloating(root.client?.id);
         }
     }

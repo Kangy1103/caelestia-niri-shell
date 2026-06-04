@@ -30,10 +30,8 @@ Searcher {
             const framePath = getColorSource(path);
             // Check if frame already exists to avoid re-extraction
             if (CUtils.exists(framePath)) {
-                console.log("Video frame already exists, applying immediately");
                 applyWallpaper(path);
             } else {
-                console.log("Extracting frame for video wallpaper:", path);
                 _pendingWallpaper = path;
                 
                 // Use bash to ensure directory exists before ffmpeg runs, with software fallback
@@ -42,7 +40,7 @@ Searcher {
                     "mkdir -p \"$(dirname \"$2\")\" && (ffmpeg -y -ss 0 -hwaccel auto -loglevel error -i \"$1\" -an -vframes 1 -update 1 \"$2\" || ffmpeg -y -ss 0 -hwaccel none -loglevel error -i \"$1\" -an -vframes 1 -update 1 \"$2\")",
                     "--", path, framePath
                 ];
-                console.log("Running extraction command:", JSON.stringify(extractFrameProcess.command));
+
                 extractFrameProcess.running = true;
             }
         } else {
@@ -67,7 +65,6 @@ Searcher {
 
         onExited: (exitCode) => {
             if (exitCode === 0) {
-                console.log("Frame extraction successful, applying wallpaper");
                 const path = root._pendingWallpaper;
                 root.frameReady(path);
                 root.applyWallpaper(path);
@@ -126,7 +123,6 @@ Searcher {
             const mode = Colours.light ? "light" : "dark";
             const schemeType = variantToMatugenType(variant || Schemes.currentVariant || "tonalspot");
             colorGenProcess.command = ["bash", scriptPath, "--mode", mode, "--type", schemeType, imagePath];
-            console.log("Running color generation:", JSON.stringify(colorGenProcess.command));
             colorGenProcess.running = true;
         } catch (e) {
             console.warn("Failed to run color generation:", e);
@@ -154,7 +150,6 @@ Searcher {
     function loadFromConfig(): void {
         if (!actualCurrent && Config.paths.wallpaper) {
             const path = Paths.absolutePath(Config.paths.wallpaper);
-            console.log("Loading initial wallpaper from config:", path);
             setWallpaper(path);
         }
     }
@@ -210,9 +205,7 @@ Searcher {
         id: matugenProcess
 
         onExited: (exitCode, exitStatus) => {
-            if (exitCode === 0) {
-                console.log("Matugen completed successfully");
-            } else {
+            if (exitCode !== 0) {
                 console.warn("Matugen exited with code:", exitCode);
             }
         }
@@ -233,10 +226,7 @@ Searcher {
         }
 
         stdout: SplitParser {
-            onRead: data => {
-                if (data.trim() !== "")
-                    console.log("Color gen:", data.trim());
-            }
+            onRead: data => {}
         }
 
         stderr: SplitParser {
@@ -256,8 +246,7 @@ Searcher {
         onLoaded: {
             const loadedPath = text().trim();
             if (loadedPath) {
-                console.log("Loading initial wallpaper from state:", loadedPath);
-                root.setWallpaper(loadedPath);
+            root.setWallpaper(loadedPath);
             } else {
                 root.loadFromConfig();
             }

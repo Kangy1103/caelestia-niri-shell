@@ -95,14 +95,12 @@ Searcher {
         // Handle dynamic scheme generation
         if (name === "dynamic") {
             const wallpaper = Wallpapers.current;
-            console.log("Dynamic scheme: wallpaper =", wallpaper);
             if (!wallpaper) {
                 console.warn("Cannot set dynamic scheme: no wallpaper set");
                 return;
             }
             const mode = Colours.light ? "light" : "dark";
             const variant = root.currentVariant || "tonalspot";
-            console.log("Dynamic scheme: variant =", variant, "mode =", mode);
 
             // Use matugen for color generation from wallpaper (Quickshell UI)
             dynamicSchemeGenerator.wallpaper = wallpaper;
@@ -269,11 +267,8 @@ Searcher {
             
             // If it's a video and the frame might not exist yet, we should check/retry
             if (Wallpapers.isPathVideo(wallpaper)) {
-                console.log("Checking for video frame:", colorSource);
-                // We'll let matugen try, and if it fails, we use the retry timer
             }
             
-            console.log("Running matugen:", JSON.stringify(command));
             running = true;
         }
 
@@ -289,7 +284,6 @@ Searcher {
                 return;
             }
 
-            console.log("Matugen output length:", outputBuffer.length);
             try {
                 const matugenData = JSON.parse(outputBuffer);
                 const colours = root.transformMatugenOutput(matugenData, mode);

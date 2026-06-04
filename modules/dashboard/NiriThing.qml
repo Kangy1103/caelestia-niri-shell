@@ -147,43 +147,8 @@ Item {
                         Niri.screenshotWindow();
                     }
                 }
-
-                // // expandColumnToAvailable - Button 6
-                // ActionButton {
-                //     Layout.fillWidth: true
-                //     icon: "view_column"
-                //     text: qsTr("Expand Column")
-                //     function onClicked(): void {
-                //         Niri.expandColumnToAvailable();
-                //     }
-                // }
-
-                // // toggleWindowOpacity - Button 5
-                // ActionButton {
-                //     Layout.fillWidth: true
-                //     icon: "opacity"
-                //     text: qsTr("Toggle Opacity")
-                //     function onClicked(): void {
-                //         Niri.toggleWindowOpacity();
-                //     }
-                // }
             }
         }
-
-        // Rect {
-        //     Layout.row: 1
-        //     Layout.column: 4
-        //     Layout.preferredWidth: resources.implicitWidth
-        //     Layout.fillHeight: true
-        // }
-
-        // Rect {
-        //     Layout.row: 0
-        //     Layout.column: 5
-        //     Layout.rowSpan: 2
-        //     Layout.preferredWidth: media.implicitWidth
-        //     Layout.fillHeight: true
-        // }
     }
 
     // ***************************************************
@@ -303,84 +268,6 @@ Item {
                 Behavior on color {
                     CAnim {}
                 }
-            }
-        }
-    }
-
-    // Legacy Button component (kept for compatibility)
-    component Button: StyledRect {
-        property color onColor: Colours.palette.m3onSurface
-        property alias disabled: stateLayer.disabled
-        property alias text: label.text
-        property alias icon: icon.text
-
-        function onClicked(): void {
-        }
-
-        Layout.fillWidth: true
-
-        radius: Appearance.rounding.small
-
-        implicitHeight: (icon.implicitHeight + Appearance.padding.xs * 2)
-        implicitWidth: (52 + Appearance.padding.xs * 2)
-
-        RowLayout {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            // anchors.left: parent.left
-
-            Item {
-                Layout.fillWidth: true
-            }
-            MaterialIcon {
-                id: icon
-                color: parent.parent.onColor
-                // font.pointSize: Appearance.font.size.titleMedium
-                text: "radio_button_unchecked"
-                font.pointSize: label.font.pointSize * 3.0
-
-                // anchors.verticalCenter: parent.verticalCenter
-                Layout.alignment: Qt.AlignVCenter
-
-                // opacity: icon.text ? !stateLayer.containsMouse : true
-                // Behavior on opacity {
-                //     PropertyAnimation {w
-                //         property: "opacity"
-                //         duration: Appearance.anim.durations.normal
-                //         easing.type: Easing.BezierSpline
-                //         easing.bezierCurve: Appearance.anim.curves.standard
-                //     }
-                // }
-            }
-            StyledText {
-                id: label
-                color: parent.parent.onColor
-                font.pointSize: Appearance.font.size.labelLarge
-                wrapMode: Text.WordWrap
-                maximumLineCount: 2
-                Layout.preferredWidth: 90 // Adjust as needed for your layout
-                // Optionally, set elide if text is too long
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-                // horizontalAlignment: Text.AlignLeft
-                // opacity: icon.text ? stateLayer.containsMouse : true
-                // Behavior on opacity {
-                //     PropertyAnimation {
-                //         property: "opacity"
-                //         duration: Appearance.anim.durations.normal
-                //         easing.type: Easing.BezierSpline
-                //         easing.bezierCurve: Appearance.anim.curves.standard
-                //     }
-                // }
-            }
-        }
-
-        StateLayer {
-            id: stateLayer
-            color: parent.onColor
-            function onClicked(): void {
-                parent.onClicked();
             }
         }
     }

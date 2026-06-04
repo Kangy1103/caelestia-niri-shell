@@ -159,22 +159,10 @@ Singleton {
         }
         onExited: (exitCode) => {
             if (exitCode !== 0) {
-                console.log("Brightness: ddcutil detect exited with code", exitCode, "(DDC monitors unavailable)");
+                // DDC unavailable, skip
             }
         }
     }
-
-    // CustomShortcut {
-    //     name: "brightnessUp"
-    //     description: "Increase brightness"
-    //     onPressed: root.increaseBrightness()
-    // }
-    //
-    // CustomShortcut {
-    //     name: "brightnessDown"
-    //     description: "Decrease brightness"
-    //     onPressed: root.decreaseBrightness()
-    // }
 
     IpcHandler {
         target: "brightness"
@@ -264,8 +252,7 @@ Singleton {
             }
             onExited: (exitCode) => {
                 if (exitCode !== 0) {
-                    console.log("Brightness: Failed to get brightness for", monitor.modelData?.name ?? "unknown");
-                    monitor.brightness = 0.5; // Default fallback
+                    monitor.brightness = 0.5;
                 }
             }
         }

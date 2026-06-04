@@ -1,6 +1,5 @@
 pragma Singleton
 
-// import qs.components.misc
 import qs.config
 import qs.services
 import Caelestia
@@ -31,43 +30,6 @@ Singleton {
                 Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(root.active.trackArtist).arg(root.active.trackTitle), "music_note");
         }
     }
-
-    // Niri does not have global shortcuts yet ;).
-    // CustomShortcut {
-    //     name: "mediaToggle"
-    //     description: "Toggle media playback"
-    //     onPressed: {
-    //         const active = root.active;
-    //         if (active && active.canTogglePlaying)
-    //             active.togglePlaying();
-    //     }
-    // }
-
-    // CustomShortcut {
-    //     name: "mediaPrev"
-    //     description: "Previous track"
-    //     onPressed: {
-    //         const active = root.active;
-    //         if (active && active.canGoPrevious)
-    //             active.previous();
-    //     }
-    // }
-
-    // CustomShortcut {
-    //     name: "mediaNext"
-    //     description: "Next track"
-    //     onPressed: {
-    //         const active = root.active;
-    //         if (active && active.canGoNext)
-    //             active.next();
-    //     }
-    // }
-
-    // CustomShortcut {
-    //     name: "mediaStop"
-    //     description: "Stop media playback"
-    //     onPressed: root.active?.stop()
-    // }
 
     IpcHandler {
         target: "mpris"
