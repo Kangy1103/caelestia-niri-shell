@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.3.0-20260604
+
 pragma Singleton
 
 import Quickshell

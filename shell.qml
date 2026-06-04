@@ -35,4 +35,7 @@ ShellRoot {
 
     // Initialize BatteryMonitor service
     property var _batteryMonitor: BatteryMonitor
+
+    // Initialize AudioPortSwitch service
+    property var _audioPortSwitch: AudioPortSwitch
 }
