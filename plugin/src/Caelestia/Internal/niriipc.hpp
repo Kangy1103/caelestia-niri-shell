@@ -140,6 +140,7 @@ signals:
     void capsLockChanged();
     void numLockChanged();
     void windowOpenedOrChanged(const QVariantMap& windowData);
+    void configLoaded(bool failed);
 
 private slots:
     void onEventStreamConnected();

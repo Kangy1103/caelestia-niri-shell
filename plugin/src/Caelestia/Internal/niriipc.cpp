@@ -327,6 +327,10 @@ void NiriIpc::onEvent(const QJsonObject& event) {
         handleOverviewOpenedOrClosed(event.value(QStringLiteral("OverviewOpenedOrClosed")).toObject());
     } else if (event.contains(QStringLiteral("OutputsChanged"))) {
         handleOutputsChanged(event.value(QStringLiteral("OutputsChanged")).toObject());
+    } else if (event.contains(QStringLiteral("ConfigLoaded"))) {
+        const auto data = event.value(QStringLiteral("ConfigLoaded")).toObject();
+        const bool failed = data.value(QStringLiteral("failed")).toBool();
+        emit configLoaded(failed);
     }
 }
 

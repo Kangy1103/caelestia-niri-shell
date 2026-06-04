@@ -49,7 +49,7 @@ Loader {
 
                 Loader {
                     anchors.fill: parent
-                    active: behindClock.isFocusedScreen
+                    active: Config.background.visualiser.enabled && (!Config.background.visualiser.output || Config.background.visualiser.output === win.modelData.name)
 
                     sourceComponent: Visualiser {
                         anchors.fill: parent

@@ -4,6 +4,7 @@ JsonObject {
     property bool isDistLogo: false
     property Apps apps: Apps {}
     property Battery battery: Battery {}
+    property int idleTimeout: 300
 
     component Apps: JsonObject {
         property list<string> terminal: ["foot"]

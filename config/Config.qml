@@ -139,7 +139,8 @@ Singleton {
                 warnLevels: general.battery.warnLevels,
                 criticalLevel: general.battery.criticalLevel,
                 enableWarnings: general.battery.enableWarnings
-            }
+            },
+            idleTimeout: general.idleTimeout
         };
     }
 
@@ -169,7 +170,8 @@ Singleton {
                 autoHide: background.visualiser.autoHide,
                 blur: background.visualiser.blur,
                 rounding: background.visualiser.rounding,
-                spacing: background.visualiser.spacing
+                spacing: background.visualiser.spacing,
+                output: background.visualiser.output
             }
         };
     }
@@ -406,7 +408,8 @@ Singleton {
                 kbLayoutChanged: utilities.toasts.kbLayoutChanged,
                 kbLimit: utilities.toasts.kbLimit,
                 vpnChanged: utilities.toasts.vpnChanged,
-                nowPlaying: utilities.toasts.nowPlaying
+                nowPlaying: utilities.toasts.nowPlaying,
+                niriConfigLoaded: utilities.toasts.niriConfigLoaded
             },
             vpn: {
                 enabled: utilities.vpn.enabled,

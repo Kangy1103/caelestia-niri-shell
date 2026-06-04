@@ -1,59 +1,39 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.2.0-20260604
+
 pragma Singleton
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
+import Quickshell.Wayland
 
 Singleton {
     id: root
 
     property bool isIdle: false
-    property int idleThresholdSeconds: 300 // 5 minutes
-    property int checkInterval: 30000 // Check every 30 seconds
+    property int idleThresholdSeconds: 300
 
     signal idleChanged(bool idle)
 
-    function checkIdleState() {
-        if (idleChecker.running)
-            return;
-        idleChecker.running = true;
+    function setThreshold(seconds: int): void {
+        idleThresholdSeconds = seconds;
+        idleMonitor.timeout = seconds;
     }
 
-    Timer {
-        id: idleTimer
-        interval: root.checkInterval
-        running: true
-        repeat: true
-        onTriggered: root.checkIdleState()
-    }
+    IdleMonitor {
+        id: idleMonitor
+        timeout: root.idleThresholdSeconds
+        enabled: true
+        respectInhibitors: true
 
-    Process {
-        id: idleChecker
-        command: ["bash", "-c", "if command -v xprintidle >/dev/null 2>&1; then echo $(( $(xprintidle) / 1000 )); elif command -v qdbus >/dev/null 2>&1; then qdbus org.freedesktop.ScreenSaver /org/freedesktop/ScreenSaver GetSessionIdleTime 2>/dev/null || echo 0; else echo 0; fi"]
-        running: false
+        onIsIdleChanged: {
+            const wasIdle = root.isIdle;
+            root.isIdle = isIdle;
 
-        stdout: SplitParser {
-            splitMarker: "\n"
-            onRead: data => {
-                const idleSeconds = parseInt(data.trim()) || 0;
-                const wasIdle = root.isIdle;
-                root.isIdle = idleSeconds >= root.idleThresholdSeconds;
-
-                if (wasIdle !== root.isIdle) {
-                    root.idleChanged(root.isIdle);
-                }
+            if (wasIdle !== root.isIdle) {
+                root.idleChanged(root.isIdle);
             }
         }
-
-        onExited: exitCode => {
-            if (exitCode !== 0) {
-                console.warn("IdleService: Failed to check idle state, exit code:", exitCode);
-            }
-        }
-    }
-
-    Component.onCompleted: {
-        checkIdleState();
     }
 }

@@ -135,6 +135,15 @@ Singleton {
         function onWindowOpenedOrChanged(windowData) {
             root.windowOpenedOrChanged(windowData);
         }
+        function onConfigLoaded(failed) {
+            if (!Config.utilities.toasts.niriConfigLoaded)
+                return;
+
+            if (failed)
+                Toaster.toast(qsTr("Niri config error"), qsTr("Configuration reload failed. Check your config."), "warning", Toast.Error);
+            else
+                Toaster.toast(qsTr("Niri config loaded"), qsTr("Configuration reloaded successfully."), "check");
+        }
     }
 
     // --- Workspace Functions ---

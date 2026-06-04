@@ -15,14 +15,14 @@ Item {
     required property ShellScreen screen
     required property Item wallpaper
 
-    readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0)
-    property real offset: shouldBeActive ? 0 : screen.height * 0.2
+    readonly property bool onTargetOutput: !Config.background.visualiser.output || Config.background.visualiser.output === screen.name
+    readonly property bool shouldBeActive: Config.background.visualiser.enabled && onTargetOutput && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0)
 
     opacity: shouldBeActive ? 1 : 0
 
     Loader {
         anchors.fill: parent
-        active: root.opacity > 0 && Config.background.visualiser.blur
+        active: opacity > 0 && Config.background.visualiser.blur
 
         sourceComponent: MultiEffect {
             source: root.wallpaper
@@ -39,45 +39,32 @@ Item {
         id: wrapper
 
         anchors.fill: parent
-        layer.enabled: root.opacity > 0
+        visible: opacity > 0
+        layer.enabled: visible
 
-        Loader {
+        Item {
+            id: content
+
             anchors.fill: parent
-            anchors.topMargin: root.offset
-            anchors.bottomMargin: -root.offset
+            anchors.margins: Config.border.thickness
+            anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Appearance.spacing.sm * Config.background.visualiser.spacing
 
-            active: root.opacity > 0
+            Side {
+                content: content
+            }
+            Side {
+                content: content
+                isRight: true
+            }
 
-            sourceComponent: Item {
-                ServiceRef {
-                    service: Cava.provider
-                }
-
-                Item {
-                    id: content
-
-                    anchors.fill: parent
-                    anchors.margins: Config.border.thickness
-                    anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Appearance.spacing.sm * Config.background.visualiser.spacing
-
-                    Side {
-                        content: content
-                    }
-                    Side {
-                        content: content
-                        isRight: true
-                    }
-
-                    Behavior on anchors.leftMargin {
-                        Anim {}
-                    }
-                }
+            Behavior on anchors.leftMargin {
+                Anim {}
             }
         }
-    }
 
-    Behavior on offset {
-        Anim {}
+        ServiceRef {
+            service: Cava.provider
+        }
     }
 
     Behavior on opacity {

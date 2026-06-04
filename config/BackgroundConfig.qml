@@ -34,5 +34,6 @@ JsonObject {
         property bool blur: false
         property real rounding: 1
         property real spacing: 1
+        property string output: ""
     }
 }

@@ -15,7 +15,9 @@ import "modules/background"
 import "modules/polkit"
 import qs.modules.controlcenter
 import qs.services
+import qs.config
 
+import QtQuick
 import Quickshell
 
 ShellRoot {
@@ -38,4 +40,17 @@ ShellRoot {
 
     // Initialize AudioPortSwitch service
     property var _audioPortSwitch: AudioPortSwitch
+
+    // Initialize Cava audio visualiser service
+    property var _cavaService: Cava
+
+    // Wire idle timeout from config
+    property var _idleService: IdleService
+
+    Connections {
+        target: Config
+        function onConfigLoaded(): void {
+            IdleService.setThreshold(Config.general.idleTimeout);
+        }
+    }
 }
