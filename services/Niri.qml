@@ -373,7 +373,7 @@ Singleton {
         }
         
         _moveAfterFocusPendingId = windowId.toString();
-        _moveAfterFocusCb = function() {
+        _moveAfterFocusPendingCb = function() {
             NiriIpc.action("move-column-to-index", [index.toString()]);
         };
         

@@ -213,58 +213,32 @@ CustomMouseArea {
     Connections {
         target: root.visibilities
 
-        function onLauncherChanged() {
-            // Launcher doesn't cascade to other panels — each panel manages itself
-        }
-
-        function onDashboardChanged() {
-            if (root.visibilities.dashboard) {
-                // Dashboard became visible, check if this should be shortcut mode
-                const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
-                if (!inDashboardArea) {
-                    root.setShortcutPanel("dashboard");
-                }
+        function _onPanelVisibility(name: string, panel: Item, inPanelFn: Function): void {
+            if (root.visibilities[name]) {
+                if (!inPanelFn(panel, root.mouseX, root.mouseY))
+                    root.setShortcutPanel(name);
             } else {
-                // Dashboard hidden, clear shortcut flag
-                root.clearShortcutPanel("dashboard");
+                root.clearShortcutPanel(name);
             }
         }
 
-        function onOsdChanged() {
-            if (root.visibilities.osd) {
-                // OSD became visible, check if this should be shortcut mode
-                const inOsdArea = root.inRightPanel(root.panels.osd, root.mouseX, root.mouseY);
-                if (!inOsdArea) {
-                    root.setShortcutPanel("osd");
-                }
-            } else {
-                // OSD hidden, clear shortcut flag
-                root.clearShortcutPanel("osd");
-            }
+        function onDashboardChanged(): void {
+            root._onPanelVisibility("dashboard", root.panels.dashboard, root.inTopPanel);
         }
 
-        function onUtilitiesChanged() {
-            if (root.visibilities.utilities) {
-                // Utilities became visible, check if this should be shortcut mode
-                const inUtilitiesArea = root.inBottomPanel(root.panels.utilities, root.mouseX, root.mouseY);
-                if (!inUtilitiesArea) {
-                    root.setShortcutPanel("utilities");
-                }
-            } else {
-                // Utilities hidden, clear shortcut flag
-                root.clearShortcutPanel("utilities");
-            }
+        function onOsdChanged(): void {
+            root._onPanelVisibility("osd", root.panels.osd, root.inRightPanel);
         }
 
-        function onQuicktogglesChanged() {
+        function onUtilitiesChanged(): void {
+            root._onPanelVisibility("utilities", root.panels.utilities, root.inBottomPanel);
+        }
+
+        function onQuicktogglesChanged(): void {
             if (root.visibilities.quicktoggles) {
-                // Quicktoggles became visible, check if this should be shortcut mode
-                const inQuicktogglesArea = root.inBottomPanel(root.panels.quicktoggles, root.mouseX, root.mouseY) && root.inRightPanel(root.panels.quicktoggles, root.mouseX, root.mouseY);
-                if (!inQuicktogglesArea) {
+                if (!root.inBottomPanel(root.panels.quicktoggles, root.mouseX, root.mouseY) || !root.inRightPanel(root.panels.quicktoggles, root.mouseX, root.mouseY))
                     root.setShortcutPanel("quicktoggles");
-                }
             } else {
-                // Quicktoggles hidden, clear shortcut flag
                 root.clearShortcutPanel("quicktoggles");
             }
         }
