@@ -174,12 +174,7 @@ switch() {
     # -- 3. Run matugen templates (user define matugen templates) --
     run_matugen_templates "$actual_img" "$mode" "$scheme_type"
 
-    # -- 4. Apply terminal escape sequences --
-    if [[ -f "$SCRIPT_DIR/applycolor.sh" ]]; then
-        "$SCRIPT_DIR/applycolor.sh"
-    fi
-
-    # -- 5. Apply Kvantum Qt theme colors --
+    # -- 4. Apply Kvantum Qt theme colors --
     if [[ -f "$SCRIPT_DIR/kvantum/materialQT.sh" ]]; then
         bash "$SCRIPT_DIR/kvantum/materialQT.sh" &
     fi
