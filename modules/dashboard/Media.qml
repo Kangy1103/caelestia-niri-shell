@@ -407,6 +407,7 @@ Item {
                     radius: playerSelectorBg.radius
                     opacity: playerSelector.expanded ? 1 : 0
                     level: 2
+                    enabled: playerSelector.expanded
 
                     Behavior on opacity {
                         Anim {
@@ -447,11 +448,12 @@ Item {
                                 Layout.minimumWidth: playerSelector.implicitWidth
                                 implicitWidth: playerInner.implicitWidth + Appearance.padding.md * 2
                                 implicitHeight: playerInner.implicitHeight + Appearance.padding.sm * 2
+                                enabled: playerSelector.expanded
 
-                                StateLayer {
-                                    disabled: !playerSelector.expanded
-
-                                    function onClicked(): void {
+                                MouseArea {
+                                    anchors.fill: parent
+                                    enabled: playerSelector.expanded
+                                    onClicked: {
                                         playerSelector.expanded = false;
                                         Players.manualActive = player.modelData;
                                     }
