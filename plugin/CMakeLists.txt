@@ -15,4 +15,9 @@ string(REGEX MATCH "^[0-9]+\\.[0-9]+" VERSION_SHORT "${VERSION}")
 
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml")
 qt_standard_project_setup()
+
+if(NOT INSTALL_QMLDIR)
+    set(INSTALL_QMLDIR "/usr/lib/qt6/qml" CACHE STRING "QML module install directory" FORCE)
+endif()
+
 add_subdirectory(src/Caelestia)
