@@ -40,7 +40,7 @@ Scope {
         id: passwd
 
         config: "passwd"
-        configDirectory: Quickshell.shellDir + "/assets/pam.d"
+        configDirectory: "/etc/pam.d"
 
         onMessageChanged: {
             if (message.startsWith("The account is locked"))
@@ -92,7 +92,7 @@ Scope {
         }
 
         config: "fprint"
-        configDirectory: Quickshell.shellDir + "/assets/pam.d"
+        configDirectory: "/etc/pam.d"
 
         onCompleted: res => {
             if (!available)
