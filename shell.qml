@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260602
+// Version: 0.1.1-20260605
 
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
@@ -51,6 +51,7 @@ ShellRoot {
         target: Config
         function onConfigLoaded(): void {
             IdleService.setThreshold(Config.general.idleTimeout);
+            IdleService.screenOffDelaySeconds = Config.general.screenOffDelay;
         }
     }
 }

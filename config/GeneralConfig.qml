@@ -5,6 +5,8 @@ JsonObject {
     property Apps apps: Apps {}
     property Battery battery: Battery {}
     property int idleTimeout: 300
+    // Seconds after idleTimeout before screens turn off. Total idle time = idleTimeout + screenOffDelay.
+    property int screenOffDelay: 120
 
     component Apps: JsonObject {
         property list<string> terminal: ["foot"]

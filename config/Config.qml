@@ -8,21 +8,21 @@ import QtQuick
 Singleton {
     id: root
 
-    property alias appearance: adapter.appearance
-    property alias general: adapter.general
-    property alias background: adapter.background
-    property alias bar: adapter.bar
-    property alias border: adapter.border
-    property alias dashboard: adapter.dashboard
-    property alias controlCenter: adapter.controlCenter
-    property alias launcher: adapter.launcher
-    property alias notifs: adapter.notifs
-    property alias osd: adapter.osd
-    property alias session: adapter.session
-    property alias lock: adapter.lock
-    property alias utilities: adapter.utilities
-    property alias services: adapter.services
-    property alias paths: adapter.paths
+    property alias appearance: themeAdapter.appearance
+    property alias border: themeAdapter.border
+    property alias bar: uiAdapter.bar
+    property alias dashboard: uiAdapter.dashboard
+    property alias launcher: uiAdapter.launcher
+    property alias osd: uiAdapter.osd
+    property alias session: uiAdapter.session
+    property alias controlCenter: uiAdapter.controlCenter
+    property alias lock: uiAdapter.lock
+    property alias background: bgAdapter.background
+    property alias general: sysAdapter.general
+    property alias services: sysAdapter.services
+    property alias paths: sysAdapter.paths
+    property alias notifs: notifAdapter.notifs
+    property alias utilities: notifAdapter.utilities
 
     // Track whether this is the initial load or a reload
     property bool initialLoadComplete: false
@@ -49,38 +49,60 @@ Singleton {
         interval: 500
         onTriggered: {
             try {
-                configFile.watchChanges = false;
-                configFile.setText(JSON.stringify(serializeConfig(), null, 2));
-                configFile.watchChanges = true;
+                const grouped = serializeConfig();
+                themeFile.setText(JSON.stringify(grouped.theme, null, 2));
+                uiFile.setText(JSON.stringify(grouped.ui, null, 2));
+                bgFile.setText(JSON.stringify(grouped.background, null, 2));
+                sysFile.setText(JSON.stringify(grouped.system, null, 2));
+                notifFile.setText(JSON.stringify(grouped.notifications, null, 2));
                 root.configSaved();
             } catch (e) {
-                configFile.watchChanges = true;
                 console.error("Config: Failed to save:", e.message);
                 root.configError(e.message);
             }
         }
     }
 
+    function getFileForSection(section: string): var {
+        const map = {
+            appearance: "themeFile",
+            border: "themeFile",
+            bar: "uiFile",
+            dashboard: "uiFile",
+            launcher: "uiFile",
+            osd: "uiFile",
+            session: "uiFile",
+            controlCenter: "uiFile",
+            lock: "uiFile",
+            background: "bgFile",
+            general: "sysFile",
+            services: "sysFile",
+            paths: "sysFile",
+            notifs: "notifFile",
+            utilities: "notifFile"
+        };
+        return root[map[section]];
+    }
+
     function serializeConfig(): var {
         const sections = {
             appearance: serializeAppearance,
-            general: serializeGeneral,
-            background: serializeBackground,
-            bar: serializeBar,
             border: serializeBorder,
+            bar: serializeBar,
             dashboard: serializeDashboard,
-            controlCenter: serializeControlCenter,
             launcher: serializeLauncher,
-            notifs: serializeNotifs,
             osd: serializeOsd,
             session: serializeSession,
+            controlCenter: serializeControlCenter,
             lock: serializeLock,
-            utilities: serializeUtilities,
+            background: serializeBackground,
+            general: serializeGeneral,
             services: serializeServices,
-            paths: serializePaths
+            paths: serializePaths,
+            notifs: serializeNotifs,
+            utilities: serializeUtilities
         };
 
-        const result = {};
         const dirty = _dirtySections;
         const noCache = Object.keys(_cachedSections).length === 0;
 
@@ -88,11 +110,37 @@ Singleton {
             if (noCache || dirty.has(key)) {
                 _cachedSections[key] = fn();
             }
-            result[key] = _cachedSections[key];
         }
 
         _dirtySections.clear();
-        return result;
+
+        return {
+            theme: {
+                appearance: _cachedSections.appearance,
+                border: _cachedSections.border
+            },
+            ui: {
+                bar: _cachedSections.bar,
+                dashboard: _cachedSections.dashboard,
+                launcher: _cachedSections.launcher,
+                osd: _cachedSections.osd,
+                session: _cachedSections.session,
+                controlCenter: _cachedSections.controlCenter,
+                lock: _cachedSections.lock
+            },
+            background: {
+                background: _cachedSections.background
+            },
+            system: {
+                general: _cachedSections.general,
+                services: _cachedSections.services,
+                paths: _cachedSections.paths
+            },
+            notifications: {
+                notifs: _cachedSections.notifs,
+                utilities: _cachedSections.utilities
+            }
+        };
     }
 
     function markDirty(section: string): void {
@@ -100,6 +148,180 @@ Singleton {
         save();
     }
 
+    function reloadAll(): void {
+        themeFile.reload();
+        uiFile.reload();
+        bgFile.reload();
+        sysFile.reload();
+        notifFile.reload();
+    }
+
+    function _onFileLoaded(): void {
+        if (root.initialLoadComplete && root.loadStartTime)
+            root.configLoaded(Date.now() - root.loadStartTime);
+        root.initialLoadComplete = true;
+        root.loadStartTime = null;
+    }
+
+    // ── Shared reload debounce (coalesces rapid writes across all 5 files) ──
+    Timer {
+        id: reloadDebounce
+        interval: 120
+        onTriggered: reloadAll()
+    }
+
+    // ── Shared save debounce for adapter updates ────────────────────────────
+    Timer {
+        id: adapterSaveTimer
+        interval: 500
+        onTriggered: {
+            const grouped = serializeConfig();
+            themeFile.setText(JSON.stringify(grouped.theme, null, 2));
+            uiFile.setText(JSON.stringify(grouped.ui, null, 2));
+            bgFile.setText(JSON.stringify(grouped.background, null, 2));
+            sysFile.setText(JSON.stringify(grouped.system, null, 2));
+            notifFile.setText(JSON.stringify(grouped.notifications, null, 2));
+        }
+    }
+
+    FileView {
+        id: themeFile; path: `${Paths.config}/theme.json`
+        watchChanges: true
+        onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
+        onAdapterUpdated: { adapterSaveTimer.restart(); }
+        property int _retry: 0
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound && _retry < 3)
+                { _retry++; fileNotFoundRetry.restart(); return; }
+            console.error("Config: Failed to load theme.json:", err);
+            root.configError(`theme.json: ${err}`);
+        }
+        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        JsonAdapter { id: themeAdapter
+            property AppearanceConfig appearance: AppearanceConfig {}
+            property BorderConfig border: BorderConfig {}
+        }
+    }
+
+    FileView {
+        id: uiFile; path: `${Paths.config}/ui.json`
+        watchChanges: true
+        onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
+        onAdapterUpdated: { adapterSaveTimer.restart(); }
+        property int _retry: 0
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound && _retry < 3)
+                { _retry++; fileNotFoundRetry.restart(); return; }
+            console.error("Config: Failed to load ui.json:", err);
+            root.configError(`ui.json: ${err}`);
+        }
+        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        JsonAdapter { id: uiAdapter
+            property BarConfig bar: BarConfig {}
+            property DashboardConfig dashboard: DashboardConfig {}
+            property LauncherConfig launcher: LauncherConfig {}
+            property OsdConfig osd: OsdConfig {}
+            property SessionConfig session: SessionConfig {}
+            property ControlCenterConfig controlCenter: ControlCenterConfig {}
+            property LockConfig lock: LockConfig {}
+        }
+    }
+
+    FileView {
+        id: bgFile; path: `${Paths.config}/background.json`
+        watchChanges: true
+        onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
+        onAdapterUpdated: { adapterSaveTimer.restart(); }
+        property int _retry: 0
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound && _retry < 3)
+                { _retry++; fileNotFoundRetry.restart(); return; }
+            console.error("Config: Failed to load background.json:", err);
+            root.configError(`background.json: ${err}`);
+        }
+        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        JsonAdapter { id: bgAdapter
+            property BackgroundConfig background: BackgroundConfig {}
+        }
+    }
+
+    FileView {
+        id: sysFile; path: `${Paths.config}/system.json`
+        watchChanges: true
+        onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
+        onAdapterUpdated: { adapterSaveTimer.restart(); }
+        property int _retry: 0
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound && _retry < 3)
+                { _retry++; fileNotFoundRetry.restart(); return; }
+            console.error("Config: Failed to load system.json:", err);
+            root.configError(`system.json: ${err}`);
+        }
+        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        JsonAdapter { id: sysAdapter
+            property GeneralConfig general: GeneralConfig {}
+            property ServiceConfig services: ServiceConfig {}
+            property UserPaths paths: UserPaths {}
+        }
+    }
+
+    FileView {
+        id: notifFile; path: `${Paths.config}/notifications.json`
+        watchChanges: true
+        onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
+        onAdapterUpdated: { adapterSaveTimer.restart(); }
+        property int _retry: 0
+        onLoadFailed: err => {
+            if (err === FileViewError.FileNotFound && _retry < 3)
+                { _retry++; fileNotFoundRetry.restart(); return; }
+            console.error("Config: Failed to load notifications.json:", err);
+            root.configError(`notifications.json: ${err}`);
+        }
+        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        JsonAdapter { id: notifAdapter
+            property NotifsConfig notifs: NotifsConfig {}
+            property UtilitiesConfig utilities: UtilitiesConfig {}
+        }
+    }
+
+    // ── Shared timers and init ───────────────────────────────────────────────
+    Timer {
+        id: recentSaveCooldown
+        interval: 2000
+        onTriggered: root.recentlySaved = false
+    }
+
+    Timer {
+        id: fileNotFoundRetry
+        interval: 250
+        onTriggered: configInitializer.running = true
+    }
+
+    Process {
+        id: configInitializer
+        command: ["mkdir", "-p", Paths.config]
+        running: false
+        onExited: (exitCode, exitStatus) => {
+            if (exitCode === 0) {
+                const grouped = serializeConfig();
+                if (!themeFile.loaded)
+                    themeFile.setText(JSON.stringify(grouped.theme, null, 2));
+                if (!uiFile.loaded)
+                    uiFile.setText(JSON.stringify(grouped.ui, null, 2));
+                if (!bgFile.loaded)
+                    bgFile.setText(JSON.stringify(grouped.background, null, 2));
+                if (!sysFile.loaded)
+                    sysFile.setText(JSON.stringify(grouped.system, null, 2));
+                if (!notifFile.loaded)
+                    notifFile.setText(JSON.stringify(grouped.notifications, null, 2));
+                reloadAll();
+            } else {
+                console.error("Config: Failed to create directory:", Paths.config, "Exit code:", exitCode);
+            }
+        }
+    }
+
+    // ── Serialize functions (unchanged from original) ────────────────────────
     function serializeAppearance(): var {
         return {
             rounding: { scale: 1.0 },
@@ -443,116 +665,5 @@ Singleton {
             sessionGif: paths.sessionGif,
             mediaGif: paths.mediaGif
         };
-    }
-
-    Timer {
-        id: recentSaveCooldown
-        interval: 2000
-        onTriggered: root.recentlySaved = false
-    }
-
-    property int fileNotFoundRetries: 0
-
-    Timer {
-        id: reloadDebounce
-        interval: 120
-        onTriggered: configFile.reload()
-    }
-
-    Timer {
-        id: fileNotFoundRetry
-        interval: 250
-        onTriggered: {
-            root.loadStartTime = Date.now();
-            configFile.reload();
-        }
-    }
-
-    Process {
-        id: configInitializer
-        command: ["mkdir", "-p", Paths.config]
-        running: false
-        
-        onExited: (exitCode, exitStatus) => {
-            if (exitCode === 0) {
-                const defaultConfig = JSON.stringify(root.serializeConfig(), null, 2);
-                configFile.watchChanges = false;
-                configFile.setText(defaultConfig);
-                configFile.watchChanges = true;
-                configFile.reload();
-            } else {
-                console.error("Config: Failed to create directory:", Paths.config, "Exit code:", exitCode);
-            }
-        }
-    }
-
-    FileView {
-        id: configFile
-        
-        path: `${Paths.config}/shell.json`
-        watchChanges: true
-        
-        onFileChanged: {
-            root.loadStartTime = Date.now();
-            reloadDebounce.restart();
-        }
-        
-        onLoaded: {
-            try {
-                // Try to parse JSON to validate it
-                JSON.parse(text());
-                
-                // Calculate load time
-                const loadTime = root.loadStartTime ? Date.now() - root.loadStartTime : 0;
-                
-                // Emit signal for toast handling (avoids circular qs.services import)
-                if (root.initialLoadComplete)
-                    root.configLoaded(loadTime);
-                
-                root.initialLoadComplete = true;
-                root.loadStartTime = null;
-                root.fileNotFoundRetries = 0;
-                
-            } catch (e) {
-                console.error("Config: Failed to parse config:", e.message);
-                root.configError(e.message);
-            }
-        }
-        
-        onLoadFailed: err => {
-            if (err === FileViewError.FileNotFound) {
-                if (root.fileNotFoundRetries < 3) {
-                    root.fileNotFoundRetries++;
-                    fileNotFoundRetry.restart();
-                    return;
-                }
-
-                root.fileNotFoundRetries = 0;
-                configInitializer.running = true;
-            } else {
-                console.error("Config: Failed to read config file:", err);
-                root.configError(`Failed to read: ${FileViewError[err] || err}`);
-            }
-        }
-
-        JsonAdapter {
-            id: adapter
-
-            property AppearanceConfig appearance: AppearanceConfig {}
-            property GeneralConfig general: GeneralConfig {}
-            property BackgroundConfig background: BackgroundConfig {}
-            property BarConfig bar: BarConfig {}
-            property BorderConfig border: BorderConfig {}
-            property DashboardConfig dashboard: DashboardConfig {}
-            property ControlCenterConfig controlCenter: ControlCenterConfig {}
-            property LauncherConfig launcher: LauncherConfig {}
-            property NotifsConfig notifs: NotifsConfig {}
-            property OsdConfig osd: OsdConfig {}
-            property SessionConfig session: SessionConfig {}
-            property LockConfig lock: LockConfig {}
-            property UtilitiesConfig utilities: UtilitiesConfig {}
-            property ServiceConfig services: ServiceConfig {}
-            property UserPaths paths: UserPaths {}
-        }
     }
 }

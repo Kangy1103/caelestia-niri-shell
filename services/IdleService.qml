@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.2.0-20260604
+// Version: 0.3.1-20260605
 
 pragma Singleton
 pragma ComponentBehavior: Bound
@@ -13,6 +13,8 @@ Singleton {
 
     property bool isIdle: false
     property int idleThresholdSeconds: 300
+    // Relative to idleThresholdSeconds. Total idle time before screen-off is idleThreshold + screenOffDelay.
+    property int screenOffDelaySeconds: 120
 
     signal idleChanged(bool idle)
 
@@ -34,6 +36,29 @@ Singleton {
             if (wasIdle !== root.isIdle) {
                 root.idleChanged(root.isIdle);
             }
+
+            if (isIdle) {
+                screenOffTimer.start();
+            } else {
+                screenOffTimer.stop();
+                turnScreensOn();
+            }
         }
+    }
+
+    Timer {
+        id: screenOffTimer
+        interval: root.screenOffDelaySeconds * 1000
+        onTriggered: Quickshell.execDetached([
+            "sh", "-c",
+            "niri msg -j outputs | jq -r '.[].name' | while IFS= read -r name; do niri msg output \"$name\" off; done"
+        ])
+    }
+
+    function turnScreensOn(): void {
+        Quickshell.execDetached([
+            "sh", "-c",
+            "niri msg -j outputs | jq -r '.[].name' | while IFS= read -r name; do niri msg output \"$name\" on; done"
+        ]);
     }
 }
