@@ -21,13 +21,14 @@ Singleton {
     function setThreshold(seconds: int): void {
         idleThresholdSeconds = seconds;
         idleMonitor.timeout = seconds;
+        console.log("IdleService: threshold updated to", seconds);
     }
 
     IdleMonitor {
         id: idleMonitor
         timeout: root.idleThresholdSeconds
         enabled: true
-        respectInhibitors: true
+        respectInhibitors: false
 
         onIsIdleChanged: {
             const wasIdle = root.isIdle;
