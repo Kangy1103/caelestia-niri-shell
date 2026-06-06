@@ -21,7 +21,7 @@ Singleton {
         id: idleMonitor
         timeout: root.idleThresholdSeconds
         enabled: true
-        respectInhibitors: true
+        respectInhibitors: false
 
         onIsIdleChanged: {
             const wasIdle = root.isIdle;
