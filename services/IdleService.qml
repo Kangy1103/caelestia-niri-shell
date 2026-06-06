@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.3.1-20260605
+// Version: 0.9.0-20260606
 
 pragma Singleton
 pragma ComponentBehavior: Bound
@@ -13,22 +13,15 @@ Singleton {
 
     property bool isIdle: false
     property int idleThresholdSeconds: 1800
-    // Relative to idleThresholdSeconds. Total idle time before screen-off is idleThreshold + screenOffDelay.
     property int screenOffDelaySeconds: 1800
 
     signal idleChanged(bool idle)
-
-    function setThreshold(seconds: int): void {
-        idleThresholdSeconds = seconds;
-        idleMonitor.timeout = seconds;
-        console.log("IdleService: threshold updated to", seconds);
-    }
 
     IdleMonitor {
         id: idleMonitor
         timeout: root.idleThresholdSeconds
         enabled: true
-        respectInhibitors: false
+        respectInhibitors: true
 
         onIsIdleChanged: {
             const wasIdle = root.isIdle;
@@ -63,7 +56,10 @@ Singleton {
         ]);
     }
 
-    // Workaround for Quickshell 0.3.0 IdleMonitor race condition
+    // Workaround for Quickshell 0.3.0 IdleMonitor race condition:
+    // ext-idle-notify-v1 isn't initialized during component construction.
+    // Toggling enabled after a delay forces the C++ IdleMonitor to
+    // create the idle notification when the extension IS available.
     Timer {
         interval: 3000
         running: true

@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.1-20260605
+// Version: 0.3.0-20260606
 
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
@@ -15,7 +15,6 @@ import "modules/background"
 import "modules/polkit"
 import qs.modules.controlcenter
 import qs.services
-import qs.config
 
 import QtQuick
 import Quickshell
@@ -44,17 +43,6 @@ ShellRoot {
     // Initialize Cava audio visualiser service
     property var _cavaService: Cava
 
-    // Wire idle timeout from config
+    // Initialize IdleService
     property var _idleService: IdleService
-
-    Connections {
-        target: Config
-        function onConfigLoaded(): void {
-            var timeouts = Config.general.idle.timeouts;
-            var lockSec = timeouts[0]?.timeout ?? 300;
-            IdleService.setThreshold(lockSec);
-            if (timeouts.length > 1)
-                IdleService.screenOffDelaySeconds = timeouts[1].timeout - lockSec;
-        }
-    }
 }
