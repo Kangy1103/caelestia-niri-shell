@@ -4,9 +4,7 @@ JsonObject {
     property bool isDistLogo: false
     property Apps apps: Apps {}
     property Battery battery: Battery {}
-    property int idleTimeout: 300
-    // Seconds after idleTimeout before screens turn off. Total idle time = idleTimeout + screenOffDelay.
-    property int screenOffDelay: 120
+    property Idle idle: Idle {}
 
     component Apps: JsonObject {
         property list<string> terminal: ["foot"]
@@ -37,7 +35,23 @@ JsonObject {
                 critical: true
             }
         ]
-        property int criticalLevel: 3 // Battery level to trigger critical action (e.g., suspend)
+        property int criticalLevel: 3
         property bool enableWarnings: true
+    }
+
+    component Idle: JsonObject {
+        property bool lockBeforeSleep: false
+        property bool inhibitWhenAudio: false
+        property list<var> timeouts: [
+            {
+                timeout: 180,
+                idleAction: "lock"
+            },
+            {
+                timeout: 300,
+                idleAction: "dpms off",
+                returnAction: "dpms on"
+            }
+        ]
     }
 }

@@ -50,8 +50,11 @@ ShellRoot {
     Connections {
         target: Config
         function onConfigLoaded(): void {
-            IdleService.setThreshold(Config.general.idleTimeout);
-            IdleService.screenOffDelaySeconds = Config.general.screenOffDelay;
+            var timeouts = Config.general.idle.timeouts;
+            var lockSec = timeouts[0]?.timeout ?? 300;
+            IdleService.setThreshold(lockSec);
+            if (timeouts.length > 1)
+                IdleService.screenOffDelaySeconds = timeouts[1].timeout - lockSec;
         }
     }
 }

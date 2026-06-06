@@ -26,7 +26,7 @@ Singleton {
 
     // Track whether this is the initial load or a reload
     property bool initialLoadComplete: false
-    
+
     // Timer to measure config load time
     property var loadStartTime: null
 
@@ -156,13 +156,6 @@ Singleton {
         notifFile.reload();
     }
 
-    function _onFileLoaded(): void {
-        if (root.initialLoadComplete && root.loadStartTime)
-            root.configLoaded(Date.now() - root.loadStartTime);
-        root.initialLoadComplete = true;
-        root.loadStartTime = null;
-    }
-
     // ── Shared reload debounce (coalesces rapid writes across all 5 files) ──
     Timer {
         id: reloadDebounce
@@ -170,25 +163,10 @@ Singleton {
         onTriggered: reloadAll()
     }
 
-    // ── Shared save debounce for adapter updates ────────────────────────────
-    Timer {
-        id: adapterSaveTimer
-        interval: 500
-        onTriggered: {
-            const grouped = serializeConfig();
-            themeFile.setText(JSON.stringify(grouped.theme, null, 2));
-            uiFile.setText(JSON.stringify(grouped.ui, null, 2));
-            bgFile.setText(JSON.stringify(grouped.background, null, 2));
-            sysFile.setText(JSON.stringify(grouped.system, null, 2));
-            notifFile.setText(JSON.stringify(grouped.notifications, null, 2));
-        }
-    }
-
     FileView {
         id: themeFile; path: `${Paths.config}/theme.json`
         watchChanges: true
         onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
-        onAdapterUpdated: { adapterSaveTimer.restart(); }
         property int _retry: 0
         onLoadFailed: err => {
             if (err === FileViewError.FileNotFound && _retry < 3)
@@ -196,7 +174,7 @@ Singleton {
             console.error("Config: Failed to load theme.json:", err);
             root.configError(`theme.json: ${err}`);
         }
-        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        onLoaded: { _retry = 0; }
         JsonAdapter { id: themeAdapter
             property AppearanceConfig appearance: AppearanceConfig {}
             property BorderConfig border: BorderConfig {}
@@ -207,7 +185,6 @@ Singleton {
         id: uiFile; path: `${Paths.config}/ui.json`
         watchChanges: true
         onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
-        onAdapterUpdated: { adapterSaveTimer.restart(); }
         property int _retry: 0
         onLoadFailed: err => {
             if (err === FileViewError.FileNotFound && _retry < 3)
@@ -215,7 +192,7 @@ Singleton {
             console.error("Config: Failed to load ui.json:", err);
             root.configError(`ui.json: ${err}`);
         }
-        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        onLoaded: { _retry = 0; }
         JsonAdapter { id: uiAdapter
             property BarConfig bar: BarConfig {}
             property DashboardConfig dashboard: DashboardConfig {}
@@ -231,7 +208,6 @@ Singleton {
         id: bgFile; path: `${Paths.config}/background.json`
         watchChanges: true
         onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
-        onAdapterUpdated: { adapterSaveTimer.restart(); }
         property int _retry: 0
         onLoadFailed: err => {
             if (err === FileViewError.FileNotFound && _retry < 3)
@@ -239,7 +215,7 @@ Singleton {
             console.error("Config: Failed to load background.json:", err);
             root.configError(`background.json: ${err}`);
         }
-        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        onLoaded: { _retry = 0; }
         JsonAdapter { id: bgAdapter
             property BackgroundConfig background: BackgroundConfig {}
         }
@@ -249,7 +225,6 @@ Singleton {
         id: sysFile; path: `${Paths.config}/system.json`
         watchChanges: true
         onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
-        onAdapterUpdated: { adapterSaveTimer.restart(); }
         property int _retry: 0
         onLoadFailed: err => {
             if (err === FileViewError.FileNotFound && _retry < 3)
@@ -257,7 +232,12 @@ Singleton {
             console.error("Config: Failed to load system.json:", err);
             root.configError(`system.json: ${err}`);
         }
-        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        onLoaded: {
+            _retry = 0;
+            root.initialLoadComplete = true;
+            root.configLoaded(root.loadStartTime ? Date.now() - root.loadStartTime : 0);
+            root.loadStartTime = null;
+        }
         JsonAdapter { id: sysAdapter
             property GeneralConfig general: GeneralConfig {}
             property ServiceConfig services: ServiceConfig {}
@@ -269,7 +249,6 @@ Singleton {
         id: notifFile; path: `${Paths.config}/notifications.json`
         watchChanges: true
         onFileChanged: { root.loadStartTime = Date.now(); reloadDebounce.restart(); }
-        onAdapterUpdated: { adapterSaveTimer.restart(); }
         property int _retry: 0
         onLoadFailed: err => {
             if (err === FileViewError.FileNotFound && _retry < 3)
@@ -277,7 +256,7 @@ Singleton {
             console.error("Config: Failed to load notifications.json:", err);
             root.configError(`notifications.json: ${err}`);
         }
-        onLoaded: { _retry = 0; root._onFileLoaded(); }
+        onLoaded: { _retry = 0; }
         JsonAdapter { id: notifAdapter
             property NotifsConfig notifs: NotifsConfig {}
             property UtilitiesConfig utilities: UtilitiesConfig {}
@@ -362,7 +341,11 @@ Singleton {
                 criticalLevel: general.battery.criticalLevel,
                 enableWarnings: general.battery.enableWarnings
             },
-            idleTimeout: general.idleTimeout
+            idle: {
+                lockBeforeSleep: general.idle.lockBeforeSleep,
+                inhibitWhenAudio: general.idle.inhibitWhenAudio,
+                timeouts: general.idle.timeouts
+            }
         };
     }
 
