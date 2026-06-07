@@ -368,12 +368,12 @@ Item {
                 property bool expanded
 
                 Layout.alignment: Qt.AlignVCenter
+                Layout.maximumWidth: slider.implicitWidth * 0.6
 
-                implicitWidth: slider.implicitWidth * 0.6
+                implicitWidth: Math.max(currentPlayer.implicitWidth, 100) + Appearance.padding.sm * 2
                 implicitHeight: currentPlayer.implicitHeight + Appearance.padding.sm * 2
                 radius: Appearance.rounding.normal
                 color: Colours.tPalette.m3surfaceContainer
-                z: 1
 
                 StateLayer {
                     disabled: playerSelector.expanded
@@ -402,107 +402,17 @@ Item {
                     }
                 }
 
-                Elevation {
-                    anchors.fill: playerSelectorBg
-                    radius: playerSelectorBg.radius
-                    opacity: playerSelector.expanded ? 1 : 0
-                    level: 2
-                    enabled: playerSelector.expanded
+                MaterialIcon {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.rightMargin: Appearance.padding.xs
+                    text: "expand_more"
+                    color: Colours.palette.m3onSurfaceVariant
+                    rotation: playerSelector.expanded ? 180 : 0
+                    font.pointSize: Appearance.font.size.labelLarge
 
-                    Behavior on opacity {
-                        Anim {
-                            duration: Appearance.anim.durations.expressiveDefaultSpatial
-                        }
-                    }
-                }
-
-                StyledRect {
-                    id: playerSelectorBg
-
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    implicitWidth: playerSelector.expanded ? playerListCol.implicitWidth : playerSelector.implicitWidth
-                    implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight : playerSelector.implicitHeight
-
-                    color: Colours.palette.m3secondaryContainer
-                    radius: Appearance.rounding.normal
-                    opacity: playerSelector.expanded ? 1 : 0
-
-                    ColumnLayout {
-                        id: playerListCol
-
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.bottom: parent.bottom
-
-                        spacing: 0
-
-                        property var flatList: {
-                            var arr = [];
-                            for (var i = 0; i < Players.list.length; i++)
-                                arr.push(Players.list[i]);
-                            return arr;
-                        }
-
-                        Repeater {
-                            model: playerListCol.flatList
-
-                            Item {
-                                id: player
-
-                                required property MprisPlayer modelData
-
-                                Layout.fillWidth: true
-                                Layout.minimumWidth: playerSelector.implicitWidth
-                                implicitWidth: playerInner.implicitWidth + Appearance.padding.md * 2
-                                implicitHeight: playerInner.implicitHeight + Appearance.padding.sm * 2
-                                enabled: playerSelector.expanded
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    enabled: playerSelector.expanded
-                                    onClicked: {
-                                        playerSelector.expanded = false;
-                                        Players.manualActive = player.modelData;
-                                    }
-                                }
-
-                                RowLayout {
-                                    id: playerInner
-
-                                    anchors.centerIn: parent
-                                    spacing: Appearance.spacing.sm
-
-                                    PlayerIcon {
-                                        player: player.modelData
-                                    }
-
-                                    StyledText {
-                                        text: Players.getIdentity(player.modelData)
-                                        color: Colours.palette.m3onSecondaryContainer
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Behavior on opacity {
-                        Anim {
-                            duration: Appearance.anim.durations.expressiveDefaultSpatial
-                        }
-                    }
-
-                    Behavior on implicitWidth {
-                        Anim {
-                            duration: Appearance.anim.durations.expressiveDefaultSpatial
-                            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-                        }
-                    }
-
-                    Behavior on implicitHeight {
-                        Anim {
-                            duration: Appearance.anim.durations.expressiveDefaultSpatial
-                            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-                        }
+                    Behavior on rotation {
+                        Anim {}
                     }
                 }
             }
@@ -517,6 +427,98 @@ Item {
 
                 function onClicked(): void {
                     Players.active?.quit();
+                }
+            }
+        }
+    }
+
+    MouseArea {
+        id: dropdownOverlay
+        anchors.fill: parent
+        enabled: playerSelector.expanded
+        visible: playerSelector.expanded
+        onClicked: playerSelector.expanded = false
+        z: 9
+
+        StyledRect {
+            id: dropdown
+
+            anchors.bottom: playerSelector.top
+            anchors.horizontalCenter: playerSelector.horizontalCenter
+            anchors.bottomMargin: Appearance.spacing.sm
+
+            implicitWidth: Math.max(200, playerListCol.implicitWidth + Appearance.padding.md * 2)
+            implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight + Appearance.padding.sm * 2 : 0
+
+            radius: Appearance.rounding.normal
+            color: Colours.palette.m3secondaryContainer
+            opacity: playerSelector.expanded ? 1 : 0
+
+            ColumnLayout {
+                id: playerListCol
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.margins: Appearance.padding.sm
+                spacing: 0
+
+                Repeater {
+                    model: Players.list
+
+                    StyledRect {
+                        id: playerItem
+                        required property MprisPlayer modelData
+
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: playerSelector.implicitWidth
+                        implicitWidth: playerInner.implicitWidth + Appearance.padding.md * 2
+                        implicitHeight: playerInner.implicitHeight + Appearance.padding.sm * 2
+
+                        radius: Appearance.rounding.small
+                        color: Qt.alpha(Colours.palette.m3primaryContainer, modelData === Players.active ? 1 : 0)
+
+                        StateLayer {
+                            color: modelData === Players.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSecondaryContainer
+                            disabled: !playerSelector.expanded
+
+                            function onClicked(): void {
+                                playerSelector.expanded = false;
+                                Players.manualActive = playerItem.modelData;
+                            }
+                        }
+
+                        RowLayout {
+                            id: playerInner
+                            anchors.centerIn: parent
+                            spacing: Appearance.spacing.sm
+
+                            MaterialIcon {
+                                Layout.alignment: Qt.AlignVCenter
+                                font.pointSize: Appearance.font.size.bodyLarge
+                                text: modelData === Players.active ? "check" : "radio_button_unchecked"
+                                color: modelData === Players.active ? Colours.palette.m3primary : Colours.palette.m3onSecondaryContainer
+                            }
+
+                            StyledText {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: Players.getIdentity(modelData)
+                                color: modelData === Players.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSecondaryContainer
+                            }
+                        }
+                    }
+                }
+            }
+
+            Behavior on opacity {
+                Anim {
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                }
+            }
+
+            Behavior on implicitHeight {
+                Anim {
+                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
                 }
             }
         }
@@ -572,8 +574,6 @@ Item {
             anchors.fill: parent
             source: root.iconName
             asynchronous: true
-            sourceSize.width: width
-            sourceSize.height: height
 
             onStatusChanged: {
                 if (status === Image.Error)
