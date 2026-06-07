@@ -215,7 +215,7 @@ Item {
         anchors.margins: Appearance.padding.xl * 2
 
         playing: Players.active?.isPlaying ?? false
-        speed: BeatTracker.bpm / 300
+        speed: BeatTracker.bpm > 0 ? BeatTracker.bpm / 300 : 0.5
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit

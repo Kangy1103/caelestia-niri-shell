@@ -414,7 +414,7 @@ Item {
                     }
                 }
 
-                StyledClippingRect {
+                StyledRect {
                     id: playerSelectorBg
 
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -530,42 +530,40 @@ Item {
             height: visualiser.height * 0.75
 
             playing: Players.active?.isPlaying ?? false
-            speed: BeatTracker.bpm / 300
+            speed: BeatTracker.bpm > 0 ? BeatTracker.bpm / 300 : 0.5
             source: Paths.absolutePath(Config.paths.mediaGif)
             asynchronous: true
             fillMode: AnimatedImage.PreserveAspectFit
         }
     }
 
-    component PlayerIcon: Item {
-        id: root
+    component PlayerIcon: Loader {
+        id: loader
 
         required property MprisPlayer player
-        readonly property string icon: Icons.getAppIcon(player?.identity)
+        readonly property string iconName: player ? Icons.getAppIcon(player.identity) : ""
+        readonly property bool hasIcon: iconName !== "" && Icons.iconExists(player?.identity ?? "")
 
-        property bool iconFailed: false
-
-        implicitWidth: playerIconImage.implicitWidth
-        implicitHeight: playerIconImage.implicitHeight
         Layout.fillHeight: true
+        asynchronous: true
+        sourceComponent: !player || !hasIcon ? fallbackIcon : playerImage
 
-        IconImage {
-            id: playerIconImage
-            visible: !root.iconFailed
-            anchors.fill: parent
-            source: root.icon
+        Component {
+            id: playerImage
 
-            onStatusChanged: {
-                if (status === Image.Error)
-                    root.iconFailed = true;
+            IconImage {
+                implicitWidth: height
+                source: loader.iconName
+                asynchronous: true
             }
         }
 
-        MaterialIcon {
+        Component {
             id: fallbackIcon
-            visible: !player || root.iconFailed
-            anchors.centerIn: parent
-            text: root.player ? "animated_images" : "music_off"
+
+            MaterialIcon {
+                text: loader.player ? "animated_images" : "music_off"
+            }
         }
     }
 
