@@ -443,15 +443,22 @@ Item {
         StyledRect {
             id: dropdown
 
-            anchors.bottom: playerSelector.top
-            anchors.horizontalCenter: playerSelector.horizontalCenter
-            anchors.bottomMargin: Appearance.spacing.sm
+            x: {
+                if (!playerSelector) return 0;
+                var pt = playerSelector.mapToItem(dropdownOverlay, playerSelector.width / 2, 0);
+                return pt ? pt.x - width / 2 : 0;
+            }
+            y: {
+                if (!playerSelector) return 0;
+                var pt = playerSelector.mapToItem(dropdownOverlay, 0, 0);
+                return pt ? pt.y - implicitHeight - Appearance.spacing.sm : 0;
+            }
 
             implicitWidth: Math.max(200, playerListCol.implicitWidth + Appearance.padding.md * 2)
             implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight + Appearance.padding.sm * 2 : 0
 
             radius: Appearance.rounding.normal
-            color: Colours.palette.m3secondaryContainer
+            color: Colours.palette.m3surfaceContainer
             opacity: playerSelector.expanded ? 1 : 0
 
             ColumnLayout {
@@ -475,10 +482,10 @@ Item {
                         implicitHeight: playerInner.implicitHeight + Appearance.padding.sm * 2
 
                         radius: Appearance.rounding.small
-                        color: Qt.alpha(Colours.palette.m3primaryContainer, modelData === Players.active ? 1 : 0)
+                        color: Qt.alpha(Colours.palette.m3secondaryContainer, modelData === Players.active ? 1 : 0)
 
                         StateLayer {
-                            color: modelData === Players.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSecondaryContainer
+                            color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
                             disabled: !playerSelector.expanded
 
                             function onClicked(): void {
@@ -495,14 +502,14 @@ Item {
                             MaterialIcon {
                                 Layout.alignment: Qt.AlignVCenter
                                 font.pointSize: Appearance.font.size.bodyLarge
-                                text: modelData === Players.active ? "check" : "radio_button_unchecked"
-                                color: modelData === Players.active ? Colours.palette.m3primary : Colours.palette.m3onSecondaryContainer
+                                text: modelData === Players.active ? "check" : ""
+                                color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
                             }
 
                             StyledText {
                                 Layout.alignment: Qt.AlignVCenter
                                 text: Players.getIdentity(modelData)
-                                color: modelData === Players.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSecondaryContainer
+                                color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
                             }
                         }
                     }
