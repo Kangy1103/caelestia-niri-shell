@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import qs.services
 
 Scope {
 
@@ -23,16 +22,6 @@ Scope {
         id: pam
 
         lock: lock
-    }
-
-    Connections {
-        target: IdleService
-
-        function onIdleChanged(idle: bool): void {
-            if (idle) {
-                lock.locked = true;
-            }
-        }
     }
 
     IpcHandler {

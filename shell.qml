@@ -42,7 +42,4 @@ ShellRoot {
 
     // Initialize Cava audio visualiser service
     property var _cavaService: Cava
-
-    // Initialize IdleService
-    property var _idleService: IdleService
 }
