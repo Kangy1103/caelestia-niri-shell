@@ -376,8 +376,6 @@ Item {
                 z: 1
 
                 StateLayer {
-                    disabled: Players.list.length <= 1
-
                     function onClicked(): void {
                         playerSelector.expanded = !playerSelector.expanded;
                     }
@@ -539,31 +537,35 @@ Item {
         }
     }
 
-    component PlayerIcon: Loader {
-        id: loader
+    component PlayerIcon: Item {
+        id: root
 
         required property MprisPlayer player
         readonly property string icon: Icons.getAppIcon(player?.identity)
 
+        property bool iconFailed: false
+
+        implicitWidth: playerIconImage.implicitWidth
+        implicitHeight: playerIconImage.implicitHeight
         Layout.fillHeight: true
-        asynchronous: true
-        sourceComponent: !player || icon === "image://icon/" ? fallbackIcon : playerImage
 
-        Component {
-            id: playerImage
+        IconImage {
+            id: playerIconImage
+            visible: !root.iconFailed
+            anchors.fill: parent
+            source: root.icon
 
-            IconImage {
-                implicitWidth: height
-                source: loader.icon
+            onStatusChanged: {
+                if (status === Image.Error)
+                    root.iconFailed = true;
             }
         }
 
-        Component {
+        MaterialIcon {
             id: fallbackIcon
-
-            MaterialIcon {
-                text: loader.player ? "animated_images" : "music_off"
-            }
+            visible: !player || root.iconFailed
+            anchors.centerIn: parent
+            text: root.player ? "animated_images" : "music_off"
         }
     }
 

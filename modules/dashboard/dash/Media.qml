@@ -4,6 +4,7 @@ import qs.services
 import qs.config
 import qs.utils
 import Caelestia.Services
+import Quickshell.Services.Mpris
 import QtQuick
 import QtQuick.Shapes
 
