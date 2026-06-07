@@ -203,6 +203,13 @@ Item {
         }
     }
 
+    readonly property real bongoSpeed: {
+        var svc = BeatTracker;
+        var bpm = 0;
+        try { bpm = svc.bpm || 0; } catch(e) {}
+        return bpm > 0 ? bpm / Config.services.mediaGifSpeedAdjustment : 0.5;
+    }
+
     AnimatedImage {
         id: bongocat
 
@@ -215,7 +222,7 @@ Item {
         anchors.margins: Appearance.padding.xl * 2
 
         playing: Players.active?.isPlaying ?? false
-        speed: (BeatTracker?.bpm ?? 0) > 0 ? (BeatTracker?.bpm ?? 0) / Config.services.mediaGifSpeedAdjustment : 0.5
+        speed: root.bongoSpeed
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit

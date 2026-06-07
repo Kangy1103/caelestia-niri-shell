@@ -421,23 +421,30 @@ Item {
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.bottom: parent.bottom
-                    implicitWidth: playerSelector.expanded ? playerList.implicitWidth : playerSelector.implicitWidth
-                    implicitHeight: playerSelector.expanded ? playerList.implicitHeight : playerSelector.implicitHeight
+                    implicitWidth: playerSelector.expanded ? playerListCol.implicitWidth : playerSelector.implicitWidth
+                    implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight : playerSelector.implicitHeight
 
                     color: Colours.palette.m3secondaryContainer
                     radius: Appearance.rounding.normal
                     opacity: playerSelector.expanded ? 1 : 0
 
                     ColumnLayout {
-                        id: playerList
+                        id: playerListCol
 
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.bottom: parent.bottom
 
                         spacing: 0
 
+                        property var flatList: {
+                            var arr = [];
+                            for (var i = 0; i < Players.list.length; i++)
+                                arr.push(Players.list[i]);
+                            return arr;
+                        }
+
                         Repeater {
-                            model: [...Players.list].sort((a, b) => (a === Players.active) - (b === Players.active))
+                            model: playerListCol.flatList
 
                             Item {
                                 id: player
@@ -525,6 +532,13 @@ Item {
         implicitWidth: visualiser.width
         implicitHeight: visualiser.height
 
+        readonly property real bongoSpeed: {
+            var svc = BeatTracker;
+            var bpm = 0;
+            try { bpm = svc.bpm || 0; } catch(e) {}
+            return bpm > 0 ? bpm / Config.services.mediaGifSpeedAdjustment : 0.5;
+        }
+
         AnimatedImage {
             anchors.centerIn: parent
 
@@ -532,7 +546,7 @@ Item {
             height: visualiser.height * 0.75
 
             playing: Players.active?.isPlaying ?? false
-            speed: (BeatTracker?.bpm ?? 0) > 0 ? (BeatTracker?.bpm ?? 0) / Config.services.mediaGifSpeedAdjustment : 0.5
+            speed: root.bongoSpeed
             source: Paths.absolutePath(Config.paths.mediaGif)
             asynchronous: true
             fillMode: AnimatedImage.PreserveAspectFit
@@ -543,13 +557,14 @@ Item {
         id: root
 
         required property MprisPlayer player
-        readonly property string iconName: player ? Icons.getAppIcon(player.identity) : ""
+        readonly property string iconName: player ? Icons.getAppIcon(player.desktopEntry || player.identity) : ""
 
         property bool imageFailed: false
 
-        implicitWidth: iconImage.implicitWidth
-        implicitHeight: iconImage.implicitHeight
+        implicitWidth: Config.dashboard.sizes.mediaIconSize
+        implicitHeight: Config.dashboard.sizes.mediaIconSize
         Layout.fillHeight: true
+        Layout.preferredWidth: height
 
         IconImage {
             id: iconImage
@@ -557,6 +572,8 @@ Item {
             anchors.fill: parent
             source: root.iconName
             asynchronous: true
+            sourceSize.width: width
+            sourceSize.height: height
 
             onStatusChanged: {
                 if (status === Image.Error)
@@ -565,10 +582,10 @@ Item {
         }
 
         MaterialIcon {
-            id: fallbackIcon
             visible: !player || root.imageFailed
             anchors.centerIn: parent
-            text: root.player && !root.imageFailed ? "" : root.player ? "animated_images" : "music_off"
+            font.pointSize: parent.height * 0.6
+            text: root.player ? "animated_images" : "music_off"
         }
     }
 
