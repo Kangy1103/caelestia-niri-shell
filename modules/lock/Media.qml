@@ -4,7 +4,6 @@ import qs.components
 import qs.components.effects
 import qs.services
 import qs.config
-import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
@@ -26,14 +25,6 @@ Item {
         sourceSize.width: width
         sourceSize.height: height
 
-        layer.enabled: true
-        layer.effect: ShaderEffect {
-            required property Item source
-            readonly property Item maskSource: mask
-
-            fragmentShader: `file://${Quickshell.shellDir}/assets/shaders/opacitymask.frag.qsb`
-        }
-
         opacity: status === Image.Ready ? 1 : 0
 
         Behavior on opacity {
@@ -41,30 +32,11 @@ Item {
                 duration: Appearance.anim.durations.extraLarge
             }
         }
-    }
 
-    Rectangle {
-        id: mask
-
-        anchors.fill: parent
-        layer.enabled: true
-        visible: false
-
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-
-            GradientStop {
-                position: 0
-                color: Qt.rgba(0, 0, 0, 0.5)
-            }
-            GradientStop {
-                position: 0.4
-                color: Qt.rgba(0, 0, 0, 0.2)
-            }
-            GradientStop {
-                position: 0.8
-                color: Qt.rgba(0, 0, 0, 0)
-            }
+        StyledRect {
+            anchors.fill: parent
+            color: Colours.palette.m3surface
+            opacity: 0.7
         }
     }
 

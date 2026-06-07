@@ -565,7 +565,7 @@ Item {
     }
 
     component PlayerIcon: Item {
-        id: root
+        id: playerIcon
 
         required property MprisPlayer player
         readonly property string iconName: player ? Icons.getAppIcon(player.desktopEntry || player.identity) : ""
@@ -575,26 +575,26 @@ Item {
         implicitWidth: Config.dashboard.sizes.mediaIconSize
         implicitHeight: Config.dashboard.sizes.mediaIconSize
         Layout.fillHeight: true
-        Layout.preferredWidth: height
+        Layout.preferredWidth: Config.dashboard.sizes.mediaIconSize
 
         IconImage {
             id: iconImage
-            visible: !root.imageFailed
+            visible: !playerIcon.imageFailed
             anchors.fill: parent
-            source: root.iconName
+            source: playerIcon.iconName
             asynchronous: true
 
             onStatusChanged: {
                 if (status === Image.Error)
-                    root.imageFailed = true;
+                    playerIcon.imageFailed = true;
             }
         }
 
         MaterialIcon {
-            visible: !player || root.imageFailed
+            visible: !player || playerIcon.imageFailed
             anchors.centerIn: parent
             font.pointSize: parent.height * 0.6
-            text: root.player ? "animated_images" : "music_off"
+            text: player ? "animated_images" : "music_off"
         }
     }
 
