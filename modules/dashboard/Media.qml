@@ -443,16 +443,18 @@ Item {
         StyledRect {
             id: dropdown
 
-            x: {
-                if (!playerSelector) return 0;
+            function reposition(): void {
+                if (!playerSelector || !playerSelector.expanded) return;
                 var pt = playerSelector.mapToItem(dropdownOverlay, playerSelector.width / 2, 0);
-                return pt ? pt.x - width / 2 : 0;
+                var pt2 = playerSelector.mapToItem(dropdownOverlay, 0, 0);
+                if (pt && pt2) {
+                    x = pt.x - width / 2;
+                    y = pt2.y - implicitHeight - Appearance.spacing.sm;
+                }
             }
-            y: {
-                if (!playerSelector) return 0;
-                var pt = playerSelector.mapToItem(dropdownOverlay, 0, 0);
-                return pt ? pt.y - implicitHeight - Appearance.spacing.sm : 0;
-            }
+
+            onVisibleChanged: Qt.callLater(reposition)
+            onImplicitHeightChanged: Qt.callLater(reposition)
 
             implicitWidth: Math.max(200, playerListCol.implicitWidth + Appearance.padding.md * 2)
             implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight + Appearance.padding.sm * 2 : 0
