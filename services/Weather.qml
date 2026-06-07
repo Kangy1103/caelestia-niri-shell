@@ -27,6 +27,8 @@ Singleton {
     readonly property string feelsLike: Config.services.useFahrenheit ? `${cc?.FeelsLikeF ?? 0}°F` : `${cc?.FeelsLikeC ?? 0}°C`
     readonly property int humidity: cc?.humidity ?? 0
     readonly property real windSpeed: cc?.windSpeed ?? 0.0
+    readonly property string sunrise: cc?.sunrise ?? "--:--"
+    readonly property string sunset: cc?.sunset ?? "--:--"
 
     function reload(): void {
         let configLocation = Config.services.weatherLocation;
