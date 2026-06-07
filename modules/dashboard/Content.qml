@@ -137,6 +137,14 @@ Item {
                     Pane {
                         sourceComponent: Performance {}
                     }
+
+                    Pane {
+                        sourceComponent: WindowTools {}
+                    }
+
+                    Pane {
+                        sourceComponent: WeatherPanel {}
+                    }
                 }
 
                 Behavior on contentX {

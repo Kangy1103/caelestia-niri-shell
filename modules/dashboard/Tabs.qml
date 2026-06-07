@@ -44,6 +44,16 @@ Item {
             iconName: "speed"
             text: qsTr("System")
         }
+
+        Tab {
+            iconName: "grid_view"
+            text: qsTr("Window")
+        }
+
+        Tab {
+            iconName: "partly_cloudy_day"
+            text: qsTr("Weather")
+        }
     }
 
     Item {
