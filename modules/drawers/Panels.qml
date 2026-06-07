@@ -8,6 +8,7 @@ import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities as Utilities
 import qs.modules.utilities.toasts as Toasts
 import qs.modules.quicktoggles as QuickToggles
+import qs.modules.keybinds as Keybinds
 import Quickshell
 import QtQuick
 
@@ -26,6 +27,7 @@ Item {
     readonly property BarPopouts.Wrapper popouts: popouts
     readonly property Utilities.Wrapper utilities: utilities
     readonly property QuickToggles.Wrapper quicktoggles: quicktoggles
+    readonly property Keybinds.Wrapper keybinds: keybinds
 
     anchors.fill: parent
     anchors.margins: Config.border.thickness
@@ -111,6 +113,15 @@ Item {
 
     QuickToggles.Wrapper {
         id: quicktoggles
+
+        visibilities: root.visibilities
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+    Keybinds.Wrapper {
+        id: keybinds
 
         visibilities: root.visibilities
 

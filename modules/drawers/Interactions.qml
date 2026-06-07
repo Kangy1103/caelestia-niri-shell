@@ -99,6 +99,9 @@ CustomMouseArea {
             if (!isShortcutActive("quicktoggles"))
                 visibilities.quicktoggles = false;
 
+            if (!isShortcutActive("keybinds"))
+                visibilities.keybinds = false;
+
             if (popouts.currentName !== "wirelesspassword")
                 popouts.hasCurrent = false;
 
@@ -202,6 +205,15 @@ CustomMouseArea {
             clearShortcutPanel("quicktoggles");
         }
 
+        // Show keybinds on hover (bottom-right area, same region as quicktoggles)
+        const showKeybinds = inBottomPanel(panels.keybinds, x, y) && inRightPanel(panels.keybinds, x, y);
+
+        if (!isShortcutActive("keybinds")) {
+            visibilities.keybinds = showKeybinds;
+        } else if (showKeybinds) {
+            clearShortcutPanel("keybinds");
+        }
+
         // Show popouts on hover
         if (x < bar.implicitWidth)
             bar.checkPopout(y);
@@ -240,6 +252,15 @@ CustomMouseArea {
                     root.setShortcutPanel("quicktoggles");
             } else {
                 root.clearShortcutPanel("quicktoggles");
+            }
+        }
+
+        function onKeybindsChanged(): void {
+            if (root.visibilities.keybinds) {
+                if (!root.inBottomPanel(root.panels.keybinds, root.mouseX, root.mouseY) || !root.inRightPanel(root.panels.keybinds, root.mouseX, root.mouseY))
+                    root.setShortcutPanel("keybinds");
+            } else {
+                root.clearShortcutPanel("keybinds");
             }
         }
     }
