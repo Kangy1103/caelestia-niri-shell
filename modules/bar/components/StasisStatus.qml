@@ -66,7 +66,7 @@ Item {
                 ? Colours.palette.m3onSurfaceVariant
                 : Colours.palette.m3primary
             font.bold: true
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: 16
         }
     }
 
