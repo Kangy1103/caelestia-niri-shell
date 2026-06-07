@@ -23,6 +23,10 @@ JsonObject {
             enabled: true
         },
         {
+            id: "stasisStatus",
+            enabled: true
+        },
+        {
             id: "spacer",
             enabled: true
         },

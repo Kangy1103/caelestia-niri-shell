@@ -156,6 +156,12 @@ ColumnLayout {
                 }
             }
             DelegateChoice {
+                roleValue: "stasisStatus"
+                delegate: WrappedLoader {
+                    sourceComponent: StasisStatus {}
+                }
+            }
+            DelegateChoice {
                 roleValue: "activeWindow"
                 delegate: WrappedLoader {
                     sourceComponent: ActiveWindow {
