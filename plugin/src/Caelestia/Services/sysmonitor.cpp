@@ -490,15 +490,12 @@ void SysMonitor::updateGpuOnce() {
     nvidiaSmi.waitForFinished(1000);
     if (nvidiaSmi.exitStatus() == QProcess::NormalExit && nvidiaSmi.exitCode() == 0) {
         QString out = QString::fromUtf8(nvidiaSmi.readAllStandardOutput()).trimmed();
-        qDebug() << "[SysMonitor] GPU detection nvidia-smi output:" << out;
         if (!out.isEmpty()) {
             gType = "NVIDIA";
             gName = out;
             // Clean up name
             gName = gName.replace(QRegularExpression("(?i)NVIDIA GeForce |NVIDIA |Graphics"), "").trimmed();
         }
-    } else {
-        qDebug() << "[SysMonitor] GPU detection nvidia-smi failed or not found";
     }
 
     // 2. Fallback to lspci and /sys/class/drm generic polling
@@ -531,8 +528,6 @@ void SysMonitor::updateGpuOnce() {
             gName = gName.replace(QRegularExpression("(?i)AMD Radeon |AMD |Intel |\\(R\\)|\\(TM\\)|Graphics|Corporation"), "").replace("  ", " ").trimmed();
         }
     }
-
-    qDebug() << "[SysMonitor] updateGpuOnce result -" << "Type:" << gType << "Name:" << gName;
 
     m_gpu["type"] = gType;
     m_gpu["name"] = gName;
@@ -593,8 +588,6 @@ void SysMonitor::updateGpu() {
             }
         }
     }
-
-    qDebug() << "[SysMonitor] updateGpu result -" << "Utilization:" << newGpu["utilization"] << "Temp:" << newGpu["temperature"];
 
     if (m_gpu != newGpu) {
         m_gpu = newGpu;

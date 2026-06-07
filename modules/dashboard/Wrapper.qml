@@ -73,7 +73,7 @@ Item {
     Loader {
         id: content
 
-        Component.onCompleted: active = Qt.binding(() => (root.visibilities.dashboard && Config.dashboard.enabled) || root.visible)
+        Component.onCompleted: active = Qt.binding(() => root.visibilities.dashboard && Config.dashboard.enabled)
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

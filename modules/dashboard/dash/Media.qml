@@ -204,9 +204,8 @@ Item {
     }
 
     readonly property real bongoSpeed: {
-        var svc = BeatTracker;
         var bpm = 0;
-        try { bpm = svc.bpm || 0; } catch(e) {}
+        try { bpm = BeatTracker.bpm || 0; } catch(e) {}
         return bpm > 0 ? bpm / Config.services.mediaGifSpeedAdjustment : 0.5;
     }
 

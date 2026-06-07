@@ -544,9 +544,8 @@ Item {
         implicitHeight: visualiser.height
 
         readonly property real bongoSpeed: {
-            var svc = BeatTracker;
             var bpm = 0;
-            try { bpm = svc.bpm || 0; } catch(e) {}
+            try { bpm = BeatTracker.bpm || 0; } catch(e) {}
             return bpm > 0 ? bpm / Config.services.mediaGifSpeedAdjustment : 0.5;
         }
 
@@ -557,7 +556,7 @@ Item {
             height: visualiser.height * 0.75
 
             playing: Players.active?.isPlaying ?? false
-            speed: root.bongoSpeed
+            speed: parent.bongoSpeed
             source: Paths.absolutePath(Config.paths.mediaGif)
             asynchronous: true
             fillMode: AnimatedImage.PreserveAspectFit
@@ -593,7 +592,7 @@ Item {
         MaterialIcon {
             visible: !player || playerIcon.imageFailed
             anchors.centerIn: parent
-            font.pointSize: parent.height * 0.6
+            font.pointSize: Math.max(1, parent.height * 0.6)
             text: player ? "animated_images" : "music_off"
         }
     }

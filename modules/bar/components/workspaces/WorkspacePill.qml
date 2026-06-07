@@ -113,7 +113,7 @@ Item {
                         }
                         return workspace.idx.toString();
                     }
-                    font.pointSize: (isVertical ? pillContainer.pillWidth : pillContainer.pillHeight) * textRatio
+                    font.pointSize: Math.max(1, (isVertical ? pillContainer.pillWidth : pillContainer.pillHeight) * textRatio)
                     font.weight: fontWeight
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter

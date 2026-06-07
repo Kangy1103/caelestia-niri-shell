@@ -1,4 +1,4 @@
-#!/usr/bin/env -S\_/bin/sh\_-c\_"source\_\$(eval\_echo\_\$CAELESTIA_VIRTUAL_ENV)/bin/activate&&exec\_python\_-E\_"\$0"\_"\$@""
+#!/usr/bin/env -S /bin/sh -c ". \${CAELESTIA_VIRTUAL_ENV:-\$HOME/.local/state/quickshell/.venv}/bin/activate \&\& exec python3 -E \"\$0\" \"\$@\""
 import argparse
 import math
 import json
@@ -137,7 +137,7 @@ if args.termscheme is not None:
         json_termscheme = f.read()
     term_source_colors = json.loads(json_termscheme)['dark' if darkmode else 'light']
 
-    primary_color_argb = hex_to_argb(material_colors['primary_paletteKeyColor'])
+    primary_color_argb = hex_to_argb(material_colors['primaryPaletteKeyColor'])
     for color, val in term_source_colors.items():
         if(args.scheme == 'scheme-monochrome') :
             term_colors[color] = val

@@ -1,4 +1,5 @@
 import qs.utils
+import Quickshell
 import Quickshell.Io
 
 JsonObject {

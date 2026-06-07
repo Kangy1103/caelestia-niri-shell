@@ -5,7 +5,7 @@ JsonObject {
     property bool showOnHover: true
     property bool useWallpaperAvatar: true
     property int mediaUpdateInterval: 500
-    property int resourceUpdateInterval: 1000
+    property int resourceUpdateInterval: 5000
     property int dragThreshold: 50
     property int updateInterval: 1000
     property Sizes sizes: Sizes {}

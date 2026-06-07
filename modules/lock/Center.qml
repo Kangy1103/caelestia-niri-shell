@@ -175,7 +175,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: "person"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Math.floor(parent.width * 0.45)
+                font.pointSize: Math.max(1, Math.floor(parent.width * 0.45))
             }
 
             CachingImage {
