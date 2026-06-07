@@ -42,31 +42,25 @@ Item {
 
             GridLayout {
                 id: wsGrid
-                columns: 4  // Maximum 4 workspaces per row
+                columns: 4
                 rowSpacing: Appearance.spacing.lg
                 columnSpacing: Appearance.spacing.lg
                 Layout.fillWidth: true
 
                 Repeater {
-                    model: Niri.getWorkspaceCount()
+                    model: Niri.currentOutputWorkspaces
 
                     WorkspaceButton {
-                        required property int index
-                        readonly property int wsId: Math.floor((Niri.focusedWorkspaceIndex) / 10) * 10 + index + 1
-                        readonly property bool isCurrent: (wsId - 1) % 10 === Niri.focusedWorkspaceIndex
-                        readonly property int wsIndex: wsId - 1
+                        required property var modelData
+                        readonly property bool isCurrent: modelData.is_focused
 
                         Layout.fillWidth: true
                         active: isCurrent
-                        text: {
-                            if (wsIndex < 0 || wsIndex >= Niri.currentOutputWorkspaces.length)
-                                return "Workspace " + wsId;
-                            return Niri.currentOutputWorkspaces[wsIndex]?.name ?? ("Workspace " + wsId);
-                        }
+                        text: modelData.name ?? ("Workspace " + modelData.idx)
                         disabled: isCurrent
 
                         function onClicked(): void {
-                            Niri.moveWindowToWorkspace(wsId);
+                            Niri.moveWindowToWorkspace(modelData.idx);
                         }
                     }
                 }
