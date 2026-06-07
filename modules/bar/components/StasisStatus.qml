@@ -19,10 +19,13 @@ Item {
     property string stasisProfile: "default"
 
     Timer {
-        interval: 5000
+        interval: 1000
         running: true
         repeat: true
-        onTriggered: pollRunner.running = true
+        onTriggered: {
+            if (!pollRunner.running)
+                pollRunner.running = true;
+        }
     }
 
     Process {
@@ -39,9 +42,7 @@ Item {
                     root.stasisState = info.alt ?? "idle_waiting";
                     root.stasisProfile = info.profile ?? "default";
                     root.stasisTooltip = info.tooltip ?? "Stasis: waiting";
-                } catch (e) {
-                    // parse error, keep last state
-                }
+                } catch (e) {}
             }
         }
     }
@@ -52,14 +53,18 @@ Item {
         id: bg
         anchors.fill: parent
         radius: Appearance.rounding.full
-        color: Qt.alpha(Colours.palette.m3primaryContainer, root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle" ? 1 : 0)
+        color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle"
+            ? Qt.alpha(Colours.palette.m3primaryContainer, 1)
+            : "transparent"
 
         MaterialIcon {
             id: icon
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: -1
-            text: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle" ? "coffee_off" : "coffee"
-            color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle" ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onPrimaryContainer
+            text: "coffee"
+            color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle"
+                ? Colours.palette.m3onSurfaceVariant
+                : Colours.palette.m3primary
             font.bold: true
             font.pointSize: Appearance.font.size.bodyMedium
         }

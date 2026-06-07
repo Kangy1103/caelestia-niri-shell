@@ -99,6 +99,11 @@ Item {
             source: "LockStatus.qml"
         }
 
+        Popout {
+            name: "stasis"
+            source: "Stasis.qml"
+        }
+
         Repeater {
             model: ScriptModel {
                 values: [...SystemTray.items.values]

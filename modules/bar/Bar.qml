@@ -61,6 +61,10 @@ ColumnLayout {
                 popouts.currentCenter = Qt.binding(() => icon.mapToItem(root, 0, icon.implicitHeight / 2).y);
                 popouts.hasCurrent = true;
             }
+        } else if (id === "stasisStatus") {
+            popouts.currentName = "stasis";
+            popouts.currentCenter = Qt.binding(() => ch.mapToItem(root, 0, ch.implicitHeight / 2).y);
+            popouts.hasCurrent = true;
         } else if (id === "tray") {
             const index = Math.floor(((y - top) / itemHeight) * item.items.count);
             const trayItem = item.items.itemAt(index);
