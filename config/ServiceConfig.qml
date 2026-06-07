@@ -9,6 +9,7 @@ JsonObject {
     property int visualiserBars: 24
     property real audioIncrement: 0.1
     property bool smartScheme: true
+    property int mediaGifSpeedAdjustment: 300
     property string defaultPlayer: "Spotify"
     property list<var> playerAliases: [
         {

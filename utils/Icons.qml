@@ -80,19 +80,12 @@ Singleton {
     function getAppIcon(name: string, fallback: string): string {
         const icon = DesktopEntries.heuristicLookup(name)?.icon;
 
-        if (icon === undefined) {
-            if (fallback !== undefined)
-                return Quickshell.iconPath(name, fallback);
+        if (icon === undefined)
             return Quickshell.iconPath(name);
-        }
 
         if (fallback !== undefined)
             return Quickshell.iconPath(icon, fallback);
         return Quickshell.iconPath(icon);
-    }
-
-    function iconExists(name: string): bool {
-        return Quickshell.iconPath(name, true) !== "";
     }
 
     function getAppCategoryIcon(name: string, fallback: string): string {

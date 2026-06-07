@@ -376,6 +376,8 @@ Item {
                 z: 1
 
                 StateLayer {
+                    disabled: playerSelector.expanded
+
                     function onClicked(): void {
                         playerSelector.expanded = !playerSelector.expanded;
                     }
@@ -530,40 +532,43 @@ Item {
             height: visualiser.height * 0.75
 
             playing: Players.active?.isPlaying ?? false
-            speed: BeatTracker.bpm > 0 ? BeatTracker.bpm / 300 : 0.5
+            speed: (BeatTracker?.bpm ?? 0) > 0 ? (BeatTracker?.bpm ?? 0) / Config.services.mediaGifSpeedAdjustment : 0.5
             source: Paths.absolutePath(Config.paths.mediaGif)
             asynchronous: true
             fillMode: AnimatedImage.PreserveAspectFit
         }
     }
 
-    component PlayerIcon: Loader {
-        id: loader
+    component PlayerIcon: Item {
+        id: root
 
         required property MprisPlayer player
         readonly property string iconName: player ? Icons.getAppIcon(player.identity) : ""
-        readonly property bool hasIcon: iconName !== "" && Icons.iconExists(player?.identity ?? "")
 
+        property bool imageFailed: false
+
+        implicitWidth: iconImage.implicitWidth
+        implicitHeight: iconImage.implicitHeight
         Layout.fillHeight: true
-        asynchronous: true
-        sourceComponent: !player || !hasIcon ? fallbackIcon : playerImage
 
-        Component {
-            id: playerImage
+        IconImage {
+            id: iconImage
+            visible: !root.imageFailed
+            anchors.fill: parent
+            source: root.iconName
+            asynchronous: true
 
-            IconImage {
-                implicitWidth: height
-                source: loader.iconName
-                asynchronous: true
+            onStatusChanged: {
+                if (status === Image.Error)
+                    root.imageFailed = true;
             }
         }
 
-        Component {
+        MaterialIcon {
             id: fallbackIcon
-
-            MaterialIcon {
-                text: loader.player ? "animated_images" : "music_off"
-            }
+            visible: !player || root.imageFailed
+            anchors.centerIn: parent
+            text: root.player && !root.imageFailed ? "" : root.player ? "animated_images" : "music_off"
         }
     }
 
