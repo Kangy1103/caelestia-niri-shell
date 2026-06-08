@@ -13,23 +13,9 @@ Singleton {
     property string previousSinkName: ""
     property string previousSourceName: ""
 
-    readonly property var nodes: Pipewire.nodes.values.reduce((acc, node) => {
-        if (!node.isStream) {
-            if (node.isSink)
-                acc.sinks.push(node);
-            else if (node.audio)
-                acc.sources.push(node);
-        }
-        return acc;
-    }, {
-        sources: [],
-        sinks: []
-    })
-
-    readonly property list<PwNode> sinks: nodes.sinks
-    readonly property list<PwNode> sources: nodes.sources
-
-    readonly property var streams: Pipewire.nodes.values.filter(node => node.isStream && node.audio)
+    readonly property list<PwNode> sinks: Pipewire.nodes.values.filter(n => !n.isStream && n.isSink)
+    readonly property list<PwNode> sources: Pipewire.nodes.values.filter(n => !n.isStream && n.audio && !n.isSink)
+    readonly property list<PwNode> streams: Pipewire.nodes.values.filter(n => n.isStream && n.audio)
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property PwNode source: Pipewire.defaultAudioSource

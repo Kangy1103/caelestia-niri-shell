@@ -239,8 +239,7 @@ StyledRect {
             active: Config.bar.status.showBattery
 
             sourceComponent: MaterialIcon {
-                animate: true
-                text: {
+                readonly property string batteryIcon: {
                     if (!UPower.displayDevice.isLaptopBattery) {
                         if (PowerProfiles.profile === PowerProfile.PowerSaver)
                             return "energy_savings_leaf";
@@ -258,6 +257,9 @@ StyledRect {
                         level--;
                     return charging ? `battery_charging_${(level + 3) * 10}` : `battery_${level}_bar`;
                 }
+
+                animate: true
+                text: batteryIcon
                 color: !UPower.onBattery || UPower.displayDevice.percentage > 0.2 ? root.colour : Colours.palette.m3error
                 fill: 1
             }

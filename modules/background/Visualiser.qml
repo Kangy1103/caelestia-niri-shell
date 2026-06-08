@@ -40,6 +40,7 @@ Item {
 
         anchors.fill: parent
         visible: opacity > 0
+        clip: true
         layer.enabled: visible
 
         Item {
@@ -84,8 +85,6 @@ Item {
 
             required property int modelData
             property real value: Math.max(0, Math.min(1, Cava.values[side.isRight ? modelData : side.count - modelData - 1]))
-
-            clip: true
 
             x: modelData * ((side.content.width * 0.4) / Config.services.visualiserBars) + (side.isRight ? side.content.width * 0.6 : 0)
             implicitWidth: (side.content.width * 0.4) / Config.services.visualiserBars - Appearance.spacing.sm * Config.background.visualiser.spacing

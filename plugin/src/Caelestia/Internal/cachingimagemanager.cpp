@@ -1,6 +1,7 @@
 #include "cachingimagemanager.hpp"
 
 #include <QtQuick/qquickwindow.h>
+#include <algorithm>
 #include <qcryptographichash.h>
 #include <qdatetime.h>
 #include <qdir.h>
@@ -198,25 +199,22 @@ void CachingImageManager::trackCacheEntry(const QString& cachePath, qint64 fileS
 
 void CachingImageManager::evictIfNeeded() {
     QMutexLocker lock(&s_cacheMutex);
+    if (s_totalCacheSize <= MAX_CACHE_BYTES) return;
 
-    while (s_totalCacheSize > MAX_CACHE_BYTES && !s_cacheEntries.isEmpty()) {
-        // Find the oldest entry
-        QString oldestKey;
-        qint64 oldestAccess = std::numeric_limits<qint64>::max();
+    QList<QPair<QString, CacheEntry>> entries;
+    entries.reserve(s_cacheEntries.size());
+    for (auto it = s_cacheEntries.constBegin(); it != s_cacheEntries.constEnd(); ++it) {
+        entries.append({it.key(), it.value()});
+    }
+    std::sort(entries.begin(), entries.end(), [](const auto& a, const auto& b) {
+        return a.second.lastAccess < b.second.lastAccess;
+    });
 
-        for (auto it = s_cacheEntries.constBegin(); it != s_cacheEntries.constEnd(); ++it) {
-            if (it.value().lastAccess < oldestAccess) {
-                oldestAccess = it.value().lastAccess;
-                oldestKey = it.key();
-            }
-        }
-
-        if (oldestKey.isEmpty()) break;
-
-        const auto& entry = s_cacheEntries[oldestKey];
+    for (const auto& [key, entry] : entries) {
+        if (s_totalCacheSize <= MAX_CACHE_BYTES) break;
         QFile::remove(entry.filePath);
         s_totalCacheSize -= entry.fileSize;
-        s_cacheEntries.remove(oldestKey);
+        s_cacheEntries.remove(key);
     }
 }
 

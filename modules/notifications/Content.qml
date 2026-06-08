@@ -19,26 +19,7 @@ Item {
 
     implicitWidth: Config.notifs.sizes.width + padding * 2
 
-    property real _cachedContentHeight: 0
-
-    function _recalcContentHeight(): void {
-        const count = list.count;
-        if (count === 0) {
-            _cachedContentHeight = 0;
-            return;
-        }
-
-        let height = (count - 1) * Appearance.spacing.md;
-        for (let i = 0; i < count; i++)
-            height += list.itemAtIndex(i)?.nonAnimHeight ?? 0;
-
-        _cachedContentHeight = height;
-    }
-
-    Connections {
-        target: list
-        function onCountChanged() { root._recalcContentHeight(); }
-    }
+    readonly property real _cachedContentHeight: list.contentHeight
 
     implicitHeight: {
         const height = _cachedContentHeight;
@@ -171,20 +152,10 @@ Item {
                 anchors.top: parent.top
                 extra: {
                     const count = list.count;
-                    if (count === 0)
+                    if (count === 0 || list.contentHeight <= list.height)
                         return 0;
-
-                    const scrollY = list.contentY;
-
-                    let height = 0;
-                    for (let i = 0; i < count; i++) {
-                        height += (list.itemAtIndex(i)?.nonAnimHeight ?? 0) + Appearance.spacing.md;
-
-                        if (height - Appearance.spacing.md >= scrollY)
-                            return i;
-                    }
-
-                    return count;
+                    const ratio = list.contentY / (list.contentHeight - list.height);
+                    return Math.min(count, Math.floor(Math.max(0, ratio) * count));
                 }
             }
 
@@ -192,20 +163,11 @@ Item {
                 anchors.bottom: parent.bottom
                 extra: {
                     const count = list.count;
-                    if (count === 0)
+                    if (count === 0 || list.contentHeight <= list.height)
                         return 0;
-
-                    const scrollY = list.contentHeight - (list.contentY + list.height);
-
-                    let height = 0;
-                    for (let i = count - 1; i >= 0; i--) {
-                        height += (list.itemAtIndex(i)?.nonAnimHeight ?? 0) + Appearance.spacing.md;
-
-                        if (height - Appearance.spacing.md >= scrollY)
-                            return count - i - 1;
-                    }
-
-                    return 0;
+                    const scrollBottom = list.contentHeight - (list.contentY + list.height);
+                    const ratio = scrollBottom / (list.contentHeight - list.height);
+                    return Math.min(count, Math.floor(Math.max(0, ratio) * count));
                 }
             }
         }

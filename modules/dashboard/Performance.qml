@@ -494,6 +494,11 @@ Item {
                     anchors.centerIn: parent
                     width: Math.min(parent.width, parent.height)
                     height: width
+
+                    function _requestPaint(): void {
+                        Qt.callLater(gaugeCanvas.requestPaint);
+                    }
+
                     onPaint: {
                         const ctx = getContext("2d");
                         ctx.reset();
@@ -516,11 +521,11 @@ Item {
                             ctx.stroke();
                         }
                     }
-                    Component.onCompleted: requestPaint()
+                    Component.onCompleted: _requestPaint()
 
                     Connections {
                         function onAnimatedPercentageChanged() {
-                            gaugeCanvas.requestPaint();
+                            gaugeCanvas._requestPaint();
                         }
 
                         target: gaugeCard
@@ -528,7 +533,7 @@ Item {
 
                     Connections {
                         function onPaletteChanged() {
-                            gaugeCanvas.requestPaint();
+                            gaugeCanvas._requestPaint();
                         }
 
                         target: Colours
@@ -650,6 +655,11 @@ Item {
                     anchors.centerIn: parent
                     width: Math.min(parent.width, parent.height)
                     height: width
+
+                    function _requestPaint(): void {
+                        Qt.callLater(storageGaugeCanvas.requestPaint);
+                    }
+
                     onPaint: {
                         const ctx = getContext("2d");
                         ctx.reset();
@@ -672,11 +682,11 @@ Item {
                             ctx.stroke();
                         }
                     }
-                    Component.onCompleted: requestPaint()
+                    Component.onCompleted: _requestPaint()
 
                     Connections {
                         function onAnimatedPercentageChanged() {
-                            storageGaugeCanvas.requestPaint();
+                            storageGaugeCanvas._requestPaint();
                         }
 
                         target: storageGaugeCard
@@ -684,7 +694,7 @@ Item {
 
                     Connections {
                         function onPaletteChanged() {
-                            storageGaugeCanvas.requestPaint();
+                            storageGaugeCanvas._requestPaint();
                         }
 
                         target: Colours
@@ -762,6 +772,10 @@ Item {
                     property int _tickCount: 0
                     property int _lastTickCount: -1
 
+                    function _requestPaint(): void {
+                        Qt.callLater(sparklineCanvas.requestPaint);
+                    }
+
                     function checkAndAnimate(): void {
                         const currentLength = (downHistory || []).length;
                         if (currentLength > 0 && _tickCount !== _lastTickCount) {
@@ -775,14 +789,14 @@ Item {
                         const upHist = upHistory || [];
                         const allValues = downHist.concat(upHist);
                         targetMax = Math.max(...allValues, 1024);
-                        requestPaint();
+                        _requestPaint();
                     }
 
                     anchors.fill: parent
                     onDownHistoryChanged: checkAndAnimate()
                     onUpHistoryChanged: checkAndAnimate()
-                    onSmoothMaxChanged: requestPaint()
-                    onSlideProgressChanged: requestPaint()
+                    onSmoothMaxChanged: _requestPaint()
+                    onSlideProgressChanged: _requestPaint()
 
                     onPaint: {
                         const ctx = getContext("2d");
@@ -830,7 +844,7 @@ Item {
 
                     Connections {
                         function onPaletteChanged() {
-                            sparklineCanvas.requestPaint();
+                            sparklineCanvas._requestPaint();
                         }
 
                         target: Colours

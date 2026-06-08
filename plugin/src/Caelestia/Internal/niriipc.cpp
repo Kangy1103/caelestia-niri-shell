@@ -31,9 +31,9 @@ QVariant NiriListModel::data(const QModelIndex& index, int role) const {
     return {};
 }
 
-void NiriListModel::resetData(const QVariantList& items) {
+void NiriListModel::resetData(QVariantList items) {
     beginResetModel();
-    m_items = items;
+    m_items = std::move(items);
     endResetModel();
 }
 
@@ -83,15 +83,15 @@ NiriIpc::NiriIpc(QObject* parent)
 bool NiriIpc::available() const { return m_available; }
 
 QAbstractListModel* NiriIpc::workspacesModel() const { return m_workspacesModel; }
-QVariantList NiriIpc::workspaces() const { return m_workspacesModel->items(); }
+const QVariantList& NiriIpc::workspaces() const { return m_workspacesModel->items(); }
 int NiriIpc::focusedWorkspaceIndex() const { return m_focusedWorkspaceIndex; }
 int NiriIpc::focusedWorkspaceId() const { return m_focusedWorkspaceId; }
 QString NiriIpc::focusedMonitorName() const { return m_focusedMonitorName; }
-QVariantList NiriIpc::currentOutputWorkspaces() const { return m_currentOutputWorkspaces; }
+const QVariantList& NiriIpc::currentOutputWorkspaces() const { return m_currentOutputWorkspaces; }
 QVariantMap NiriIpc::workspaceHasWindows() const { return m_workspaceHasWindows; }
 
 QAbstractListModel* NiriIpc::windowsModel() const { return m_windowsModel; }
-QVariantList NiriIpc::windows() const { return m_windowsModel->items(); }
+const QVariantList& NiriIpc::windows() const { return m_windowsModel->items(); }
 int NiriIpc::focusedWindowIndex() const { return m_focusedWindowIndex; }
 QString NiriIpc::focusedWindowId() const { return m_focusedWindowId; }
 QString NiriIpc::focusedWindowTitle() const { return m_focusedWindowTitle; }
@@ -703,7 +703,7 @@ void NiriIpc::updateFocusedWindowFields() {
 }
 
 void NiriIpc::sortWindowsList() {
-    QVariantList winList = m_windowsModel->items();
+    QVariantList winList = m_windowsModel->items(); // copy needed for sorting
     std::sort(winList.begin(), winList.end(), [](const QVariant& a, const QVariant& b) {
         const auto aLayout = a.toMap().value(QStringLiteral("layout")).toMap();
         const auto bLayout = b.toMap().value(QStringLiteral("layout")).toMap();
@@ -716,7 +716,7 @@ void NiriIpc::sortWindowsList() {
         if (ax != bx) return ax < bx;
         return ay < by;
     });
-    m_windowsModel->resetData(winList);
+    m_windowsModel->resetData(std::move(winList));
 }
 
 void NiriIpc::rebuildWindowIndex() {

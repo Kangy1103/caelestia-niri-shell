@@ -233,7 +233,7 @@ ColumnLayout {
         required property string id
         required property int index
 
-        onEnabledChanged: root.updateEnabledCache()
+        onEnabledChanged: Qt.callLater(root.updateEnabledCache)
 
         Layout.alignment: Qt.AlignHCenter
 

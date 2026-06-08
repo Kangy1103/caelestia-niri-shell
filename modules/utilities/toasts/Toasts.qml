@@ -12,16 +12,37 @@ Item {
 
     readonly property int spacing: Appearance.spacing.sm
     property bool flag
+    property var _yCache: []
+    property int _totalHeight: 0
 
     implicitWidth: Config.utilities.sizes.toastWidth - Appearance.padding.md * 2
-    implicitHeight: {
-        let h = -spacing;
+    implicitHeight: _totalHeight
+
+    onFlagChanged: _recalcLayout()
+
+    function _recalcLayout(): void {
+        Qt.callLater(_doRecalc);
+    }
+
+    function _doRecalc(): void {
+        const positions = [];
+        let h = 0;
+        let visible = 0;
         for (let i = 0; i < repeater.count; i++) {
             const item = repeater.itemAt(i);
-            if (item && !item.modelData.closed && !item.previewHidden)
-                h += item.implicitHeight + spacing;
+            if (!item) { positions[i] = h; continue; }
+            const closed = item.modelData?.closed ?? true;
+            const hidden = !closed && visible >= Config.utilities.maxToasts;
+            if (!closed && !hidden) {
+                positions[i] = h;
+                h += (item.implicitHeight || 0) + spacing;
+                visible++;
+            } else {
+                positions[i] = h;
+            }
         }
-        return h;
+        root._yCache = positions;
+        root._totalHeight = h > 0 ? h - spacing : 0;
     }
 
     Repeater {
@@ -69,16 +90,7 @@ Item {
         opacity: modelData.closed || previewHidden ? 0 : 1
         scale: modelData.closed || previewHidden ? 0.7 : 1
 
-        anchors.bottomMargin: {
-            root.flag; // Force update
-            let y = 0;
-            for (let i = 0; i < index; i++) {
-                const item = repeater.itemAt(i);
-                if (item && !item.modelData.closed && !item.previewHidden)
-                    y += item.implicitHeight + root.spacing;
-            }
-            return y;
-        }
+        anchors.bottomMargin: root._yCache[index] ?? 0
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -105,7 +117,10 @@ Item {
 
         ParallelAnimation {
             running: toast.modelData.closed
-            onStarted: toast.anchors.bottomMargin = toast.anchors.bottomMargin
+            onStarted: {
+                toast.anchors.bottomMargin = toast.anchors.bottomMargin;
+                root._recalcLayout();
+            }
             onFinished: toast.modelData.unlock(toast)
 
             Anim {

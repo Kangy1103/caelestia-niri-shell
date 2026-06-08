@@ -597,7 +597,7 @@ StyledRect {
         TextMetrics {
             id: actionTextMetrics
 
-            text: action.modelData.text
+            text: action.modelData.text ?? ""
             font.family: actionText.font.family
             font.pointSize: actionText.font.pointSize
             elide: Text.ElideRight

@@ -46,16 +46,23 @@ Singleton {
     // ── Grouping helpers (mirrors end-4's design) ─────────────────────────────
 
     /** Map of appName → { appName, appIcon, notifications[], time } for ALL notifications. */
-    readonly property var groupsByAppName: root._buildGroups(root.list)
+    property var groupsByAppName: ({})
 
     /** Same, but for popup-only notifications. */
-    readonly property var popupGroupsByAppName: root._buildGroups(root.popups)
+    property var popupGroupsByAppName: ({})
 
     /** App names sorted by most-recent notification, descending. */
-    readonly property list<string> appNameList: root._sortedNames(root.groupsByAppName)
+    property list<string> appNameList: []
 
     /** App names for popups, sorted by most-recent notification, descending. */
-    readonly property list<string> popupAppNameList: root._sortedNames(root.popupGroupsByAppName)
+    property list<string> popupAppNameList: []
+
+    function _updateGroups(): void {
+        root.groupsByAppName = root._buildGroups(root.list);
+        root.popupGroupsByAppName = root._buildGroups(root.popups);
+        root.appNameList = root._sortedNames(root.groupsByAppName);
+        root.popupAppNameList = root._sortedNames(root.popupGroupsByAppName);
+    }
 
     // ── Signals ───────────────────────────────────────────────────────────────
 
@@ -324,6 +331,7 @@ Singleton {
             if (!root.list.some(n => n.appName === app))
                 delete root._latestTimeForApp[app];
         });
+        root._updateGroups();
         root._triggerListChange();
     }
 

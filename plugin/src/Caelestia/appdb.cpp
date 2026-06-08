@@ -224,9 +224,15 @@ void AppDb::incrementFrequency(const QString& id) {
 
 QList<AppEntry*>& AppDb::getSortedApps() const {
     m_sortedApps = m_apps.values();
-    std::sort(m_sortedApps.begin(), m_sortedApps.end(), [this](AppEntry* a, AppEntry* b) {
-        bool aIsFav = isFavourite(a);
-        bool bIsFav = isFavourite(b);
+    // Pre-compute favourite status to avoid O(m) regex scan per comparison
+    QHash<QString, bool> favCache;
+    favCache.reserve(m_sortedApps.size());
+    for (AppEntry* app : std::as_const(m_sortedApps)) {
+        favCache[app->id()] = isFavourite(app);
+    }
+    std::sort(m_sortedApps.begin(), m_sortedApps.end(), [&favCache](AppEntry* a, AppEntry* b) {
+        bool aIsFav = favCache.value(a->id(), false);
+        bool bIsFav = favCache.value(b->id(), false);
         if (aIsFav != bIsFav) {
             return aIsFav;
         }

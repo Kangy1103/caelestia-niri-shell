@@ -25,7 +25,7 @@ Item {
 
     signal cleared
 
-    readonly property real desiredContentHeight: headerRow.implicitHeight + column.spacing + notifList.contentHeight + notifList.spacing * Math.max(0, Notifs.list.length - 1)
+    readonly property real desiredContentHeight: headerRow.implicitHeight + column.spacing + notifList.contentHeight
 
     implicitHeight: column.implicitHeight
 

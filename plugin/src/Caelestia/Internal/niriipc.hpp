@@ -25,7 +25,7 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
-    void resetData(const QVariantList& items);
+    void resetData(QVariantList items);
     void appendItem(const QVariantMap& item);
     void setItem(int idx, const QVariantMap& item);
     void removeItem(int idx);
@@ -88,15 +88,15 @@ public:
     [[nodiscard]] bool available() const;
 
     [[nodiscard]] QAbstractListModel* workspacesModel() const;
-    [[nodiscard]] QVariantList workspaces() const;
+    [[nodiscard]] const QVariantList& workspaces() const;
     [[nodiscard]] int focusedWorkspaceIndex() const;
     [[nodiscard]] int focusedWorkspaceId() const;
     [[nodiscard]] QString focusedMonitorName() const;
-    [[nodiscard]] QVariantList currentOutputWorkspaces() const;
+    [[nodiscard]] const QVariantList& currentOutputWorkspaces() const;
     [[nodiscard]] QVariantMap workspaceHasWindows() const;
 
     [[nodiscard]] QAbstractListModel* windowsModel() const;
-    [[nodiscard]] QVariantList windows() const;
+    [[nodiscard]] const QVariantList& windows() const;
     [[nodiscard]] int focusedWindowIndex() const;
     [[nodiscard]] QString focusedWindowId() const;
     [[nodiscard]] QString focusedWindowTitle() const;
