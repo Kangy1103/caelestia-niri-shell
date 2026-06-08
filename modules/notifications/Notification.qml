@@ -21,10 +21,12 @@ StyledRect {
     property bool expanded
     property bool pendingDismiss: false
 
+    property bool _entered: false
+
     Timer {
         id: undoTimer
         interval: 3000
-        onTriggered: Notifs.discardNotification(root.modelData.notificationId)
+        onTriggered: root.finalizeDismiss()
     }
 
     function startDismiss(): void {
@@ -38,30 +40,90 @@ StyledRect {
         root.x = 0;
     }
 
+    function finalizeDismiss(): void {
+        root.state = "dismissing";
+        discardTimer.start();
+    }
+
+    Timer {
+        id: discardTimer
+        interval: Appearance.anim.durations.normal
+        onTriggered: {
+            if (root.modelData.isTransient)
+                Notifs.discardNotification(root.modelData.notificationId);
+            else
+                root.modelData.popup = false;
+        }
+    }
+
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
     radius: Appearance.rounding.normal
     implicitWidth: Config.notifs.sizes.width
     implicitHeight: inner.implicitHeight
 
-    property real animX: Config.notifs.sizes.width
     x: 0
 
-    Component.onCompleted: animX = 0
-
-    Behavior on animX {
-        Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
-        }
+    Component.onCompleted: {
+        root._entered = true;
     }
 
-    transform: Translate {
-        x: root.animX
+    // Timeout from popup timer
+    Connections {
+        target: root.modelData
+        function onWillTimeoutChanged() {
+            if (root.modelData.willTimeout) {
+                root.state = "dismissing";
+                discardTimer.start();
+            }
+        }
     }
 
     RetainableLock {
         object: root.modelData.notification
         locked: true
     }
+
+    states: [
+        State {
+            name: "entering"
+            when: !root._entered
+            PropertyChanges {
+                target: root
+                implicitHeight: 0
+            }
+        },
+        State {
+            name: "dismissing"
+            PropertyChanges {
+                target: root
+                implicitHeight: 0
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "entering"
+            to: ""
+            NumberAnimation {
+                target: root
+                property: "implicitHeight"
+                duration: Appearance.anim.durations.large
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+            }
+        },
+        Transition {
+            to: "dismissing"
+            NumberAnimation {
+                target: root
+                property: "implicitHeight"
+                duration: Appearance.anim.durations.normal
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
+            }
+        }
+    ]
 
     MouseArea {
         property int startY
@@ -85,7 +147,7 @@ StyledRect {
             root.modelData.timer?.stop();
             startY = event.y;
             if (event.button === Qt.MiddleButton)
-                Notifs.discardNotification(root.modelData.notificationId);
+                root.startDismiss();
         }
         onReleased: event => {
             if (!containsMouse)
@@ -123,10 +185,7 @@ StyledRect {
             implicitHeight: root.nonAnimHeight
 
             Behavior on implicitHeight {
-                Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
-                }
+                Anim {}
             }
 
             Loader {
@@ -369,7 +428,13 @@ StyledRect {
             Loader {
                 id: primaryAction
 
-                active: root.modelData.actions.length > 0
+                active: {
+                    const acts = root.modelData.actions;
+                    const hasActs = acts && acts.length > 0;
+                    if (!hasActs) return false;
+                    const first = acts[0];
+                    return first && (first.text ?? "").length > 0;
+                }
                 visible: !root.expanded
 
                 anchors.right: expandBtn.left
@@ -489,7 +554,7 @@ StyledRect {
                         readonly property string text: qsTr("Close")
                         readonly property string identifier: ""
                         function invoke(): void {
-                            Notifs.discardNotification(root.modelData.notificationId);
+                            root.startDismiss();
                         }
                     }
                 }
@@ -509,7 +574,7 @@ StyledRect {
     Rectangle {
         anchors.fill: parent
         radius: root.radius
-        color: Colours.palette.m3inverseSurface
+        color: Colours.tPalette.m3surfaceContainerHighest
         visible: root.pendingDismiss
         opacity: root.pendingDismiss ? 1 : 0
 
@@ -526,20 +591,20 @@ StyledRect {
             StyledText {
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Dismissed")
-                color: Colours.palette.m3inverseOnSurface
+                color: Colours.palette.m3onSurfaceVariant
                 font.pointSize: Appearance.font.size.labelLarge
             }
 
             StyledRect {
                 anchors.verticalCenter: parent.verticalCenter
                 radius: Appearance.rounding.full
-                color: Colours.palette.m3inversePrimary
+                color: Colours.palette.m3secondaryContainer
                 implicitWidth: undoText.implicitWidth + Appearance.padding.md * 2
                 implicitHeight: undoText.implicitHeight + Appearance.padding.xs * 2
 
                 StateLayer {
                     radius: Appearance.rounding.full
-                    color: Colours.palette.m3onSurface
+                    color: Colours.palette.m3onSecondaryContainer
 
                     function onClicked(): void {
                         root.undoDismiss();
@@ -550,7 +615,7 @@ StyledRect {
                     id: undoText
                     anchors.centerIn: parent
                     text: qsTr("Undo")
-                    color: Colours.palette.m3onSurface
+                    color: Colours.palette.m3onSecondaryContainer
                     font.pointSize: Appearance.font.size.labelLarge
                     font.bold: true
                 }
@@ -562,6 +627,8 @@ StyledRect {
         id: action
 
         required property var modelData
+
+        visible: (modelData?.text ?? "").length > 0
 
         radius: Appearance.rounding.full
         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)

@@ -1,3 +1,4 @@
+import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
@@ -152,7 +153,7 @@ Item {
                 anchors.top: parent.top
                 extra: {
                     const count = list.count;
-                    if (count === 0 || list.contentHeight <= list.height)
+                    if (count <= 1 || list.contentHeight <= list.height)
                         return 0;
                     const ratio = list.contentY / (list.contentHeight - list.height);
                     return Math.min(count, Math.floor(Math.max(0, ratio) * count));
@@ -163,7 +164,7 @@ Item {
                 anchors.bottom: parent.bottom
                 extra: {
                     const count = list.count;
-                    if (count === 0 || list.contentHeight <= list.height)
+                    if (count <= 1 || list.contentHeight <= list.height)
                         return 0;
                     const scrollBottom = list.contentHeight - (list.contentY + list.height);
                     const ratio = scrollBottom / (list.contentHeight - list.height);
@@ -171,15 +172,5 @@ Item {
                 }
             }
         }
-    }
-
-    Behavior on implicitHeight {
-        Anim {}
-    }
-
-    component Anim: NumberAnimation {
-        duration: Appearance.anim.durations.expressiveDefaultSpatial
-        easing.type: Easing.BezierSpline
-        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
     }
 }

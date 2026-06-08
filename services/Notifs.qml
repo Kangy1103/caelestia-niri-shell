@@ -264,12 +264,7 @@ Singleton {
         if (!n) return;
 
         root.timeout(id);
-
-        if (n.isTransient) {
-            root.discardNotification(id);
-        } else {
-            n.popup = false;
-        }
+        n.willTimeout = true;
     }
 
     /** Hide all popups (keeps non-transient ones in history). */
@@ -442,6 +437,9 @@ Singleton {
 
         // Whether this notif should be discarded (not just hidden) when it times out
         property bool isTransient: notification?.hints?.transient ?? false
+
+        // Set by timeoutNotification to trigger the card's dismiss animation
+        property bool willTimeout: false
 
         // Whether this notif has been closed (dismissed from sidebar)
         property bool closed: false
