@@ -34,6 +34,13 @@ Item {
     implicitHeight: 0
     implicitWidth: content.implicitWidth
 
+    property real targetHeight: 0
+
+    onImplicitHeightChanged: {
+        if (implicitHeight > 0)
+            targetHeight = implicitHeight;
+    }
+
     states: [
         State {
             name: "open"
@@ -70,17 +77,26 @@ Item {
         }
     ]
 
-    Loader {
-        id: content
-
-        Component.onCompleted: active = Qt.binding(() => root.visibilities.dashboard && Config.dashboard.enabled)
+    Item {
+        id: contentWrapper
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
+        width: content.implicitWidth
+        height: root.height
+        clip: true
+        opacity: root.targetHeight > 0 ? Math.min(1, root.height / (root.targetHeight * 0.6)) : 0
 
-        sourceComponent: Content {
-            visibilities: root.visibilities
-            state: root.state
+        Loader {
+            id: content
+
+            anchors.fill: parent
+            active: (root.visibilities.dashboard && Config.dashboard.enabled) || root.height > 0
+
+            sourceComponent: Content {
+                visibilities: root.visibilities
+                state: root.state
+            }
         }
     }
 }

@@ -62,6 +62,33 @@ Singleton {
                 readonly property FontBuilder extraLarge: FontBuilder { _size: 36; _weight: Font.Normal }
             }
         }
+
+        readonly property QtObject family: QtObject {
+            readonly property string mono: "monospace"
+        }
+
+        readonly property QtObject size: QtObject {
+            readonly property int small: 12
+            readonly property int medium: 14
+            readonly property int large: 16
+        }
+    }
+
+    readonly property QtObject sizes: QtObject {
+        readonly property QtObject sidebar: QtObject {
+            readonly property int width: 400
+        }
+        readonly property QtObject notifs: QtObject {
+            readonly property int badge: 20
+            readonly property int image: 41
+        }
+    }
+
+    readonly property QtObject anim: QtObject {
+        readonly property QtObject durations: QtObject {
+            readonly property int normal: 150
+            readonly property int expressiveFastSpatial: 200
+        }
     }
 
     component FontBuilder: QtObject {

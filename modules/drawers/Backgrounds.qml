@@ -9,6 +9,7 @@ import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities as Utilities
 import qs.modules.quicktoggles as QuickToggles
 import qs.modules.keybinds as Keybinds
+import qs.modules.sidebar as Sidebar
 import QtQuick
 import QtQuick.Shapes
 
@@ -86,5 +87,12 @@ Shape {
 
         startX: root.width
         startY: root.height
+    }
+
+    Sidebar.Background {
+        wrapper: root.panels.sidebar
+
+        startX: root.width
+        startY: 0
     }
 }

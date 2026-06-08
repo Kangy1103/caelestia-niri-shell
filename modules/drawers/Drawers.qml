@@ -108,6 +108,7 @@ Variants {
                 property bool keybinds
                 property bool editingWeatherLocation
                 property bool notifsExpanded
+                property bool sidebar
 
                 Component.onCompleted: Visibilities.screens[scope.modelData.name] = this
             }

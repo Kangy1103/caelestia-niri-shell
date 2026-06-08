@@ -646,7 +646,8 @@ Singleton {
             wallpaperDir: paths.wallpaperDir,
             wallpaper: paths.wallpaper,
             sessionGif: paths.sessionGif,
-            mediaGif: paths.mediaGif
+            mediaGif: paths.mediaGif,
+            noNotifsPic: paths.noNotifsPic
         };
     }
 }

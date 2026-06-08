@@ -31,6 +31,7 @@ Singleton {
 
     readonly property list<Notif> list: []
     readonly property list<Notif> popups: list.filter(n => n.popup)
+    readonly property list<Notif> notClosed: list.filter(n => !n.closed)
 
     property alias dnd: props.dnd
 
@@ -442,8 +443,38 @@ Singleton {
         // Whether this notif should be discarded (not just hidden) when it times out
         property bool isTransient: notification?.hints?.transient ?? false
 
+        // Whether this notif has been closed (dismissed from sidebar)
+        property bool closed: false
+
         // Dismissal timer — created dynamically, may be null
         property Timer timer: null
+
+        // LazyListView lifecycle locks — prevent destruction while items reference us
+        property var _locks: []
+
+        function lock(item: var): void {
+            if (!_locks.includes(item))
+                _locks.push(item);
+        }
+
+        function unlock(item: var): void {
+            const idx = _locks.indexOf(item);
+            if (idx !== -1)
+                _locks.splice(idx, 1);
+        }
+
+        function close(): void {
+            notif.closed = true;
+            notif.popup = false;
+        }
+
+        readonly property bool resident: notification?.resident ?? false
+
+        readonly property bool hasActionIcons: {
+            const acts = notif.actions;
+            if (!acts || acts.length === 0) return false;
+            return acts.some(a => a.identifier && a.identifier.length > 0);
+        }
 
         // ── Presentation data ─────────────────────────────────────────────────
         // When the notification is live, we read from the Notification object.

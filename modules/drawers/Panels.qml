@@ -9,6 +9,7 @@ import qs.modules.utilities as Utilities
 import qs.modules.utilities.toasts as Toasts
 import qs.modules.quicktoggles as QuickToggles
 import qs.modules.keybinds as Keybinds
+import qs.modules.sidebar as Sidebar
 import Quickshell
 import QtQuick
 
@@ -28,6 +29,7 @@ Item {
     readonly property Utilities.Wrapper utilities: utilities
     readonly property QuickToggles.Wrapper quicktoggles: quicktoggles
     readonly property Keybinds.Wrapper keybinds: keybinds
+    readonly property Sidebar.Wrapper sidebar: sidebar
 
     anchors.fill: parent
     anchors.margins: Config.border.thickness
@@ -122,6 +124,15 @@ Item {
 
     Keybinds.Wrapper {
         id: keybinds
+
+        visibilities: root.visibilities
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+    Sidebar.Wrapper {
+        id: sidebar
 
         visibilities: root.visibilities
 
