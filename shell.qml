@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.3.0-20260606
+// Version: 0.4.0-20260608
 
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
@@ -44,4 +44,7 @@ ShellRoot {
 
     // Initialize Cava audio visualiser service
     property var _cavaService: Cava
+
+    // Initialize GameMode service
+    property var _gameMode: GameMode
 }

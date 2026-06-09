@@ -90,7 +90,7 @@ Variants {
             opacity: status === Image.Ready ? 1 : 0
             Behavior on opacity { Anim {} }
 
-            layer.enabled: status === Image.Ready
+            layer.enabled: status === Image.Ready && !GameMode.enabled
             layer.effect: MultiEffect {
                 autoPaddingEnabled: false
                 blurEnabled: true

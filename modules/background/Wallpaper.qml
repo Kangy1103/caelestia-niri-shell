@@ -18,6 +18,21 @@ Item {
 
     anchors.fill: parent
 
+    Connections {
+        target: GameMode
+        function onEnabledChanged(): void {
+            if (GameMode.enabled) {
+                if (root.current && root.current.item && root.current.item.isVideo) {
+                    player.pause();
+                }
+            } else {
+                if (root.current && root.current.item && root.current.item.isVideo) {
+                    player.play();
+                }
+            }
+        }
+    }
+
     Component.onCompleted: {
     }
 

@@ -16,7 +16,7 @@ Item {
     required property Item wallpaper
 
     readonly property bool onTargetOutput: !Config.background.visualiser.output || Config.background.visualiser.output === screen.name
-    readonly property bool shouldBeActive: Config.background.visualiser.enabled && onTargetOutput && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0)
+    readonly property bool shouldBeActive: Config.background.visualiser.enabled && onTargetOutput && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0) && !GameMode.enabled
 
     opacity: shouldBeActive ? 1 : 0
 

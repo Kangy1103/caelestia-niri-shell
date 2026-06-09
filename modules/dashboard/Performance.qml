@@ -852,7 +852,7 @@ Item {
 
                     Timer {
                         interval: Config.dashboard.resourceUpdateInterval
-                        running: true
+                        running: !GameMode.enabled
                         repeat: true
                         onTriggered: sparklineCanvas._tickCount++
                     }
@@ -862,7 +862,7 @@ Item {
                         to: 1
                         duration: Config.dashboard.resourceUpdateInterval
                         loops: Animation.Infinite
-                        running: true
+                        running: !GameMode.enabled
                     }
 
                     Behavior on smoothMax {
