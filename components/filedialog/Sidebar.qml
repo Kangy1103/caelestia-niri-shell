@@ -1,10 +1,11 @@
 pragma ComponentBehavior: Bound
 
-import ".."
-import qs.services
-import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.components.filedialog
+import qs.services
 
 StyledRect {
     id: root
@@ -12,7 +13,7 @@ StyledRect {
     required property var dialog
 
     implicitWidth: Sizes.sidebarWidth
-    implicitHeight: inner.implicitHeight + Config.appearance.padding.medium * 2
+    implicitHeight: inner.implicitHeight + Tokens.padding.medium * 2
 
     color: Colours.tPalette.m3surfaceContainer
 
@@ -22,17 +23,16 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Config.appearance.padding.medium
-        spacing: Config.appearance.spacing.small / 2
+        anchors.margins: Tokens.padding.medium
+        spacing: Tokens.spacing.extraSmall
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Config.appearance.padding.extraSmall / 2
-            Layout.bottomMargin: Config.appearance.spacing.large
+            Layout.topMargin: Tokens.padding.extraSmall / 2
+            Layout.bottomMargin: Tokens.spacing.medium
             text: qsTr("Files")
             color: Colours.palette.m3onSurface
-            font.pointSize: Config.appearance.font.body.large.size
-            font.bold: true
+            font: Tokens.font.body.builders.large.weight(Font.Bold).build()
         }
 
         Repeater {
@@ -45,15 +45,14 @@ StyledRect {
                 readonly property bool selected: modelData === root.dialog.cwd[root.dialog.cwd.length - 1]
 
                 Layout.fillWidth: true
-                implicitHeight: placeInner.implicitHeight + Config.appearance.padding.medium * 2
+                implicitHeight: placeInner.implicitHeight + Tokens.padding.medium * 2
 
-                radius: Config.appearance.rounding.full
+                radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3secondaryContainer, selected ? 1 : 0)
 
                 StateLayer {
                     color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-
-                    function onClicked(): void {
+                    onClicked: {
                         if (place.modelData === "Home")
                             root.dialog.cwd = ["Home"];
                         else
@@ -65,11 +64,11 @@ StyledRect {
                     id: placeInner
 
                     anchors.fill: parent
-                    anchors.margins: Config.appearance.padding.medium
-                    anchors.leftMargin: Config.appearance.padding.largeIncreased
-                    anchors.rightMargin: Config.appearance.padding.largeIncreased
+                    anchors.margins: Tokens.padding.medium
+                    anchors.leftMargin: Tokens.padding.large
+                    anchors.rightMargin: Tokens.padding.large
 
-                    spacing: Config.appearance.spacing.large
+                    spacing: Tokens.spacing.medium
 
                     MaterialIcon {
                         text: {
@@ -91,11 +90,13 @@ StyledRect {
                             return "folder";
                         }
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Config.appearance.font.title.medium.size
+                        fontStyle: Tokens.font.icon.medium
                         fill: place.selected ? 1 : 0
 
                         Behavior on fill {
-                            Anim {}
+                            Anim {
+                                type: Anim.DefaultEffects
+                            }
                         }
                     }
 
@@ -103,7 +104,7 @@ StyledRect {
                         Layout.fillWidth: true
                         text: place.modelData
                         color: place.selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Config.appearance.font.body.medium.size
+                        font: Tokens.font.body.small
                         elide: Text.ElideRight
                     }
                 }

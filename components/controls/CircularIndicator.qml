@@ -1,9 +1,9 @@
-import ".."
-import qs.services
-import Caelestia.Config
-import Caelestia.Internal
 import QtQuick
 import QtQuick.Templates
+import Caelestia.Config
+import Caelestia.Internal
+import qs.components
+import qs.services
 
 BusyIndicator {
     id: root
@@ -19,8 +19,8 @@ BusyIndicator {
         Completing
     }
 
-    property real implicitSize: Config.appearance.font.body.medium.size * 3
-    property real strokeWidth: Config.appearance.padding.extraSmall * 0.8
+    property real implicitSize: Tokens.font.body.medium.pointSize * 3
+    property real strokeWidth: Tokens.padding.extraSmall
     property color fgColour: Colours.palette.m3primary
     property color bgColour: Colours.palette.m3secondaryContainer
 
@@ -63,8 +63,9 @@ BusyIndicator {
 
     transitions: Transition {
         Anim {
+            type: Anim.DefaultEffects
             properties: "opacity,internalStrokeWidth"
-            duration: manager.completeEndDuration * Config.appearance.anim.durations.scale
+            duration: manager.completeEndDuration * Tokens.anim.durations.scale
         }
     }
 
@@ -77,6 +78,7 @@ BusyIndicator {
         rotation: manager.rotation
         startAngle: manager.startFraction * 360
         value: manager.endFraction - manager.startFraction
+        hasEndIndicator: false
     }
 
     CircularIndicatorManager {
@@ -90,7 +92,7 @@ BusyIndicator {
         property: "progress"
         from: 0
         to: 1
-        duration: manager.duration * Config.appearance.anim.durations.scale
+        duration: manager.duration * Tokens.anim.durations.scale
     }
 
     NumberAnimation {
@@ -99,7 +101,7 @@ BusyIndicator {
         property: "completeEndProgress"
         from: 0
         to: 1
-        duration: manager.completeEndDuration * Config.appearance.anim.durations.scale
+        duration: manager.completeEndDuration * Tokens.anim.durations.scale
         onFinished: {
             if (root.animState === CircularIndicator.Completing)
                 root.animState = CircularIndicator.Stopped;

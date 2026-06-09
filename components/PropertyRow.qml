@@ -1,8 +1,8 @@
-import qs.components
-import qs.services
-import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.services
 
 ColumnLayout {
     id: root
@@ -11,16 +11,16 @@ ColumnLayout {
     required property string value
     property bool showTopMargin: false
 
-    spacing: Config.appearance.spacing.small / 2
+    spacing: Tokens.spacing.extraSmall
 
     StyledText {
-        Layout.topMargin: root.showTopMargin ? Config.appearance.spacing.large : 0
+        Layout.topMargin: root.showTopMargin ? Tokens.spacing.medium : 0
         text: root.label
     }
 
     StyledText {
         text: root.value
         color: Colours.palette.m3outline
-        font.pointSize: Config.appearance.font.label.large.size
+        font: Tokens.font.body.small
     }
 }

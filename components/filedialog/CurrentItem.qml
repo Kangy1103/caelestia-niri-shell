@@ -1,16 +1,16 @@
-import ".."
-import qs.services
-import Caelestia.Config
 import QtQuick
 import QtQuick.Shapes
+import Caelestia.Config
+import qs.components
+import qs.services
 
 Item {
     id: root
 
     required property var currentItem
 
-    implicitWidth: content.implicitWidth + Config.appearance.padding.large + content.anchors.rightMargin
-    implicitHeight: currentItem ? content.implicitHeight + Config.appearance.padding.medium + content.anchors.bottomMargin : 0
+    implicitWidth: content.implicitWidth + Tokens.padding.medium + content.anchors.rightMargin
+    implicitHeight: currentItem ? content.implicitHeight + Tokens.padding.medium + content.anchors.bottomMargin : 0
 
     Shape {
         preferredRendererType: Shape.CurveRenderer
@@ -18,7 +18,7 @@ Item {
         ShapePath {
             id: path
 
-            readonly property real rounding: Config.appearance.rounding.small
+            readonly property real rounding: root.Tokens.rounding.medium
             readonly property bool flatten: root.implicitHeight < rounding * 2
             readonly property real roundingY: flatten ? root.implicitHeight / 2 : rounding
 
@@ -76,16 +76,16 @@ Item {
 
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.rightMargin: Config.appearance.padding.large - Config.appearance.padding.extraSmall
-            anchors.bottomMargin: Config.appearance.padding.medium - Config.appearance.padding.extraSmall
+            anchors.rightMargin: Tokens.padding.medium - Tokens.padding.extraSmall
+            anchors.bottomMargin: Tokens.padding.medium - Tokens.padding.extraSmall
 
             Connections {
-                target: root
-
                 function onCurrentItemChanged(): void {
                     if (root.currentItem)
                         content.text = qsTr(`"%1" selected`).arg(root.currentItem.modelData.name);
                 }
+
+                target: root
             }
         }
     }

@@ -1,8 +1,8 @@
-import qs.components
-import qs.services
-import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.services
 
 ColumnLayout {
     id: root
@@ -13,10 +13,9 @@ ColumnLayout {
     spacing: 0
 
     StyledText {
-        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
+        Layout.topMargin: Tokens.spacing.largeIncreased
         text: root.title
-        font.pointSize: Config.appearance.font.body.large.size
-        font.weight: 500
+        font: Tokens.font.title.builders.medium.weight(Font.Medium).build()
     }
 
     StyledText {
