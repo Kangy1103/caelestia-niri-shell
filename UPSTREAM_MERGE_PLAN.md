@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.5.1-20260609
+Version: 0.6.0-20260609
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -890,3 +890,91 @@ git checkout main -- components/CollapsibleSection.qml
 rm components/controls/CollapsibleSection.qml
 ```
 Restores all component files to pre-Phase-3 state.
+
+---
+
+### Phase 4 — Services ✅ (2026-06-09)
+
+**What was done:**
+
+Merged upstream service files, added new services, and verified at runtime. 3 new files copied, 2 replaced from upstream, 8 three-way merged, 5 kept as-is, 11 custom files preserved.
+
+**New upstream files copied (4):**
+```
+services/NotifData.qml       # Notification data model
+services/Recorder.qml        # gpu-screen-recorder integration
+services/Screens.qml         # Multi-monitor screen info
+services/Hypr.qml            # NOT copied — Hyprland-specific, we use Niri.qml
+```
+
+**Files accepted from upstream (full replace):**
+```
+services/VPN.qml             # Richer status model, auth, per-provider parsing
+services/IdleInhibitor.qml   # Wayland-native IdleInhibitor replaces systemd-inhibit hack
+```
+
+**Files merged (kept our features, added upstream improvements):**
+
+| File | Our features kept | Upstream additions |
+|------|-------------------|--------------------|
+| `Weather.qml` | Error handling, ipinfo caching, geocoding dedup | Hourly forecast, reverse geocoding, Config reactivity |
+| `Wallpapers.qml` | Video wallpaper support, self-contained colour gen | Fallback, setRandom, getCategoryFor, smartArg, key prop |
+| `Audio.qml` | Readonly computed sinks/sources/streams | CavaProvider/BeatTracker (disabled), cycleOutput, maxVolume, app.name |
+| `Players.qml` | IpcHandler structure | PersistentProperties for manualActive, getArtUrl, null guard, PostTrack toast |
+| `Network.qml` | Bar-compatible API, failure-state tracking | Qt.callLater delays (500/1000/100ms) to prevent NM races |
+| `Nmcli.qml` | Cleaner retry logic | connecting property + isConnectingState + connectingSsid |
+| `NetworkUsage.qml` | JS array backward compat via .values export | CircularBuffer for efficient history |
+| `Visibilities.qml` | Niri.focusedMonitorName keying | Map() instead of plain object {} |
+
+**Files kept as-is (our version superior or no meaningful diff):**
+```
+Notifs.qml      # Our enhanced version (persistence, grouping, unread, IPC)
+Colours.qml     # reduceTransparency, saveSchemeState, extended colours
+Brightness.qml  # Compositor-agnostic, better error handling
+GameMode.qml    # Niri-specific compositor integration
+Time.qml        # Identical functionality
+```
+
+**Our custom files preserved (11):**
+```
+AudioPortSwitch.qml, BatteryMonitor.qml, CalEvents.qml, Cava.qml, Fonts.qml,
+M3Variants.qml, Niri.qml, PolkitService.qml, scheme.json, Schemes.qml, SystemUsage.qml
+```
+
+**C++ plugin additions (missed in Phase 1):**
+```
+plugin/src/Caelestia/Services/audiocollector.{hpp,cpp}
+plugin/src/Caelestia/Services/audioprovider.{hpp,cpp}
+plugin/src/Caelestia/Services/beattracker.{hpp,cpp}
+plugin/src/Caelestia/Services/cavaprovider.{hpp,cpp}
+```
+
+**C++ fixes:**
+- `audioprovider.cpp`: Fixed Qt 6.11 `QMetaObject::invokeMethod` — removed extra `this` arg from `AudioCollector::ref`/`unref` calls
+- `service.hpp`: Added `QML_ELEMENT` (needed for cross-namespace prototype chain resolution)
+- `audioprovider.hpp`: Added `QML_ELEMENT` (needed for BeatTracker/CavaProvider prototype chain)
+- `beattracker.hpp`: Changed `smpl_t` → `float` in QML-visible properties (aubio typedef unresolvable by QML engine)
+- `Internal/CMakeLists.txt`: Added missing `circularbuffer.hpp` (MOC never ran, type silently not registered)
+
+**Runtime verification:**
+- Shell launches clean: `Configuration Loaded`, Niri IPC connected, no errors
+- **CircularBuffer**: Fixed and working (`circularbuffer.hpp` was missing from CMakeLists.txt)
+- **CavaProvider**: Crashes in `libcava` → `fftw3` segfault — third-party library bug. Disabled with diagnostic comment.
+- **BeatTracker**: `Element is not creatable` in Qt 6.11 — `smpl_t` typedef, `optional plugin` qmldir, abstract `Service` base all contribute. Works on upstream's older Qt. Disabled with diagnostic comment. All fixes applied: `QML_ELEMENT` on Service+AudioProvider, `smpl_t`→`float`, qmldir `plugin` (not optional), `prefer` removed.
+
+**Reversion:**
+```fish
+git checkout main -- services/
+# Remove new upstream files:
+rm services/NotifData.qml services/Recorder.qml services/Screens.qml
+# Remove new C++ service files:
+rm plugin/src/Caelestia/Services/{audiocollector,audioprovider,beattracker,cavaprovider}.{hpp,cpp}
+# Revert C++ modifications:
+git checkout main -- plugin/src/Caelestia/Services/audioprovider.cpp
+git checkout main -- plugin/src/Caelestia/Services/service.hpp
+git checkout main -- plugin/src/Caelestia/Services/audioprovider.hpp
+git checkout main -- plugin/src/Caelestia/Services/beattracker.hpp
+git checkout main -- plugin/src/Caelestia/Internal/CMakeLists.txt
+# Rebuild and reinstall:
+cmake -B build -G Ninja && cmake --build build && sudo cmake --install build
+```
