@@ -12,7 +12,8 @@ Singleton {
     property string city
     property string loc
     property var cc
-    property var forecast
+    property list<var> forecast
+    property list<var> hourlyForecast
     property string error: ""
     property string _cachedLoc: ""
     property string _cachedCity: ""
@@ -21,14 +22,16 @@ Singleton {
     property bool _geocodingInProgress: false
     property string _lastGeocodedCity: ""
 
+    readonly property var cachedCities: new Map()
+
     readonly property string icon: cc ? Icons.getWeatherIcon(cc.weatherCode) : "cloud_alert"
-    readonly property string description: cc?.weatherDesc[0].value ?? qsTr("No weather")
-    readonly property string temp: Config.services.useFahrenheit ? `${cc?.temp_F ?? 0}°F` : `${cc?.temp_C ?? 0}°C`
-    readonly property string feelsLike: Config.services.useFahrenheit ? `${cc?.FeelsLikeF ?? 0}°F` : `${cc?.FeelsLikeC ?? 0}°C`
+    readonly property string description: cc?.weatherDesc ?? qsTr("No weather")
+    readonly property string temp: cc ? `${cc.temp_C ?? "--"}°C` : "--"
+    readonly property string feelsLike: cc ? `${cc.FeelsLikeC ?? "--"}°C` : "--"
     readonly property int humidity: cc?.humidity ?? 0
     readonly property real windSpeed: cc?.windSpeed ?? 0.0
-    readonly property string sunrise: cc?.sunrise ?? "--:--"
-    readonly property string sunset: cc?.sunset ?? "--:--"
+    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
+    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
 
     function reload(): void {
         let configLocation = Config.services.weatherLocation;
@@ -36,12 +39,12 @@ Singleton {
         if (configLocation && configLocation !== "") {
             if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0]))) {
                 loc = configLocation;
+                fetchCityFromCoords(configLocation);
             } else {
                 fetchCoordsFromCity(configLocation);
             }
         }
         else {
-            // Re-use cached location if less than 24 hours old
             const now = Date.now();
             const twentyFourHours = 86400000;
             if (_cachedLoc && (now - _lastLocationFetchMs) < twentyFourHours) {
@@ -81,8 +84,44 @@ Singleton {
         }
     }
 
+    function fetchCityFromCoords(coords: string): void {
+        if (cachedCities.has(coords)) {
+            city = cachedCities.get(coords);
+            return;
+        }
+
+        const [lat, lon] = coords.split(",").map(s => s.trim());
+
+        const fallbackToBigDataCloud = () => {
+            const fallbackUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
+            Requests.get(fallbackUrl, text => {
+                const geo = JSON.parse(text);
+                const geoCity = geo.city || geo.locality;
+                if (geoCity) {
+                    city = geoCity;
+                    cachedCities.set(coords, geoCity);
+                } else {
+                    city = "Unknown City";
+                }
+            });
+        };
+
+        const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=geocodejson`;
+        Requests.get(nominatimUrl, text => {
+            const geo = JSON.parse(text).features?.[0]?.properties.geocoding;
+            if (geo) {
+                const geoCity = geo.type === "city" ? geo.name : geo.city;
+                if (geoCity) {
+                    city = geoCity;
+                    cachedCities.set(coords, geoCity);
+                    return;
+                }
+            }
+            fallbackToBigDataCloud();
+        }, fallbackToBigDataCloud);
+    }
+
     function fetchCoordsFromCity(cityName) {
-        // Skip if already geocoding or if we already resolved this city
         if (_geocodingInProgress) return;
         if (_lastGeocodedCity === cityName && loc) {
             fetchWeatherData();
@@ -109,10 +148,9 @@ Singleton {
                 city = result.name;
                 error = "";
                 if (loc === newLoc) {
-                    // Same location, just refresh weather
                     fetchWeatherData();
                 } else {
-                    loc = newLoc; // triggers onLocChanged -> fetchWeatherData
+                    loc = newLoc;
                 }
             } catch (e) {
                 console.warn("Weather: Failed to parse geocoding response:", e);
@@ -125,9 +163,7 @@ Singleton {
         });
     }
 
-    onLocChanged: {
-        fetchWeatherData()
-    }
+    onLocChanged: fetchWeatherData()
 
     function fetchWeatherData() {
         let url = getWeatherUrl();
@@ -141,31 +177,46 @@ Singleton {
                 error = "";
                 cc = {
                     "weatherCode": String(json.current.weather_code),
-                    "weatherDesc": [{ "value": getWeatherCondition(String(json.current.weather_code))}],
+                    "weatherDesc": getWeatherCondition(String(json.current.weather_code)),
                     "temp_C": Math.round(json.current.temperature_2m),
-                    "temp_F": Math.round(json.current.temperature_2m * 9/5 + 32),
                     "FeelsLikeC": Math.round(json.current.apparent_temperature),
-                    "FeelsLikeF": Math.round(json.current.apparent_temperature * 9/5 + 32),
                     "humidity": json.current.relative_humidity_2m,
                     "windSpeed": json.current.wind_speed_10m,
                     "isDay": json.current.is_day,
-                    "sunrise": json.daily.sunrise[0].split("T")[1],
-                    "sunset": json.daily.sunset[0].split("T")[1]
+                    "sunrise": json.daily.sunrise[0],
+                    "sunset": json.daily.sunset[0]
                 };
 
-                let forecastList = []
+                let forecastList = [];
                 for (let i = 0; i < json.daily.time.length; i++) {
                     forecastList.push({
                         "date": json.daily.time[i],
                         "maxTempC": Math.round(json.daily.temperature_2m_max[i]),
-                        "maxTempF": Math.round(json.daily.temperature_2m_max[i] * 9/5 + 32),
                         "minTempC": Math.round(json.daily.temperature_2m_min[i]),
-                        "minTempF": Math.round(json.daily.temperature_2m_min[i] * 9/5 + 32),
                         "weatherCode": String(json.daily.weather_code[i]),
                         "icon": Icons.getWeatherIcon(String(json.daily.weather_code[i]))
                     });
                 }
                 forecast = forecastList;
+
+                const hourlyList = [];
+                const now = new Date();
+                for (let i = 0; i < json.hourly.time.length; i++) {
+                    const time = new Date(json.hourly.time[i].replace("T", " "));
+
+                    if (time < now)
+                        continue;
+
+                    hourlyList.push({
+                        timestamp: json.hourly.time[i],
+                        hour: time.getHours(),
+                        tempC: Math.round(json.hourly.temperature_2m[i]),
+                        precipChance: json.hourly.precipitation_probability[i],
+                        weatherCode: json.hourly.weather_code[i],
+                        icon: Icons.getWeatherIcon(json.hourly.weather_code[i])
+                    });
+                }
+                hourlyForecast = hourlyList;
             } catch (e) {
                 console.warn("Weather: Failed to parse weather data:", e);
                 error = qsTr("Weather data unavailable");
@@ -179,14 +230,12 @@ Singleton {
     function getWeatherUrl() {
         if (!loc || loc.indexOf(",") === -1) return "";
 
-        let coords = loc.split(",");
-        let lat = coords[0];
-        let lon = coords[1];
-
+        const [lat, lon] = loc.split(",").map(s => s.trim());
         const baseUrl = "https://api.open-meteo.com/v1/forecast";
         const params = [
             "latitude=" + lat,
             "longitude=" + lon,
+            "hourly=weather_code,temperature_2m,precipitation_probability",
             "daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset",
             "current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m",
             "timezone=auto",
@@ -230,9 +279,16 @@ Singleton {
         return conditions[code] || "Unknown";
     }
 
-    // Refresh current location hourly
+    Connections {
+        function onWeatherLocationChanged(): void {
+            root.reload();
+        }
+
+        target: Config.services
+    }
+
     Timer {
-        interval: 3600000 // 1 hour
+        interval: 3600000
         running: true
         repeat: true
         onTriggered: fetchWeatherData()

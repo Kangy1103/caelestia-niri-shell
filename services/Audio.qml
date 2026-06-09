@@ -3,6 +3,7 @@ pragma Singleton
 import Caelestia.Config
 import qs.services
 import Caelestia
+import Caelestia.Services
 import Quickshell
 import Quickshell.Services.Pipewire
 import QtQuick
@@ -26,10 +27,13 @@ Singleton {
     readonly property bool sourceMuted: !!source?.audio?.muted
     readonly property real sourceVolume: source?.audio?.volume ?? 0
 
+    readonly property alias cava: cava
+    readonly property alias beatTracker: beatTracker
+
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {
             sink.audio.muted = false;
-            sink.audio.volume = Math.max(0, Math.min(1, newVolume));
+            sink.audio.volume = Math.max(0, Math.min(Config.services.maxVolume, newVolume));
         }
     }
 
@@ -44,30 +48,8 @@ Singleton {
     function setSourceVolume(newVolume: real): void {
         if (source?.ready && source?.audio) {
             source.audio.muted = false;
-            source.audio.volume = Math.max(0, Math.min(1, newVolume));
+            source.audio.volume = Math.max(0, Math.min(Config.services.maxVolume, newVolume));
         }
-    }
-
-    function getStreamName(node: PwNode): string {
-        return node?.description || node?.name || qsTr("Unknown");
-    }
-
-    function getStreamVolume(node: PwNode): real {
-        return node?.audio?.volume ?? 0;
-    }
-
-    function getStreamMuted(node: PwNode): bool {
-        return !!node?.audio?.muted;
-    }
-
-    function setStreamVolume(node: PwNode, newVolume: real): void {
-        if (node?.audio)
-            node.audio.volume = Math.max(0, Math.min(1, newVolume));
-    }
-
-    function setStreamMuted(node: PwNode, muted: bool): void {
-        if (node?.audio)
-            node.audio.muted = muted;
     }
 
     function incrementSourceVolume(amount: real): void {
@@ -84,6 +66,42 @@ Singleton {
 
     function setAudioSource(newSource: PwNode): void {
         Pipewire.preferredDefaultAudioSource = newSource;
+    }
+
+    function cycleNextAudioOutput(): void {
+        if (sinks.length === 0)
+            return;
+
+        const currentIndex = sinks.findIndex(s => s === sink);
+        const nextIndex = (currentIndex + 1) % sinks.length;
+        setAudioSink(sinks[nextIndex]);
+    }
+
+    function setStreamVolume(stream: PwNode, newVolume: real): void {
+        if (stream?.ready && stream?.audio) {
+            stream.audio.muted = false;
+            stream.audio.volume = Math.max(0, Math.min(Config.services.maxVolume, newVolume));
+        }
+    }
+
+    function setStreamMuted(stream: PwNode, muted: bool): void {
+        if (stream?.ready && stream?.audio) {
+            stream.audio.muted = muted;
+        }
+    }
+
+    function getStreamVolume(stream: PwNode): real {
+        return stream?.audio?.volume ?? 0;
+    }
+
+    function getStreamMuted(stream: PwNode): bool {
+        return !!stream?.audio?.muted;
+    }
+
+    function getStreamName(stream: PwNode): string {
+        if (!stream)
+            return qsTr("Unknown");
+        return stream.properties["application.name"] || stream.description || stream.name || qsTr("Unknown Application");
     }
 
     onSinkChanged: {
@@ -117,5 +135,23 @@ Singleton {
 
     PwObjectTracker {
         objects: [...root.sinks, ...root.sources, ...root.streams]
+    }
+
+    CavaProvider {
+        id: cava
+
+        bars: Config.services.visualiserBars
+    }
+
+    BeatTracker {
+        id: beatTracker
+    }
+
+    IpcHandler {
+        function cycleOutput(): void {
+            root.cycleNextAudioOutput();
+        }
+
+        target: "audio"
     }
 }

@@ -12,6 +12,7 @@ Singleton {
     property var wirelessInterfaces: []
     property var ethernetInterfaces: []
     property bool isConnected: false
+    readonly property bool connecting: wirelessInterfaces.some(i => isConnectingState(i.state))
     property string activeInterface: ""
     property string activeConnection: ""
     property bool wifiEnabled: true
@@ -164,6 +165,15 @@ Singleton {
         }
 
         return state === "100 (connected)" || state === "connected" || state.startsWith("connected");
+    }
+
+    function isConnectingState(state: string): bool {
+        if (!state || state.length === 0) return false;
+        return state === "connecting" || state === "40 (connecting)" || state.startsWith("connecting");
+    }
+
+    function connectingSsid(): string {
+        return root.pendingConnection?.ssid ?? "";
     }
 
     function executeCommand(args: list<string>, callback: var): void {

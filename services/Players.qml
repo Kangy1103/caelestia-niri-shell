@@ -1,5 +1,6 @@
 pragma Singleton
 
+import QtQml
 import Caelestia.Config
 import qs.services
 import Caelestia
@@ -12,23 +13,47 @@ Singleton {
     id: root
 
     readonly property list<MprisPlayer> list: Mpris.players.values
-    readonly property MprisPlayer active: manualActive ?? list.find(p => getIdentity(p) === Config.services.defaultPlayer) ?? list[0] ?? null
-    property MprisPlayer manualActive
+    readonly property MprisPlayer active: props.manualActive ?? list.find(p => getIdentity(p) === Config.services.defaultPlayer) ?? list[0] ?? null
+    property alias manualActive: props.manualActive
 
     function getIdentity(player: MprisPlayer): string {
+        if (!player)
+            return "";
         const alias = Config.services.playerAliases.find(a => a.from === player.identity);
         return alias?.to ?? player.identity;
     }
 
-    Connections {
-        target: root.active
+    function getArtUrl(player: MprisPlayer): string {
+        if (!player)
+            return "";
+        if (player.trackArtUrl)
+            return player.trackArtUrl;
 
-        function onTrackChanged(): void {
+        const url = player.metadata["xesam:url"] ?? "";
+        if (url.startsWith("https://www.youtube.com/watch")) {
+            const id = url.match(/[?&]v=([\w-]{11})/)?.[1];
+            return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
+        }
+        return "";
+    }
+
+    Connections {
+        function onPostTrackChanged() {
             if (!Config.utilities.toasts.nowPlaying)
                 return;
-            if (root.active)
+            if (root.active.trackArtist != "" && root.active.trackTitle != "")
                 Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(root.active.trackArtist).arg(root.active.trackTitle), "music_note");
         }
+
+        target: root.active
+    }
+
+    PersistentProperties {
+        id: props
+
+        property MprisPlayer manualActive
+
+        reloadableId: "players"
     }
 
     IpcHandler {

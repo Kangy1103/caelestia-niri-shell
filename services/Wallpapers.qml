@@ -13,30 +13,45 @@ Searcher {
 
     readonly property string stateDir: `${Paths.state}/wallpaper`
     readonly property string currentNamePath: `${stateDir}/path.txt`
+    readonly property list<string> smartArg: Config.services.smartScheme ? [] : ["--no-smart"]
+    readonly property string fallback: Quickshell.shellPath("assets/wallpaper.webp")
 
     property bool showPreview: false
     readonly property string current: showPreview ? previewPath : actualCurrent
     property string previewPath
     property string actualCurrent
     property bool previewColourLock
+    property bool pendingPreviewClear
     property bool initialized: false
 
     property string _pendingWallpaper: ""
-    
+
     signal frameReady(string path)
+
+    function getCategoryFor(w: FileSystemEntry): string {
+        let category = w.parentDir.slice(Paths.wallsdir.length + 1);
+        if (category.includes("/"))
+            category = category.slice(0, category.indexOf("/"));
+        return category;
+    }
+
+    function setRandom(): void {
+        const entries = wallpapers.entries;
+        if (entries.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * entries.length);
+        setWallpaper(entries[randomIndex].path);
+    }
 
     function setWallpaper(path: string): void {
         if (isPathVideo(path)) {
             const framePath = getColorSource(path);
-            // Check if frame already exists to avoid re-extraction
             if (CUtils.exists(framePath)) {
                 applyWallpaper(path);
             } else {
                 _pendingWallpaper = path;
-                
-                // Use bash to ensure directory exists before ffmpeg runs, with software fallback
+
                 extractFrameProcess.command = [
-                    "bash", "-c", 
+                    "bash", "-c",
                     "mkdir -p \"$(dirname \"$2\")\" && (ffmpeg -y -ss 0 -hwaccel auto -loglevel error -i \"$1\" -an -vframes 1 -update 1 \"$2\" || ffmpeg -y -ss 0 -hwaccel none -loglevel error -i \"$1\" -an -vframes 1 -update 1 \"$2\")",
                     "--", path, framePath
                 ];
@@ -50,16 +65,13 @@ Searcher {
 
     function applyWallpaper(path: string): void {
         actualCurrent = path;
-        // Ensure state directory exists, then save
         ensureStateDir.running = true;
-        
-        // Small delay to ensure filesystem sync before color generation starts
+
         Qt.callLater(() => {
             runColorGeneration(path);
         });
     }
 
-    // Dedicated process for sequential frame extraction
     Process {
         id: extractFrameProcess
 
@@ -70,7 +82,6 @@ Searcher {
                 root.applyWallpaper(path);
             } else {
                 console.error("Frame extraction failed with code:", exitCode);
-                // Fallback: apply anyway, though colors might fail
                 root.applyWallpaper(root._pendingWallpaper);
             }
             root._pendingWallpaper = "";
@@ -78,7 +89,6 @@ Searcher {
 
         stderr: SplitParser {
             onRead: data => {
-                // Keep stderr for real errors but hide the verbose info
                 if (data.includes("Error") || data.includes("failed"))
                     console.warn("Extraction error:", data);
             }
@@ -98,7 +108,6 @@ Searcher {
         return `${Paths.state}/generated/video_frames/${hash}.png`;
     }
 
-    // Convert variant name to matugen type
     function variantToMatugenType(variant) {
         const variantMap = {
             "content": "scheme-content",
@@ -118,7 +127,6 @@ Searcher {
         variant = variant || "";
         if (!imagePath) return;
         try {
-            // Use switchwall.sh for full color generation (matugen + terminal + GTK/KDE)
             const scriptPath = Qt.resolvedUrl("../scripts/colors/switchwall.sh").toString().replace("file://", "");
             const mode = Colours.light ? "light" : "dark";
             const schemeType = variantToMatugenType(variant || Schemes.currentVariant || "tonalspot");
@@ -126,7 +134,6 @@ Searcher {
             colorGenProcess.running = true;
         } catch (e) {
             console.warn("Failed to run color generation:", e);
-            // Fallback to just matugen
             try {
                 matugenProcess.command = ["matugen", "image", imagePath, "--source-color-index", "0"];
                 matugenProcess.running = true;
@@ -143,7 +150,14 @@ Searcher {
 
     function stopPreview(): void {
         showPreview = false;
-        if (!previewColourLock)
+        if (previewColourLock)
+            pendingPreviewClear = true;
+        else
+            Colours.showPreview = false;
+    }
+
+    onPreviewColourLockChanged: {
+        if (!previewColourLock && pendingPreviewClear)
             Colours.showPreview = false;
     }
 
@@ -155,12 +169,12 @@ Searcher {
     }
 
     list: wallpapers.entries
+    key: "relativePath"
     useFuzzy: Config.launcher.useFuzzy.wallpapers
     extraOpts: useFuzzy ? ({}) : ({
             forward: false
         })
 
-    // Delayed load to ensure config is ready
     Timer {
         interval: 100
         running: true
@@ -183,7 +197,6 @@ Searcher {
         }
     }
 
-    // Create state directory, then write wallpaper path via FileView
     Process {
         id: ensureStateDir
 
@@ -200,7 +213,6 @@ Searcher {
         }
     }
 
-    // Run matugen for color generation
     Process {
         id: matugenProcess
 
@@ -215,7 +227,6 @@ Searcher {
         }
     }
 
-    // Run full color generation (switchwall.sh)
     Process {
         id: colorGenProcess
 
@@ -231,7 +242,6 @@ Searcher {
 
         stderr: SplitParser {
             onRead: data => {
-                // Suppress successful theme update messages that are sent to stderr
                 if (!data.includes("theme updated") && !data.includes("SVG colors"))
                     console.warn("Color gen error:", data);
             }
@@ -242,14 +252,19 @@ Searcher {
         id: stateFile
         path: root.currentNamePath
         watchChanges: true
+        printErrors: false
         onFileChanged: reload()
         onLoaded: {
-            const loadedPath = text().trim();
-            if (loadedPath) {
-            root.setWallpaper(loadedPath);
-            } else {
-                root.loadFromConfig();
+            let wall = text().trim();
+            if (!wall) {
+                wall = root.fallback;
             }
+            root.setWallpaper(wall);
+            root.previewColourLock = false;
+            root.initialized = true;
+        }
+        onLoadFailed: {
+            root.actualCurrent = root.fallback;
             root.previewColourLock = false;
             root.initialized = true;
         }
