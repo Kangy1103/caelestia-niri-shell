@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import QtQuick
 
@@ -9,8 +9,8 @@ Item {
 
     anchors.centerIn: parent
 
-    implicitWidth: content.implicitWidth + Appearance.padding.lg * 2
-    implicitHeight: content.implicitHeight + Appearance.padding.md * 2
+    implicitWidth: content.implicitWidth + Config.appearance.padding.large * 2
+    implicitHeight: content.implicitHeight + Config.appearance.padding.medium * 2
 
     Component.onCompleted: Weather.reload()
 
@@ -27,11 +27,11 @@ Item {
     Row {
         id: content
         anchors.centerIn: parent
-        spacing: Appearance.spacing.xxl
+        spacing: Config.appearance.spacing.extraExtraLarge
 
         Column {
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
 
             MaterialIcon {
                 id: icon
@@ -40,7 +40,7 @@ Item {
                 animate: true
                 text: Weather.error ? "cloud_alert" : Weather.icon
                 color: Weather.error ? Colours.palette.m3error : Colours.palette.m3secondary
-                font.pointSize: Appearance.font.size.headlineLarge * 2
+                font.pointSize: Config.appearance.font.headline.large.size * 2
             }
 
             // Description below icon
@@ -49,7 +49,7 @@ Item {
             //     visible: !Weather.error
             //     animate: true
             //     text: Weather.description
-            //     font.pointSize: Appearance.font.size.labelMedium
+            //     font.pointSize: Config.appearance.font.label.medium.size
             //     color: Colours.palette.m3onSurfaceVariant
             // }
         }
@@ -58,14 +58,14 @@ Item {
             id: info
 
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
 
             // Temperature
             StyledText {
                 animate: true
                 text: Weather.error ? Weather.error : Weather.temp
                 color: Weather.error ? Colours.palette.m3error : Colours.palette.m3primary
-                font.pointSize: Weather.error ? Appearance.font.size.bodyMedium : Appearance.font.size.headlineLarge
+                font.pointSize: Weather.error ? Config.appearance.font.body.medium.size : Config.appearance.font.headline.large.size
                 font.weight: 600
             }
 
@@ -75,7 +75,7 @@ Item {
                 animate: true
                 text: root.highLow
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 500
                 opacity: 0.85
             }
@@ -87,11 +87,11 @@ Item {
                 animate: true
                 text: "  " + Weather.city
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelSmall
+                font.pointSize: Config.appearance.font.label.small.size
                 font.weight: 400
                 opacity: 0.7
                 elide: Text.ElideRight
-                width: Math.min(implicitWidth, root.parent ? root.parent.width - icon.implicitWidth - content.spacing - Appearance.padding.xl * 2 : implicitWidth)
+                width: Math.min(implicitWidth, root.parent ? root.parent.width - icon.implicitWidth - content.spacing - Config.appearance.padding.largeIncreased * 2 : implicitWidth)
             }
         }
     }

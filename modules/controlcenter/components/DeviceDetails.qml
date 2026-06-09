@@ -5,7 +5,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.components.containers
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -30,7 +30,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         Loader {
             id: headerLoader

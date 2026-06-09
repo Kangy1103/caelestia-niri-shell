@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import QtQuick
 import Quickshell.Io
@@ -36,13 +36,13 @@ ColumnLayout {
         RowLayout {
             id: clockRow
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
 
             StyledText {
                 text: root.timeComponents[0]
                 color: Colours.palette.m3onSurface
-                font.pointSize: Math.floor(Appearance.font.size.headlineLarge * 2.8 * root.panelScale)
-                font.family: Appearance.font.family.clock
+                font.pointSize: Math.floor(Config.appearance.font.headline.large.size * 2.8 * root.panelScale)
+                font.family: Config.appearance.font.clock
                 font.weight: Font.Bold
             }
 
@@ -51,8 +51,8 @@ ColumnLayout {
                 id: colonText
                 text: ":"
                 color: Colours.palette.m3primary
-                font.pointSize: Math.floor(Appearance.font.size.headlineLarge * 2.8 * root.panelScale)
-                font.family: Appearance.font.family.clock
+                font.pointSize: Math.floor(Config.appearance.font.headline.large.size * 2.8 * root.panelScale)
+                font.family: Config.appearance.font.clock
                 font.weight: Font.Bold
                 opacity: 1
 
@@ -76,14 +76,14 @@ ColumnLayout {
             StyledText {
                 text: root.timeComponents[1]
                 color: Colours.palette.m3onSurface
-                font.pointSize: Math.floor(Appearance.font.size.headlineLarge * 2.8 * root.panelScale)
-                font.family: Appearance.font.family.clock
+                font.pointSize: Math.floor(Config.appearance.font.headline.large.size * 2.8 * root.panelScale)
+                font.family: Config.appearance.font.clock
                 font.weight: Font.Bold
             }
 
             // AM/PM badge
             Loader {
-                Layout.leftMargin: Appearance.spacing.sm
+                Layout.leftMargin: Config.appearance.spacing.small
                 Layout.alignment: Qt.AlignVCenter
 
                 asynchronous: true
@@ -91,10 +91,10 @@ ColumnLayout {
                 visible: active
 
                 sourceComponent: StyledRect {
-                    implicitWidth: amPmLabel.implicitWidth + Appearance.padding.sm * 2
-                    implicitHeight: amPmLabel.implicitHeight + Appearance.padding.xs
+                    implicitWidth: amPmLabel.implicitWidth + Config.appearance.padding.small * 2
+                    implicitHeight: amPmLabel.implicitHeight + Config.appearance.padding.extraSmall
 
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     color: Qt.alpha(Colours.palette.m3secondaryContainer, 0.7)
 
                     StyledText {
@@ -102,8 +102,8 @@ ColumnLayout {
                         anchors.centerIn: parent
                         text: root.timeComponents[2] ?? ""
                         color: Colours.palette.m3onSecondaryContainer
-                        font.pointSize: Math.floor(Appearance.font.size.labelLarge * root.panelScale)
-                        font.family: Appearance.font.family.clock
+                        font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
+                        font.family: Config.appearance.font.clock
                         font.weight: Font.DemiBold
                     }
                 }
@@ -114,21 +114,21 @@ ColumnLayout {
     // Date
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Appearance.spacing.xs
+        Layout.topMargin: Config.appearance.spacing.extraSmall
 
         text: Time.format("dddd, d MMMM yyyy")
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Math.floor(Appearance.font.size.bodyMedium * root.panelScale)
-        font.family: Appearance.font.family.mono
+        font.pointSize: Math.floor(Config.appearance.font.body.medium.size * root.panelScale)
+        font.family: Config.appearance.font.mono.family
     }
 
     // Gradient divider — fades at edges for a refined look
     Rectangle {
         Layout.fillWidth: true
-        Layout.topMargin: Appearance.spacing.md
-        Layout.bottomMargin: Appearance.spacing.md
-        Layout.leftMargin: Appearance.padding.xl
-        Layout.rightMargin: Appearance.padding.xl
+        Layout.topMargin: Config.appearance.spacing.medium
+        Layout.bottomMargin: Config.appearance.spacing.medium
+        Layout.leftMargin: Config.appearance.padding.largeIncreased
+        Layout.rightMargin: Config.appearance.padding.largeIncreased
         height: 1
         color: "transparent"
         gradient: Gradient {
@@ -143,7 +143,7 @@ ColumnLayout {
     // ── Avatar ─────────────────────────────────────────────────────────────────
     Item {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Appearance.spacing.lg
+        Layout.topMargin: Config.appearance.spacing.large
         implicitWidth: avatarSize
         implicitHeight: avatarSize
 
@@ -152,7 +152,7 @@ ColumnLayout {
         // Circular avatar background
         StyledRect {
             anchors.fill: parent
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
             color: Qt.alpha(Colours.palette.m3secondaryContainer, 0.55)
         }
 
@@ -160,7 +160,7 @@ ColumnLayout {
         Rectangle {
             anchors.fill: parent
             anchors.margins: -3
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
             color: "transparent"
             border.width: 2
             border.color: Qt.alpha(Colours.palette.m3primary, 0.45)
@@ -168,7 +168,7 @@ ColumnLayout {
 
         StyledClippingRect {
             anchors.fill: parent
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
             color: "transparent"
 
             MaterialIcon {
@@ -196,11 +196,11 @@ ColumnLayout {
     // Username hint
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Appearance.spacing.sm
+        Layout.topMargin: Config.appearance.spacing.small
 
         text: SysInfo.user
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Math.floor(Appearance.font.size.bodyMedium * root.panelScale)
+        font.pointSize: Math.floor(Config.appearance.font.body.medium.size * root.panelScale)
         font.weight: Font.Medium
     }
 
@@ -210,13 +210,13 @@ ColumnLayout {
     StyledRect {
         id: inputBar
         Layout.fillWidth: true
-        Layout.topMargin: Appearance.spacing.md
-        Layout.leftMargin: Appearance.padding.lg
-        Layout.rightMargin: Appearance.padding.lg
-        implicitHeight: inputRow.implicitHeight + Appearance.padding.sm * 2
+        Layout.topMargin: Config.appearance.spacing.medium
+        Layout.leftMargin: Config.appearance.padding.large
+        Layout.rightMargin: Config.appearance.padding.large
+        implicitHeight: inputRow.implicitHeight + Config.appearance.padding.small * 2
 
         color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.75)
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
         border.width: activeFocus ? 2 : 0
         border.color: Colours.palette.m3primary
 
@@ -251,13 +251,13 @@ ColumnLayout {
             id: inputRow
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.sm
-            spacing: Appearance.spacing.md
+            anchors.margins: Config.appearance.padding.small
+            spacing: Config.appearance.spacing.medium
 
             // Fprint / busy indicator
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: fprintIcon.implicitHeight + Appearance.padding.xs * 2
+                implicitHeight: fprintIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
                 MaterialIcon {
                     id: fprintIcon
@@ -296,12 +296,12 @@ ColumnLayout {
             // Enter / submit button
             StyledRect {
                 implicitWidth: implicitHeight
-                implicitHeight: enterIcon.implicitHeight + Appearance.padding.sm * 2
+                implicitHeight: enterIcon.implicitHeight + Config.appearance.padding.small * 2
 
                 color: root.lock.pam.buffer
                     ? Colours.palette.m3primary
                     : Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.8)
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
 
                 CAnim { properties: "color" }
 
@@ -335,10 +335,10 @@ ColumnLayout {
 
     Item {
         Layout.fillWidth: true
-        Layout.topMargin: Appearance.spacing.sm
-        Layout.bottomMargin: Appearance.spacing.sm
-        Layout.leftMargin: Appearance.padding.lg
-        Layout.rightMargin: Appearance.padding.lg
+        Layout.topMargin: Config.appearance.spacing.small
+        Layout.bottomMargin: Config.appearance.spacing.small
+        Layout.leftMargin: Config.appearance.padding.large
+        Layout.rightMargin: Config.appearance.padding.large
 
         implicitHeight: Math.max(stateMessage.implicitHeight, errorMessage.implicitHeight)
 
@@ -381,8 +381,8 @@ ColumnLayout {
             color: Colours.palette.m3onSurfaceVariant
             animateProp: "opacity"
 
-            font.pointSize: Math.floor(Appearance.font.size.labelLarge * root.panelScale)
-            font.family: Appearance.font.family.mono
+            font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
+            font.family: Config.appearance.font.mono.family
             horizontalAlignment: Qt.AlignHCenter
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -424,8 +424,8 @@ ColumnLayout {
             opacity: 0
             color: Colours.palette.m3error
 
-            font.pointSize: Math.floor(Appearance.font.size.labelLarge * root.panelScale)
-            font.family: Appearance.font.family.mono
+            font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
+            font.family: Config.appearance.font.mono.family
             horizontalAlignment: Qt.AlignHCenter
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -483,7 +483,7 @@ ColumnLayout {
                 target: errorMessage
                 property: "opacity"
                 to: 0
-                duration: Appearance.anim.durations.large
+                duration: Config.appearance.anim.durations.large
             }
         }
     }
@@ -491,7 +491,7 @@ ColumnLayout {
     component FlashAnim: NumberAnimation {
         target: errorMessage
         property: "opacity"
-        duration: Appearance.anim.durations.small
+        duration: Config.appearance.anim.durations.small
         easing.type: Easing.Linear
     }
 

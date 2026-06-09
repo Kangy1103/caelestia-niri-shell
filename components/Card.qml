@@ -1,5 +1,5 @@
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 StyledRect {
@@ -13,9 +13,9 @@ StyledRect {
 
     property int variant: Card.Variant.Filled
     property alias contentItem: contentArea
-    property int padding: Appearance.padding.md
+    property int padding: Config.appearance.padding.medium
 
-    radius: Appearance.rounding.normal
+    radius: Config.appearance.rounding.large
 
     color: {
         switch (variant) {

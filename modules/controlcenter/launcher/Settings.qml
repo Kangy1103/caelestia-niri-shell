@@ -6,7 +6,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -15,7 +15,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
 
     SettingsHeader {
         icon: "apps"
@@ -23,7 +23,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("General")
         description: qsTr("General launcher settings")
     }
@@ -34,7 +34,6 @@ ColumnLayout {
             checked: Config.launcher.enabled
             toggle.onToggled: {
                 Config.launcher.enabled = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -43,7 +42,6 @@ ColumnLayout {
             checked: Config.launcher.showOnHover
             toggle.onToggled: {
                 Config.launcher.showOnHover = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -52,7 +50,6 @@ ColumnLayout {
             checked: Config.launcher.vimKeybinds
             toggle.onToggled: {
                 Config.launcher.vimKeybinds = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -61,19 +58,18 @@ ColumnLayout {
             checked: Config.launcher.enableDangerousActions
             toggle.onToggled: {
                 Config.launcher.enableDangerousActions = checked;
-                Config.markDirty("launcher");
             }
         }
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Display")
         description: qsTr("Display and appearance settings")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm / 2
+        contentSpacing: Config.appearance.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Max shown items")
@@ -94,13 +90,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Prefixes")
         description: qsTr("Command prefix settings")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm / 2
+        contentSpacing: Config.appearance.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Special prefix")
@@ -115,7 +111,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Fuzzy search")
         description: qsTr("Fuzzy search settings")
     }
@@ -126,7 +122,6 @@ ColumnLayout {
             checked: Config.launcher.useFuzzy.apps
             toggle.onToggled: {
                 Config.launcher.useFuzzy.apps = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -135,7 +130,6 @@ ColumnLayout {
             checked: Config.launcher.useFuzzy.actions
             toggle.onToggled: {
                 Config.launcher.useFuzzy.actions = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -144,7 +138,6 @@ ColumnLayout {
             checked: Config.launcher.useFuzzy.schemes
             toggle.onToggled: {
                 Config.launcher.useFuzzy.schemes = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -153,7 +146,6 @@ ColumnLayout {
             checked: Config.launcher.useFuzzy.variants
             toggle.onToggled: {
                 Config.launcher.useFuzzy.variants = checked;
-                Config.markDirty("launcher");
             }
         }
 
@@ -162,52 +154,51 @@ ColumnLayout {
             checked: Config.launcher.useFuzzy.wallpapers
             toggle.onToggled: {
                 Config.launcher.useFuzzy.wallpapers = checked;
-                Config.markDirty("launcher");
             }
         }
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Sizes")
         description: qsTr("Size settings for launcher items")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm / 2
+        contentSpacing: Config.appearance.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Item width")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.itemWidth)
+            value: qsTr("%1 px").arg(TokenConfig.sizes.launcher.itemWidth)
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Item height")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.itemHeight)
+            value: qsTr("%1 px").arg(TokenConfig.sizes.launcher.itemHeight)
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Wallpaper width")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.wallpaperWidth)
+            value: qsTr("%1 px").arg(TokenConfig.sizes.launcher.wallpaperWidth)
         }
 
         PropertyRow {
             showTopMargin: true
             label: qsTr("Wallpaper height")
-            value: qsTr("%1 px").arg(Config.launcher.sizes.wallpaperHeight)
+            value: qsTr("%1 px").arg(TokenConfig.sizes.launcher.wallpaperHeight)
         }
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Hidden apps")
         description: qsTr("Applications hidden from launcher")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm / 2
+        contentSpacing: Config.appearance.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Total hidden")

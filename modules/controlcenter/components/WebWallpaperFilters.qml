@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import "../../../components"
 import qs.components
 import qs.components.controls
-import qs.config
+import Caelestia.Config
 import qs.services
 import Caelestia
 import QtQuick
@@ -15,10 +15,10 @@ SectionContainer {
     // The main grid component to sync properties with
     required property var gridRoot
     
-    contentSpacing: Appearance.spacing.md
+    contentSpacing: Config.appearance.spacing.medium
 
     RowLayout {
-        spacing: Appearance.spacing.md
+        spacing: Config.appearance.spacing.medium
         Layout.fillWidth: true
         z: 1 
 
@@ -79,9 +79,9 @@ SectionContainer {
     // Categories Chips (UHDpaper)
     Flow {
         Layout.fillWidth: true
-        Layout.topMargin: Appearance.spacing.xs
-        Layout.bottomMargin: Appearance.spacing.xs
-        spacing: Appearance.spacing.sm
+        Layout.topMargin: Config.appearance.spacing.extraSmall
+        Layout.bottomMargin: Config.appearance.spacing.extraSmall
+        spacing: Config.appearance.spacing.small
         visible: gridRoot.categoriesList.length > 0 && gridRoot.currentServer === "uhdpaper"
 
         Repeater {
@@ -96,7 +96,7 @@ SectionContainer {
                     gridRoot.fetchWallpapers();
                 }
                 type: checked ? TextButton.Filled : TextButton.Tonal
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
         }
     }
@@ -104,26 +104,26 @@ SectionContainer {
     // Wallhaven specific filters
     ColumnLayout {
         Layout.fillWidth: true
-        Layout.topMargin: Appearance.spacing.sm
-        spacing: Appearance.spacing.md
+        Layout.topMargin: Config.appearance.spacing.small
+        spacing: Config.appearance.spacing.medium
         visible: gridRoot.currentServer === "wallhaven"
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.xxl
+            spacing: Config.appearance.spacing.extraExtraLarge
 
             // Categories
             ColumnLayout {
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
                 Layout.alignment: Qt.AlignTop
                 StyledText {
                     text: qsTr("Categories")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     font.weight: 600
                     color: Colours.palette.m3primary
                 }
                 RowLayout {
-                    spacing: Appearance.spacing.xs
+                    spacing: Config.appearance.spacing.extraSmall
                     Repeater {
                         model: ["General", "Anime", "People"]
                         delegate: TextButton {
@@ -141,7 +141,7 @@ SectionContainer {
                                 gridRoot.fetchWallpapers();
                             }
                             type: checked ? TextButton.Filled : TextButton.Tonal
-                            font.pointSize: Appearance.font.size.labelMedium
+                            font.pointSize: Config.appearance.font.label.medium.size
                         }
                     }
                 }
@@ -149,16 +149,16 @@ SectionContainer {
 
             // Purity
             ColumnLayout {
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
                 Layout.alignment: Qt.AlignTop
                 StyledText {
                     text: qsTr("Purity")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     font.weight: 600
                     color: Colours.palette.m3primary
                 }
                 RowLayout {
-                    spacing: Appearance.spacing.xs
+                    spacing: Config.appearance.spacing.extraSmall
                     Repeater {
                         model: gridRoot.wallhavenHasApiKey ? ["SFW", "Sketchy", "NSFW"] : ["SFW", "Sketchy"]
                         delegate: TextButton {
@@ -177,7 +177,7 @@ SectionContainer {
                                 gridRoot.fetchWallpapers();
                             }
                             type: checked ? TextButton.Filled : TextButton.Tonal
-                            font.pointSize: Appearance.font.size.labelMedium
+                            font.pointSize: Config.appearance.font.label.medium.size
                         }
                     }
                 }
@@ -186,16 +186,16 @@ SectionContainer {
 
         // Sorting
         ColumnLayout {
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
             StyledText {
                 text: qsTr("Sorting")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 600
                 color: Colours.palette.m3primary
             }
             Flow {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
                 Repeater {
                     model: [
                         {label: qsTr("Added"), val: "date_added"},
@@ -214,7 +214,7 @@ SectionContainer {
                             gridRoot.fetchWallpapers();
                         }
                         type: checked ? TextButton.Filled : TextButton.Tonal
-                        font.pointSize: Appearance.font.size.labelMedium
+                        font.pointSize: Config.appearance.font.label.medium.size
                     }
                 }
             }
@@ -222,16 +222,16 @@ SectionContainer {
 
         // Color Palette
         ColumnLayout {
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
             StyledText {
                 text: qsTr("Color")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 600
                 color: Colours.palette.m3primary
             }
             Flow {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 // Clear color button
                 IconButton {
@@ -252,7 +252,7 @@ SectionContainer {
                         required property var modelData
                         width: 28
                         height: 28
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
                         color: "#" + modelData
                         border.width: gridRoot.wallhavenColor === modelData ? 2 : 1
                         border.color: gridRoot.wallhavenColor === modelData ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.5)
@@ -272,16 +272,16 @@ SectionContainer {
         }
         // Toplist Range
         ColumnLayout {
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
             visible: gridRoot.wallhavenSort === "toplist"
             StyledText {
                 text: qsTr("Range")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 600
                 color: Colours.palette.m3primary
             }
             RowLayout {
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
                 Repeater {
                     model: ["1d", "1w", "1M", "3M", "1y"]
                     delegate: TextButton {
@@ -293,7 +293,7 @@ SectionContainer {
                             gridRoot.fetchWallpapers();
                         }
                         type: checked ? TextButton.Filled : TextButton.Tonal
-                        font.pointSize: Appearance.font.size.labelMedium
+                        font.pointSize: Config.appearance.font.label.medium.size
                     }
                 }
             }
@@ -302,7 +302,7 @@ SectionContainer {
         // API Key Section
         ColumnLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
 
             IconTextButton {
                 text: gridRoot.showApiKey ? qsTr("Hide API Settings") : qsTr("Configure API Key")
@@ -314,7 +314,7 @@ SectionContainer {
             RowLayout {
                 visible: gridRoot.showApiKey
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.md
+                spacing: Config.appearance.spacing.medium
                 
                 StyledTextField {
                     id: apiKeyField
@@ -353,22 +353,22 @@ SectionContainer {
 
     RowLayout {
         Layout.fillWidth: true
-        Layout.topMargin: Appearance.spacing.sm
-        spacing: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.small
+        spacing: Config.appearance.spacing.extraExtraLarge
 
         // Resolution
         ColumnLayout {
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
             Layout.alignment: Qt.AlignTop
             StyledText {
                 text: qsTr("Resolution")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 600
                 color: Colours.palette.m3primary
             }
 
             RowLayout {
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
                 Repeater {
                     model: gridRoot.currentServer === "uhdpaper" ? ["4k", "2k", "1080p"] : ["3840x2160", "2560x1440", "1920x1080"]
                     delegate: TextButton {
@@ -377,7 +377,7 @@ SectionContainer {
                         checked: gridRoot.resolution === modelData
                         onClicked: gridRoot.resolution = modelData
                         type: checked ? TextButton.Filled : TextButton.Tonal
-                        font.pointSize: Appearance.font.size.labelMedium
+                        font.pointSize: Config.appearance.font.label.medium.size
                     }
                 }
             }

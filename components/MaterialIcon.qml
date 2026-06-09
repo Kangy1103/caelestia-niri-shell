@@ -1,12 +1,12 @@
 import qs.services
-import qs.config
+import Caelestia.Config
 
 StyledText {
     property real fill
     property int grade: Colours.light ? 0 : -25
 
-    font.family: Appearance.font.family.material
-    font.pointSize: Appearance.font.size.bodyLarge
+    font.family: Config.appearance.font.icon.family
+    font.pointSize: Config.appearance.font.body.large.size
     font.variableAxes: ({
             FILL: fill.toFixed(1),
             GRAD: grade,

@@ -13,7 +13,7 @@ import "lock"
 import "session"
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.controlcenter
 import Quickshell.Widgets
 import QtQuick
@@ -72,7 +72,7 @@ ClippingRectangle {
 
         Timer {
             id: animationDelayTimer
-            interval: Appearance.anim.durations.normal
+            interval: Config.appearance.anim.durations.normal
             onTriggered: {
                 layout.animationComplete = true;
             }
@@ -80,7 +80,7 @@ ClippingRectangle {
 
         Timer {
             id: initialOpeningTimer
-            interval: Appearance.anim.durations.large
+            interval: Config.appearance.anim.durations.large
             running: true
             onTriggered: {
                 layout.initialOpeningComplete = true;

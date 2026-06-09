@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Bluetooth
@@ -16,11 +16,11 @@ ColumnLayout {
     required property Item wrapper
 
     width: 300
-    spacing: Appearance.spacing.sm
+    spacing: Config.appearance.spacing.small
 
     StyledText {
-        Layout.topMargin: Appearance.padding.md
-        Layout.rightMargin: Appearance.padding.xs
+        Layout.topMargin: Config.appearance.padding.medium
+        Layout.rightMargin: Config.appearance.padding.extraSmall
         text: qsTr("Bluetooth %1").arg(BluetoothAdapterState.toString(Bluetooth.defaultAdapter?.state).toLowerCase())
         font.weight: 500
     }
@@ -46,8 +46,8 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.sm
-        Layout.rightMargin: Appearance.padding.xs
+        Layout.topMargin: Config.appearance.spacing.small
+        Layout.rightMargin: Config.appearance.padding.extraSmall
         text: {
             const devices = Bluetooth.devices.values;
             let available = qsTr("%1 device%2 available").arg(devices.length).arg(devices.length === 1 ? "" : "s");
@@ -57,7 +57,7 @@ ColumnLayout {
             return available;
         }
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Appearance.font.size.labelLarge
+        font.pointSize: Config.appearance.font.label.large.size
     }
 
     Repeater {
@@ -72,8 +72,8 @@ ColumnLayout {
             readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting
 
             Layout.fillWidth: true
-            Layout.rightMargin: Appearance.padding.xs
-            spacing: Appearance.spacing.sm
+            Layout.rightMargin: Config.appearance.padding.extraSmall
+            spacing: Config.appearance.spacing.small
 
             opacity: 0
             scale: 0.7
@@ -96,8 +96,8 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.leftMargin: Appearance.spacing.sm / 2
-                Layout.rightMargin: Appearance.spacing.sm / 2
+                Layout.leftMargin: Config.appearance.spacing.small / 2
+                Layout.rightMargin: Config.appearance.spacing.small / 2
                 Layout.fillWidth: true
                 text: device.modelData.name
                 elide: Text.ElideRight
@@ -113,9 +113,9 @@ ColumnLayout {
                 id: connectBtn
 
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Appearance.padding.xs
+                implicitHeight: connectIcon.implicitHeight + Config.appearance.padding.extraSmall
 
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0)
 
                 StyledBusyIndicator {
@@ -157,7 +157,7 @@ ColumnLayout {
                     implicitHeight: connectBtn.implicitHeight
 
                     StateLayer {
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
 
                         function onClicked(): void {
                             device.modelData.forget();
@@ -174,11 +174,11 @@ ColumnLayout {
     }
 
     StyledRect {
-        Layout.topMargin: Appearance.spacing.sm
-        implicitWidth: expandBtn.implicitWidth + Appearance.padding.md * 2
-        implicitHeight: expandBtn.implicitHeight + Appearance.padding.xs
+        Layout.topMargin: Config.appearance.spacing.small
+        implicitWidth: expandBtn.implicitWidth + Config.appearance.padding.medium * 2
+        implicitHeight: expandBtn.implicitHeight + Config.appearance.padding.extraSmall
 
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
         color: Colours.palette.m3primaryContainer
 
         StateLayer {
@@ -193,10 +193,10 @@ ColumnLayout {
             id: expandBtn
 
             anchors.centerIn: parent
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             StyledText {
-                Layout.leftMargin: Appearance.padding.sm
+                Layout.leftMargin: Config.appearance.padding.small
                 text: qsTr("Settings")
                 color: Colours.palette.m3onPrimaryContainer
             }
@@ -204,7 +204,7 @@ ColumnLayout {
             MaterialIcon {
                 text: "chevron_right"
                 color: Colours.palette.m3onPrimaryContainer
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
             }
         }
     }
@@ -215,8 +215,8 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        Layout.rightMargin: Appearance.padding.xs
-        spacing: Appearance.spacing.lg
+        Layout.rightMargin: Config.appearance.padding.extraSmall
+        spacing: Config.appearance.spacing.large
 
         StyledText {
             Layout.fillWidth: true

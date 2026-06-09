@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -207,7 +207,7 @@ MouseArea {
                 target: root
                 property: "opacity"
                 to: 0
-                duration: Appearance.anim.durations.large
+                duration: Config.appearance.anim.durations.large
             }
             ExAnim {
                 target: root
@@ -291,7 +291,7 @@ MouseArea {
         StyledRect {
             x: crosshair.width / 2 + 8
             y: crosshair.height / 2 + 8
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
             color: {
                 switch (root.loader.mode) {
                 case "ocr": return Colours.palette.m3tertiaryContainer;
@@ -300,13 +300,13 @@ MouseArea {
                 }
             }
 
-            implicitWidth: badgeRow.implicitWidth + Appearance.padding.md * 2
-            implicitHeight: badgeRow.implicitHeight + Appearance.padding.xs * 2
+            implicitWidth: badgeRow.implicitWidth + Config.appearance.padding.medium * 2
+            implicitHeight: badgeRow.implicitHeight + Config.appearance.padding.extraSmall * 2
 
             Row {
                 id: badgeRow
                 anchors.centerIn: parent
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
 
                 MaterialIcon {
                     anchors.verticalCenter: parent.verticalCenter
@@ -324,7 +324,7 @@ MouseArea {
                         default: return Colours.palette.m3onPrimaryContainer;
                         }
                     }
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                 }
 
                 StyledText {
@@ -343,7 +343,7 @@ MouseArea {
                         default: return Colours.palette.m3onPrimaryContainer;
                         }
                     }
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     font.bold: true
                 }
             }
@@ -401,7 +401,7 @@ MouseArea {
 
     Behavior on opacity {
         Anim {
-            duration: Appearance.anim.durations.large
+            duration: Config.appearance.anim.durations.large
         }
     }
 
@@ -430,7 +430,7 @@ MouseArea {
     }
 
     component ExAnim: Anim {
-        duration: Appearance.anim.durations.expressiveDefaultSpatial
-        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
     }
 }

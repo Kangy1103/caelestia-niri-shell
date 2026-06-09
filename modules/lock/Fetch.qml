@@ -3,39 +3,39 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell.Services.UPower
 import QtQuick
 import QtQuick.Layouts
 
 // System fetch widget — flex-filling middle slot of the left lock panel.
-// anchors.margins: padding.xl mirrors Resources.qml / Media.qml internal inset.
+// anchors.margins: padding.largeIncreased mirrors Resources.qml / Media.qml internal inset.
 ColumnLayout {
     id: root
 
     anchors.fill: parent
-    anchors.margins: Appearance.padding.xl
+    anchors.margins: Config.appearance.padding.largeIncreased
 
-    spacing: Appearance.spacing.md
+    spacing: Config.appearance.spacing.medium
 
     // ── Terminal header ────────────────────────────────────────────────────────
     //  icon + filename — mono, muted, matches section-label style across shell
     RowLayout {
         Layout.fillWidth: true
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
 
         MaterialIcon {
             text: "chevron_right"
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: Config.appearance.font.body.medium.size
             color: Colours.palette.m3onSurfaceVariant
         }
 
         StyledText {
             Layout.fillWidth: true
             text: "Systemfetch.sh"
-            font.pointSize: Appearance.font.size.bodySmall
-            font.family: Appearance.font.family.mono
+            font.pointSize: Config.appearance.font.body.small.size
+            font.family: Config.appearance.font.mono.family
             color: Colours.palette.m3onSurfaceVariant
             elide: Text.ElideRight
         }
@@ -54,7 +54,7 @@ ColumnLayout {
         value: `${UPower.onBattery ? "" : "+ "}${Math.round(UPower.displayDevice.percentage * 100)}%`
     }
 
-    Item { Layout.preferredHeight: Appearance.font.size.labelLarge }
+    Item { Layout.preferredHeight: Config.appearance.font.label.large.size }
 
     // Flex spacer — pushes swatches to the bottom of the available area
     Item { Layout.fillHeight: true }
@@ -67,12 +67,12 @@ ColumnLayout {
         required property string value
 
         Layout.fillWidth: true
-        spacing: Appearance.spacing.xs
+        spacing: Config.appearance.spacing.extraSmall
 
         StyledText {
             text: infoRow.label
-            font.pointSize: Appearance.font.size.labelLarge
-            font.family: Appearance.font.family.mono
+            font.pointSize: Config.appearance.font.label.large.size
+            font.family: Config.appearance.font.mono.family
             color: Colours.palette.m3primary
             font.weight: Font.Medium
         }
@@ -80,8 +80,8 @@ ColumnLayout {
         StyledText {
             Layout.fillWidth: true
             text: infoRow.value
-            font.pointSize: Appearance.font.size.labelLarge
-            font.family: Appearance.font.family.mono
+            font.pointSize: Config.appearance.font.label.large.size
+            font.family: Config.appearance.font.mono.family
             color: Colours.palette.m3onSurfaceVariant
             elide: Text.ElideRight
         }

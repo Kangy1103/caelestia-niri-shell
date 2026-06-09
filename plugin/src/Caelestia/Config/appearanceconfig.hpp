@@ -298,6 +298,7 @@ class AppearanceTransparency : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(bool, enabled, false)
     CONFIG_GLOBAL_PROPERTY(qreal, base, 0.85)
     CONFIG_GLOBAL_PROPERTY(qreal, layers, 0.4)
+    CONFIG_PROPERTY(bool, reduceTransparency, true)
 
 public:
     explicit AppearanceTransparency(QObject* parent = nullptr)

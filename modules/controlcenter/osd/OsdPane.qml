@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -22,8 +22,8 @@ Item {
     property int hideDelay: Config.osd.hideDelay ?? 2000
     property bool enableBrightness: Config.osd.enableBrightness ?? true
     property bool enableMicrophone: Config.osd.enableMicrophone ?? false
-    property int sliderWidth: Config.osd.sizes.sliderWidth ?? 30
-    property int sliderHeight: Config.osd.sizes.sliderHeight ?? 150
+    property int sliderWidth: TokenConfig.sizes.osd.sliderWidth ?? 30
+    property int sliderHeight: TokenConfig.sizes.osd.sliderHeight ?? 150
 
     anchors.fill: parent
 
@@ -32,17 +32,16 @@ Item {
         Config.osd.hideDelay = root.hideDelay;
         Config.osd.enableBrightness = root.enableBrightness;
         Config.osd.enableMicrophone = root.enableMicrophone;
-        Config.osd.sizes.sliderWidth = root.sliderWidth;
-        Config.osd.sizes.sliderHeight = root.sliderHeight;
-        Config.markDirty("osd");
+        TokenConfig.sizes.osd.sliderWidth = root.sliderWidth;
+        TokenConfig.sizes.osd.sliderHeight = root.sliderHeight;
     }
 
     ClippingRectangle {
         id: osdClippingRect
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.md
+        anchors.rightMargin: Config.appearance.padding.medium
 
         radius: osdBorder.innerRadius
         color: "transparent"
@@ -50,9 +49,9 @@ Item {
         Loader {
             id: osdLoader
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl + Appearance.padding.md
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+            anchors.leftMargin: Config.appearance.padding.largeIncreased
+            anchors.rightMargin: Config.appearance.padding.largeIncreased
 
             sourceComponent: osdContentComponent
         }
@@ -61,7 +60,7 @@ Item {
     InnerBorder {
         id: osdBorder
         leftThickness: 0
-        rightThickness: Appearance.padding.md
+        rightThickness: Config.appearance.padding.medium
     }
 
     Component {
@@ -81,14 +80,14 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("On-Screen Display")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
                 }
@@ -99,7 +98,7 @@ Item {
 
                     StyledText {
                         text: qsTr("General")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SwitchRow {
@@ -112,7 +111,7 @@ Item {
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true
@@ -141,7 +140,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Indicators")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SwitchRow {
@@ -169,11 +168,11 @@ Item {
 
                     StyledText {
                         text: qsTr("Sizing")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true

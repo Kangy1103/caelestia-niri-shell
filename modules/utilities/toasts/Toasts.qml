@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.services
 import Caelestia
 import Quickshell
@@ -10,12 +10,12 @@ import QtQuick
 Item {
     id: root
 
-    readonly property int spacing: Appearance.spacing.sm
+    readonly property int spacing: Config.appearance.spacing.small
     property bool flag
     property var _yCache: []
     property int _totalHeight: 0
 
-    implicitWidth: Config.utilities.sizes.toastWidth - Appearance.padding.md * 2
+    implicitWidth: TokenConfig.sizes.utilities.toastWidth - Config.appearance.padding.medium * 2
     implicitHeight: _totalHeight
 
     onFlagChanged: _recalcLayout()
@@ -111,8 +111,8 @@ Item {
             properties: "opacity,scale"
             from: 0
             to: 1
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
         }
 
         ParallelAnimation {
@@ -151,8 +151,8 @@ Item {
 
         Behavior on anchors.bottomMargin {
             Anim {
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
             }
         }
     }

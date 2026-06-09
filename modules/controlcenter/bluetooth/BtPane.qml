@@ -6,7 +6,7 @@ import "."
 import qs.components
 import qs.components.controls
 import qs.components.containers
-import qs.config
+import Caelestia.Config
 import Quickshell.Widgets
 import Quickshell.Bluetooth
 import QtQuick

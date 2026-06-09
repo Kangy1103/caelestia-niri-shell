@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
@@ -30,13 +30,13 @@ Item {
         root.list.visibilities.launcher = false;
     }
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: TokenConfig.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
 
         function onClicked(): void {
             root.onClicked();
@@ -47,13 +47,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Appearance.padding.lg
+        anchors.margins: Config.appearance.padding.large
 
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         MaterialIcon {
             text: root.isUrl ? "open_in_browser" : "search"
-            font.pointSize: Appearance.font.size.headlineLarge
+            font.pointSize: Config.appearance.font.headline.large.size
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -81,11 +81,11 @@ Item {
 
         StyledRect {
             color: Colours.palette.m3tertiary
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             clip: true
 
-            implicitWidth: icon.implicitWidth + Appearance.padding.md * 2
-            implicitHeight: Math.max(icon.implicitHeight) + Appearance.padding.xs * 2
+            implicitWidth: icon.implicitWidth + Config.appearance.padding.medium * 2
+            implicitHeight: Math.max(icon.implicitHeight) + Config.appearance.padding.extraSmall * 2
 
             Layout.alignment: Qt.AlignVCenter
 
@@ -102,11 +102,11 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Appearance.padding.md
+                anchors.rightMargin: Config.appearance.padding.medium
 
                 text: root.isUrl ? "open_in_new" : "search"
                 color: Colours.palette.m3onTertiary
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
             }
         }
     }

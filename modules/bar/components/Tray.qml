@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell.Io
 import Quickshell.Services.SystemTray
 import QtQuick
@@ -13,24 +13,24 @@ StyledRect {
     clip: true
     visible: width > 0 && height > 0 // To avoid warnings about being visible with no size
 
-    implicitWidth: Config.bar.sizes.innerWidth
-    implicitHeight: layout.implicitHeight + (Config.bar.tray.background ? Appearance.padding.md : Appearance.padding.xs) * 2
+    implicitWidth: TokenConfig.sizes.bar.innerWidth
+    implicitHeight: layout.implicitHeight + (Config.bar.tray.background ? Config.appearance.padding.medium : Config.appearance.padding.extraSmall) * 2
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.tray.background ? Colours.tPalette.m3surfaceContainer.a : 0)
-    radius: Appearance.rounding.full
+    radius: Config.appearance.rounding.full
 
     Column {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
 
         add: Transition {
             Anim {
                 properties: "scale"
                 from: 0
                 to: 1
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
             }
         }
 
@@ -38,7 +38,7 @@ StyledRect {
             Anim {
                 properties: "scale"
                 to: 1
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -55,13 +55,13 @@ StyledRect {
 
     Behavior on implicitWidth {
         Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 
     Behavior on implicitHeight {
         Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 

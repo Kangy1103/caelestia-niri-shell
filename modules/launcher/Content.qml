@@ -4,7 +4,7 @@ import "services"
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 
@@ -15,8 +15,8 @@ Item {
     required property PersistentProperties visibilities
     required property var panels
 
-    readonly property int padding: Appearance.padding.xl
-    readonly property int rounding: Appearance.rounding.large
+    readonly property int padding: Config.appearance.padding.largeIncreased
+    readonly property int rounding: Config.appearance.rounding.large
 
     implicitWidth: listWrapper.width + padding * 2
     implicitHeight: searchWrapper.height + listWrapper.height + padding * 2
@@ -51,19 +51,19 @@ Item {
 
         visible: list.activeMode !== "apps"
         color: Colours.tPalette.m3tertiaryContainer
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: searchWrapper.top
-        anchors.bottomMargin: Appearance.spacing.sm
+        anchors.bottomMargin: Config.appearance.spacing.small
 
-        implicitWidth: modeRow.implicitWidth + Appearance.padding.md * 2
-        implicitHeight: modeRow.implicitHeight + Appearance.padding.xs * 2
+        implicitWidth: modeRow.implicitWidth + Config.appearance.padding.medium * 2
+        implicitHeight: modeRow.implicitHeight + Config.appearance.padding.extraSmall * 2
 
         Row {
             id: modeRow
             anchors.centerIn: parent
-            spacing: Appearance.spacing.xs
+            spacing: Config.appearance.spacing.extraSmall
 
             MaterialIcon {
                 anchors.verticalCenter: parent.verticalCenter
@@ -81,7 +81,7 @@ Item {
                     }
                 }
                 color: Colours.palette.m3onTertiaryContainer
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
 
             StyledText {
@@ -100,14 +100,14 @@ Item {
                     }
                 }
                 color: Colours.palette.m3onTertiaryContainer
-                font.pointSize: Appearance.font.size.labelMedium
+                font.pointSize: Config.appearance.font.label.medium.size
                 font.bold: true
             }
         }
 
         Behavior on opacity {
             Anim {
-                duration: Appearance.anim.durations.small
+                duration: Config.appearance.anim.durations.small
             }
         }
     }
@@ -116,7 +116,7 @@ Item {
         id: searchWrapper
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -141,11 +141,11 @@ Item {
 
             anchors.left: searchIcon.right
             anchors.right: clearIcon.left
-            anchors.leftMargin: Appearance.spacing.sm
-            anchors.rightMargin: Appearance.spacing.sm
+            anchors.leftMargin: Config.appearance.spacing.small
+            anchors.rightMargin: Config.appearance.spacing.small
 
-            topPadding: Appearance.padding.lg
-            bottomPadding: Appearance.padding.lg
+            topPadding: Config.appearance.padding.large
+            bottomPadding: Config.appearance.padding.large
 
             placeholderText: qsTr("Type \"%1\" for commands").arg(Config.launcher.actionPrefix)
 
@@ -305,13 +305,13 @@ Item {
 
             Behavior on width {
                 Anim {
-                    duration: Appearance.anim.durations.small
+                    duration: Config.appearance.anim.durations.small
                 }
             }
 
             Behavior on opacity {
                 Anim {
-                    duration: Appearance.anim.durations.small
+                    duration: Config.appearance.anim.durations.small
                 }
             }
         }

@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Caelestia
 import Quickshell
 import Quickshell.Widgets
@@ -20,15 +20,14 @@ Item {
     required property Session session
 
     function saveConfig(): void {
-        Config.markDirty("extra");
     }
 
     ClippingRectangle {
         id: extraClippingRect
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.md
+        anchors.rightMargin: Config.appearance.padding.medium
 
         radius: extraBorder.innerRadius
         color: "transparent"
@@ -36,9 +35,9 @@ Item {
         Loader {
             id: extraLoader
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl + Appearance.padding.md
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+            anchors.leftMargin: Config.appearance.padding.largeIncreased
+            anchors.rightMargin: Config.appearance.padding.largeIncreased
 
             sourceComponent: extraContentComponent
         }
@@ -47,7 +46,7 @@ Item {
     InnerBorder {
         id: extraBorder
         leftThickness: 0
-        rightThickness: Appearance.padding.md
+        rightThickness: Config.appearance.padding.medium
     }
 
     Component {
@@ -67,14 +66,14 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("Extra Features")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
                 }
@@ -85,7 +84,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Features")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
                 }
             }

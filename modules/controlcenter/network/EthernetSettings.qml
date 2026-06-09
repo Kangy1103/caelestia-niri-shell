@@ -6,7 +6,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -15,7 +15,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
 
     SettingsHeader {
         icon: "cable"
@@ -23,9 +23,9 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         text: qsTr("Ethernet devices")
-        font.pointSize: Appearance.font.size.bodyLarge
+        font.pointSize: Config.appearance.font.body.large.size
         font.weight: 500
     }
 
@@ -36,9 +36,9 @@ ColumnLayout {
 
     StyledRect {
         Layout.fillWidth: true
-        implicitHeight: ethernetInfo.implicitHeight + Appearance.padding.xl * 2
+        implicitHeight: ethernetInfo.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
         color: Colours.tPalette.m3surfaceContainer
 
         ColumnLayout {
@@ -47,9 +47,9 @@ ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased
 
-            spacing: Appearance.spacing.sm / 2
+            spacing: Config.appearance.spacing.small / 2
 
             StyledText {
                 text: qsTr("Total devices")
@@ -58,18 +58,18 @@ ColumnLayout {
             StyledText {
                 text: qsTr("%1").arg(Nmcli.ethernetDevices.length)
                 color: Colours.palette.m3outline
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
 
             StyledText {
-                Layout.topMargin: Appearance.spacing.lg
+                Layout.topMargin: Config.appearance.spacing.large
                 text: qsTr("Connected devices")
             }
 
             StyledText {
                 text: qsTr("%1").arg(Nmcli.ethernetDevices.filter(d => d.connected).length)
                 color: Colours.palette.m3outline
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
         }
     }

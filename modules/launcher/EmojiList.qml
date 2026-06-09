@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Caelestia
 import Quickshell
@@ -110,13 +110,13 @@ Item {
         return results.filter((v, i, a) => a.findIndex(t => (t.emoji === v.emoji)) === i);
     }
 
-    implicitWidth: Config.launcher.sizes.itemWidth
-    implicitHeight: Config.launcher.maxShown * Config.launcher.sizes.itemHeight
+    implicitWidth: TokenConfig.sizes.launcher.itemWidth
+    implicitHeight: Config.launcher.maxShown * TokenConfig.sizes.launcher.itemHeight
 
     ColumnLayout {
         id: contentColumn
         anchors.fill: parent
-        spacing: Appearance.spacing.md
+        spacing: Config.appearance.spacing.medium
 
         // Category Bar
         StyledRect {
@@ -124,13 +124,13 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 64
             color: Colours.tPalette.m3surfaceContainerLow
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             visible: root.search.text.startsWith(`${Config.launcher.actionPrefix}emoji `) && root.search.text.length <= `${Config.launcher.actionPrefix}emoji `.length
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.sm
-                spacing: Appearance.spacing.xs
+                anchors.margins: Config.appearance.padding.small
+                spacing: Config.appearance.spacing.extraSmall
 
                 Repeater {
                     model: root.categoryData
@@ -148,15 +148,15 @@ Item {
                         StyledRect {
                             anchors.fill: parent
                             anchors.margins: 4
-                            radius: Appearance.rounding.small
+                            radius: Config.appearance.rounding.small
                             color: Colours.palette.m3onSurface
                             opacity: catBtn.hovered ? 0.08 : 0
-                            Behavior on opacity { Anim { duration: Appearance.anim.durations.small } }
+                            Behavior on opacity { Anim { duration: Config.appearance.anim.durations.small } }
                         }
 
                         StateLayer {
                             id: catStateLayer
-                            radius: Appearance.rounding.small
+                            radius: Config.appearance.rounding.small
                             onClicked: {
                                 root.categoryIndex = index;
                             }
@@ -167,10 +167,10 @@ Item {
                             anchors.verticalCenterOffset: catBtn.active ? -2 : 0
                             text: modelData.icon ?? ""
                             color: catBtn.active ? Colours.palette.m3primary : (catBtn.hovered ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant)
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                             
                             Behavior on color { CAnim {} }
-                            Behavior on anchors.verticalCenterOffset { Anim { duration: Appearance.anim.durations.small } }
+                            Behavior on anchors.verticalCenterOffset { Anim { duration: Config.appearance.anim.durations.small } }
                         }
 
                         // Selection Indicator (Tab look)
@@ -182,8 +182,8 @@ Item {
                             color: Colours.palette.m3primary
                             opacity: catBtn.active ? 1 : 0
 
-                            Behavior on width { Anim { duration: Appearance.anim.durations.normal; easing.bezierCurve: Appearance.anim.curves.emphasized } }
-                            Behavior on opacity { Anim { duration: Appearance.anim.durations.normal } }
+                            Behavior on width { Anim { duration: Config.appearance.anim.durations.normal; easing.bezierCurve: TokenConfig.appearance.curves.emphasized } }
+                            Behavior on opacity { Anim { duration: Config.appearance.anim.durations.normal } }
                         }
 
 
@@ -206,10 +206,10 @@ Item {
             
             StyledText {
                 anchors.left: parent.left
-                anchors.leftMargin: Appearance.padding.md
+                anchors.leftMargin: Config.appearance.padding.medium
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Search Results")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 600
                 color: Colours.palette.m3primary
             }
@@ -220,23 +220,23 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: Colours.tPalette.m3surfaceContainer
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             clip: true
 
             GridView {
                 id: grid
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.sm
+                anchors.margins: Config.appearance.padding.small
                 cellWidth: width / 6
                 cellHeight: cellWidth
                 model: root._filteredEmojis
                 
                 currentIndex: -1
                 
-                highlightMoveDuration: Appearance.anim.durations.normal
+                highlightMoveDuration: Config.appearance.anim.durations.normal
 
                 highlight: Rectangle {
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     color: Qt.alpha(Colours.palette.m3primary, 0.12)
                     border.width: 2
                     border.color: Colours.palette.m3primary
@@ -262,7 +262,7 @@ Item {
 
                     StateLayer {
                         id: emojiStateLayer
-                        radius: Appearance.rounding.small
+                        radius: Config.appearance.rounding.small
                         onClicked: {
                             emojiItem.onClicked();
                         }
@@ -271,7 +271,7 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: modelData?.emoji ?? ""
-                        font.pointSize: Appearance.font.size.headlineLarge
+                        font.pointSize: Config.appearance.font.headline.large.size
                         color: Colours.palette.m3onSurface
                         renderType: Text.QtRendering
                     }
@@ -289,7 +289,7 @@ Item {
                 ColumnLayout {
                     anchors.centerIn: parent
                     visible: grid.count === 0
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
                     opacity: 0.6
 
                     MaterialIcon {
@@ -303,7 +303,7 @@ Item {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("No emojis found")
                         color: Colours.palette.m3onSurfaceVariant
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
                 }
             }
@@ -315,7 +315,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 64
             color: Colours.tPalette.m3surfaceContainerLow
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             
             readonly property var activeEmoji: {
                 if (grid.currentIndex !== -1 && grid.model && grid.model[grid.currentIndex]) 
@@ -325,8 +325,8 @@ Item {
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.md
-                spacing: Appearance.padding.lg
+                anchors.margins: Config.appearance.padding.medium
+                spacing: Config.appearance.padding.large
 
                 Text {
                     text: footer.activeEmoji?.emoji ?? "✨"
@@ -334,7 +334,7 @@ Item {
                     color: Colours.palette.m3onSurface
                     opacity: footer.activeEmoji ? 1 : 0.3
                     renderType: Text.QtRendering
-                    Behavior on opacity { Anim { duration: Appearance.anim.durations.small } }
+                    Behavior on opacity { Anim { duration: Config.appearance.anim.durations.small } }
                 }
 
                 ColumnLayout {
@@ -344,7 +344,7 @@ Item {
                     StyledText {
                         Layout.fillWidth: true
                         text: footer.activeEmoji?.name ?? qsTr("Select an emoji")
-                        font.pointSize: Appearance.font.size.labelLarge
+                        font.pointSize: Config.appearance.font.label.large.size
                         font.weight: 600
                         color: Colours.palette.m3onSurface
                         elide: Text.ElideRight
@@ -354,7 +354,7 @@ Item {
                     StyledText {
                         Layout.fillWidth: true
                         text: (footer.activeEmoji?.keywords ?? []).join(", ")
-                        font.pointSize: Appearance.font.size.labelSmall
+                        font.pointSize: Config.appearance.font.label.small.size
                         color: Colours.palette.m3onSurfaceVariant
                         elide: Text.ElideRight
                         visible: text !== ""
@@ -364,7 +364,7 @@ Item {
                 
                 // Shortcut hints
                 Row {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
                     opacity: 0.5
                     visible: categoryHeader.visible
 

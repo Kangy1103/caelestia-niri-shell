@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Widgets
@@ -57,15 +57,14 @@ Item {
         Config.dashboard.performance.showStorage = root.showStorage;
         Config.dashboard.performance.showNetwork = root.showNetwork;
         // Note: sizes properties are readonly and cannot be modified
-        Config.markDirty("dashboard");
     }
 
     ClippingRectangle {
         id: dashboardClippingRect
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.md
+        anchors.rightMargin: Config.appearance.padding.medium
 
         radius: dashboardBorder.innerRadius
         color: "transparent"
@@ -74,9 +73,9 @@ Item {
             id: dashboardLoader
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl + Appearance.padding.md
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+            anchors.leftMargin: Config.appearance.padding.largeIncreased
+            anchors.rightMargin: Config.appearance.padding.largeIncreased
 
             sourceComponent: dashboardContentComponent
         }
@@ -85,7 +84,7 @@ Item {
     InnerBorder {
         id: dashboardBorder
         leftThickness: 0
-        rightThickness: Appearance.padding.md
+        rightThickness: Config.appearance.padding.medium
     }
 
     Component {
@@ -106,14 +105,14 @@ Item {
                 anchors.right: parent.right
                 anchors.top: parent.top
 
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("Dashboard")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
                 }

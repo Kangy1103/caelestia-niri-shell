@@ -1,7 +1,7 @@
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import Caelestia
 import QtQuick
 import QtQuick.Layouts
@@ -13,9 +13,9 @@ StyledRect {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    implicitHeight: layout.implicitHeight + Appearance.padding.sm * 2
+    implicitHeight: layout.implicitHeight + Config.appearance.padding.small * 2
 
-    radius: Appearance.rounding.normal
+    radius: Config.appearance.rounding.large
     color: {
         if (root.modelData.type === Toast.Success)
             return Colours.palette.m3successContainer;
@@ -50,13 +50,13 @@ StyledRect {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.sm
-        anchors.leftMargin: Appearance.padding.md
-        anchors.rightMargin: Appearance.padding.md
-        spacing: Appearance.spacing.lg
+        anchors.margins: Config.appearance.padding.small
+        anchors.leftMargin: Config.appearance.padding.medium
+        anchors.rightMargin: Config.appearance.padding.medium
+        spacing: Config.appearance.spacing.large
 
         StyledRect {
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             color: {
                 if (root.modelData.type === Toast.Success)
                     return Colours.palette.m3success;
@@ -68,7 +68,7 @@ StyledRect {
             }
 
             implicitWidth: implicitHeight
-            implicitHeight: icon.implicitHeight + Appearance.padding.sm * 2
+            implicitHeight: icon.implicitHeight + Config.appearance.padding.small * 2
 
             MaterialIcon {
                 id: icon
@@ -84,7 +84,7 @@ StyledRect {
                         return Colours.palette.m3onError;
                     return Colours.palette.m3onSurfaceVariant;
                 }
-                font.pointSize: Math.round(Appearance.font.size.titleMedium * 1.2)
+                font.pointSize: Math.round(Config.appearance.font.title.medium.size * 1.2)
             }
         }
 
@@ -106,7 +106,7 @@ StyledRect {
                         return Colours.palette.m3onErrorContainer;
                     return Colours.palette.m3onSurface;
                 }
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Config.appearance.font.body.medium.size
                 elide: Text.ElideRight
             }
 

@@ -5,7 +5,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 CollapsibleSection {

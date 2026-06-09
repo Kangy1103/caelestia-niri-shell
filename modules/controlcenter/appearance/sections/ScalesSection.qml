@@ -6,7 +6,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -19,11 +19,11 @@ CollapsibleSection {
     showBackground: true
 
     ColumnLayout {
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
         Layout.fillWidth: true
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         SliderInput {
             Layout.fillWidth: true
@@ -47,7 +47,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         SliderInput {
             Layout.fillWidth: true
@@ -71,7 +71,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         SliderInput {
             Layout.fillWidth: true

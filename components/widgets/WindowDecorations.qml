@@ -4,15 +4,15 @@ import qs.services
 import qs.components.controls
 import QtQuick
 import QtQuick.Layouts
-import qs.config
+import Caelestia.Config
 
 // 3 Styled Radial buttons
 RowLayout {
     id: root
     property var client: Niri.focusedWindow
-    property int implicitSize: Appearance.font.size.bodyMedium
+    property int implicitSize: Config.appearance.font.body.medium.size
 
-    spacing: Appearance.padding.xs / 2
+    spacing: Config.appearance.padding.extraSmall / 2
 
     // Pin feature removed - Niri doesn't support window pinning
     // TODO: Implement alternative if Niri adds pin support in future

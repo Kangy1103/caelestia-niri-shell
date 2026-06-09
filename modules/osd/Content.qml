@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import QtQuick
 import QtQuick.Layouts
@@ -17,19 +17,19 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: parent.left
 
-    implicitWidth: layout.implicitWidth + Appearance.padding.xl * 2
-    implicitHeight: layout.implicitHeight + Appearance.padding.xl * 2
+    implicitWidth: layout.implicitWidth + Config.appearance.padding.largeIncreased * 2
+    implicitHeight: layout.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
     ColumnLayout {
         id: layout
 
         anchors.centerIn: parent
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         // Speaker volume
         CustomMouseArea {
-            implicitWidth: Config.osd.sizes.sliderWidth
-            implicitHeight: Config.osd.sizes.sliderHeight
+            implicitWidth: TokenConfig.sizes.osd.sliderWidth
+            implicitHeight: TokenConfig.sizes.osd.sliderHeight
 
             function onWheel(event: WheelEvent) {
                 if (event.angleDelta.y > 0)
@@ -52,8 +52,8 @@ Item {
             shouldBeActive: Config.osd.enableMicrophone && (!Config.osd.enableBrightness || !root.visibilities.session)
 
             sourceComponent: CustomMouseArea {
-                implicitWidth: Config.osd.sizes.sliderWidth
-                implicitHeight: Config.osd.sizes.sliderHeight
+                implicitWidth: TokenConfig.sizes.osd.sliderWidth
+                implicitHeight: TokenConfig.sizes.osd.sliderHeight
 
                 function onWheel(event: WheelEvent) {
                     if (event.angleDelta.y > 0)
@@ -77,8 +77,8 @@ Item {
             shouldBeActive: Config.osd.enableBrightness
 
             sourceComponent: CustomMouseArea {
-                implicitWidth: Config.osd.sizes.sliderWidth
-                implicitHeight: Config.osd.sizes.sliderHeight
+                implicitWidth: TokenConfig.sizes.osd.sliderWidth
+                implicitHeight: TokenConfig.sizes.osd.sliderHeight
 
                 function onWheel(event: WheelEvent) {
                     const monitor = root.monitor;
@@ -104,7 +104,7 @@ Item {
     component WrappedLoader: Loader {
         required property bool shouldBeActive
 
-        Layout.preferredHeight: shouldBeActive ? Config.osd.sizes.sliderHeight : 0
+        Layout.preferredHeight: shouldBeActive ? TokenConfig.sizes.osd.sliderHeight : 0
         opacity: shouldBeActive ? 1 : 0
         active: opacity > 0
         asynchronous: true
@@ -112,7 +112,7 @@ Item {
 
         Behavior on Layout.preferredHeight {
             Anim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
             }
         }
 

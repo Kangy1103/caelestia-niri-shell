@@ -1,5 +1,5 @@
 import qs.components
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 
@@ -29,8 +29,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.normal
-                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                duration: Config.appearance.anim.durations.normal
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         },
         Transition {
@@ -40,8 +40,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.small
-                easing.bezierCurve: root.visibilities.osd ? Appearance.anim.curves.emphasizedDecel : Appearance.anim.curves.emphasizedAccel
+                duration: Config.appearance.anim.durations.small
+                easing.bezierCurve: root.visibilities.osd ? TokenConfig.appearance.curves.emphasizedDecel : TokenConfig.appearance.curves.emphasizedAccel
             }
         }
     ]

@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.containers
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -17,7 +17,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
 
     SettingsHeader {
         icon: "router"
@@ -25,13 +25,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Ethernet")
         description: qsTr("Ethernet device information")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm / 2
+        contentSpacing: Config.appearance.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Total devices")
@@ -46,7 +46,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Wireless")
         description: qsTr("WiFi network settings")
     }
@@ -62,7 +62,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("VPN")
         description: qsTr("VPN provider settings")
         visible: Config.utilities.vpn.enabled || Config.utilities.vpn.provider.length > 0
@@ -76,7 +76,6 @@ ColumnLayout {
             checked: Config.utilities.vpn.enabled
             toggle.onToggled: {
                 Config.utilities.vpn.enabled = checked;
-                Config.markDirty("utilities");
             }
         }
 
@@ -88,8 +87,8 @@ ColumnLayout {
 
         TextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Appearance.spacing.lg
-            Layout.minimumHeight: Appearance.font.size.bodyMedium + Appearance.padding.md * 2
+            Layout.topMargin: Config.appearance.spacing.large
+            Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
             text: qsTr("⚙ Manage VPN Providers")
             inactiveColour: Colours.palette.m3secondaryContainer
             inactiveOnColour: Colours.palette.m3onSecondaryContainer
@@ -101,13 +100,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Current connection")
         description: qsTr("Active network connection information")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm / 2
+        contentSpacing: Config.appearance.spacing.small / 2
 
         PropertyRow {
             label: qsTr("Network")
@@ -141,20 +140,20 @@ ColumnLayout {
 
         parent: Overlay.overlay
         anchors.centerIn: parent
-        width: Math.min(600, parent.width - Appearance.padding.xl * 2)
-        height: Math.min(700, parent.height - Appearance.padding.xl * 2)
+        width: Math.min(600, parent.width - Config.appearance.padding.largeIncreased * 2)
+        height: Math.min(700, parent.height - Config.appearance.padding.largeIncreased * 2)
 
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
         background: StyledRect {
             color: Colours.palette.m3surface
-            radius: Appearance.rounding.large
+            radius: Config.appearance.rounding.large
         }
 
         StyledFlickable {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl * 1.5
+            anchors.margins: Config.appearance.padding.largeIncreased * 1.5
             flickableDirection: Flickable.VerticalFlick
             contentHeight: vpnSettingsContent.height
             clip: true

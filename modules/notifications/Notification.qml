@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Widgets
@@ -47,7 +47,7 @@ StyledRect {
 
     Timer {
         id: discardTimer
-        interval: Appearance.anim.durations.normal
+        interval: Config.appearance.anim.durations.normal
         onTriggered: {
             if (root.modelData.isTransient)
                 Notifs.discardNotification(root.modelData.notificationId);
@@ -57,8 +57,8 @@ StyledRect {
     }
 
     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
-    radius: Appearance.rounding.normal
-    implicitWidth: Config.notifs.sizes.width
+    radius: Config.appearance.rounding.large
+    implicitWidth: TokenConfig.sizes.notifs.width
     implicitHeight: inner.implicitHeight
 
     x: 0
@@ -108,9 +108,9 @@ StyledRect {
             NumberAnimation {
                 target: root
                 property: "implicitHeight"
-                duration: Appearance.anim.durations.large
+                duration: Config.appearance.anim.durations.large
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         },
         Transition {
@@ -118,9 +118,9 @@ StyledRect {
             NumberAnimation {
                 target: root
                 property: "implicitHeight"
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
             }
         }
     ]
@@ -153,7 +153,7 @@ StyledRect {
             if (!containsMouse)
                 root.modelData.timer?.start();
 
-            if (Math.abs(root.x) < Config.notifs.sizes.width * Config.notifs.clearThreshold)
+            if (Math.abs(root.x) < TokenConfig.sizes.notifs.width * Config.notifs.clearThreshold)
                 root.x = 0;
             else
                 root.startDismiss();
@@ -180,7 +180,7 @@ StyledRect {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.margins: Appearance.padding.md
+            anchors.margins: Config.appearance.padding.medium
 
             implicitHeight: root.nonAnimHeight
 
@@ -196,14 +196,14 @@ StyledRect {
 
                 anchors.left: parent.left
                 anchors.top: parent.top
-                width: Config.notifs.sizes.image
-                height: Config.notifs.sizes.image
+                width: TokenConfig.sizes.notifs.image
+                height: TokenConfig.sizes.notifs.image
                 visible: root.hasImage || root.hasAppIcon
 
                 sourceComponent: ClippingRectangle {
-                    radius: Appearance.rounding.full
-                    implicitWidth: Config.notifs.sizes.image
-                    implicitHeight: Config.notifs.sizes.image
+                    radius: Config.appearance.rounding.full
+                    implicitWidth: TokenConfig.sizes.notifs.image
+                    implicitHeight: TokenConfig.sizes.notifs.image
 
                     Image {
                         anchors.fill: parent
@@ -227,10 +227,10 @@ StyledRect {
                 anchors.bottom: root.hasImage ? image.bottom : undefined
 
                 sourceComponent: StyledRect {
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.modelData.urgency === NotificationUrgency.Low ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.palette.m3secondaryContainer
-                    implicitWidth: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
-                    implicitHeight: root.hasImage ? Config.notifs.sizes.badge : Config.notifs.sizes.image
+                    implicitWidth: root.hasImage ? TokenConfig.sizes.notifs.badge : TokenConfig.sizes.notifs.image
+                    implicitHeight: root.hasImage ? TokenConfig.sizes.notifs.badge : TokenConfig.sizes.notifs.image
 
                     Loader {
                         id: icon
@@ -255,14 +255,14 @@ StyledRect {
                         active: !root.hasAppIcon
                         asynchronous: true
                         anchors.centerIn: parent
-                        anchors.horizontalCenterOffset: -Appearance.font.size.titleMedium * 0.02
-                        anchors.verticalCenterOffset: Appearance.font.size.titleMedium * 0.02
+                        anchors.horizontalCenterOffset: -Config.appearance.font.title.medium.size * 0.02
+                        anchors.verticalCenterOffset: Config.appearance.font.title.medium.size * 0.02
 
                         sourceComponent: MaterialIcon {
                             text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
 
                             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                         }
                     }
                 }
@@ -273,13 +273,13 @@ StyledRect {
 
                 anchors.top: parent.top
                 anchors.left: image.right
-                anchors.leftMargin: Appearance.spacing.md
+                anchors.leftMargin: Config.appearance.spacing.medium
 
                 animate: true
                 text: appNameMetrics.elidedText
                 maximumLineCount: 1
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
 
                 opacity: root.expanded ? 1 : 0
 
@@ -295,7 +295,7 @@ StyledRect {
                 font.family: appName.font.family
                 font.pointSize: appName.font.pointSize
                 elide: Text.ElideRight
-                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - Appearance.spacing.sm * 3
+                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - Config.appearance.spacing.small * 3
             }
 
             StyledText {
@@ -303,7 +303,7 @@ StyledRect {
 
                 anchors.top: parent.top
                 anchors.left: image.right
-                anchors.leftMargin: Appearance.spacing.md
+                anchors.leftMargin: Config.appearance.spacing.medium
 
                 animate: true
                 text: summaryMetrics.elidedText
@@ -330,9 +330,9 @@ StyledRect {
                         property: "maximumLineCount"
                     }
                     AnchorAnimation {
-                        duration: Appearance.anim.durations.normal
+                        duration: Config.appearance.anim.durations.normal
                         easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Appearance.anim.curves.standard
+                        easing.bezierCurve: TokenConfig.appearance.curves.standard
                     }
                 }
 
@@ -348,7 +348,7 @@ StyledRect {
                 font.family: summary.font.family
                 font.pointSize: summary.font.pointSize
                 elide: Text.ElideRight
-                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - Appearance.spacing.sm * 3 - (primaryAction.visible && primaryAction.item ? primaryAction.item.width + Appearance.spacing.sm : 0)
+                elideWidth: expandBtn.x - time.width - timeSep.width - summary.x - Config.appearance.spacing.small * 3 - (primaryAction.visible && primaryAction.item ? primaryAction.item.width + Config.appearance.spacing.small : 0)
             }
 
             StyledText {
@@ -356,11 +356,11 @@ StyledRect {
 
                 anchors.top: parent.top
                 anchors.left: summary.right
-                anchors.leftMargin: Appearance.spacing.sm
+                anchors.leftMargin: Config.appearance.spacing.small
 
                 text: "•"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
 
                 states: State {
                     name: "expanded"
@@ -374,9 +374,9 @@ StyledRect {
 
                 transitions: Transition {
                     AnchorAnimation {
-                        duration: Appearance.anim.durations.normal
+                        duration: Config.appearance.anim.durations.normal
                         easing.type: Easing.BezierSpline
-                        easing.bezierCurve: Appearance.anim.curves.standard
+                        easing.bezierCurve: TokenConfig.appearance.curves.standard
                     }
                 }
             }
@@ -386,13 +386,13 @@ StyledRect {
 
                 anchors.top: parent.top
                 anchors.left: timeSep.right
-                anchors.leftMargin: Appearance.spacing.sm
+                anchors.leftMargin: Config.appearance.spacing.small
 
                 animate: true
                 horizontalAlignment: Text.AlignLeft
                 text: root.modelData.timeStr
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
 
             Item {
@@ -405,7 +405,7 @@ StyledRect {
                 implicitHeight: expandIcon.height
 
                 StateLayer {
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
                     function onClicked() {
@@ -420,7 +420,7 @@ StyledRect {
 
                     animate: true
                     text: root.expanded ? "expand_less" : "expand_more"
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                 }
             }
 
@@ -439,16 +439,16 @@ StyledRect {
 
                 anchors.right: expandBtn.left
                 anchors.top: parent.top
-                anchors.rightMargin: Appearance.spacing.sm
+                anchors.rightMargin: Config.appearance.spacing.small
 
                 sourceComponent: StyledRect {
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-                    implicitWidth: primaryActionText.implicitWidth + Appearance.padding.sm * 2
-                    implicitHeight: primaryActionText.implicitHeight + Appearance.padding.xs
+                    implicitWidth: primaryActionText.implicitWidth + Config.appearance.padding.small * 2
+                    implicitHeight: primaryActionText.implicitHeight + Config.appearance.padding.extraSmall
 
                     StateLayer {
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
                         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
 
                         function onClicked(): void {
@@ -461,7 +461,7 @@ StyledRect {
                         anchors.centerIn: parent
                         text: root.modelData.actions[0]?.text ?? ""
                         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
-                        font.pointSize: Appearance.font.size.labelSmall
+                        font.pointSize: Config.appearance.font.label.small.size
                         font.weight: Font.Medium
                     }
                 }
@@ -478,13 +478,13 @@ StyledRect {
                 anchors.left: summary.left
                 anchors.right: expandBtn.left
                 anchors.top: summary.bottom
-                anchors.rightMargin: Appearance.spacing.sm
+                anchors.rightMargin: Config.appearance.spacing.small
 
                 animate: true
                 textFormat: Text.MarkdownText
                 text: bodyPreviewMetrics.elidedText
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
 
                 opacity: root.expanded ? 0 : 1
 
@@ -509,13 +509,13 @@ StyledRect {
                 anchors.left: summary.left
                 anchors.right: expandBtn.left
                 anchors.top: summary.bottom
-                anchors.rightMargin: Appearance.spacing.sm
+                anchors.rightMargin: Config.appearance.spacing.small
 
                 animate: true
                 textFormat: Text.MarkdownText
                 text: root.modelData.body
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 height: text ? implicitHeight : 0
 
@@ -539,9 +539,9 @@ StyledRect {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: body.bottom
-                anchors.topMargin: Appearance.spacing.sm
+                anchors.topMargin: Config.appearance.spacing.small
 
-                spacing: Appearance.spacing.md
+                spacing: Config.appearance.spacing.medium
 
                 opacity: root.expanded ? 1 : 0
 
@@ -580,30 +580,30 @@ StyledRect {
 
         Behavior on opacity {
             Anim {
-                duration: Appearance.anim.durations.small
+                duration: Config.appearance.anim.durations.small
             }
         }
 
         Row {
             anchors.centerIn: parent
-            spacing: Appearance.spacing.lg
+            spacing: Config.appearance.spacing.large
 
             StyledText {
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Dismissed")
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
 
             StyledRect {
                 anchors.verticalCenter: parent.verticalCenter
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: Colours.palette.m3secondaryContainer
-                implicitWidth: undoText.implicitWidth + Appearance.padding.md * 2
-                implicitHeight: undoText.implicitHeight + Appearance.padding.xs * 2
+                implicitWidth: undoText.implicitWidth + Config.appearance.padding.medium * 2
+                implicitHeight: undoText.implicitHeight + Config.appearance.padding.extraSmall * 2
 
                 StateLayer {
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: Colours.palette.m3onSecondaryContainer
 
                     function onClicked(): void {
@@ -616,7 +616,7 @@ StyledRect {
                     anchors.centerIn: parent
                     text: qsTr("Undo")
                     color: Colours.palette.m3onSecondaryContainer
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     font.bold: true
                 }
             }
@@ -630,16 +630,16 @@ StyledRect {
 
         visible: (modelData?.text ?? "").length > 0
 
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3secondary : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
 
-        Layout.preferredWidth: actionText.width + Appearance.padding.md * 2
-        Layout.preferredHeight: actionText.height + Appearance.padding.xs * 2
-        implicitWidth: actionText.width + Appearance.padding.md * 2
-        implicitHeight: actionText.height + Appearance.padding.xs * 2
+        Layout.preferredWidth: actionText.width + Config.appearance.padding.medium * 2
+        Layout.preferredHeight: actionText.height + Config.appearance.padding.extraSmall * 2
+        implicitWidth: actionText.width + Config.appearance.padding.medium * 2
+        implicitHeight: actionText.height + Config.appearance.padding.extraSmall * 2
 
         StateLayer {
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
 
             function onClicked(): void {
@@ -658,7 +658,7 @@ StyledRect {
             anchors.centerIn: parent
             text: actionTextMetrics.elidedText
             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
 
         TextMetrics {
@@ -670,7 +670,7 @@ StyledRect {
             elide: Text.ElideRight
             elideWidth: {
                 const numActions = root.modelData.actions.length + 1;
-                return (inner.width - actions.spacing * (numActions - 1)) / numActions - Appearance.padding.md * 2;
+                return (inner.width - actions.spacing * (numActions - 1)) / numActions - Config.appearance.padding.medium * 2;
             }
         }
     }

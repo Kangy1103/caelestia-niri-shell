@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 
@@ -31,8 +31,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.small
-                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                duration: Config.appearance.anim.durations.small
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         },
         Transition {
@@ -42,8 +42,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.small / 2
-                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
+                duration: Config.appearance.anim.durations.small / 2
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
             }
         }
     ]

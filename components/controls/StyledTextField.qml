@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Controls
 
@@ -11,8 +11,8 @@ TextField {
 
     color: Colours.palette.m3onSurface
     placeholderTextColor: Colours.palette.m3outline
-    font.family: Appearance.font.family.sans
-    font.pointSize: Appearance.font.size.bodySmall
+    font.family: Config.appearance.font.body.family
+    font.pointSize: Config.appearance.font.body.small.size
     renderType: Text.QtRendering
     cursorVisible: !readOnly
 
@@ -23,7 +23,7 @@ TextField {
 
         implicitWidth: 2
         color: Colours.palette.m3primary
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
         
         // Hide immediately when focus is lost
         opacity: root.activeFocus && root.cursorVisible ? 1 : 0

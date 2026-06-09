@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.components.effects
-import qs.config
+import Caelestia.Config
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -34,9 +34,9 @@ RowLayout {
             id: leftClippingRect
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.md
+            anchors.margins: Config.appearance.padding.medium
             anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.md / 2
+            anchors.rightMargin: Config.appearance.padding.medium / 2
 
             radius: leftBorder.innerRadius
             color: "transparent"
@@ -45,9 +45,9 @@ RowLayout {
                 id: leftLoader
 
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.xl + Appearance.padding.md
-                anchors.leftMargin: Appearance.padding.xl
-                anchors.rightMargin: Appearance.padding.xl + Appearance.padding.md / 2
+                anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+                anchors.leftMargin: Config.appearance.padding.largeIncreased
+                anchors.rightMargin: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium / 2
 
                 sourceComponent: root.leftContent
 
@@ -63,7 +63,7 @@ RowLayout {
             id: leftBorder
 
             leftThickness: 0
-            rightThickness: Appearance.padding.md / 2
+            rightThickness: Config.appearance.padding.medium / 2
         }
     }
 
@@ -77,9 +77,9 @@ RowLayout {
             id: rightClippingRect
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.md
+            anchors.margins: Config.appearance.padding.medium
             anchors.leftMargin: 0
-            anchors.rightMargin: Appearance.padding.md / 2
+            anchors.rightMargin: Config.appearance.padding.medium / 2
 
             radius: rightBorder.innerRadius
             color: "transparent"
@@ -88,7 +88,7 @@ RowLayout {
                 id: rightLoader
 
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.xl * 2
+                anchors.margins: Config.appearance.padding.largeIncreased * 2
 
                 sourceComponent: root.rightContent
 
@@ -103,7 +103,7 @@ RowLayout {
         InnerBorder {
             id: rightBorder
 
-            leftThickness: Appearance.padding.md / 2
+            leftThickness: Config.appearance.padding.medium / 2
         }
     }
 }

@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -22,9 +22,9 @@ Item {
     property bool recolourLogo: Config.lock.recolourLogo ?? false
     property bool enableFprint: Config.lock.enableFprint ?? true
     property int maxFprintTries: Config.lock.maxFprintTries ?? 3
-    property int centerWidth: Config.lock.sizes.centerWidth ?? 600
-    property real heightMult: Config.lock.sizes.heightMult ?? 0.7
-    property real ratio: Config.lock.sizes.ratio ?? (16 / 9)
+    property int centerWidth: TokenConfig.sizes.lock.centerWidth ?? 600
+    property real heightMult: TokenConfig.sizes.lock.heightMult ?? 0.7
+    property real ratio: TokenConfig.sizes.lock.ratio ?? (16 / 9)
 
     anchors.fill: parent
 
@@ -33,19 +33,18 @@ Item {
         Config.lock.recolourLogo = root.recolourLogo;
         Config.lock.enableFprint = root.enableFprint;
         Config.lock.maxFprintTries = root.maxFprintTries;
-        Config.lock.sizes.centerWidth = root.centerWidth;
-        Config.lock.sizes.heightMult = root.heightMult;
-        Config.lock.sizes.ratio = root.ratio;
-        Config.markDirty("lock");
+        TokenConfig.sizes.lock.centerWidth = root.centerWidth;
+        TokenConfig.sizes.lock.heightMult = root.heightMult;
+        TokenConfig.sizes.lock.ratio = root.ratio;
     }
 
     ClippingRectangle {
         id: lockClippingRect
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.md
+        anchors.rightMargin: Config.appearance.padding.medium
 
         radius: lockBorder.innerRadius
         color: "transparent"
@@ -54,9 +53,9 @@ Item {
             id: lockLoader
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl + Appearance.padding.md
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+            anchors.leftMargin: Config.appearance.padding.largeIncreased
+            anchors.rightMargin: Config.appearance.padding.largeIncreased
 
             sourceComponent: lockContentComponent
         }
@@ -66,7 +65,7 @@ Item {
         id: lockBorder
 
         leftThickness: 0
-        rightThickness: Appearance.padding.md
+        rightThickness: Config.appearance.padding.medium
     }
 
     Component {
@@ -89,17 +88,17 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 readonly property var rootPane: lockFlickable.rootPane
                 readonly property bool allExpanded: layoutSection.expanded && authSection.expanded && sizingSection.expanded
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("Lock Screen")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
 
@@ -130,7 +129,7 @@ Item {
                     showBackground: true
 
                     ColumnLayout {
-                        spacing: Appearance.spacing.sm
+                        spacing: Config.appearance.spacing.small
                         Layout.fillWidth: true
 
                         SwitchRow {
@@ -162,7 +161,7 @@ Item {
                     showBackground: true
 
                     ColumnLayout {
-                        spacing: Appearance.spacing.sm
+                        spacing: Config.appearance.spacing.small
                         Layout.fillWidth: true
 
                         SwitchRow {
@@ -175,7 +174,7 @@ Item {
                         }
 
                         SectionContainer {
-                            contentSpacing: Appearance.spacing.lg
+                            contentSpacing: Config.appearance.spacing.large
 
                             SliderInput {
                                 Layout.fillWidth: true
@@ -207,7 +206,7 @@ Item {
                     showBackground: true
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true

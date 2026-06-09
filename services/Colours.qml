@@ -1,7 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Caelestia
 import Quickshell
@@ -238,10 +238,10 @@ Singleton {
     }
 
     component Transparency: QtObject {
-        readonly property bool reduceTransparency: Appearance.transparency.reduceTransparency
-        readonly property bool enabled: Appearance.transparency.enabled && !reduceTransparency
-        readonly property real base: reduceTransparency ? 1.0 : Appearance.transparency.base - (root.light ? 0.1 : 0)
-        readonly property real layers: reduceTransparency ? 1.0 : Appearance.transparency.layers
+        readonly property bool reduceTransparency: Config.appearance.transparency.reduceTransparency
+        readonly property bool enabled: Config.appearance.transparency.enabled && !reduceTransparency
+        readonly property real base: reduceTransparency ? 1.0 : Config.appearance.transparency.base - (root.light ? 0.1 : 0)
+        readonly property real layers: reduceTransparency ? 1.0 : Config.appearance.transparency.layers
     }
 
     // Batched transparent palette — computed imperatively to avoid 54 reactive bindings

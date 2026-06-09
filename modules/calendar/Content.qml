@@ -4,7 +4,7 @@ import qs.components
 import qs.components.effects
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -18,7 +18,7 @@ Item {
     readonly property int currMonth: currentDate.getMonth()
     readonly property int currYear: currentDate.getFullYear()
 
-    readonly property int padding: Appearance.padding.xl
+    readonly property int padding: Config.appearance.padding.largeIncreased
 
     implicitWidth: 480
     implicitHeight: calLayout.implicitHeight + padding * 2
@@ -40,18 +40,18 @@ Item {
         id: calLayout
         anchors.fill: parent
         anchors.margins: root.padding
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: prevIcon.implicitHeight + Appearance.padding.xs * 2
+                implicitHeight: prevIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
                 StateLayer {
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
 
                     function onClicked(): void {
                         currentDate = new Date(currYear, currMonth - 1, 1);
@@ -63,21 +63,21 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_left"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     font.weight: 700
                 }
             }
 
             Item {
                 Layout.fillWidth: true
-                implicitHeight: monthText.implicitHeight + Appearance.padding.xs * 2
+                implicitHeight: monthText.implicitHeight + Config.appearance.padding.extraSmall * 2
 
                 StateLayer {
                     anchors.fill: monthText
-                    anchors.margins: -Appearance.padding.xs
-                    anchors.leftMargin: -Appearance.padding.md
-                    anchors.rightMargin: -Appearance.padding.md
-                    radius: Appearance.rounding.full
+                    anchors.margins: -Config.appearance.padding.extraSmall
+                    anchors.leftMargin: -Config.appearance.padding.medium
+                    anchors.rightMargin: -Config.appearance.padding.medium
+                    radius: Config.appearance.rounding.full
                     disabled: {
                         const now = new Date();
                         return currMonth === now.getMonth() && currYear === now.getFullYear();
@@ -94,7 +94,7 @@ Item {
                     anchors.centerIn: parent
                     text: grid.title
                     color: Colours.palette.m3primary
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     font.weight: 500
                     font.capitalization: Font.Capitalize
                 }
@@ -102,10 +102,10 @@ Item {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: nextIcon.implicitHeight + Appearance.padding.xs * 2
+                implicitHeight: nextIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
                 StateLayer {
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
 
                     function onClicked(): void {
                         currentDate = new Date(currYear, currMonth + 1, 1);
@@ -117,7 +117,7 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_right"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     font.weight: 700
                 }
             }
@@ -127,7 +127,7 @@ Item {
                 text: "Today"
                 icon: "today"
                 type: IconTextButton.Tonal
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
 
                 onClicked: {
                     currentDate = new Date();
@@ -144,7 +144,7 @@ Item {
                 required property var model
                 horizontalAlignment: Text.AlignHCenter
                 text: model.shortName
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Config.appearance.font.body.small.size
                 font.weight: 500
                 color: (model.day === 0 || model.day === 6) ? Colours.palette.m3secondary : Colours.palette.m3onSurfaceVariant
             }
@@ -166,7 +166,7 @@ Item {
                     id: dayItem
                     required property var model
                     implicitWidth: implicitHeight
-                    implicitHeight: text.implicitHeight + Appearance.padding.xs * 2 + (hasEvents ? 8 : 0)
+                    implicitHeight: text.implicitHeight + Config.appearance.padding.extraSmall * 2 + (hasEvents ? 8 : 0)
 
                     readonly property var eventsForDay: CalEvents.eventsForDate(new Date(model.year, model.month, model.day))
                     readonly property var dotColors: eventsForDay.slice(0, 3).map(e => e.color)
@@ -174,7 +174,7 @@ Item {
 
                     StateLayer {
                         anchors.fill: parent
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
 
                         function onClicked(): void {
                             root.selectedDate = new Date(model.year, model.month, model.day);
@@ -194,7 +194,7 @@ Item {
                             return Colours.palette.m3onSurfaceVariant;
                         }
                         opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                         font.weight: 500
                     }
 
@@ -236,7 +236,7 @@ Item {
                 implicitHeight: today?.implicitHeight ?? 0
 
                 clip: true
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: Colours.palette.m3primary
                 opacity: todayItem ? 1 : 0
                 scale: todayItem ? 1 : 0.7
@@ -256,15 +256,15 @@ Item {
 
                 Behavior on x {
                     Anim {
-                        duration: Appearance.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                     }
                 }
 
                 Behavior on y {
                     Anim {
-                        duration: Appearance.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                     }
                 }
             }

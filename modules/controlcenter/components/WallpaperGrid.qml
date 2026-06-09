@@ -6,7 +6,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import Caelestia
 import QtQuick
 import QtQuick.Layouts
@@ -24,11 +24,11 @@ GridView {
     implicitHeight: Math.max(400, contentHeight)
     cacheBuffer: Math.max(0, height * 2)
 
-    readonly property int minCellWidth: 200 + Appearance.spacing.lg
+    readonly property int minCellWidth: 200 + Config.appearance.spacing.large
     readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
 
     cellWidth: width / columnsCount
-    cellHeight: 140 + Appearance.spacing.lg
+    cellHeight: 140 + Config.appearance.spacing.large
 
     model: Wallpapers.list
 
@@ -46,8 +46,8 @@ GridView {
         readonly property bool isVideo: Wallpapers.isPathVideo(rootDelegate.modelData.path)
         readonly property string colorSource: Wallpapers.getColorSource(rootDelegate.modelData.path)
         readonly property bool colorSourceExists: !isVideo || CUtils.exists(colorSource)
-        readonly property real itemMargin: Appearance.spacing.lg / 2
-        readonly property real itemRadius: Appearance.rounding.normal
+        readonly property real itemMargin: Config.appearance.spacing.large / 2
+        readonly property real itemRadius: Config.appearance.rounding.large
 
         StateLayer {
             anchors.fill: parent
@@ -104,7 +104,7 @@ GridView {
                 anchors.horizontalCenterOffset: font.pointSize * 0.1
                 text: "play_arrow"
                 color: "white"
-                font.pointSize: Appearance.font.size.headlineLarge * 2
+                font.pointSize: Config.appearance.font.headline.large.size * 2
                 visible: rootDelegate.isVideo
 
                 layer.enabled: true
@@ -156,7 +156,7 @@ GridView {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
 
-                implicitHeight: filenameText.implicitHeight + Appearance.padding.md * 1.5
+                implicitHeight: filenameText.implicitHeight + Config.appearance.padding.medium * 1.5
                 radius: 0
 
                 gradient: Gradient {
@@ -216,12 +216,12 @@ GridView {
             MaterialIcon {
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.margins: Appearance.padding.xs
+                anchors.margins: Config.appearance.padding.extraSmall
 
                 visible: isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
             }
         }
 
@@ -230,12 +230,12 @@ GridView {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: Appearance.padding.md + Appearance.spacing.lg / 2
-            anchors.rightMargin: Appearance.padding.md + Appearance.spacing.lg / 2
-            anchors.bottomMargin: Appearance.padding.md
+            anchors.leftMargin: Config.appearance.padding.medium + Config.appearance.spacing.large / 2
+            anchors.rightMargin: Config.appearance.padding.medium + Config.appearance.spacing.large / 2
+            anchors.bottomMargin: Config.appearance.padding.medium
 
             text: rootDelegate.modelData.name
-            font.pointSize: Appearance.font.size.bodySmall
+            font.pointSize: Config.appearance.font.body.small.size
             font.weight: 500
             color: isCurrent ? Colours.palette.m3primary : Colours.palette.m3onSurface
             elide: Text.ElideMiddle

@@ -8,7 +8,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Widgets
@@ -43,15 +43,15 @@ Item {
 
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    spacing: Appearance.spacing.lg
+                    spacing: Config.appearance.spacing.large
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Appearance.spacing.md
+                        spacing: Config.appearance.spacing.medium
 
                         StyledText {
                             text: qsTr("Network")
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                             font.weight: 500
                         }
 
@@ -63,9 +63,9 @@ Item {
                             toggled: Nmcli.wifiEnabled
                             icon: "wifi"
                             accent: "Tertiary"
-                            iconSize: Appearance.font.size.bodyMedium
-                            horizontalPadding: Appearance.padding.md
-                            verticalPadding: Appearance.padding.sm
+                            iconSize: Config.appearance.font.body.medium.size
+                            horizontalPadding: Config.appearance.padding.medium
+                            verticalPadding: Config.appearance.padding.small
                             tooltip: qsTr("Toggle WiFi")
 
                             onClicked: {
@@ -77,9 +77,9 @@ Item {
                             toggled: Nmcli.scanning
                             icon: "wifi_find"
                             accent: "Secondary"
-                            iconSize: Appearance.font.size.bodyMedium
-                            horizontalPadding: Appearance.padding.md
-                            verticalPadding: Appearance.padding.sm
+                            iconSize: Config.appearance.font.body.medium.size
+                            horizontalPadding: Config.appearance.padding.medium
+                            verticalPadding: Config.appearance.padding.small
                             tooltip: qsTr("Scan for networks")
 
                             onClicked: {
@@ -91,9 +91,9 @@ Item {
                             toggled: !root.session.ethernet.active && !root.session.network.active
                             icon: "settings"
                             accent: "Primary"
-                            iconSize: Appearance.font.size.bodyMedium
-                            horizontalPadding: Appearance.padding.md
-                            verticalPadding: Appearance.padding.sm
+                            iconSize: Config.appearance.font.body.medium.size
+                            horizontalPadding: Config.appearance.padding.medium
+                            verticalPadding: Config.appearance.padding.small
                             tooltip: qsTr("Network settings")
 
                             onClicked: {

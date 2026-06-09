@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -21,7 +21,7 @@ Item {
     property bool enabled: Config.session.enabled ?? true
     property bool vimKeybinds: Config.session.vimKeybinds ?? false
     property int dragThreshold: Config.session.dragThreshold ?? 30
-    property int buttonSize: Config.session.sizes.button ?? 80
+    property int buttonSize: TokenConfig.sizes.session.button ?? 80
 
     anchors.fill: parent
 
@@ -29,16 +29,15 @@ Item {
         Config.session.enabled = root.enabled;
         Config.session.vimKeybinds = root.vimKeybinds;
         Config.session.dragThreshold = root.dragThreshold;
-        Config.session.sizes.button = root.buttonSize;
-        Config.markDirty("session");
+        TokenConfig.sizes.session.button = root.buttonSize;
     }
 
     ClippingRectangle {
         id: sessionClippingRect
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.md
+        anchors.rightMargin: Config.appearance.padding.medium
 
         radius: sessionBorder.innerRadius
         color: "transparent"
@@ -46,9 +45,9 @@ Item {
         Loader {
             id: sessionLoader
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl + Appearance.padding.md
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+            anchors.leftMargin: Config.appearance.padding.largeIncreased
+            anchors.rightMargin: Config.appearance.padding.largeIncreased
 
             sourceComponent: sessionContentComponent
         }
@@ -57,7 +56,7 @@ Item {
     InnerBorder {
         id: sessionBorder
         leftThickness: 0
-        rightThickness: Appearance.padding.md
+        rightThickness: Config.appearance.padding.medium
     }
 
     Component {
@@ -77,14 +76,14 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("Session")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
                 }
@@ -95,7 +94,7 @@ Item {
 
                     StyledText {
                         text: qsTr("General")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SwitchRow {
@@ -117,7 +116,7 @@ Item {
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true
@@ -145,11 +144,11 @@ Item {
 
                     StyledText {
                         text: qsTr("Sizing")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true

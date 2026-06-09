@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Io
@@ -18,7 +18,7 @@ Item {
     required property var wrapper
     required property PersistentProperties visibilities
 
-    readonly property int padding: Math.max(Appearance.padding.xl, Config.border.rounding)
+    readonly property int padding: Math.max(Config.appearance.padding.largeIncreased, Config.border.rounding)
 
     implicitWidth: 480
     implicitHeight: mainLayout.implicitHeight + padding * 2
@@ -69,28 +69,28 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: root.padding
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
         anchors.leftMargin: root.padding
         anchors.rightMargin: 10
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.lg
+            spacing: Config.appearance.spacing.large
             MaterialIcon {
                 text: "keyboard"
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 color: Colours.palette.m3primary
             }
             StyledText {
                 text: qsTr("Keybinds")
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 font.weight: Font.Bold
                 Layout.fillWidth: true
             }
             StyledRect {
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 32
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
                 color: "transparent"
                 StateLayer {
                     radius: parent.radius
@@ -100,14 +100,14 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "refresh"
-                    font.pointSize: Appearance.font.size.bodyLarge
+                    font.pointSize: Config.appearance.font.body.large.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
             StyledRect {
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 32
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
                 color: "transparent"
                 StateLayer {
                     radius: parent.radius
@@ -117,7 +117,7 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "close"
-                    font.pointSize: Appearance.font.size.bodyLarge
+                    font.pointSize: Config.appearance.font.body.large.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -126,13 +126,13 @@ Item {
         StyledRect {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.max(searchIcon.implicitHeight, searchInput.implicitHeight, clearIcon.implicitHeight)
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             color: Colours.tPalette.m3surfaceContainer
             MaterialIcon {
                 id: searchIcon
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: Appearance.padding.md
+                anchors.leftMargin: Config.appearance.padding.medium
                 text: "search"
                 color: Colours.palette.m3onSurfaceVariant
             }
@@ -140,10 +140,10 @@ Item {
                 id: searchInput
                 anchors.left: searchIcon.right
                 anchors.right: clearIcon.left
-                anchors.leftMargin: Appearance.spacing.sm
-                anchors.rightMargin: Appearance.spacing.sm
-                topPadding: Appearance.padding.lg
-                bottomPadding: Appearance.padding.lg
+                anchors.leftMargin: Config.appearance.spacing.small
+                anchors.rightMargin: Config.appearance.spacing.small
+                topPadding: Config.appearance.padding.large
+                bottomPadding: Config.appearance.padding.large
                 placeholderText: qsTr("Search keybinds...")
                 onTextChanged: filterKeybinds()
                 Keys.onPressed: (event) => {
@@ -164,7 +164,7 @@ Item {
                 id: clearIcon
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Appearance.padding.md
+                anchors.rightMargin: Config.appearance.padding.medium
                 width: searchInput.text ? implicitWidth : implicitWidth / 2
                 opacity: searchInput.text ? 1 : 0
                 text: "close"
@@ -175,30 +175,30 @@ Item {
                     cursorShape: searchInput.text ? Qt.PointingHandCursor : undefined
                     onClicked: searchInput.text = ""
                 }
-                Behavior on width { Anim { duration: Appearance.anim.durations.small } }
-                Behavior on opacity { Anim { duration: Appearance.anim.durations.small } }
+                Behavior on width { Anim { duration: Config.appearance.anim.durations.small } }
+                Behavior on opacity { Anim { duration: Config.appearance.anim.durations.small } }
             }
         }
 
         StyledClippingRect {
             Layout.fillWidth: true
             Layout.preferredHeight: 400
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             color: Colours.tPalette.m3surfaceContainer
 
             StyledListView {
                 id: listView
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.sm
+                anchors.margins: Config.appearance.padding.small
                 model: filteredModel
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
                 currentIndex: 0
                 highlightFollowsCurrentItem: true
                 clip: true
-                highlightMoveDuration: Appearance.anim.durations.normal
+                highlightMoveDuration: Config.appearance.anim.durations.normal
                 highlightResizeDuration: 0
                 highlight: StyledRect {
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     color: Colours.palette.m3onSurface
                     opacity: 0.08
                 }
@@ -210,12 +210,12 @@ Item {
                     required property string action
 
                     width: listView.width
-                    height: keybindContent.implicitHeight + Appearance.padding.sm * 2
+                    height: keybindContent.implicitHeight + Config.appearance.padding.small * 2
 
                     StyledRect {
                         anchors.fill: parent
                         anchors.margins: 2
-                        radius: Appearance.rounding.small
+                        radius: Config.appearance.rounding.small
                         color: "transparent"
                         StateLayer {
                             radius: parent.radius
@@ -227,29 +227,29 @@ Item {
                         RowLayout {
                             id: keybindContent
                             anchors.fill: parent
-                            anchors.margins: Appearance.padding.sm
-                            spacing: Appearance.spacing.lg
+                            anchors.margins: Config.appearance.padding.small
+                            spacing: Config.appearance.spacing.large
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: Appearance.spacing.xs
+                                spacing: Config.appearance.spacing.extraSmall
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: keybindItem.action
-                                    font.pointSize: Appearance.font.size.labelLarge
+                                    font.pointSize: Config.appearance.font.label.large.size
                                     font.weight: Font.Medium
                                     color: Colours.palette.m3onSurface
                                     elide: Text.ElideRight
                                 }
                                 StyledRect {
-                                    Layout.preferredWidth: keyText.implicitWidth + Appearance.padding.md * 2
-                                    Layout.preferredHeight: keyText.implicitHeight + Appearance.padding.sm * 2
-                                    radius: Appearance.rounding.extraSmall
+                                    Layout.preferredWidth: keyText.implicitWidth + Config.appearance.padding.medium * 2
+                                    Layout.preferredHeight: keyText.implicitHeight + Config.appearance.padding.small * 2
+                                    radius: Config.appearance.rounding.extraSmall
                                     color: Colours.tPalette.m3surfaceContainerHighest
                                     StyledText {
                                         id: keyText
                                         anchors.centerIn: parent
                                         text: keybindItem.key
-                                        font.pointSize: Appearance.font.size.labelMedium
+                                        font.pointSize: Config.appearance.font.label.medium.size
                                         font.family: "monospace"
                                         color: Colours.palette.m3onSurfaceVariant
                                     }
@@ -282,17 +282,17 @@ Item {
             Column {
                 visible: filteredModel.count === 0 && !Keybinds.loading && !Keybinds.error
                 anchors.centerIn: parent
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? "keyboard_hide" : "search_off"
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Config.appearance.font.headline.large.size
                     color: Colours.palette.m3outline
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? qsTr("No keybinds found") : qsTr("No results found")
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     color: Colours.palette.m3outline
                 }
             }
@@ -300,17 +300,17 @@ Item {
             Column {
                 visible: Keybinds.error && !Keybinds.loading
                 anchors.centerIn: parent
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "error_outline"
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Config.appearance.font.headline.large.size
                     color: Colours.palette.m3error
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: Keybinds.error
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     color: Colours.palette.m3error
                 }
             }
@@ -318,7 +318,7 @@ Item {
             Column {
                 visible: Keybinds.loading
                 anchors.centerIn: parent
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
                 StyledBusyIndicator {
                     anchors.horizontalCenter: parent.horizontalCenter
                     running: true
@@ -326,7 +326,7 @@ Item {
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: qsTr("Loading keybinds...")
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -334,23 +334,23 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.lg
+            spacing: Config.appearance.spacing.large
             StyledText {
                 text: filteredModel.count + " " + qsTr("keybinds")
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 color: Colours.palette.m3outline
             }
             Item { Layout.fillWidth: true }
             RowLayout {
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
                 MaterialIcon {
                     text: "info"
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     color: Colours.palette.m3outline
                 }
                 StyledText {
                     text: qsTr("Arrow keys to navigate")
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     color: Colours.palette.m3outline
                 }
             }

@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 Item {
@@ -18,6 +18,6 @@ Item {
     readonly property real itemH: anchorWs ? (anchorWs.height + Config.bar.workspaces.windowIconGap * 2) : Config.bar.workspaces.windowIconSize
     readonly property real expandedW: Config.bar.workspaces.windowContextWidth - Config.bar.workspaces.windowIconSize
 
-    implicitHeight: anchorWs ? ((itemH + Appearance.padding.xs) * anchorWsCount) : itemH - Appearance.padding.md
+    implicitHeight: anchorWs ? ((itemH + Config.appearance.padding.extraSmall) * anchorWsCount) : itemH - Config.appearance.padding.medium
     implicitWidth: root.expandedW
 }

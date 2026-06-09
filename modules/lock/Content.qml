@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -28,7 +28,7 @@ ColumnLayout {
         visible: root.showLeft
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumHeight: Appearance.padding.xl * 4
+        Layout.minimumHeight: Config.appearance.padding.largeIncreased * 4
         Fetch {}
     }
     Rectangle {

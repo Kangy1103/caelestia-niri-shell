@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import QtQuick
@@ -63,9 +63,9 @@ ColumnLayout {
         }
     }
 
-    spacing: Appearance.spacing.md
+    spacing: Config.appearance.spacing.medium
     implicitWidth: 400
-    implicitHeight: content.implicitHeight + Appearance.padding.xl * 2
+    implicitHeight: content.implicitHeight + Config.appearance.padding.largeIncreased * 2
     visible: shouldBeVisible || isClosing
     enabled: shouldBeVisible && !isClosing
     focus: enabled
@@ -116,8 +116,8 @@ ColumnLayout {
     StyledRect {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
-        implicitHeight: content.implicitHeight + Appearance.padding.xl * 2
-        radius: Appearance.rounding.large
+        implicitHeight: content.implicitHeight + Config.appearance.padding.largeIncreased * 2
+        radius: Config.appearance.rounding.large
         color: Colours.tPalette.m3surfaceContainer
         visible: root.shouldBeVisible || root.isClosing
 
@@ -159,20 +159,20 @@ ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased
 
-            spacing: Appearance.spacing.md
+            spacing: Config.appearance.spacing.medium
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "lock"
-                font.pointSize: Appearance.font.size.titleLarge * 2
+                font.pointSize: Config.appearance.font.title.large.size * 2
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enter password")
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 font.weight: 500
             }
 
@@ -188,7 +188,7 @@ ColumnLayout {
                     return qsTr("Network: Unknown");
                 }
                 color: Colours.palette.m3outline
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
 
             Timer {
@@ -222,7 +222,7 @@ ColumnLayout {
                 id: statusText
 
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Appearance.spacing.sm
+                Layout.topMargin: Config.appearance.spacing.small
                 visible: connectButton.connecting || connectButton.hasError
                 text: {
                     if (connectButton.hasError) {
@@ -234,10 +234,10 @@ ColumnLayout {
                     return "";
                 }
                 color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 font.weight: 400
                 wrapMode: Text.WordWrap
-                Layout.maximumWidth: parent.width - Appearance.padding.xl * 2
+                Layout.maximumWidth: parent.width - Config.appearance.padding.largeIncreased * 2
             }
 
             FocusScope {
@@ -246,9 +246,9 @@ ColumnLayout {
                 property string passwordBuffer: ""
 
                 objectName: "passwordContainer"
-                Layout.topMargin: Appearance.spacing.lg
+                Layout.topMargin: Config.appearance.spacing.large
                 Layout.fillWidth: true
-                implicitHeight: Math.max(48, charList.implicitHeight + Appearance.padding.md * 2)
+                implicitHeight: Math.max(48, charList.implicitHeight + Config.appearance.padding.medium * 2)
                 focus: true
                 activeFocusOnTab: true
 
@@ -357,7 +357,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: qsTr("Password")
                     color: Colours.palette.m3outline
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     opacity: passwordContainer.passwordBuffer ? 0 : 1
 
                     Behavior on opacity {
@@ -372,10 +372,10 @@ ColumnLayout {
 
                     anchors.centerIn: parent
                     implicitWidth: fullWidth
-                    implicitHeight: Appearance.font.size.bodyMedium
+                    implicitHeight: Config.appearance.font.body.medium.size
 
                     orientation: Qt.Horizontal
-                    spacing: Appearance.spacing.sm / 2
+                    spacing: Config.appearance.spacing.small / 2
                     interactive: false
 
                     model: ScriptModel {
@@ -442,15 +442,15 @@ ColumnLayout {
             }
 
             RowLayout {
-                Layout.topMargin: Appearance.spacing.md
+                Layout.topMargin: Config.appearance.spacing.medium
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.md
+                spacing: Config.appearance.spacing.medium
 
                 TextButton {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Appearance.font.size.bodyMedium + Appearance.padding.md * 2
+                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
                     inactiveColour: Colours.palette.m3secondaryContainer
                     inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -465,7 +465,7 @@ ColumnLayout {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Appearance.font.size.bodyMedium + Appearance.padding.md * 2
+                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

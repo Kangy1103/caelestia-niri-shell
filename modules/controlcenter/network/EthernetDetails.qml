@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -43,7 +43,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -69,7 +69,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Device properties")
@@ -77,7 +77,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Appearance.spacing.sm / 2
+                    contentSpacing: Config.appearance.spacing.small / 2
 
                     PropertyRow {
                         label: qsTr("Interface")
@@ -100,7 +100,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Connection information")

@@ -3,7 +3,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -14,9 +14,9 @@ StyledRect {
     property string icon
     property string label
     property string accent: "Secondary"
-    property real iconSize: Appearance.font.size.titleMedium
-    property real horizontalPadding: Appearance.padding.xl
-    property real verticalPadding: Appearance.padding.md
+    property real iconSize: Config.appearance.font.title.medium.size
+    property real horizontalPadding: Config.appearance.padding.largeIncreased
+    property real verticalPadding: Config.appearance.padding.medium
     property string tooltip: ""
 
     property bool hovered: false
@@ -36,11 +36,11 @@ StyledRect {
         }
     }
 
-    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Appearance.padding.md * 2 : toggled ? Appearance.padding.xs * 2 : 0)
+    Layout.preferredWidth: implicitWidth + (toggleStateLayer.pressed ? Config.appearance.padding.medium * 2 : toggled ? Config.appearance.padding.extraSmall * 2 : 0)
     implicitWidth: toggleBtnInner.implicitWidth + horizontalPadding * 2
     implicitHeight: toggleBtnIcon.implicitHeight + verticalPadding * 2
 
-    radius: toggled || toggleStateLayer.pressed ? Appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Appearance.rounding.scale)
+    radius: toggled || toggleStateLayer.pressed ? Config.appearance.rounding.small : Math.min(width, height) / 2 * Math.min(1, Config.appearance.rounding.scale)
     color: toggled ? Colours.palette[`m3${accent.toLowerCase()}`] : Colours.palette[`m3${accent.toLowerCase()}Container`]
 
     StateLayer {
@@ -57,7 +57,7 @@ StyledRect {
         id: toggleBtnInner
 
         anchors.centerIn: parent
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         MaterialIcon {
             id: toggleBtnIcon
@@ -86,15 +86,15 @@ StyledRect {
 
     Behavior on radius {
         Anim {
-            duration: Appearance.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+            duration: Config.appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
         }
     }
 
     Behavior on Layout.preferredWidth {
         Anim {
-            duration: Appearance.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+            duration: Config.appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
         }
     }
 

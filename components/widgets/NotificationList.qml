@@ -5,7 +5,7 @@ import qs.components.containers
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Widgets
@@ -32,18 +32,18 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
 
         // Header row
         RowLayout {
             id: headerRow
             Layout.fillWidth: true
             visible: root.showHeader
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             MaterialIcon {
                 text: Notifs.dnd ? "notifications_off" : "notifications"
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Config.appearance.font.body.medium.size
                 color: Notifs.dnd ? Colours.palette.m3outline : Colours.palette.m3primary
             }
 
@@ -55,7 +55,7 @@ Item {
                         return qsTr("%1 notification%2").arg(Notifs.list.length).arg(Notifs.list.length === 1 ? "" : "s");
                     return qsTr("Notifications");
                 }
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Config.appearance.font.body.small.size
                 font.weight: Font.Medium
                 Layout.fillWidth: true
             }
@@ -63,7 +63,7 @@ Item {
             StyledRect {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: Notifs.dnd ? Colours.palette.m3errorContainer : "transparent"
                 visible: root.showDndToggle
 
@@ -79,7 +79,7 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: Notifs.dnd ? "do_not_disturb_on" : "do_not_disturb_off"
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     color: Notifs.dnd ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -87,7 +87,7 @@ Item {
             StyledRect {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: "transparent"
                 visible: root.showClearAll && Notifs.list.length > 0 && root.expanded
 
@@ -104,7 +104,7 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "delete_sweep"
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     color: Colours.palette.m3error
                 }
             }
@@ -112,7 +112,7 @@ Item {
             StyledRect {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: "transparent"
                 visible: root.expandable
 
@@ -128,7 +128,7 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: root.expanded ? "keyboard_arrow_up" : "keyboard_arrow_down"
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -145,12 +145,12 @@ Item {
             ColumnLayout {
                 anchors.centerIn: parent
                 visible: Notifs.list.length === 0
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 MaterialIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: "notifications_none"
-                    font.pointSize: Appearance.font.size.headlineLarge * 1.5
+                    font.pointSize: Config.appearance.font.headline.large.size * 1.5
                     color: Colours.palette.m3outlineVariant
                 }
 
@@ -158,7 +158,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("All clear")
                     color: Colours.palette.m3outlineVariant
-                    font.pointSize: Appearance.font.size.bodySmall
+                    font.pointSize: Config.appearance.font.body.small.size
                 }
             }
 
@@ -166,7 +166,7 @@ Item {
                 id: notifList
                 anchors.fill: parent
                 clip: true
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
                 visible: Notifs.list.length > 0
 
                 model: ScriptModel {
@@ -195,14 +195,14 @@ Item {
 
         readonly property bool bodyTruncated: bodyText.truncated
 
-        implicitHeight: notifContent.implicitHeight + Appearance.padding.sm * 2
-        radius: Appearance.rounding.small
+        implicitHeight: notifContent.implicitHeight + Config.appearance.padding.small * 2
+        radius: Config.appearance.rounding.small
         color: notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3errorContainer : Colours.tPalette.m3surfaceContainerHigh
 
         Behavior on implicitHeight {
             Anim {
-                duration: Appearance.anim.durations.small
-                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                duration: Config.appearance.anim.durations.small
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         }
 
@@ -222,8 +222,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.margins: Appearance.padding.sm
-            spacing: Appearance.spacing.sm
+            anchors.margins: Config.appearance.padding.small
+            spacing: Config.appearance.spacing.small
 
             Item {
                 Layout.preferredWidth: 32
@@ -234,7 +234,7 @@ Item {
                 StyledRect {
                     width: 32
                     height: 32
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.palette.m3secondaryContainer
 
                     Loader {
@@ -259,7 +259,7 @@ Item {
 
                             MaterialIcon {
                                 text: Icons.getNotifIcon(notifItem.notif?.summary ?? "", notifItem.notif?.urgency ?? NotificationUrgency.Normal)
-                                font.pointSize: Appearance.font.size.bodyMedium
+                                font.pointSize: Config.appearance.font.body.medium.size
                                 color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSecondaryContainer
                             }
                         }
@@ -274,7 +274,7 @@ Item {
                 StyledText {
                     Layout.fillWidth: true
                     text: notifItem.notif?.appName ?? ""
-                    font.pointSize: Appearance.font.size.labelSmall
+                    font.pointSize: Config.appearance.font.label.small.size
                     font.weight: Font.Medium
                     color: Colours.palette.m3outline
                     visible: notifItem.itemExpanded && text.length > 0
@@ -285,7 +285,7 @@ Item {
                 StyledText {
                     Layout.fillWidth: true
                     text: notifItem.notif?.summary ?? ""
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     font.weight: Font.Medium
                     elide: notifItem.itemExpanded ? Text.ElideNone : Text.ElideRight
                     maximumLineCount: notifItem.itemExpanded ? 3 : 1
@@ -297,7 +297,7 @@ Item {
                     id: bodyText
                     Layout.fillWidth: true
                     text: notifItem.notif?.body ?? ""
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     elide: notifItem.itemExpanded ? Text.ElideNone : Text.ElideRight
                     maximumLineCount: notifItem.itemExpanded ? 20 : 2
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -316,7 +316,7 @@ Item {
 
                 Flow {
                     Layout.fillWidth: true
-                    spacing: Appearance.spacing.sm
+                    spacing: Config.appearance.spacing.small
                     visible: notifItem.itemExpanded && notifActionsRepeater.count > 0
 
                     Repeater {
@@ -326,9 +326,9 @@ Item {
                         delegate: StyledRect {
                             required property var modelData
 
-                            implicitWidth: actionLabel.implicitWidth + Appearance.padding.md * 2
-                            implicitHeight: actionLabel.implicitHeight + Appearance.padding.xs * 2
-                            radius: Appearance.rounding.small
+                            implicitWidth: actionLabel.implicitWidth + Config.appearance.padding.medium * 2
+                            implicitHeight: actionLabel.implicitHeight + Config.appearance.padding.extraSmall * 2
+                            radius: Config.appearance.rounding.small
                             color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.palette.m3secondaryContainer
 
                             StateLayer {
@@ -344,7 +344,7 @@ Item {
                                 id: actionLabel
                                 anchors.centerIn: parent
                                 text: modelData.text ?? ""
-                                font.pointSize: Appearance.font.size.labelSmall
+                                font.pointSize: Config.appearance.font.label.small.size
                                 font.weight: Font.Medium
                                 color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSecondaryContainer
                             }
@@ -355,7 +355,7 @@ Item {
                 MaterialIcon {
                     Layout.alignment: Qt.AlignHCenter
                     text: notifItem.itemExpanded ? "expand_less" : "expand_more"
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     color: Colours.palette.m3outline
                     visible: notifItem.bodyTruncated || notifItem.itemExpanded
                     opacity: 0.6
@@ -364,12 +364,12 @@ Item {
 
             ColumnLayout {
                 Layout.alignment: Qt.AlignTop
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 StyledText {
                     Layout.alignment: Qt.AlignRight
                     text: notifItem.notif?.timeStr ?? ""
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     color: Colours.palette.m3outline
                 }
 
@@ -377,7 +377,7 @@ Item {
                     Layout.preferredWidth: 20
                     Layout.preferredHeight: 20
                     Layout.alignment: Qt.AlignRight
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     color: "transparent"
 
                     StateLayer {
@@ -393,7 +393,7 @@ Item {
                     MaterialIcon {
                         anchors.centerIn: parent
                         text: "close"
-                        font.pointSize: Appearance.font.size.labelMedium
+                        font.pointSize: Config.appearance.font.label.medium.size
                         color: Colours.palette.m3onSurfaceVariant
                     }
                 }

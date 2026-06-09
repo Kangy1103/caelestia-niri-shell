@@ -5,7 +5,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
@@ -17,7 +17,7 @@ CollapsibleSection {
 
     ColumnLayout {
         Layout.fillWidth: true
-        spacing: Appearance.spacing.sm / 2
+        spacing: Config.appearance.spacing.small / 2
 
         Repeater {
             model: Schemes.list
@@ -31,7 +31,7 @@ CollapsibleSection {
                 readonly property bool isCurrent: schemeKey === Schemes.currentScheme
 
                 color: Qt.alpha(Colours.tPalette.m3surfaceContainer, isCurrent ? Colours.tPalette.m3surfaceContainer.a : 0)
-                radius: Appearance.rounding.normal
+                radius: Config.appearance.rounding.large
                 border.width: isCurrent ? 1 : 0
                 border.color: Colours.palette.m3primary
 
@@ -62,9 +62,9 @@ CollapsibleSection {
                     id: schemeRow
 
                     anchors.fill: parent
-                    anchors.margins: Appearance.padding.md
+                    anchors.margins: Config.appearance.padding.medium
 
-                    spacing: Appearance.spacing.lg
+                    spacing: Config.appearance.spacing.large
 
                     StyledRect {
                         id: preview
@@ -75,7 +75,7 @@ CollapsibleSection {
                         border.color: Qt.alpha(`#${modelData.colours?.outline}`, 0.5)
 
                         color: `#${modelData.colours?.surface}`
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
                         implicitWidth: iconPlaceholder.implicitWidth
                         implicitHeight: iconPlaceholder.implicitWidth
 
@@ -83,7 +83,7 @@ CollapsibleSection {
                             id: iconPlaceholder
                             visible: false
                             text: "circle"
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                         }
 
                         Item {
@@ -101,7 +101,7 @@ CollapsibleSection {
 
                                 implicitWidth: preview.implicitWidth
                                 color: `#${modelData.colours?.primary}`
-                                radius: Appearance.rounding.full
+                                radius: Config.appearance.rounding.full
                             }
                         }
                     }
@@ -112,12 +112,12 @@ CollapsibleSection {
 
                         StyledText {
                             text: modelData.flavour ?? ""
-                            font.pointSize: Appearance.font.size.bodyMedium
+                            font.pointSize: Config.appearance.font.body.medium.size
                         }
 
                         StyledText {
                             text: modelData.name ?? ""
-                            font.pointSize: Appearance.font.size.labelLarge
+                            font.pointSize: Config.appearance.font.label.large.size
                             color: Colours.palette.m3outline
 
                             elide: Text.ElideRight
@@ -132,12 +132,12 @@ CollapsibleSection {
                         sourceComponent: MaterialIcon {
                             text: "check"
                             color: Colours.palette.m3onSurfaceVariant
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                         }
                     }
                 }
 
-                implicitHeight: schemeRow.implicitHeight + Appearance.padding.md * 2
+                implicitHeight: schemeRow.implicitHeight + Config.appearance.padding.medium * 2
             }
         }
     }

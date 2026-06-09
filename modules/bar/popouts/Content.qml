@@ -4,7 +4,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Services.SystemTray
 import QtQuick
@@ -16,8 +16,8 @@ Item {
 
     anchors.centerIn: parent
 
-    implicitWidth: (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Appearance.padding.xl * 2
-    implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Appearance.padding.xl * 2
+    implicitWidth: (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Config.appearance.padding.largeIncreased * 2
+    implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Config.appearance.padding.largeIncreased * 2
 
     // Persistent storage for the password network - survives network popout deactivation
     property var pendingPasswordNetwork: null
@@ -26,7 +26,7 @@ Item {
         id: content
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.xl
+        anchors.margins: Config.appearance.padding.largeIncreased
 
         Popout {
             name: "wsWindow"
@@ -174,7 +174,7 @@ Item {
                 SequentialAnimation {
                     Anim {
                         properties: "opacity,scale"
-                        duration: Appearance.anim.durations.small
+                        duration: Config.appearance.anim.durations.small
                     }
                     PropertyAction {
                         target: popout

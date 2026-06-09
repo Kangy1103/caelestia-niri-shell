@@ -4,7 +4,7 @@ import qs.components
 import qs.components.images
 import qs.components.filedialog
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Caelestia
 import QtQuick
@@ -68,30 +68,30 @@ Item {
 
             Row {
                 anchors.centerIn: parent
-                spacing: Appearance.spacing.xxl
+                spacing: Config.appearance.spacing.extraExtraLarge
 
                 MaterialIcon {
                     text: "sentiment_stressed"
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Appearance.font.size.headlineLarge * 5
+                    font.pointSize: Config.appearance.font.headline.large.size * 5
                 }
 
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: Appearance.spacing.sm
+                    spacing: Config.appearance.spacing.small
 
                     StyledText {
                         text: qsTr("Wallpaper missing?")
                         color: Colours.palette.m3onSurfaceVariant
-                        font.pointSize: Appearance.font.size.headlineLarge * 2
+                        font.pointSize: Config.appearance.font.headline.large.size * 2
                         font.bold: true
                     }
 
                     StyledRect {
-                        implicitWidth: selectWallText.implicitWidth + Appearance.padding.xl * 2
-                        implicitHeight: selectWallText.implicitHeight + Appearance.padding.xs * 2
+                        implicitWidth: selectWallText.implicitWidth + Config.appearance.padding.largeIncreased * 2
+                        implicitHeight: selectWallText.implicitHeight + Config.appearance.padding.extraSmall * 2
 
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
                         color: Colours.palette.m3primary
 
                         FileDialog {
@@ -119,7 +119,7 @@ Item {
 
                             text: qsTr("Set it now!")
                             color: Colours.palette.m3onPrimary
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                         }
                     }
                 }

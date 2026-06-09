@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import QtQuick
@@ -12,12 +12,12 @@ Column {
 
     required property PersistentProperties visibilities
 
-    padding: Appearance.padding.xl
+    padding: Config.appearance.padding.largeIncreased
 
     anchors.verticalCenter: parent.verticalCenter
     anchors.left: parent.left
 
-    spacing: Appearance.spacing.xxl
+    spacing: Config.appearance.spacing.extraExtraLarge
 
     SessionButton {
         id: logout
@@ -53,8 +53,8 @@ Column {
     }
 
     AnimatedImage {
-        width: Config.session.sizes.button
-        height: Config.session.sizes.button
+        width: TokenConfig.sizes.session.button
+        height: TokenConfig.sizes.session.button
         sourceSize.width: width
         sourceSize.height: height
 
@@ -89,10 +89,10 @@ Column {
         required property string icon
         required property list<string> command
 
-        implicitWidth: Config.session.sizes.button
-        implicitHeight: Config.session.sizes.button
+        implicitWidth: TokenConfig.sizes.session.button
+        implicitHeight: TokenConfig.sizes.session.button
 
-        radius: Appearance.rounding.large
+        radius: Config.appearance.rounding.large
         color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
 
         Keys.onEnterPressed: Quickshell.execDetached(button.command)
@@ -135,7 +135,7 @@ Column {
 
             text: button.icon
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.headlineLarge
+            font.pointSize: Config.appearance.font.headline.large.size
             font.weight: 500
         }
     }

@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell.Bluetooth
 import QtQuick
@@ -54,12 +54,12 @@ StyledFlickable {
             sections: [
                 Component {
                     ColumnLayout {
-                        spacing: Appearance.spacing.lg
+                        spacing: Config.appearance.spacing.large
 
                         StyledText {
-                            Layout.topMargin: Appearance.spacing.xxl
+                            Layout.topMargin: Config.appearance.spacing.extraExtraLarge
                             text: qsTr("Connection status")
-                            font.pointSize: Appearance.font.size.bodyLarge
+                            font.pointSize: Config.appearance.font.body.large.size
                             font.weight: 500
                         }
 
@@ -70,9 +70,9 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceStatus.implicitHeight + Appearance.padding.xl * 2
+                            implicitHeight: deviceStatus.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
-                            radius: Appearance.rounding.normal
+                            radius: Config.appearance.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -81,9 +81,9 @@ StyledFlickable {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.xl
+                                anchors.margins: Config.appearance.padding.largeIncreased
 
-                                spacing: Appearance.spacing.xl
+                                spacing: Config.appearance.spacing.largeIncreased
 
                                 Toggle {
                                     label: qsTr("Connected")
@@ -113,12 +113,12 @@ StyledFlickable {
                 },
                 Component {
                     ColumnLayout {
-                        spacing: Appearance.spacing.lg
+                        spacing: Config.appearance.spacing.large
 
                         StyledText {
-                            Layout.topMargin: Appearance.spacing.xxl
+                            Layout.topMargin: Config.appearance.spacing.extraExtraLarge
                             text: qsTr("Device properties")
-                            font.pointSize: Appearance.font.size.bodyLarge
+                            font.pointSize: Config.appearance.font.body.large.size
                             font.weight: 500
                         }
 
@@ -129,9 +129,9 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceProps.implicitHeight + Appearance.padding.xl * 2
+                            implicitHeight: deviceProps.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
-                            radius: Appearance.rounding.normal
+                            radius: Config.appearance.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -140,19 +140,19 @@ StyledFlickable {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.xl
+                                anchors.margins: Config.appearance.padding.largeIncreased
 
-                                spacing: Appearance.spacing.xl
+                                spacing: Config.appearance.spacing.largeIncreased
 
                                 RowLayout {
                                     Layout.fillWidth: true
-                                    spacing: Appearance.spacing.sm
+                                    spacing: Config.appearance.spacing.small
 
                                     Item {
                                         id: renameDevice
 
                                         Layout.fillWidth: true
-                                        Layout.rightMargin: Appearance.spacing.sm
+                                        Layout.rightMargin: Config.appearance.spacing.small
 
                                         implicitHeight: renameLabel.implicitHeight + deviceNameEdit.implicitHeight
 
@@ -167,15 +167,15 @@ StyledFlickable {
                                             PropertyChanges {
                                                 renameDevice.implicitHeight: deviceNameEdit.implicitHeight
                                                 renameLabel.opacity: 0
-                                                deviceNameEdit.padding: Appearance.padding.md
+                                                deviceNameEdit.padding: Config.appearance.padding.medium
                                             }
                                         }
 
                                         transitions: Transition {
                                             AnchorAnimation {
-                                                duration: Appearance.anim.durations.normal
+                                                duration: Config.appearance.anim.durations.normal
                                                 easing.type: Easing.BezierSpline
-                                                easing.bezierCurve: Appearance.anim.curves.standard
+                                                easing.bezierCurve: TokenConfig.appearance.curves.standard
                                             }
                                             Anim {
                                                 properties: "implicitHeight,opacity,padding"
@@ -189,7 +189,7 @@ StyledFlickable {
 
                                             text: qsTr("Device name")
                                             color: Colours.palette.m3outline
-                                            font.pointSize: Appearance.font.size.labelLarge
+                                            font.pointSize: Config.appearance.font.label.large.size
                                         }
 
                                         StyledTextField {
@@ -198,7 +198,7 @@ StyledFlickable {
                                             anchors.left: parent.left
                                             anchors.right: parent.right
                                             anchors.top: renameLabel.bottom
-                                            anchors.leftMargin: root.session.bt.editingDeviceName ? 0 : -Appearance.padding.md
+                                            anchors.leftMargin: root.session.bt.editingDeviceName ? 0 : -Config.appearance.padding.medium
 
                                             text: root.device?.name ?? ""
                                             readOnly: !root.session.bt.editingDeviceName
@@ -207,11 +207,11 @@ StyledFlickable {
                                                 root.device.name = text;
                                             }
 
-                                            leftPadding: Appearance.padding.md
-                                            rightPadding: Appearance.padding.md
+                                            leftPadding: Config.appearance.padding.medium
+                                            rightPadding: Config.appearance.padding.medium
 
                                             background: StyledRect {
-                                                radius: Appearance.rounding.small
+                                                radius: Config.appearance.rounding.small
                                                 border.width: 2
                                                 border.color: Colours.palette.m3primary
                                                 opacity: root.session.bt.editingDeviceName ? 1 : 0
@@ -233,9 +233,9 @@ StyledFlickable {
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: cancelEditIcon.implicitHeight + Appearance.padding.sm * 2
+                                        implicitHeight: cancelEditIcon.implicitHeight + Config.appearance.padding.small * 2
 
-                                        radius: Appearance.rounding.small
+                                        radius: Config.appearance.rounding.small
                                         color: Colours.palette.m3secondaryContainer
                                         opacity: root.session.bt.editingDeviceName ? 1 : 0
                                         scale: root.session.bt.editingDeviceName ? 1 : 0.5
@@ -265,17 +265,17 @@ StyledFlickable {
 
                                         Behavior on scale {
                                             Anim {
-                                                duration: Appearance.anim.durations.expressiveFastSpatial
-                                                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                                                duration: Config.appearance.anim.durations.expressiveFastSpatial
+                                                easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                                             }
                                         }
                                     }
 
                                     StyledRect {
                                         implicitWidth: implicitHeight
-                                        implicitHeight: editIcon.implicitHeight + Appearance.padding.sm * 2
+                                        implicitHeight: editIcon.implicitHeight + Config.appearance.padding.small * 2
 
-                                        radius: root.session.bt.editingDeviceName ? Appearance.rounding.small : implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
+                                        radius: root.session.bt.editingDeviceName ? Config.appearance.rounding.small : implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale)
                                         color: Qt.alpha(Colours.palette.m3primary, root.session.bt.editingDeviceName ? 1 : 0)
 
                                         StateLayer {
@@ -322,12 +322,12 @@ StyledFlickable {
                 },
                 Component {
                     ColumnLayout {
-                        spacing: Appearance.spacing.lg
+                        spacing: Config.appearance.spacing.large
 
                         StyledText {
-                            Layout.topMargin: Appearance.spacing.xxl
+                            Layout.topMargin: Config.appearance.spacing.extraExtraLarge
                             text: qsTr("Device information")
-                            font.pointSize: Appearance.font.size.bodyLarge
+                            font.pointSize: Config.appearance.font.body.large.size
                             font.weight: 500
                         }
 
@@ -338,9 +338,9 @@ StyledFlickable {
 
                         StyledRect {
                             Layout.fillWidth: true
-                            implicitHeight: deviceInfo.implicitHeight + Appearance.padding.xl * 2
+                            implicitHeight: deviceInfo.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
-                            radius: Appearance.rounding.normal
+                            radius: Config.appearance.rounding.large
                             color: Colours.tPalette.m3surfaceContainer
 
                             ColumnLayout {
@@ -349,9 +349,9 @@ StyledFlickable {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.xl
+                                anchors.margins: Config.appearance.padding.largeIncreased
 
-                                spacing: Appearance.spacing.sm / 2
+                                spacing: Config.appearance.spacing.small / 2
 
                                 StyledText {
                                     text: root.device?.batteryAvailable ? qsTr("Device battery (%1%)").arg(root.device.battery * 100) : qsTr("Battery unavailable")
@@ -359,15 +359,15 @@ StyledFlickable {
 
                                 RowLayout {
                                     id: batteryPercent
-                                    Layout.topMargin: Appearance.spacing.sm / 2
+                                    Layout.topMargin: Config.appearance.spacing.small / 2
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: Appearance.padding.sm
-                                    spacing: Appearance.spacing.sm / 2
+                                    Layout.preferredHeight: Config.appearance.padding.small
+                                    spacing: Config.appearance.spacing.small / 2
 
                                     StyledRect {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        radius: Appearance.rounding.full
+                                        radius: Config.appearance.rounding.full
                                         color: Colours.palette.m3secondaryContainer
 
                                         StyledRect {
@@ -377,54 +377,54 @@ StyledFlickable {
                                             anchors.margins: parent.height * 0.25
 
                                             implicitWidth: root.device?.batteryAvailable ? batteryPercent.width * root.device.battery : 0
-                                            radius: Appearance.rounding.full
+                                            radius: Config.appearance.rounding.full
                                             color: Colours.palette.m3primary
                                         }
                                     }
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Appearance.spacing.lg
+                                    Layout.topMargin: Config.appearance.spacing.large
                                     text: qsTr("Dbus path")
                                 }
 
                                 StyledText {
                                     text: root.device?.dbusPath ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.labelLarge
+                                    font.pointSize: Config.appearance.font.label.large.size
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Appearance.spacing.lg
+                                    Layout.topMargin: Config.appearance.spacing.large
                                     text: qsTr("MAC address")
                                 }
 
                                 StyledText {
                                     text: root.device?.address ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.labelLarge
+                                    font.pointSize: Config.appearance.font.label.large.size
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Appearance.spacing.lg
+                                    Layout.topMargin: Config.appearance.spacing.large
                                     text: qsTr("Bonded")
                                 }
 
                                 StyledText {
                                     text: root.device?.bonded ? qsTr("Yes") : qsTr("No")
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.labelLarge
+                                    font.pointSize: Config.appearance.font.label.large.size
                                 }
 
                                 StyledText {
-                                    Layout.topMargin: Appearance.spacing.lg
+                                    Layout.topMargin: Config.appearance.spacing.large
                                     text: qsTr("System name")
                                 }
 
                                 StyledText {
                                     text: root.device?.deviceName ?? ""
                                     color: Colours.palette.m3outline
-                                    font.pointSize: Appearance.font.size.labelLarge
+                                    font.pointSize: Config.appearance.font.label.large.size
                                 }
                             }
                         }
@@ -437,7 +437,7 @@ StyledFlickable {
     ColumnLayout {
         anchors.right: fabRoot.right
         anchors.bottom: fabRoot.top
-        anchors.bottomMargin: Appearance.padding.md
+        anchors.bottomMargin: Config.appearance.padding.medium
 
         Repeater {
             id: fabMenu
@@ -469,9 +469,9 @@ StyledFlickable {
 
                 Layout.alignment: Qt.AlignRight
 
-                implicitHeight: fabMenuItemInner.implicitHeight + Appearance.padding.lg * 2
+                implicitHeight: fabMenuItemInner.implicitHeight + Config.appearance.padding.large * 2
 
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: Colours.palette.m3primaryContainer
 
                 opacity: 0
@@ -481,7 +481,7 @@ StyledFlickable {
                     when: root.session.bt.fabMenuOpen
 
                     PropertyChanges {
-                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + Appearance.padding.xl * 2
+                        fabMenuItem.implicitWidth: fabMenuItemInner.implicitWidth + Config.appearance.padding.largeIncreased * 2
                         fabMenuItem.opacity: 1
                         fabMenuItemInner.opacity: 1
                     }
@@ -493,17 +493,17 @@ StyledFlickable {
 
                         SequentialAnimation {
                             PauseAnimation {
-                                duration: (fabMenu.count - 1 - fabMenuItem.index) * Appearance.anim.durations.small / 8
+                                duration: (fabMenu.count - 1 - fabMenuItem.index) * Config.appearance.anim.durations.small / 8
                             }
                             ParallelAnimation {
                                 Anim {
                                     property: "implicitWidth"
-                                    duration: Appearance.anim.durations.expressiveFastSpatial
-                                    easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                                    duration: Config.appearance.anim.durations.expressiveFastSpatial
+                                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                                 }
                                 Anim {
                                     property: "opacity"
-                                    duration: Appearance.anim.durations.small
+                                    duration: Config.appearance.anim.durations.small
                                 }
                             }
                         }
@@ -513,17 +513,17 @@ StyledFlickable {
 
                         SequentialAnimation {
                             PauseAnimation {
-                                duration: fabMenuItem.index * Appearance.anim.durations.small / 8
+                                duration: fabMenuItem.index * Config.appearance.anim.durations.small / 8
                             }
                             ParallelAnimation {
                                 Anim {
                                     property: "implicitWidth"
-                                    duration: Appearance.anim.durations.expressiveFastSpatial
-                                    easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                                    duration: Config.appearance.anim.durations.expressiveFastSpatial
+                                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                                 }
                                 Anim {
                                     property: "opacity"
-                                    duration: Appearance.anim.durations.small
+                                    duration: Config.appearance.anim.durations.small
                                 }
                             }
                         }
@@ -548,7 +548,7 @@ StyledFlickable {
                     id: fabMenuItemInner
 
                     anchors.centerIn: parent
-                    spacing: Appearance.spacing.lg
+                    spacing: Config.appearance.spacing.large
                     opacity: 0
 
                     MaterialIcon {
@@ -566,7 +566,7 @@ StyledFlickable {
 
                         Behavior on Layout.preferredWidth {
                             Anim {
-                                duration: Appearance.anim.durations.small
+                                duration: Config.appearance.anim.durations.small
                             }
                         }
                     }
@@ -593,7 +593,7 @@ StyledFlickable {
             implicitWidth: 64
             implicitHeight: 64
 
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             color: root.session.bt.fabMenuOpen ? Colours.palette.m3primary : Colours.palette.m3primaryContainer
 
             states: State {
@@ -604,15 +604,15 @@ StyledFlickable {
                     fabBg.implicitWidth: 48
                     fabBg.implicitHeight: 48
                     fabBg.radius: 48 / 2
-                    fab.font.pointSize: Appearance.font.size.bodyLarge
+                    fab.font.pointSize: Config.appearance.font.body.large.size
                 }
             }
 
             transitions: Transition {
                 Anim {
                     properties: "implicitWidth,implicitHeight"
-                    duration: Appearance.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                    duration: Config.appearance.anim.durations.expressiveFastSpatial
+                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                 }
                 Anim {
                     properties: "radius,font.pointSize"
@@ -643,7 +643,7 @@ StyledFlickable {
                 animate: true
                 text: root.session.bt.fabMenuOpen ? "close" : "settings"
                 color: root.session.bt.fabMenuOpen ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 fill: 1
             }
         }
@@ -655,7 +655,7 @@ StyledFlickable {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         StyledText {
             Layout.fillWidth: true

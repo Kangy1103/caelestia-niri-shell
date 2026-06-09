@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -50,7 +50,7 @@ Variants {
             opacity: win.visible ? 1 : 0
 
             Behavior on opacity {
-                Anim { duration: Appearance.anim.durations.normal }
+                Anim { duration: Config.appearance.anim.durations.normal }
             }
         }
 
@@ -67,12 +67,12 @@ Variants {
             scale: win.visible ? 1 : 0.92
 
             Behavior on opacity {
-                Anim { duration: Appearance.anim.durations.normal }
+                Anim { duration: Config.appearance.anim.durations.normal }
             }
             Behavior on scale {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                 }
             }
 
@@ -81,9 +81,9 @@ Variants {
 
                 // Width governed by notification panel width × 1.6 for readability
                 implicitWidth: Math.min(480, win.screen?.width ?? 480)
-                implicitHeight: cardLayout.implicitHeight + Appearance.padding.xl * 2
+                implicitHeight: cardLayout.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
-                radius: Appearance.rounding.large
+                radius: Config.appearance.rounding.large
                 color: Colours.tPalette.m3surfaceContainer
 
                 // ── Keyboard handling ──────────────────────────────────────
@@ -99,18 +99,18 @@ Variants {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    anchors.margins: Appearance.padding.xl
+                    anchors.margins: Config.appearance.padding.largeIncreased
 
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     // Header — icon + title
                     RowLayout {
-                        spacing: Appearance.spacing.md
+                        spacing: Config.appearance.spacing.medium
 
                         StyledRect {
-                            implicitWidth: headerIcon.font.pointSize + Appearance.padding.md * 2
+                            implicitWidth: headerIcon.font.pointSize + Config.appearance.padding.medium * 2
                             implicitHeight: implicitWidth
-                            radius: Appearance.rounding.full
+                            radius: Config.appearance.rounding.full
                             color: Colours.palette.m3secondaryContainer
 
                             MaterialIcon {
@@ -118,7 +118,7 @@ Variants {
                                 anchors.centerIn: parent
                                 text: "admin_panel_settings"
                                 color: Colours.palette.m3onSecondaryContainer
-                                font.pointSize: Appearance.font.size.titleMedium
+                                font.pointSize: Config.appearance.font.title.medium.size
                             }
                         }
 
@@ -127,7 +127,7 @@ Variants {
 
                             StyledText {
                                 text: qsTr("Authentication Required")
-                                font.pointSize: Appearance.font.size.titleMedium
+                                font.pointSize: Config.appearance.font.title.medium.size
                                 font.weight: Font.DemiBold
                                 color: Colours.palette.m3onSurface
                             }
@@ -135,7 +135,7 @@ Variants {
                             StyledText {
                                 visible: PolkitService.subjectName.length > 0
                                 text: PolkitService.subjectName
-                                font.pointSize: Appearance.font.size.labelLarge
+                                font.pointSize: Config.appearance.font.label.large.size
                                 color: Colours.palette.m3onSurfaceVariant
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -150,8 +150,8 @@ Variants {
                         Layout.fillWidth: true
 
                         sourceComponent: StyledRect {
-                            implicitHeight: msgText.implicitHeight + Appearance.padding.sm * 2
-                            radius: Appearance.rounding.small
+                            implicitHeight: msgText.implicitHeight + Config.appearance.padding.small * 2
+                            radius: Config.appearance.rounding.small
                             color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
 
                             StyledText {
@@ -159,10 +159,10 @@ Variants {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.right: parent.right
-                                anchors.margins: Appearance.padding.sm
+                                anchors.margins: Config.appearance.padding.small
 
                                 text: PolkitService.cleanMessage
-                                font.pointSize: Appearance.font.size.bodySmall
+                                font.pointSize: Config.appearance.font.body.small.size
                                 color: Colours.palette.m3onSurfaceVariant
                                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             }
@@ -186,10 +186,10 @@ Variants {
                             id: inputBar
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            implicitHeight: inputRow.implicitHeight + Appearance.padding.sm * 2
+                            implicitHeight: inputRow.implicitHeight + Config.appearance.padding.small * 2
 
                             color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.75)
-                            radius: Appearance.rounding.full
+                            radius: Config.appearance.rounding.full
                             border.width: inputField.hasFocus ? 2 : 0
                             border.color: PolkitService.submitting
                                 ? Colours.palette.m3secondary
@@ -201,13 +201,13 @@ Variants {
                                 id: inputRow
 
                                 anchors.fill: parent
-                                anchors.margins: Appearance.padding.sm
-                                spacing: Appearance.spacing.md
+                                anchors.margins: Config.appearance.padding.small
+                                spacing: Config.appearance.spacing.medium
 
                                 // State icon / busy indicator
                                 Item {
                                     implicitWidth: implicitHeight
-                                    implicitHeight: stateIcon.implicitHeight + Appearance.padding.xs * 2
+                                    implicitHeight: stateIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
                                     MaterialIcon {
                                         id: stateIcon
@@ -217,7 +217,7 @@ Variants {
                                         color: PolkitService.submitting
                                             ? Colours.palette.m3secondary
                                             : Colours.palette.m3onSurfaceVariant
-                                        font.pointSize: Appearance.font.size.bodyMedium
+                                        font.pointSize: Config.appearance.font.body.medium.size
                                         opacity: PolkitService.submitting ? 0 : 1
                                         Behavior on opacity { Anim {} }
                                     }
@@ -240,7 +240,7 @@ Variants {
                                         ? TextInput.Normal
                                         : TextInput.Password
                                     enabled: PolkitService.interactionAvailable && !PolkitService.submitting
-                                    font.pointSize: Appearance.font.size.bodySmall
+                                    font.pointSize: Config.appearance.font.body.small.size
 
                                     Keys.onReturnPressed: dialogContent.trySubmit()
                                     Keys.onEnterPressed:  dialogContent.trySubmit()
@@ -266,12 +266,12 @@ Variants {
                                 // Submit arrow button
                                 StyledRect {
                                     implicitWidth: implicitHeight
-                                    implicitHeight: submitIcon.implicitHeight + Appearance.padding.sm * 2
+                                    implicitHeight: submitIcon.implicitHeight + Config.appearance.padding.small * 2
 
                                     color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                         ? Colours.palette.m3primary
                                         : Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.8)
-                                    radius: Appearance.rounding.full
+                                    radius: Config.appearance.rounding.full
 
                                     CAnim { properties: "color" }
 
@@ -279,7 +279,7 @@ Variants {
                                         color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                             ? Colours.palette.m3onPrimary
                                             : Colours.palette.m3onSurface
-                                        radius: Appearance.rounding.full
+                                        radius: Config.appearance.rounding.full
 
                                         function onClicked(): void {
                                             dialogContent.trySubmit();
@@ -293,7 +293,7 @@ Variants {
                                         color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                             ? Colours.palette.m3onPrimary
                                             : Colours.palette.m3onSurface
-                                        font.pointSize: Appearance.font.size.bodyMedium
+                                        font.pointSize: Config.appearance.font.body.medium.size
                                         font.weight: 500
 
                                         CAnim { properties: "color" }
@@ -317,7 +317,7 @@ Variants {
                             opacity: PolkitService.failedAttempts > 0 && PolkitService.active ? 1 : 0
                             text: qsTr("Incorrect password. Please try again.")
                             color: Colours.palette.m3error
-                            font.pointSize: Appearance.font.size.labelLarge
+                            font.pointSize: Config.appearance.font.label.large.size
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -328,18 +328,18 @@ Variants {
                     // ── Action buttons ─────────────────────────────────────
                     RowLayout {
                         Layout.alignment: Qt.AlignRight
-                        spacing: Appearance.spacing.md
+                        spacing: Config.appearance.spacing.medium
 
                         // Cancel button
                         StyledRect {
-                            implicitWidth: cancelText.implicitWidth + Appearance.padding.lg * 2
-                            implicitHeight: cancelText.implicitHeight + Appearance.padding.sm * 2
+                            implicitWidth: cancelText.implicitWidth + Config.appearance.padding.large * 2
+                            implicitHeight: cancelText.implicitHeight + Config.appearance.padding.small * 2
 
-                            radius: Appearance.rounding.full
+                            radius: Config.appearance.rounding.full
                             color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
 
                             StateLayer {
-                                radius: Appearance.rounding.full
+                                radius: Config.appearance.rounding.full
                                 color: Colours.palette.m3onSurface
 
                                 function onClicked(): void {
@@ -352,17 +352,17 @@ Variants {
                                 anchors.centerIn: parent
                                 text: qsTr("Cancel")
                                 color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Appearance.font.size.labelLarge
+                                font.pointSize: Config.appearance.font.label.large.size
                                 font.weight: Font.Medium
                             }
                         }
 
                         // Authenticate button
                         StyledRect {
-                            implicitWidth: authenticateText.implicitWidth + Appearance.padding.lg * 2
-                            implicitHeight: authenticateText.implicitHeight + Appearance.padding.sm * 2
+                            implicitWidth: authenticateText.implicitWidth + Config.appearance.padding.large * 2
+                            implicitHeight: authenticateText.implicitHeight + Config.appearance.padding.small * 2
 
-                            radius: Appearance.rounding.full
+                            radius: Config.appearance.rounding.full
                             color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                 ? Colours.palette.m3primary
                                 : Qt.alpha(Colours.palette.m3primary, 0.4)
@@ -370,7 +370,7 @@ Variants {
                             CAnim { properties: "color" }
 
                             StateLayer {
-                                radius: Appearance.rounding.full
+                                radius: Config.appearance.rounding.full
                                 color: Colours.palette.m3onPrimary
                                 enabled: inputField.text.length > 0 && PolkitService.interactionAvailable
 
@@ -384,7 +384,7 @@ Variants {
                                 anchors.centerIn: parent
                                 text: qsTr("Authenticate")
                                 color: Colours.palette.m3onPrimary
-                                font.pointSize: Appearance.font.size.labelLarge
+                                font.pointSize: Config.appearance.font.label.large.size
                                 font.weight: Font.Medium
                             }
                         }

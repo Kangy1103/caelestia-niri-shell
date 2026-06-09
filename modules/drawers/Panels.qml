@@ -1,4 +1,4 @@
-import qs.config
+import Caelestia.Config
 import qs.modules.osd as Osd
 import qs.modules.notifications as Notifications
 import qs.modules.session as Session
@@ -145,6 +145,6 @@ Item {
         width: implicitWidth
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
     }
 }

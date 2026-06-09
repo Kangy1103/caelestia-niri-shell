@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -24,9 +24,9 @@ Item {
     property bool actionOnClick: Config.notifs.actionOnClick ?? false
     property int groupPreviewNum: Config.notifs.groupPreviewNum ?? 3
     property int expandThreshold: Config.notifs.expandThreshold ?? 20
-    property int popupWidth: Config.notifs.sizes.width ?? 400
-    property int imageSize: Config.notifs.sizes.image ?? 41
-    property int badgeSize: Config.notifs.sizes.badge ?? 20
+    property int popupWidth: TokenConfig.sizes.notifs.width ?? 400
+    property int imageSize: TokenConfig.sizes.notifs.image ?? 41
+    property int badgeSize: TokenConfig.sizes.notifs.badge ?? 20
 
     anchors.fill: parent
 
@@ -37,18 +37,17 @@ Item {
         Config.notifs.actionOnClick = root.actionOnClick;
         Config.notifs.groupPreviewNum = root.groupPreviewNum;
         Config.notifs.expandThreshold = root.expandThreshold;
-        Config.notifs.sizes.width = root.popupWidth;
-        Config.notifs.sizes.image = root.imageSize;
-        Config.notifs.sizes.badge = root.badgeSize;
-        Config.markDirty("notifs");
+        TokenConfig.sizes.notifs.width = root.popupWidth;
+        TokenConfig.sizes.notifs.image = root.imageSize;
+        TokenConfig.sizes.notifs.badge = root.badgeSize;
     }
 
     ClippingRectangle {
         id: notifsClippingRect
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
+        anchors.margins: Config.appearance.padding.medium
         anchors.leftMargin: 0
-        anchors.rightMargin: Appearance.padding.md
+        anchors.rightMargin: Config.appearance.padding.medium
 
         radius: notifsBorder.innerRadius
         color: "transparent"
@@ -56,9 +55,9 @@ Item {
         Loader {
             id: notifsLoader
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xl + Appearance.padding.md
-            anchors.leftMargin: Appearance.padding.xl
-            anchors.rightMargin: Appearance.padding.xl
+            anchors.margins: Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+            anchors.leftMargin: Config.appearance.padding.largeIncreased
+            anchors.rightMargin: Config.appearance.padding.largeIncreased
 
             sourceComponent: notifsContentComponent
         }
@@ -67,7 +66,7 @@ Item {
     InnerBorder {
         id: notifsBorder
         leftThickness: 0
-        rightThickness: Appearance.padding.md
+        rightThickness: Config.appearance.padding.medium
     }
 
     Component {
@@ -87,14 +86,14 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("Notifications")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
                 }
@@ -105,7 +104,7 @@ Item {
 
                     StyledText {
                         text: qsTr("Behaviour")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SwitchRow {
@@ -127,7 +126,7 @@ Item {
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true
@@ -156,11 +155,11 @@ Item {
 
                     StyledText {
                         text: qsTr("Gestures")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true
@@ -207,11 +206,11 @@ Item {
 
                     StyledText {
                         text: qsTr("Display")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                     }
 
                     SectionContainer {
-                        contentSpacing: Appearance.spacing.lg
+                        contentSpacing: Config.appearance.spacing.large
 
                         SliderInput {
                             Layout.fillWidth: true

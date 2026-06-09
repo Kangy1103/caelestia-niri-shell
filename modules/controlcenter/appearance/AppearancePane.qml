@@ -9,7 +9,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import Quickshell.Widgets
@@ -22,10 +22,10 @@ Item {
     required property Session session
 
     property real animDurationsScale: Config.appearance.anim.durations.scale ?? 1
-    property string fontFamilyMaterial: Config.appearance.font.family.material ?? "Material Symbols Rounded"
-    property string fontFamilyMono: Config.appearance.font.family.mono ?? "CaskaydiaCove NF"
-    property string fontFamilySans: Config.appearance.font.family.sans ?? "Rubik"
-    property real fontSizeScale: Config.appearance.font.size.scale ?? 1
+    property string fontFamilyMaterial: Config.appearance.font.icon.family ?? "Material Symbols Rounded"
+    property string fontFamilyMono: Config.appearance.font.mono.family ?? "CaskaydiaCove NF"
+    property string fontFamilySans: Config.appearance.font.body.family ?? "Rubik"
+    property real fontSizeScale: Config.appearance.font.scale ?? 1
     property real paddingScale: Config.appearance.padding.scale ?? 1
     property real roundingScale: Config.appearance.rounding.scale ?? 1
     property real spacingScale: Config.appearance.spacing.scale ?? 1
@@ -58,10 +58,10 @@ Item {
     function saveConfig() {
         Config.appearance.anim.durations.scale = root.animDurationsScale;
 
-        Config.appearance.font.family.material = root.fontFamilyMaterial;
-        Config.appearance.font.family.mono = root.fontFamilyMono;
-        Config.appearance.font.family.sans = root.fontFamilySans;
-        Config.appearance.font.size.scale = root.fontSizeScale;
+        Config.appearance.font.icon.family = root.fontFamilyMaterial;
+        Config.appearance.font.mono.family = root.fontFamilyMono;
+        Config.appearance.font.body.family = root.fontFamilySans;
+        Config.appearance.font.scale = root.fontSizeScale;
 
         Config.appearance.padding.scale = root.paddingScale;
         Config.appearance.rounding.scale = root.roundingScale;
@@ -94,9 +94,6 @@ Item {
         Config.border.rounding = root.borderRounding;
         Config.border.thickness = root.borderThickness;
 
-        Config.markDirty("appearance");
-        Config.markDirty("background");
-        Config.markDirty("border");
     }
 
     Component {
@@ -116,13 +113,13 @@ Item {
                 id: contentLayout
                 anchors.left: parent.left
                 anchors.right: parent.right
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: Appearance.padding.xl
+                    Layout.topMargin: Config.appearance.padding.largeIncreased
                     text: qsTr("Wallpaper")
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Config.appearance.font.headline.large.size
                     font.weight: 600
                 }
 
@@ -170,18 +167,18 @@ Item {
                     id: sidebarLayout
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    spacing: Appearance.spacing.sm
+                    spacing: Config.appearance.spacing.small
 
                     readonly property var rootPane: sidebarFlickable.rootPane
 
                     readonly property bool allSectionsExpanded: themeModeSection.expanded && colorVariantSection.expanded && colorSchemeSection.expanded && animationsSection.expanded && fontsSection.expanded && scalesSection.expanded && transparencySection.expanded && borderSection.expanded && backgroundSection.expanded
 
                     RowLayout {
-                        spacing: Appearance.spacing.md
+                        spacing: Config.appearance.spacing.medium
 
                         StyledText {
                             text: qsTr("Appearance")
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                             font.weight: 500
                         }
 

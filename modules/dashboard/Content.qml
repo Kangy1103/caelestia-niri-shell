@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -43,8 +43,8 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Appearance.padding.md
-        anchors.margins: Appearance.padding.xl
+        anchors.topMargin: Config.appearance.padding.medium
+        anchors.margins: Config.appearance.padding.largeIncreased
 
         nonAnimWidth: root.nonAnimWidth - anchors.margins * 2
         state: root.state
@@ -57,9 +57,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Appearance.padding.xl
+        anchors.margins: Config.appearance.padding.largeIncreased
 
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
         color: "transparent"
 
         ColumnLayout {
@@ -158,15 +158,15 @@ Item {
 
     Behavior on implicitWidth {
         Anim {
-            duration: Appearance.anim.durations.large
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            duration: Config.appearance.anim.durations.large
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 
     Behavior on implicitHeight {
         Anim {
-            duration: Appearance.anim.durations.large
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            duration: Config.appearance.anim.durations.large
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 

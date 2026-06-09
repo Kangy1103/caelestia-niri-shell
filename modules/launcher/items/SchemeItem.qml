@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 Item {
@@ -9,13 +9,13 @@ Item {
     required property Schemes.Scheme modelData
     required property var list
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: TokenConfig.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
 
         function onClicked(): void {
             root.modelData?.onClicked(root.list);
@@ -24,9 +24,9 @@ Item {
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Appearance.padding.lg
-        anchors.rightMargin: Appearance.padding.lg
-        anchors.margins: Appearance.padding.sm
+        anchors.leftMargin: Config.appearance.padding.large
+        anchors.rightMargin: Config.appearance.padding.large
+        anchors.margins: Config.appearance.padding.small
 
         StyledRect {
             id: preview
@@ -37,7 +37,7 @@ Item {
             border.color: Qt.alpha(`#${root.modelData?.colours?.outline}`, 0.5)
 
             color: `#${root.modelData?.colours?.surface}`
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             implicitWidth: parent.height * 0.8
             implicitHeight: parent.height * 0.8
 
@@ -56,27 +56,27 @@ Item {
 
                     implicitWidth: preview.implicitWidth
                     color: `#${root.modelData?.colours?.primary}`
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                 }
             }
         }
 
         Column {
             anchors.left: preview.right
-            anchors.leftMargin: Appearance.spacing.lg
+            anchors.leftMargin: Config.appearance.spacing.large
             anchors.verticalCenter: parent.verticalCenter
 
-            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Appearance.spacing.lg : 0)
+            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Config.appearance.spacing.large : 0)
             spacing: 0
 
             StyledText {
                 text: root.modelData?.flavour ?? ""
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Config.appearance.font.body.medium.size
             }
 
             StyledText {
                 text: root.modelData?.name ?? ""
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight
@@ -97,7 +97,7 @@ Item {
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
             }
         }
     }

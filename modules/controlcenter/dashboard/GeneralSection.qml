@@ -3,7 +3,7 @@ import "../components"
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -17,7 +17,7 @@ SectionContainer {
 
     StyledText {
         text: qsTr("General Settings")
-        font.pointSize: Appearance.font.size.bodyMedium
+        font.pointSize: Config.appearance.font.body.medium.size
     }
 
     SwitchRow {
@@ -48,7 +48,7 @@ SectionContainer {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         SliderInput {
             Layout.fillWidth: true

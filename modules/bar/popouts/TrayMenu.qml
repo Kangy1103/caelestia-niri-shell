@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -43,8 +43,8 @@ StackView {
         property bool isSubMenu
         property bool shown
 
-        padding: Appearance.padding.sm
-        spacing: Appearance.spacing.sm
+        padding: Config.appearance.padding.small
+        spacing: Config.appearance.spacing.small
 
         opacity: shown ? 1 : 0
         scale: shown ? 1 : 0.8
@@ -76,10 +76,10 @@ StackView {
 
                 required property QsMenuEntry modelData
 
-                implicitWidth: Config.bar.sizes.trayMenuWidth
+                implicitWidth: TokenConfig.sizes.bar.trayMenuWidth
                 implicitHeight: modelData.isSeparator ? 1 : children.implicitHeight
 
-                radius: Appearance.rounding.full
+                radius: Config.appearance.rounding.full
                 color: modelData.isSeparator ? Colours.palette.m3outlineVariant : "transparent"
 
                 Loader {
@@ -95,9 +95,9 @@ StackView {
                         implicitHeight: label.implicitHeight
 
                         StateLayer {
-                            anchors.margins: -Appearance.padding.xs / 2
-                            anchors.leftMargin: -Appearance.padding.sm
-                            anchors.rightMargin: -Appearance.padding.sm
+                            anchors.margins: -Config.appearance.padding.extraSmall / 2
+                            anchors.leftMargin: -Config.appearance.padding.small
+                            anchors.rightMargin: -Config.appearance.padding.small
 
                             radius: item.radius
                             disabled: !item.modelData.enabled
@@ -135,7 +135,7 @@ StackView {
                             id: label
 
                             anchors.left: icon.right
-                            anchors.leftMargin: icon.active ? Appearance.spacing.md : 0
+                            anchors.leftMargin: icon.active ? Config.appearance.spacing.medium : 0
 
                             text: labelMetrics.elidedText
                             color: item.modelData.enabled ? Colours.palette.m3onSurface : Colours.palette.m3outline
@@ -149,7 +149,7 @@ StackView {
                             font.family: label.font.family
 
                             elide: Text.ElideRight
-                            elideWidth: Config.bar.sizes.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Appearance.spacing.lg : 0)
+                            elideWidth: TokenConfig.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Config.appearance.spacing.large : 0)
                         }
 
                         Loader {
@@ -177,7 +177,7 @@ StackView {
 
             sourceComponent: Item {
                 implicitWidth: back.implicitWidth
-                implicitHeight: back.implicitHeight + Appearance.spacing.sm / 2
+                implicitHeight: back.implicitHeight + Config.appearance.spacing.small / 2
 
                 Item {
                     anchors.bottom: parent.bottom
@@ -186,11 +186,11 @@ StackView {
 
                     StyledRect {
                         anchors.fill: parent
-                        anchors.margins: -Appearance.padding.xs / 2
-                        anchors.leftMargin: -Appearance.padding.sm
-                        anchors.rightMargin: -Appearance.padding.sm * 2
+                        anchors.margins: -Config.appearance.padding.extraSmall / 2
+                        anchors.leftMargin: -Config.appearance.padding.small
+                        anchors.rightMargin: -Config.appearance.padding.small * 2
 
-                        radius: Appearance.rounding.full
+                        radius: Config.appearance.rounding.full
                         color: Colours.palette.m3secondaryContainer
 
                         StateLayer {

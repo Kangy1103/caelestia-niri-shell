@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.modules.controlcenter
 import Quickshell
 import QtQuick
@@ -15,17 +15,17 @@ Item {
     required property Session session
     required property bool initialOpeningComplete
 
-    implicitWidth: navFlickable.implicitWidth + Appearance.padding.xl * 2
+    implicitWidth: navFlickable.implicitWidth + Config.appearance.padding.largeIncreased * 2
     implicitHeight: parent ? parent.height : 400
 
     Flickable {
         id: navFlickable
 
         anchors.fill: parent
-        anchors.leftMargin: Appearance.padding.xl
-        anchors.rightMargin: Appearance.padding.xl
-        anchors.topMargin: Appearance.padding.lg
-        anchors.bottomMargin: Appearance.padding.lg
+        anchors.leftMargin: Config.appearance.padding.largeIncreased
+        anchors.rightMargin: Config.appearance.padding.largeIncreased
+        anchors.topMargin: Config.appearance.padding.large
+        anchors.bottomMargin: Config.appearance.padding.large
 
         contentHeight: layout.implicitHeight
         contentWidth: layout.implicitWidth
@@ -40,16 +40,16 @@ Item {
             spacing: 2
 
             Loader {
-                Layout.bottomMargin: Appearance.spacing.xs
+                Layout.bottomMargin: Config.appearance.spacing.extraSmall
                 active: !root.session.floating
                 visible: active
 
                 sourceComponent: StyledRect {
-                    implicitWidth: floatRow.implicitWidth + Appearance.padding.xl * 2
-                    implicitHeight: floatRow.implicitHeight + Appearance.padding.md * 2
+                    implicitWidth: floatRow.implicitWidth + Config.appearance.padding.largeIncreased * 2
+                    implicitHeight: floatRow.implicitHeight + Config.appearance.padding.medium * 2
 
                     color: Colours.palette.m3primaryContainer
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
 
                     StateLayer {
                         color: Colours.palette.m3onPrimaryContainer
@@ -67,18 +67,18 @@ Item {
                         id: floatRow
 
                         anchors.centerIn: parent
-                        spacing: Appearance.spacing.sm
+                        spacing: Config.appearance.spacing.small
 
                         MaterialIcon {
                             text: "open_in_new"
                             color: Colours.palette.m3onPrimaryContainer
-                            font.pointSize: Appearance.font.size.bodyLarge
+                            font.pointSize: Config.appearance.font.body.large.size
                         }
 
                         StyledText {
                             text: qsTr("Float window")
                             color: Colours.palette.m3onPrimaryContainer
-                            font.pointSize: Appearance.font.size.bodySmall
+                            font.pointSize: Config.appearance.font.body.small.size
                         }
                     }
                 }
@@ -88,8 +88,8 @@ Item {
                 active: !root.session.floating
                 visible: active
                 Layout.fillWidth: true
-                Layout.topMargin: Appearance.spacing.xs
-                Layout.bottomMargin: Appearance.spacing.sm
+                Layout.topMargin: Config.appearance.spacing.extraSmall
+                Layout.bottomMargin: Config.appearance.spacing.small
 
                 sourceComponent: Rectangle {
                     implicitHeight: 1
@@ -110,10 +110,10 @@ Item {
                         active: navDelegate.index > 0 && PaneRegistry.isFirstInCategory(navDelegate.index)
                         visible: active
                         Layout.fillWidth: true
-                        Layout.leftMargin: Appearance.padding.md
-                        Layout.rightMargin: Appearance.padding.md
-                        Layout.topMargin: Appearance.spacing.sm
-                        Layout.bottomMargin: Appearance.spacing.sm
+                        Layout.leftMargin: Config.appearance.padding.medium
+                        Layout.rightMargin: Config.appearance.padding.medium
+                        Layout.topMargin: Config.appearance.spacing.small
+                        Layout.bottomMargin: Config.appearance.spacing.small
 
                         sourceComponent: Rectangle {
                             implicitHeight: 1
@@ -146,11 +146,11 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
             color: Qt.alpha(Colours.palette.m3secondaryContainer, item.active ? 1 : 0)
 
-            implicitWidth: itemIcon.implicitWidth + itemIcon.anchors.leftMargin + itemLabel.anchors.leftMargin + itemLabel.implicitWidth + Appearance.padding.xl
-            implicitHeight: Math.max(itemIcon.implicitHeight, itemLabel.implicitHeight) + Appearance.padding.md * 2
+            implicitWidth: itemIcon.implicitWidth + itemIcon.anchors.leftMargin + itemLabel.anchors.leftMargin + itemLabel.implicitWidth + Config.appearance.padding.largeIncreased
+            implicitHeight: Math.max(itemIcon.implicitHeight, itemLabel.implicitHeight) + Config.appearance.padding.medium * 2
 
             Behavior on color {
                 CAnim {}
@@ -171,11 +171,11 @@ Item {
 
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: Appearance.padding.xl
+                anchors.leftMargin: Config.appearance.padding.largeIncreased
 
                 text: item.icon
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.bodyLarge
+                font.pointSize: Config.appearance.font.body.large.size
                 fill: item.active ? 1 : 0
 
                 Behavior on fill {
@@ -192,11 +192,11 @@ Item {
 
                 anchors.left: itemIcon.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: Appearance.spacing.lg
+                anchors.leftMargin: Config.appearance.spacing.large
 
                 text: item.label
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Config.appearance.font.body.small.size
                 font.weight: item.active ? Font.DemiBold : Font.Normal
                 font.capitalization: Font.Capitalize
 

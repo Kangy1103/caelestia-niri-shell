@@ -5,7 +5,7 @@ import QtQuick
 import Quickshell
 import Caelestia
 import Caelestia.Internal
-import qs.config
+import Caelestia.Config
 import qs.services
 import qs.utils
 
@@ -29,7 +29,7 @@ Singleton {
     property string wsContextType: "none"
     
     property Timer wsAnchorClearTimer: Timer {
-        interval: Appearance.anim.durations.normal
+        interval: Config.appearance.anim.durations.normal
         repeat: false
         onTriggered: {
             if (root.wsContextAnchor === null) {

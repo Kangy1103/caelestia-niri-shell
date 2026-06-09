@@ -8,7 +8,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import QtQuick
 import QtQuick.Layouts
@@ -102,7 +102,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -124,8 +124,8 @@ DeviceDetails {
 
                     TextButton {
                         Layout.fillWidth: true
-                        Layout.topMargin: Appearance.spacing.lg
-                        Layout.minimumHeight: Appearance.font.size.bodyMedium + Appearance.padding.md * 2
+                        Layout.topMargin: Config.appearance.spacing.large
+                        Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
                         visible: {
                             if (!root.network || !root.network.ssid) {
                                 return false;
@@ -150,7 +150,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Network properties")
@@ -158,7 +158,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Appearance.spacing.sm / 2
+                    contentSpacing: Config.appearance.spacing.small / 2
 
                     PropertyRow {
                         label: qsTr("SSID")
@@ -193,7 +193,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Connection information")

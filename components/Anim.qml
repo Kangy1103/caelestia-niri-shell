@@ -1,8 +1,8 @@
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 NumberAnimation {
-    duration: Appearance.anim.durations.normal
+    duration: Config.appearance.anim.durations.normal
     easing.type: Easing.BezierSpline
-    easing.bezierCurve: Appearance.anim.curves.standard
+    easing.bezierCurve: TokenConfig.appearance.curves.standard
 }

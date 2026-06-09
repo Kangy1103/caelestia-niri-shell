@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -10,9 +10,9 @@ import QtQuick
 Column {
     id: root
 
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
     width: 200
-    topPadding: Appearance.padding.xs
+    topPadding: Config.appearance.padding.extraSmall
 
     property string stasisState: "idle_waiting"
     property string stasisProfile: "default"
@@ -49,14 +49,14 @@ Column {
 
     StyledText {
         text: stasisState === "manually_inhibited" ? "Paused" : "Default"
-        font.pointSize: Appearance.font.size.labelLarge
+        font.pointSize: Config.appearance.font.label.large.size
         font.weight: 500
     }
 
     StyledRect {
         width: parent.width
-        implicitHeight: pauseLabel.implicitHeight + Appearance.padding.sm * 2
-        radius: Appearance.rounding.normal
+        implicitHeight: pauseLabel.implicitHeight + Config.appearance.padding.small * 2
+        radius: Config.appearance.rounding.large
         color: stasisState === "manually_inhibited" ? Colours.palette.m3tertiary : Colours.palette.m3primary
 
         StateLayer {
@@ -70,20 +70,20 @@ Column {
             anchors.centerIn: parent
             text: stasisState === "manually_inhibited" ? "Resume" : "Pause"
             color: stasisState === "manually_inhibited" ? Colours.palette.m3onTertiary : Colours.palette.m3onPrimary
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
     }
 
     StyledText {
         text: "Profiles"
-        font.pointSize: Appearance.font.size.labelLarge
+        font.pointSize: Config.appearance.font.label.large.size
         font.weight: 500
     }
 
     StyledRect {
         width: parent.width
-        implicitHeight: defLabel.implicitHeight + Appearance.padding.sm * 2
-        radius: Appearance.rounding.normal
+        implicitHeight: defLabel.implicitHeight + Config.appearance.padding.small * 2
+        radius: Config.appearance.rounding.large
         color: stasisProfile === "none" || stasisProfile === "default"
             ? Colours.palette.m3primaryContainer
             : Colours.tPalette.m3surfaceContainer
@@ -101,14 +101,14 @@ Column {
             color: stasisProfile === "none" || stasisProfile === "default"
                 ? Colours.palette.m3onPrimaryContainer
                 : Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
     }
 
     StyledRect {
         width: parent.width
-        implicitHeight: gamingLabel.implicitHeight + Appearance.padding.sm * 2
-        radius: Appearance.rounding.normal
+        implicitHeight: gamingLabel.implicitHeight + Config.appearance.padding.small * 2
+        radius: Config.appearance.rounding.large
         color: stasisProfile === "gaming"
             ? Colours.palette.m3primaryContainer
             : Colours.tPalette.m3surfaceContainer
@@ -126,14 +126,14 @@ Column {
             color: stasisProfile === "gaming"
                 ? Colours.palette.m3onPrimaryContainer
                 : Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
     }
 
     StyledRect {
         width: parent.width
-        implicitHeight: videoLabel.implicitHeight + Appearance.padding.sm * 2
-        radius: Appearance.rounding.normal
+        implicitHeight: videoLabel.implicitHeight + Config.appearance.padding.small * 2
+        radius: Config.appearance.rounding.large
         color: stasisProfile === "video"
             ? Colours.palette.m3primaryContainer
             : Colours.tPalette.m3surfaceContainer
@@ -151,7 +151,7 @@ Column {
             color: stasisProfile === "video"
                 ? Colours.palette.m3onPrimaryContainer
                 : Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
     }
 }

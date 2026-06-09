@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import ".."
 import "../effects"
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -16,7 +16,7 @@ Elevation {
 
     signal itemSelected(item: MenuItem)
 
-    radius: Appearance.rounding.small / 2
+    radius: Config.appearance.rounding.small / 2
     level: 2
 
     implicitWidth: Math.max(200, column.implicitWidth)
@@ -46,8 +46,8 @@ Elevation {
                     readonly property bool active: modelData === root.active
 
                     Layout.fillWidth: true
-                    implicitWidth: menuOptionRow.implicitWidth + Appearance.padding.md * 2
-                    implicitHeight: menuOptionRow.implicitHeight + Appearance.padding.md * 2
+                    implicitWidth: menuOptionRow.implicitWidth + Config.appearance.padding.medium * 2
+                    implicitHeight: menuOptionRow.implicitHeight + Config.appearance.padding.medium * 2
 
                     color: Qt.alpha(Colours.palette.m3secondaryContainer, active ? 1 : 0)
 
@@ -66,8 +66,8 @@ Elevation {
                         id: menuOptionRow
 
                         anchors.fill: parent
-                        anchors.margins: Appearance.padding.md
-                        spacing: Appearance.spacing.sm
+                        anchors.margins: Config.appearance.padding.medium
+                        spacing: Config.appearance.spacing.small
 
                         MaterialIcon {
                             Layout.alignment: Qt.AlignVCenter
@@ -100,14 +100,14 @@ Elevation {
 
     Behavior on opacity {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
+            duration: Config.appearance.anim.durations.expressiveDefaultSpatial
         }
     }
 
     Behavior on implicitHeight {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
         }
     }
 }

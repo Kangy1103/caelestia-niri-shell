@@ -6,7 +6,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -19,7 +19,7 @@ CollapsibleSection {
     showBackground: true
 
     ColumnLayout {
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
         Layout.fillWidth: true
 
     SwitchRow {
@@ -41,9 +41,9 @@ CollapsibleSection {
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.lg
+        Layout.topMargin: Config.appearance.spacing.large
         text: qsTr("Desktop Clock")
-        font.pointSize: Appearance.font.size.bodyLarge
+        font.pointSize: Config.appearance.font.body.large.size
         font.weight: 500
     }
 
@@ -59,7 +59,7 @@ CollapsibleSection {
     SectionContainer {
         id: posContainer
 
-        contentSpacing: Appearance.spacing.sm
+        contentSpacing: Config.appearance.spacing.small
         z: 1
 
         readonly property var pos: (rootPane.desktopClockPosition || "top-left").split('-')
@@ -73,7 +73,7 @@ CollapsibleSection {
 
         StyledText {
             text: qsTr("Positioning")
-            font.pointSize: Appearance.font.size.bodyLarge
+            font.pointSize: Config.appearance.font.body.large.size
             font.weight: 500
         }
 
@@ -154,11 +154,11 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm
+        contentSpacing: Config.appearance.spacing.small
 
         StyledText {
             text: qsTr("Shadow")
-            font.pointSize: Appearance.font.size.bodyLarge
+            font.pointSize: Config.appearance.font.body.large.size
             font.weight: 500
         }
 
@@ -172,7 +172,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Appearance.spacing.lg
+            contentSpacing: Config.appearance.spacing.large
 
             SliderInput {
                 Layout.fillWidth: true
@@ -197,7 +197,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Appearance.spacing.lg
+            contentSpacing: Config.appearance.spacing.large
 
             SliderInput {
                 Layout.fillWidth: true
@@ -223,11 +223,11 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.sm
+        contentSpacing: Config.appearance.spacing.small
 
         StyledText {
             text: qsTr("Background")
-            font.pointSize: Appearance.font.size.bodyLarge
+            font.pointSize: Config.appearance.font.body.large.size
             font.weight: 500
         }
 
@@ -250,7 +250,7 @@ CollapsibleSection {
         }
 
         SectionContainer {
-            contentSpacing: Appearance.spacing.lg
+            contentSpacing: Config.appearance.spacing.large
 
             SliderInput {
                 Layout.fillWidth: true
@@ -276,9 +276,9 @@ CollapsibleSection {
     }
 
     StyledText {
-        Layout.topMargin: Appearance.spacing.lg
+        Layout.topMargin: Config.appearance.spacing.large
         text: qsTr("Visualiser")
-        font.pointSize: Appearance.font.size.bodyLarge
+        font.pointSize: Config.appearance.font.body.large.size
         font.weight: 500
     }
 
@@ -301,7 +301,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         SliderInput {
             Layout.fillWidth: true
@@ -326,7 +326,7 @@ CollapsibleSection {
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         SliderInput {
             Layout.fillWidth: true

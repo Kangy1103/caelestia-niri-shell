@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
-import qs.config
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.effects

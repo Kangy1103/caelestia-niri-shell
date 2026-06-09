@@ -1,5 +1,5 @@
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Effects
 
@@ -11,13 +11,13 @@ RectangularShadow {
     blur: (dp * 5) ** 0.7
     spread: -dp * 0.3 + (dp * 0.1) ** 2
     // offset.y: dp / 2
-    radius: Appearance.rounding.small
+    radius: Config.appearance.rounding.small
 
     Behavior on dp {
         NumberAnimation {
-            duration: Appearance.anim.durations.normal
+            duration: Config.appearance.anim.durations.normal
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: Appearance.anim.curves.standard
+            easing.bezierCurve: TokenConfig.appearance.curves.standard
         }
     }
 }

@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Caelestia.Services
 import Quickshell
 import Quickshell.Widgets
@@ -48,7 +48,7 @@ Item {
 
             anchors.fill: parent
             anchors.margins: Config.border.thickness
-            anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Appearance.spacing.sm * Config.background.visualiser.spacing
+            anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Config.appearance.spacing.small * Config.background.visualiser.spacing
 
             Side {
                 content: content
@@ -87,14 +87,14 @@ Item {
             property real value: Math.max(0, Math.min(1, Cava.values[side.isRight ? modelData : side.count - modelData - 1]))
 
             x: modelData * ((side.content.width * 0.4) / Config.services.visualiserBars) + (side.isRight ? side.content.width * 0.6 : 0)
-            implicitWidth: (side.content.width * 0.4) / Config.services.visualiserBars - Appearance.spacing.sm * Config.background.visualiser.spacing
+            implicitWidth: (side.content.width * 0.4) / Config.services.visualiserBars - Config.appearance.spacing.small * Config.background.visualiser.spacing
 
             y: side.content.height - height
             implicitHeight: bar.value * side.content.height * 0.4
 
             color: "transparent"
-            topLeftRadius: Appearance.rounding.small * Config.background.visualiser.rounding
-            topRightRadius: Appearance.rounding.small * Config.background.visualiser.rounding
+            topLeftRadius: Config.appearance.rounding.small * Config.background.visualiser.rounding
+            topRightRadius: Config.appearance.rounding.small * Config.background.visualiser.rounding
 
             Rectangle {
                 topLeftRadius: parent.topLeftRadius
@@ -129,7 +129,7 @@ Item {
 
             Behavior on value {
                 Anim {
-                    duration: Appearance.anim.durations.small
+                    duration: Config.appearance.anim.durations.small
                 }
             }
         }

@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Caelestia
 import Quickshell
@@ -74,7 +74,6 @@ Item {
         }
 
         Config.launcher.hiddenApps = hiddenApps;
-        Config.markDirty("launcher");
     }
 
     AppDb {
@@ -149,14 +148,14 @@ Item {
                 id: leftLauncherLayout
                 anchors.fill: parent
 
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 RowLayout {
-                    spacing: Appearance.spacing.md
+                    spacing: Config.appearance.spacing.medium
 
                     StyledText {
                         text: qsTr("Launcher")
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.weight: 500
                     }
 
@@ -168,9 +167,9 @@ Item {
                         toggled: !root.session.launcher.active
                         icon: "settings"
                         accent: "Primary"
-                        iconSize: Appearance.font.size.bodyMedium
-                        horizontalPadding: Appearance.padding.md
-                        verticalPadding: Appearance.padding.sm
+                        iconSize: Config.appearance.font.body.medium.size
+                        horizontalPadding: Config.appearance.padding.medium
+                        verticalPadding: Config.appearance.padding.small
                         tooltip: qsTr("Launcher settings")
 
                         onClicked: {
@@ -186,9 +185,9 @@ Item {
                 }
 
                 StyledText {
-                    Layout.topMargin: Appearance.spacing.xxl
+                    Layout.topMargin: Config.appearance.spacing.extraExtraLarge
                     text: qsTr("Applications (%1)").arg(root.searchText ? root.filteredApps.length : allAppsDb.apps.length)
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     font.weight: 500
                 }
 
@@ -199,11 +198,11 @@ Item {
 
                 StyledRect {
                     Layout.fillWidth: true
-                    Layout.topMargin: Appearance.spacing.lg
-                    Layout.bottomMargin: Appearance.spacing.sm
+                    Layout.topMargin: Config.appearance.spacing.large
+                    Layout.bottomMargin: Config.appearance.spacing.small
 
                     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
 
                     implicitHeight: Math.max(searchIcon.implicitHeight, searchField.implicitHeight, clearIcon.implicitHeight)
 
@@ -212,7 +211,7 @@ Item {
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
-                        anchors.leftMargin: Appearance.padding.md
+                        anchors.leftMargin: Config.appearance.padding.medium
 
                         text: "search"
                         color: Colours.palette.m3onSurfaceVariant
@@ -223,11 +222,11 @@ Item {
 
                         anchors.left: searchIcon.right
                         anchors.right: clearIcon.left
-                        anchors.leftMargin: Appearance.spacing.sm
-                        anchors.rightMargin: Appearance.spacing.sm
+                        anchors.leftMargin: Config.appearance.spacing.small
+                        anchors.rightMargin: Config.appearance.spacing.small
 
-                        topPadding: Appearance.padding.md
-                        bottomPadding: Appearance.padding.md
+                        topPadding: Config.appearance.padding.medium
+                        bottomPadding: Config.appearance.padding.medium
 
                         placeholderText: qsTr("Search applications...")
 
@@ -241,7 +240,7 @@ Item {
 
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
-                        anchors.rightMargin: Appearance.padding.md
+                        anchors.rightMargin: Config.appearance.padding.medium
 
                         width: searchField.text ? implicitWidth : implicitWidth / 2
                         opacity: {
@@ -269,13 +268,13 @@ Item {
 
                         Behavior on width {
                             Anim {
-                                duration: Appearance.anim.durations.small
+                                duration: Config.appearance.anim.durations.small
                             }
                         }
 
                         Behavior on opacity {
                             Anim {
-                                duration: Appearance.anim.durations.small
+                                duration: Config.appearance.anim.durations.small
                             }
                         }
                     }
@@ -295,7 +294,7 @@ Item {
                         Layout.fillHeight: true
 
                         model: root.filteredApps
-                        spacing: Appearance.spacing.sm / 2
+                        spacing: Config.appearance.spacing.small / 2
                         clip: true
 
                         StyledScrollBar.vertical: StyledScrollBar {
@@ -311,7 +310,7 @@ Item {
                             readonly property bool isSelected: root.selectedApp === modelData
 
                             color: isSelected ? Colours.layer(Colours.palette.m3surfaceContainer, 2) : "transparent"
-                            radius: Appearance.rounding.normal
+                            radius: Config.appearance.rounding.large
 
                             opacity: 0
 
@@ -336,9 +335,9 @@ Item {
                                 anchors.left: parent.left
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.margins: Appearance.padding.md
+                                anchors.margins: Config.appearance.padding.medium
 
-                                spacing: Appearance.spacing.lg
+                                spacing: Config.appearance.spacing.large
 
                                 IconImage {
                                     Layout.alignment: Qt.AlignVCenter
@@ -352,7 +351,7 @@ Item {
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: modelData.name || modelData.entry?.name || qsTr("Unknown")
-                                    font.pointSize: Appearance.font.size.bodyMedium
+                                    font.pointSize: Config.appearance.font.body.medium.size
                                 }
 
                                 Loader {
@@ -509,12 +508,12 @@ Item {
 
             readonly property var displayedApp: parent && parent.displayedApp !== undefined ? parent.displayedApp : null
 
-            spacing: Appearance.spacing.lg
+            spacing: Config.appearance.spacing.large
 
             SettingsHeader {
-                Layout.leftMargin: Appearance.padding.xl * 2
-                Layout.rightMargin: Appearance.padding.xl * 2
-                Layout.topMargin: Appearance.padding.xl * 2
+                Layout.leftMargin: Config.appearance.padding.largeIncreased * 2
+                Layout.rightMargin: Config.appearance.padding.largeIncreased * 2
+                Layout.topMargin: Config.appearance.padding.largeIncreased * 2
                 visible: displayedApp === null
                 icon: "apps"
                 title: qsTr("Launcher Applications")
@@ -522,21 +521,21 @@ Item {
 
             Item {
                 Layout.alignment: Qt.AlignHCenter
-                Layout.leftMargin: Appearance.padding.xl * 2
-                Layout.rightMargin: Appearance.padding.xl * 2
-                Layout.topMargin: Appearance.padding.xl * 2
+                Layout.leftMargin: Config.appearance.padding.largeIncreased * 2
+                Layout.rightMargin: Config.appearance.padding.largeIncreased * 2
+                Layout.topMargin: Config.appearance.padding.largeIncreased * 2
                 visible: displayedApp !== null
                 implicitWidth: Math.max(appIconImage.implicitWidth, appTitleText.implicitWidth)
-                implicitHeight: appIconImage.implicitHeight + Appearance.spacing.lg + appTitleText.implicitHeight
+                implicitHeight: appIconImage.implicitHeight + Config.appearance.spacing.large + appTitleText.implicitHeight
 
                 ColumnLayout {
                     anchors.centerIn: parent
-                    spacing: Appearance.spacing.lg
+                    spacing: Config.appearance.spacing.large
 
                     IconImage {
                         id: appIconImage
                         Layout.alignment: Qt.AlignHCenter
-                        implicitSize: Appearance.font.size.headlineLarge * 3 * 2
+                        implicitSize: Config.appearance.font.headline.large.size * 3 * 2
                         source: {
                             const app = appDetailsLayout.displayedApp;
                             if (!app)
@@ -553,7 +552,7 @@ Item {
                         id: appTitleText
                         Layout.alignment: Qt.AlignHCenter
                         text: displayedApp ? (displayedApp.name || displayedApp.entry?.name || qsTr("Application Details")) : ""
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         font.bold: true
                     }
                 }
@@ -562,9 +561,9 @@ Item {
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.topMargin: Appearance.spacing.xxl
-                Layout.leftMargin: Appearance.padding.xl * 2
-                Layout.rightMargin: Appearance.padding.xl * 2
+                Layout.topMargin: Config.appearance.spacing.extraExtraLarge
+                Layout.leftMargin: Config.appearance.padding.largeIncreased * 2
+                Layout.rightMargin: Config.appearance.padding.largeIncreased * 2
 
                 StyledFlickable {
                     id: detailsFlickable
@@ -581,10 +580,10 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        spacing: Appearance.spacing.lg
+                        spacing: Config.appearance.spacing.large
 
                         SwitchRow {
-                            Layout.topMargin: Appearance.spacing.lg
+                            Layout.topMargin: Config.appearance.spacing.large
                             visible: appDetailsLayout.displayedApp !== null
                             label: qsTr("Mark as favourite")
                             checked: root.favouriteChecked
@@ -612,12 +611,11 @@ Item {
                                         }
                                     }
                                     Config.launcher.favouriteApps = favouriteApps;
-                                    Config.markDirty("launcher");
                                 }
                             }
                         }
                         SwitchRow {
-                            Layout.topMargin: Appearance.spacing.lg
+                            Layout.topMargin: Config.appearance.spacing.large
                             visible: appDetailsLayout.displayedApp !== null
                             label: qsTr("Hide from launcher")
                             checked: root.hideFromLauncherChecked
@@ -645,7 +643,6 @@ Item {
                                         }
                                     }
                                     Config.launcher.hiddenApps = hiddenApps;
-                                    Config.markDirty("launcher");
                                 }
                             }
                         }

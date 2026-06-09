@@ -1,7 +1,7 @@
 import ".."
 import "../effects"
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 StyledRect {
@@ -9,13 +9,13 @@ StyledRect {
 
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
-    anchors.margins: Appearance.padding.md
+    anchors.margins: Config.appearance.padding.medium
 
     color: Colours.palette.m3tertiary
-    radius: Appearance.rounding.small
+    radius: Config.appearance.rounding.small
 
-    implicitWidth: count.implicitWidth + Appearance.padding.md * 2
-    implicitHeight: count.implicitHeight + Appearance.padding.xs * 2
+    implicitWidth: count.implicitWidth + Config.appearance.padding.medium * 2
+    implicitHeight: count.implicitHeight + Config.appearance.padding.extraSmall * 2
 
     opacity: extra > 0 ? 1 : 0
     scale: extra > 0 ? 1 : 0.5
@@ -39,14 +39,14 @@ StyledRect {
 
     Behavior on opacity {
         Anim {
-            duration: Appearance.anim.durations.expressiveFastSpatial
+            duration: Config.appearance.anim.durations.expressiveFastSpatial
         }
     }
 
     Behavior on scale {
         Anim {
-            duration: Appearance.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+            duration: Config.appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
         }
     }
 }

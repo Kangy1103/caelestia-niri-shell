@@ -4,7 +4,7 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Wayland
 
-import qs.config
+import Caelestia.Config
 import qs.services
 
 Scope {
@@ -84,7 +84,7 @@ Scope {
 
 					Text {
 						renderType: Text.NativeRendering
-						font.family: Appearance.font.family.sans
+						font.family: Config.appearance.font.body.family
 						font.pointSize: 14
 						text: root.failed ? "Quickshell: Reload failed" : "Quickshell reloaded"
 						color: failed ? Colours.palette.onError : Colours.palette.onSuccessContainer
@@ -92,7 +92,7 @@ Scope {
 
 					Text {
 						renderType: Text.NativeRendering
-						font.family: Appearance.font.family.mono
+						font.family: Config.appearance.font.mono.family
 						font.pointSize: 11
 						text: root.errorString
 						color: failed ? Colours.palette.onError : Colours.palette.onSuccessContainer

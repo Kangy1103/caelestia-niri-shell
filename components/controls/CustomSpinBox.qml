@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -16,30 +16,30 @@ RowLayout {
 
     signal valueModified(value: int)
 
-    spacing: Appearance.spacing.sm
+    spacing: Config.appearance.spacing.small
 
     StyledTextField {
         inputMethodHints: Qt.ImhFormattedNumbersOnly
         text: root.value
         onAccepted: root.valueModified(text)
 
-        padding: Appearance.padding.xs
-        leftPadding: Appearance.padding.md
-        rightPadding: Appearance.padding.md
+        padding: Config.appearance.padding.extraSmall
+        leftPadding: Config.appearance.padding.medium
+        rightPadding: Config.appearance.padding.medium
 
         background: StyledRect {
             implicitWidth: 100
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             color: Colours.tPalette.m3surfaceContainerHigh
         }
     }
 
     StyledRect {
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: upIcon.implicitHeight + Appearance.padding.xs * 2
+        implicitHeight: upIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
         StateLayer {
             id: upState
@@ -64,11 +64,11 @@ RowLayout {
     }
 
     StyledRect {
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
         color: Colours.palette.m3primary
 
         implicitWidth: implicitHeight
-        implicitHeight: downIcon.implicitHeight + Appearance.padding.xs * 2
+        implicitHeight: downIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
         StateLayer {
             id: downState

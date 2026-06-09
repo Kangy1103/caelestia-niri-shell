@@ -4,15 +4,15 @@ import QtQuick
 import QtQuick.Layouts
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 
 Rectangle {
     id: root
 
     readonly property int contextWidth: Config.bar.workspaces.windowContextWidth
-    readonly property int baseRadius: Appearance.rounding.normal
-    readonly property int hPadding: Appearance.padding.xs
-    readonly property int sideMargin: Appearance.padding.xl
+    readonly property int baseRadius: Config.appearance.rounding.large
+    readonly property int hPadding: Config.appearance.padding.extraSmall
+    readonly property int sideMargin: Config.appearance.padding.largeIncreased
     readonly property int textWidth: contextWidth - hPadding * 2
 
     required property var windows
@@ -34,7 +34,7 @@ Rectangle {
 
     Behavior on border.color {
         CAnim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 
@@ -46,17 +46,17 @@ Rectangle {
 
     Behavior on implicitWidth {
         Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
     Behavior on implicitHeight {
         Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
     Behavior on anchors.leftMargin {
         Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 
@@ -86,7 +86,7 @@ Rectangle {
 
         Behavior on color {
             CAnim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
             }
         }
 
@@ -100,16 +100,16 @@ Rectangle {
 
         Behavior on implicitHeight {
             Anim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
             }
         }
         Behavior on implicitWidth {
             Anim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
             }
         }
 
-        radius: Appearance.rounding.small / 2
+        radius: Config.appearance.rounding.small / 2
 
         // anchors.left: parent.left
         Layout.leftMargin: root.hPadding * 2
@@ -131,7 +131,7 @@ Rectangle {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: Appearance.padding.xs
+            anchors.leftMargin: Config.appearance.padding.extraSmall
             Layout.alignment: Qt.AlignVCenter
 
             Rectangle {
@@ -140,7 +140,7 @@ Rectangle {
 
                 Behavior on color {
                     CAnim {
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                        easing.bezierCurve: TokenConfig.appearance.curves.emphasized
                     }
                 }
                 radius: root.baseRadius
@@ -153,8 +153,8 @@ Rectangle {
 
                     anchors.centerIn: parent
                     text: multiWindowContent.index + 1
-                    font.pointSize: Appearance.font.size.labelSmall
-                    font.family: Appearance.font.family.mono
+                    font.pointSize: Config.appearance.font.label.small.size
+                    font.family: Config.appearance.font.mono.family
                     font.bold: true
                     color: multiWindowContent.itemIsFocused ? Colours.palette.m3onTertiary : Colours.palette.m3onTertiary
                 }
@@ -169,13 +169,13 @@ Rectangle {
                     Layout.alignment: Qt.AlignVCenter
 
                     text: multiWindowContent.displayTitle
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     font.italic: multiWindowContent.itemIsFocused
                     color: multiWindowContent.itemIsFocused ? Colours.palette.m3onPrimary : (multiWindowContent.onPrimary ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurfaceVariant)
                 }
 
                 Rectangle {
-                    implicitWidth: classText.width + Appearance.padding.xs * 2
+                    implicitWidth: classText.width + Config.appearance.padding.extraSmall * 2
                     implicitHeight: classText.height
                     color: multiWindowContent.itemIsFocused ? Colours.palette.m3tertiary : "transparent"
 
@@ -183,7 +183,7 @@ Rectangle {
 
                     Behavior on color {
                         CAnim {
-                            easing.bezierCurve: Appearance.anim.curves.emphasized
+                            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
                         }
                     }
 
@@ -193,8 +193,8 @@ Rectangle {
                         anchors.centerIn: parent
 
                         text: multiWindowContent.displaySubtitle
-                        font.pointSize: Appearance.font.size.labelSmall
-                        font.family: Appearance.font.family.mono
+                        font.pointSize: Config.appearance.font.label.small.size
+                        font.family: Config.appearance.font.mono.family
                         font.bold: multiWindowContent.itemIsFocused
                         color: multiWindowContent.itemIsFocused ? Colours.palette.m3onTertiary : Colours.palette.m3tertiaryContainer
                     }
@@ -202,8 +202,8 @@ Rectangle {
 
                 // AnimatedText {
                 //     text: multiWindowContent.displaySubtitle
-                //     font.pointSize: Appearance.font.size.labelSmall
-                //     font.family: Appearance.font.family.mono
+                //     font.pointSize: Config.appearance.font.label.small.size
+                //     font.family: Config.appearance.font.mono.family
                 //     font.bold: multiWindowContent.itemIsFocused
                 //     color: multiWindowContent.itemIsFocused ? Colours.palette.m3onPrimary : Colours.palette.m3tertiaryContainer
                 // }
@@ -219,13 +219,13 @@ Rectangle {
 
         Behavior on color {
             CAnim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
             }
         }
 
         Behavior on font.pointSize {
             Anim {
-                easing.bezierCurve: Appearance.anim.curves.emphasized
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
             }
         }
     }

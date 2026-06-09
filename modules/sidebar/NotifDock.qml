@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import qs.config
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.controls
@@ -44,7 +44,7 @@ Item {
 
             text: root.notifCount
             color: Colours.palette.m3outline
-            font.pointSize: Appearance.font.size.bodySmall
+            font.pointSize: Config.appearance.font.body.small.size
 
             Behavior on anchors.leftMargin {
                 Anim {}
@@ -65,7 +65,7 @@ Item {
 
             text: root.notifCount > 0 ? qsTr("notification%1").arg(root.notifCount === 1 ? "" : "s") : qsTr("Notifications")
             color: Colours.palette.m3outline
-            font.pointSize: Appearance.font.size.bodySmall
+            font.pointSize: Config.appearance.font.body.small.size
             elide: Text.ElideRight
         }
     }
@@ -108,7 +108,7 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("No Notifications")
                     color: Colours.palette.m3outlineVariant
-                    font.pointSize: Appearance.font.size.bodySmall
+                    font.pointSize: Config.appearance.font.body.small.size
                 }
             }
 
@@ -184,7 +184,7 @@ Item {
             icon: "clear_all"
             radius: Tokens.rounding.medium
             padding: Tokens.padding.medium
-            font.pointSize: Math.round(Appearance.font.size.bodyMedium * 1.2)
+            font.pointSize: Math.round(Config.appearance.font.body.medium.size * 1.2)
             onClicked: clearTimer.start()
 
             Elevation {

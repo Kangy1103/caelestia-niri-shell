@@ -1,5 +1,5 @@
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Layouts
@@ -17,9 +17,9 @@ ColumnLayout {
     property color backgroundColor: expanded ? Colours.palette.m3surfaceContainerLow : "transparent"
 
     // Margin properties: if backgroundMargins >= 0, use it for all sides; otherwise, use individual margins
-    property real backgroundMarginLeft: Appearance.padding.xs
-    property real backgroundMarginRight: Appearance.padding.xs
-    property real backgroundMarginTop: Appearance.padding.xs
+    property real backgroundMarginLeft: Config.appearance.padding.extraSmall
+    property real backgroundMarginRight: Config.appearance.padding.extraSmall
+    property real backgroundMarginTop: Config.appearance.padding.extraSmall
     property real backgroundMarginBottom: 0
     property real backgroundMargins: -1 // -1 means "not set"
 
@@ -38,10 +38,10 @@ ColumnLayout {
         Layout.bottomMargin: root.backgroundMargins >= 0 ? root.backgroundMargins : root.backgroundMarginBottom
 
         color: root.backgroundColor
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
 
         // Height is header + description (if shown) + content (if expanded) + margins
-        Layout.preferredHeight: headerRow.implicitHeight + Appearance.padding.xs * 2 + (root.expanded && root.description !== "" ? descriptionText.implicitHeight + descriptionText.Layout.topMargin + descriptionText.Layout.bottomMargin : 0) + (root.expanded ? contentWrapper.implicitHeight : 0) + (anchors.topMargin + anchors.bottomMargin)
+        Layout.preferredHeight: headerRow.implicitHeight + Config.appearance.padding.extraSmall * 2 + (root.expanded && root.description !== "" ? descriptionText.implicitHeight + descriptionText.Layout.topMargin + descriptionText.Layout.bottomMargin : 0) + (root.expanded ? contentWrapper.implicitHeight : 0) + (anchors.topMargin + anchors.bottomMargin)
 
         Behavior on Layout.preferredHeight {
             Anim {}
@@ -53,29 +53,29 @@ ColumnLayout {
             // Header
             RowLayout {
                 id: headerRow
-                Layout.topMargin: Appearance.padding.xs
-                Layout.leftMargin: Appearance.padding.xl
-                Layout.rightMargin: Appearance.padding.xs
-                Layout.bottomMargin: Appearance.padding.xs
+                Layout.topMargin: Config.appearance.padding.extraSmall
+                Layout.leftMargin: Config.appearance.padding.largeIncreased
+                Layout.rightMargin: Config.appearance.padding.extraSmall
+                Layout.bottomMargin: Config.appearance.padding.extraSmall
 
-                spacing: Appearance.spacing.lg
-                implicitHeight: Appearance.spacing.lg + Appearance.padding.xs * 2
+                spacing: Config.appearance.spacing.large
+                implicitHeight: Config.appearance.spacing.large + Config.appearance.padding.extraSmall * 2
 
                 StyledText {
                     Layout.fillWidth: true
                     text: root.title
                     elide: Text.ElideRight
-                    font.pointSize: Appearance.font.size.bodySmall
-                    font.family: Appearance.font.family.sans
+                    font.pointSize: Config.appearance.font.body.small.size
+                    font.family: Config.appearance.font.body.family
                 }
 
                 StyledRect {
                     color: "transparent"
 
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
 
-                    implicitWidth: expandIcon.implicitWidth + Appearance.padding.xs * 2
-                    implicitHeight: expandIcon.implicitHeight + Appearance.padding.xs
+                    implicitWidth: expandIcon.implicitWidth + Config.appearance.padding.extraSmall * 2
+                    implicitHeight: expandIcon.implicitHeight + Config.appearance.padding.extraSmall
 
                     StateLayer {
                         function onClicked(): void {
@@ -90,7 +90,7 @@ ColumnLayout {
                         text: root.expanded ? "expand_less" : "expand_more"
                         color: root.expanded ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
 
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                     }
                 }
             }
@@ -99,14 +99,14 @@ ColumnLayout {
             StyledText {
                 id: descriptionText
                 Layout.fillWidth: true
-                Layout.leftMargin: Appearance.padding.xl
-                Layout.rightMargin: Appearance.padding.xs
-                Layout.topMargin: root.description !== "" ? Appearance.spacing.md : 0
-                Layout.bottomMargin: root.description !== "" ? Appearance.spacing.sm : 0
+                Layout.leftMargin: Config.appearance.padding.largeIncreased
+                Layout.rightMargin: Config.appearance.padding.extraSmall
+                Layout.topMargin: root.description !== "" ? Config.appearance.spacing.medium : 0
+                Layout.bottomMargin: root.description !== "" ? Config.appearance.spacing.small : 0
                 visible: root.expanded && root.description !== ""
                 text: root.description
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 wrapMode: Text.Wrap
             }
 
@@ -114,14 +114,14 @@ ColumnLayout {
             WrapperItem {
                 id: contentWrapper
                 Layout.fillWidth: true
-                Layout.leftMargin: Appearance.padding.sm
-                Layout.rightMargin: Appearance.padding.sm
+                Layout.leftMargin: Config.appearance.padding.small
+                Layout.rightMargin: Config.appearance.padding.small
 
                 // Animate height for smooth expand/collapse
                 Layout.preferredHeight: root.expanded ? contentLoader.implicitHeight + topMargin + bottomMargin : 0
                 clip: true
 
-                bottomMargin: Appearance.padding.xl
+                bottomMargin: Config.appearance.padding.largeIncreased
 
                 Loader {
                     id: contentLoader

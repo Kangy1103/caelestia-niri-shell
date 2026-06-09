@@ -3,7 +3,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -15,8 +15,8 @@ StyledRect {
     property string title: "" // Optional title text
 
     Layout.fillWidth: true
-    implicitHeight: layout.implicitHeight + Appearance.padding.xl * 2
-    radius: Appearance.rounding.normal
+    implicitHeight: layout.implicitHeight + Config.appearance.padding.largeIncreased * 2
+    radius: Config.appearance.rounding.large
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
     clip: true
 
@@ -28,19 +28,19 @@ StyledRect {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.xl
-        spacing: Appearance.spacing.lg
+        anchors.margins: Config.appearance.padding.largeIncreased
+        spacing: Config.appearance.spacing.large
 
         StyledText {
             visible: root.title !== ""
             text: root.title
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: Config.appearance.font.body.medium.size
         }
 
         RowLayout {
             id: buttonRow
             Layout.alignment: Qt.AlignHCenter
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             Repeater {
                 id: repeater
@@ -73,13 +73,13 @@ StyledRect {
 
                     // Match utilities Toggles radius styling
                     // Each button has full rounding (not connected) since they have spacing
-                    radius: stateLayer.pressed ? Appearance.rounding.small / 2 : internalChecked ? Appearance.rounding.small : Appearance.rounding.normal
+                    radius: stateLayer.pressed ? Config.appearance.rounding.small / 2 : internalChecked ? Config.appearance.rounding.small : Config.appearance.rounding.large
 
                     // Match utilities Toggles inactive color
                     inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
 
                     // Adjust width similar to utilities toggles
-                    Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Appearance.padding.xl : internalChecked ? Appearance.padding.sm : 0)
+                    Layout.preferredWidth: implicitWidth + (stateLayer.pressed ? Config.appearance.padding.largeIncreased : internalChecked ? Config.appearance.padding.small : 0)
 
                     onClicked: {
                         if (modelData.onToggled && root.rootItem && modelData.propertyName) {
@@ -90,15 +90,15 @@ StyledRect {
 
                     Behavior on Layout.preferredWidth {
                         Anim {
-                            duration: Appearance.anim.durations.expressiveFastSpatial
-                            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                            duration: Config.appearance.anim.durations.expressiveFastSpatial
+                            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                         }
                     }
 
                     Behavior on radius {
                         Anim {
-                            duration: Appearance.anim.durations.expressiveFastSpatial
-                            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                            duration: Config.appearance.anim.durations.expressiveFastSpatial
+                            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                         }
                     }
                 }

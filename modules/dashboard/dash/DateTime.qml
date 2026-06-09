@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -17,15 +17,15 @@ Item {
         return `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
     }
 
-    implicitWidth: contentRow.implicitWidth + Appearance.padding.md * 2
-    implicitHeight: contentRow.implicitHeight + Appearance.padding.md * 2
+    implicitWidth: contentRow.implicitWidth + Config.appearance.padding.medium * 2
+    implicitHeight: contentRow.implicitHeight + Config.appearance.padding.medium * 2
 
     anchors.centerIn: parent
 
     RowLayout {
         id: contentRow
         anchors.centerIn: parent
-        spacing: Appearance.spacing.md
+        spacing: Config.appearance.spacing.medium
 
         RowLayout {
             id: timeRow
@@ -35,8 +35,8 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 text: root.timeComponents[0]
                 color: Colours.palette.m3secondary
-                font.pointSize: Appearance.font.size.headlineLarge
-                font.family: Appearance.font.family.clock
+                font.pointSize: Config.appearance.font.headline.large.size
+                font.family: Config.appearance.font.clock
                 font.weight: 600
             }
 
@@ -45,22 +45,22 @@ Item {
                 Layout.bottomMargin: -font.pointSize * 0.15
                 text: ":"
                 color: Colours.palette.m3primary
-                font.pointSize: Appearance.font.size.headlineLarge * 0.9
-                font.family: Appearance.font.family.clock
+                font.pointSize: Config.appearance.font.headline.large.size * 0.9
+                font.family: Config.appearance.font.clock
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignVCenter
                 text: root.timeComponents[1]
                 color: Colours.palette.m3secondary
-                font.pointSize: Appearance.font.size.headlineLarge
-                font.family: Appearance.font.family.clock
+                font.pointSize: Config.appearance.font.headline.large.size
+                font.family: Config.appearance.font.clock
                 font.weight: 600
             }
 
             Loader {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: Appearance.spacing.sm
+                Layout.leftMargin: Config.appearance.spacing.small
 
                 asynchronous: true
                 active: Config.services.useTwelveHourClock
@@ -69,8 +69,8 @@ Item {
                 sourceComponent: StyledText {
                     text: root.timeComponents[2] ?? ""
                     color: Colours.palette.m3primary
-                    font.pointSize: Appearance.font.size.titleMedium
-                    font.family: Appearance.font.family.clock
+                    font.pointSize: Config.appearance.font.title.medium.size
+                    font.family: Config.appearance.font.clock
                     font.weight: 600
                 }
             }
@@ -81,7 +81,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             text: root.dateText
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.titleMedium
+            font.pointSize: Config.appearance.font.title.medium.size
             font.weight: 500
         }
     }

@@ -1,7 +1,7 @@
 import ".."
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -94,10 +94,10 @@ Popup {
             let newX = targetCenterX - tooltipWidth / 2;
 
             // Position tooltip above target
-            let newY = targetPos.y - tooltipHeight - Appearance.spacing.sm;
+            let newY = targetPos.y - tooltipHeight - Config.appearance.spacing.small;
 
             // Keep within bounds
-            const padding = Appearance.padding.md;
+            const padding = Config.appearance.padding.medium;
             if (newX < padding) {
                 newX = padding;
             } else if (newX + tooltipWidth > (parent.width - padding)) {
@@ -115,8 +115,8 @@ Popup {
             property: "opacity"
             from: 0
             to: 1
-            duration: Appearance.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+            duration: Config.appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
         }
     }
 
@@ -125,8 +125,8 @@ Popup {
             property: "opacity"
             from: 1
             to: 0
-            duration: Appearance.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+            duration: Config.appearance.anim.durations.expressiveFastSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
         }
     }
 
@@ -152,11 +152,11 @@ Popup {
     contentItem: StyledRect {
         id: tooltipRect
 
-        implicitWidth: tooltipText.implicitWidth + Appearance.padding.md * 2
-        implicitHeight: tooltipText.implicitHeight + Appearance.padding.sm * 2
+        implicitWidth: tooltipText.implicitWidth + Config.appearance.padding.medium * 2
+        implicitHeight: tooltipText.implicitHeight + Config.appearance.padding.small * 2
 
         color: Colours.palette.m3surfaceContainerHighest
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
         antialiasing: true
 
         // Add elevation for depth
@@ -174,7 +174,7 @@ Popup {
 
             text: root.text
             color: Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
     }
 

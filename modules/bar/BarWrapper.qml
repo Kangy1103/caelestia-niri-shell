@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components
-import qs.config
+import Caelestia.Config
 import "popouts" as BarPopouts
 import Quickshell
 import QtQuick
@@ -13,8 +13,8 @@ Item {
     required property PersistentProperties visibilities
     required property BarPopouts.Wrapper popouts
 
-    readonly property int padding: Math.max(Appearance.padding.sm, Config.border.thickness)
-    readonly property int contentWidth: Config.bar.sizes.innerWidth + padding * 2
+    readonly property int padding: Math.max(Config.appearance.padding.small, Config.border.thickness)
+    readonly property int contentWidth: TokenConfig.sizes.bar.innerWidth + padding * 2
     readonly property int exclusiveZone: Config.bar.persistent || visibilities.bar ? contentWidth : Config.border.thickness
     readonly property bool shouldBeVisible: Config.bar.persistent || visibilities.bar || isHovered
     property bool isHovered
@@ -47,8 +47,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.normal
-                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                duration: Config.appearance.anim.durations.normal
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         },
         Transition {
@@ -58,8 +58,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Appearance.anim.durations.small
-                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
+                duration: Config.appearance.anim.durations.small
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
             }
         }
     ]

@@ -6,7 +6,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.services
 
 Item {
@@ -60,7 +60,7 @@ Item {
             to: "active"
             NumberAnimation {
                 properties: isVertical ? "height,pillHeight" : "width,pillWidth"
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         },
@@ -69,7 +69,7 @@ Item {
             to: "inactive"
             NumberAnimation {
                 properties: isVertical ? "height,pillHeight" : "width,pillWidth"
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }
@@ -81,7 +81,7 @@ Item {
         height: pillContainer.pillHeight
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
         z: 0
 
         color: {
@@ -132,7 +132,7 @@ Item {
 
                     Behavior on color {
                         ColorAnimation {
-                            duration: Appearance.anim.durations.fast
+                            duration: Config.appearance.anim.durations.fast
                             easing.type: Easing.InOutQuad
                         }
                     }
@@ -142,25 +142,25 @@ Item {
 
         Behavior on scale {
             NumberAnimation {
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }
         Behavior on color {
             ColorAnimation {
-                duration: Appearance.anim.durations.fast
+                duration: Config.appearance.anim.durations.fast
                 easing.type: Easing.InOutQuad
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: Appearance.anim.durations.fast
+                duration: Config.appearance.anim.durations.fast
                 easing.type: Easing.InOutCubic
             }
         }
         Behavior on radius {
             NumberAnimation {
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }
@@ -168,25 +168,25 @@ Item {
 
     Behavior on width {
         NumberAnimation {
-            duration: Appearance.anim.durations.normal
+            duration: Config.appearance.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }
     Behavior on height {
         NumberAnimation {
-            duration: Appearance.anim.durations.normal
+            duration: Config.appearance.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }
     Behavior on pillWidth {
         NumberAnimation {
-            duration: Appearance.anim.durations.normal
+            duration: Config.appearance.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }
     Behavior on pillHeight {
         NumberAnimation {
-            duration: Appearance.anim.durations.normal
+            duration: Config.appearance.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }

@@ -1,6 +1,6 @@
 import ".."
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Controls
 
@@ -66,7 +66,7 @@ ScrollBar {
         }
     }
 
-    implicitWidth: flickable ? Appearance.padding.xs : 6
+    implicitWidth: flickable ? Config.appearance.padding.extraSmall : 6
 
     contentItem: StyledRect {
         anchors.left: parent ? parent.left : undefined
@@ -86,7 +86,7 @@ ScrollBar {
                 return root.pressed ? 1 : root.policy === ScrollBar.AlwaysOn || (root.active && root.size < 1) ? 0.8 : 0;
             }
         }
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
         color: Colours.palette.m3secondary
 
         MouseArea {

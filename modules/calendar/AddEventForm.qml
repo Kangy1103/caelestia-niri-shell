@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -38,8 +38,8 @@ Item {
     property string selectedColor: Config.dashboard.calendarColors.blue
 
     visible: active
-    implicitHeight: active ? formLayout.implicitHeight + Appearance.padding.md * 2 : 0
-    implicitWidth: formLayout.implicitWidth + Appearance.padding.md * 2
+    implicitHeight: active ? formLayout.implicitHeight + Config.appearance.padding.medium * 2 : 0
+    implicitWidth: formLayout.implicitWidth + Config.appearance.padding.medium * 2
 
     onActiveChanged: {
         if (active)
@@ -60,16 +60,16 @@ Item {
 
     Behavior on implicitHeight {
         Anim {
-            duration: Appearance.anim.durations.normal
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            duration: Config.appearance.anim.durations.normal
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 
     ColumnLayout {
         id: formLayout
         anchors.fill: parent
-        anchors.margins: Appearance.padding.md
-        spacing: Appearance.spacing.sm
+        anchors.margins: Config.appearance.padding.medium
+        spacing: Config.appearance.spacing.small
 
         StyledInputField {
             id: titleField
@@ -83,7 +83,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             StyledInputField {
                 id: startTimeField
@@ -132,12 +132,12 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             StyledText {
                 text: "All day"
                 color: Colours.palette.m3onSurface
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Config.appearance.font.body.small.size
             }
 
             Item { Layout.fillWidth: true }
@@ -152,7 +152,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             Repeater {
                 model: root.colors
@@ -182,7 +182,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             IconTextButton {
                 id: cancelBtn
@@ -190,7 +190,7 @@ Item {
                 text: "Cancel"
                 icon: "close"
                 type: IconTextButton.Tonal
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
 
                 onClicked: root.cancelled()
             }
@@ -201,7 +201,7 @@ Item {
                 text: "Save"
                 icon: "check"
                 type: IconTextButton.Filled
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
                 enabled: root.title.trim().length > 0
 
                 onClicked: {

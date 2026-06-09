@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -23,19 +23,19 @@ Item {
 
     signal addEventRequested()
 
-    implicitHeight: contentLayout.implicitHeight + Appearance.padding.md * 2
-    implicitWidth: contentLayout.implicitWidth + Appearance.padding.md * 2
+    implicitHeight: contentLayout.implicitHeight + Config.appearance.padding.medium * 2
+    implicitWidth: contentLayout.implicitWidth + Config.appearance.padding.medium * 2
 
     ColumnLayout {
         id: contentLayout
         anchors.fill: parent
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
 
         StyledText {
             Layout.fillWidth: true
             text: "Events for " + root.selectedDate.toLocaleDateString(Qt.locale(), "MMM d")
             color: Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.bodySmall
+            font.pointSize: Config.appearance.font.body.small.size
             font.weight: 500
             horizontalAlignment: Text.AlignLeft
         }
@@ -47,8 +47,8 @@ Item {
                 required property var modelData
                 id: eventCard
                 Layout.fillWidth: true
-                implicitHeight: eventLayout.implicitHeight + Appearance.padding.sm * 2
-                radius: Appearance.rounding.small
+                implicitHeight: eventLayout.implicitHeight + Config.appearance.padding.small * 2
+                radius: Config.appearance.rounding.small
                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
                 clip: true
 
@@ -62,8 +62,8 @@ Item {
                 RowLayout {
                     id: eventLayout
                     anchors.fill: parent
-                    anchors.margins: Appearance.padding.sm
-                    spacing: Appearance.spacing.sm
+                    anchors.margins: Config.appearance.padding.small
+                    spacing: Config.appearance.spacing.small
 
                     Rectangle {
                         Layout.preferredWidth: 3
@@ -80,7 +80,7 @@ Item {
                             Layout.fillWidth: true
                             text: modelData.title
                             color: Colours.palette.m3onSurface
-                            font.pointSize: Appearance.font.size.bodySmall
+                            font.pointSize: Config.appearance.font.body.small.size
                             font.weight: 500
                             elide: Text.ElideRight
                             maximumLineCount: eventCard.expanded ? 0 : 1
@@ -96,14 +96,14 @@ Item {
                                 return times;
                             }
                             color: Colours.palette.m3onSurfaceVariant
-                            font.pointSize: Appearance.font.size.bodySmall
+                            font.pointSize: Config.appearance.font.body.small.size
                             font.weight: 400
                             visible: modelData.allDay || modelData.startTime
                         }
 
                         Item {
                             Layout.fillWidth: true
-                            implicitHeight: deleteBtn.implicitHeight + Appearance.padding.xs
+                            implicitHeight: deleteBtn.implicitHeight + Config.appearance.padding.extraSmall
                             visible: eventCard.expanded
 
                             IconButton {
@@ -112,7 +112,7 @@ Item {
                                 icon: "delete"
                                 inactiveColour: Qt.alpha(Colours.palette.m3error, 0.1)
                                 inactiveOnColour: Colours.palette.m3error
-                                radius: Appearance.rounding.small
+                                radius: Config.appearance.rounding.small
 
                                 onClicked: CalEvents.removeEvent(modelData.id)
                             }
@@ -126,7 +126,7 @@ Item {
             Layout.fillWidth: true
             text: "No events"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.bodySmall
+            font.pointSize: Config.appearance.font.body.small.size
             font.weight: 400
             horizontalAlignment: Text.AlignHCenter
             visible: root.events.length === 0
@@ -143,7 +143,7 @@ Item {
                 icon: "add"
                 text: "Add event"
                 type: IconTextButton.Tonal
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
 
                 onClicked: root.addEventRequested()
             }

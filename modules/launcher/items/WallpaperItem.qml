@@ -2,7 +2,7 @@ import qs.components
 import qs.components.effects
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import Caelestia.Models
 import Quickshell
 import Quickshell.Widgets
@@ -26,11 +26,11 @@ Item {
         opacity = Qt.binding(() => PathView.onPath ? 1 : 0);
     }
 
-    implicitWidth: image.width + Appearance.padding.lg * 2
-    implicitHeight: image.height + label.height + Appearance.spacing.sm / 2 + Appearance.padding.xl + Appearance.padding.md
+    implicitWidth: image.width + Config.appearance.padding.large * 2
+    implicitHeight: image.height + label.height + Config.appearance.spacing.small / 2 + Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
 
     StateLayer {
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
 
         function onClicked(): void {
             Wallpapers.setWallpaper(root.modelData.path);
@@ -53,18 +53,18 @@ Item {
         id: image
 
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Appearance.padding.xl
+        y: Config.appearance.padding.largeIncreased
         color: Colours.tPalette.m3surfaceContainer
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
 
-        implicitWidth: Config.launcher.sizes.wallpaperWidth
+        implicitWidth: TokenConfig.sizes.launcher.wallpaperWidth
         implicitHeight: implicitWidth / 16 * 9
 
         MaterialIcon {
             anchors.centerIn: parent
             text: root.isVideo ? "movie" : "image"
             color: Colours.tPalette.m3outline
-            font.pointSize: Appearance.font.size.headlineLarge * 2
+            font.pointSize: Config.appearance.font.headline.large.size * 2
             font.weight: 600
         }
 
@@ -83,7 +83,7 @@ Item {
             anchors.horizontalCenterOffset: font.pointSize * 0.1 // Adjust for play icon visual centering
             text: "play_arrow"
             color: "white"
-            font.pointSize: Appearance.font.size.headlineLarge * 2
+            font.pointSize: Config.appearance.font.headline.large.size * 2
             visible: root.isVideo
 
             layer.enabled: true
@@ -99,15 +99,15 @@ Item {
         id: label
 
         anchors.top: image.bottom
-        anchors.topMargin: Appearance.spacing.sm / 2
+        anchors.topMargin: Config.appearance.spacing.small / 2
         anchors.horizontalCenter: parent.horizontalCenter
 
-        width: image.width - Appearance.padding.md * 2
+        width: image.width - Config.appearance.padding.medium * 2
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         renderType: Text.QtRendering
         text: root.modelData.relativePath
-        font.pointSize: Appearance.font.size.bodyMedium
+        font.pointSize: Config.appearance.font.body.medium.size
     }
 
     Behavior on scale {

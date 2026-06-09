@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -9,7 +9,7 @@ Item {
 
     // Comfortable width to fit 4 workspace buttons in single row
     implicitWidth: 720
-    implicitHeight: content.implicitHeight + Appearance.padding.xl * 2
+    implicitHeight: content.implicitHeight + Config.appearance.padding.largeIncreased * 2
 
     property var client: null
 
@@ -30,8 +30,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Appearance.padding.xl
-        spacing: Appearance.spacing.lg
+        anchors.margins: Config.appearance.padding.largeIncreased
+        spacing: Config.appearance.spacing.large
 
         // ***************************************************
         // WORKSPACE SECTION
@@ -43,8 +43,8 @@ Item {
             GridLayout {
                 id: wsGrid
                 columns: 4
-                rowSpacing: Appearance.spacing.lg
-                columnSpacing: Appearance.spacing.lg
+                rowSpacing: Config.appearance.spacing.large
+                columnSpacing: Config.appearance.spacing.large
                 Layout.fillWidth: true
 
                 Repeater {
@@ -87,8 +87,8 @@ Item {
 
             GridLayout {
                 columns: 3
-                rowSpacing: Appearance.spacing.lg
-                columnSpacing: Appearance.spacing.lg
+                rowSpacing: Config.appearance.spacing.large
+                columnSpacing: Config.appearance.spacing.large
                 Layout.fillWidth: true
 
                 // Row 1: Main window controls
@@ -149,7 +149,7 @@ Item {
     // COMPONENTS
 
     component Rect: StyledRect {
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
         color: Colours.tPalette.m3surfaceContainer
     }
 
@@ -163,11 +163,11 @@ Item {
 
         function onClicked(): void {}
 
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
         color: active ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHigh
 
-        implicitHeight: label.implicitHeight + Appearance.padding.xs * 2
-        implicitWidth: label.implicitWidth + Appearance.padding.md * 2
+        implicitHeight: label.implicitHeight + Config.appearance.padding.extraSmall * 2
+        implicitWidth: label.implicitWidth + Config.appearance.padding.medium * 2
 
         Behavior on color {
             CAnim {}
@@ -187,7 +187,7 @@ Item {
             id: label
             anchors.centerIn: parent
             color: active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
             font.weight: active ? Font.Medium : Font.Normal
 
             Behavior on color {
@@ -208,12 +208,12 @@ Item {
 
         function onClicked(): void {}
 
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
         color: active ? Colours.palette.m3primaryContainer : accent ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHigh
         opacity: disabled ? 0.5 : 1
 
-        implicitHeight: contentCol.implicitHeight + Appearance.padding.md * 2
-        implicitWidth: Math.max(contentCol.implicitWidth + Appearance.padding.md * 2, 100)
+        implicitHeight: contentCol.implicitHeight + Config.appearance.padding.medium * 2
+        implicitWidth: Math.max(contentCol.implicitWidth + Config.appearance.padding.medium * 2, 100)
 
         Behavior on color {
             CAnim {}
@@ -221,7 +221,7 @@ Item {
 
         Behavior on opacity {
             Anim {
-                duration: Appearance.anim.durations.small
+                duration: Config.appearance.anim.durations.small
             }
         }
 
@@ -238,13 +238,13 @@ Item {
         Column {
             id: contentCol
             anchors.centerIn: parent
-            spacing: Appearance.spacing.md
+            spacing: Config.appearance.spacing.medium
 
             MaterialIcon {
                 id: actionIcon
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: active || accent ? Colours.palette.m3onPrimaryContainer : actionBtn.disabled ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurface
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 text: "radio_button_unchecked"
 
                 Behavior on color {
@@ -256,7 +256,7 @@ Item {
                 id: actionLabel
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: active || accent ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Config.appearance.font.body.small.size
                 horizontalAlignment: Text.AlignHCenter
 
                 Behavior on color {

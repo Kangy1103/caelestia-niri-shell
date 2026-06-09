@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -23,8 +23,8 @@ Item {
     readonly property color safeSecondary: useLightSet ? Colours.palette.m3secondaryContainer : Colours.palette.m3secondary
     readonly property color safeTertiary: useLightSet ? Colours.palette.m3tertiaryContainer : Colours.palette.m3tertiary
 
-    implicitWidth: layout.implicitWidth + (Appearance.padding.xl * 4 * root.scale)
-    implicitHeight: layout.implicitHeight + (Appearance.padding.xl * 2 * root.scale)
+    implicitWidth: layout.implicitWidth + (Config.appearance.padding.largeIncreased * 4 * root.scale)
+    implicitHeight: layout.implicitHeight + (Config.appearance.padding.largeIncreased * 2 * root.scale)
 
     Item {
         id: clockContainer
@@ -62,7 +62,7 @@ Item {
 
             visible: root.bgEnabled
             anchors.fill: parent
-            radius: Appearance.rounding.large * root.scale
+            radius: Config.appearance.rounding.large * root.scale
             opacity: Config.background.desktopClock.background.opacity
             color: Colours.palette.m3surface
 
@@ -73,43 +73,43 @@ Item {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Appearance.spacing.xl * root.scale
+            spacing: Config.appearance.spacing.largeIncreased * root.scale
 
             RowLayout {
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 StyledText {
                     text: Time.hourStr
-                    font.pointSize: Appearance.font.size.headlineLarge * 3 * root.scale
+                    font.pointSize: Config.appearance.font.headline.large.size * 3 * root.scale
                     font.weight: Font.Bold
                     color: root.safePrimary
                 }
 
                 StyledText {
                     text: ":"
-                    font.pointSize: Appearance.font.size.headlineLarge * 3 * root.scale
+                    font.pointSize: Config.appearance.font.headline.large.size * 3 * root.scale
                     color: root.safeTertiary
                     opacity: 0.8
-                    Layout.topMargin: -Appearance.padding.xl * 1.5 * root.scale
+                    Layout.topMargin: -Config.appearance.padding.largeIncreased * 1.5 * root.scale
                 }
 
                 StyledText {
                     text: Time.minuteStr
-                    font.pointSize: Appearance.font.size.headlineLarge * 3 * root.scale
+                    font.pointSize: Config.appearance.font.headline.large.size * 3 * root.scale
                     font.weight: Font.Bold
                     color: root.safeSecondary
                 }
 
                 Loader {
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: Appearance.padding.xl * 1.4 * root.scale
+                    Layout.topMargin: Config.appearance.padding.largeIncreased * 1.4 * root.scale
 
                     active: Config.services.useTwelveHourClock
                     visible: active
 
                     sourceComponent: StyledText {
                         text: Time.amPmStr
-                        font.pointSize: Appearance.font.size.titleMedium * root.scale
+                        font.pointSize: Config.appearance.font.title.medium.size * root.scale
                         color: root.safeSecondary
                     }
                 }
@@ -118,9 +118,9 @@ Item {
             StyledRect {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 4 * root.scale
-                Layout.topMargin: Appearance.spacing.xl * root.scale
-                Layout.bottomMargin: Appearance.spacing.xl * root.scale
-                radius: Appearance.rounding.full
+                Layout.topMargin: Config.appearance.spacing.largeIncreased * root.scale
+                Layout.bottomMargin: Config.appearance.spacing.largeIncreased * root.scale
+                radius: Config.appearance.rounding.full
                 color: root.safePrimary
                 opacity: 0.8
             }
@@ -130,7 +130,7 @@ Item {
 
                 StyledText {
                     text: Time.format("MMMM").toUpperCase()
-                    font.pointSize: Appearance.font.size.titleMedium * root.scale
+                    font.pointSize: Config.appearance.font.title.medium.size * root.scale
                     font.letterSpacing: 4
                     font.weight: Font.Bold
                     color: root.safeSecondary
@@ -138,7 +138,7 @@ Item {
 
                 StyledText {
                     text: Time.format("dd")
-                    font.pointSize: Appearance.font.size.headlineLarge * root.scale
+                    font.pointSize: Config.appearance.font.headline.large.size * root.scale
                     font.letterSpacing: 2
                     font.weight: Font.Medium
                     color: root.safePrimary
@@ -146,7 +146,7 @@ Item {
 
                 StyledText {
                     text: Time.format("dddd")
-                    font.pointSize: Appearance.font.size.bodyLarge * root.scale
+                    font.pointSize: Config.appearance.font.body.large.size * root.scale
                     font.letterSpacing: 2
                     color: root.safeSecondary
                 }
@@ -156,14 +156,14 @@ Item {
 
     Behavior on scale {
         Anim {
-            duration: Appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+            duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+            easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
         }
     }
 
     Behavior on implicitWidth {
         Anim {
-            duration: Appearance.anim.durations.small
+            duration: Config.appearance.anim.durations.small
         }
     }
 }

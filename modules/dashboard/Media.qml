@@ -6,7 +6,7 @@ import qs.components.misc
 import qs.components.controls
 import qs.services
 import qs.utils
-import qs.config
+import Caelestia.Config
 import Caelestia.Services
 import Quickshell
 import Quickshell.Widgets
@@ -38,12 +38,12 @@ Item {
         return `${mins}:${secs}`;
     }
 
-    implicitWidth: cover.implicitWidth + Config.dashboard.sizes.mediaVisualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Appearance.padding.xl * 2
-    implicitHeight: Math.max(cover.implicitHeight + Config.dashboard.sizes.mediaVisualiserSize * 2, details.implicitHeight, bongocat.implicitHeight) + Appearance.padding.xl * 2
+    implicitWidth: cover.implicitWidth + TokenConfig.sizes.dashboard.mediaVisualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Config.appearance.padding.largeIncreased * 2
+    implicitHeight: Math.max(cover.implicitHeight + TokenConfig.sizes.dashboard.mediaVisualiserSize * 2, details.implicitHeight, bongocat.implicitHeight) + Config.appearance.padding.largeIncreased * 2
 
     Behavior on playerProgress {
         Anim {
-            duration: Appearance.anim.durations.large
+            duration: Config.appearance.anim.durations.large
         }
     }
 
@@ -68,12 +68,12 @@ Item {
 
         readonly property real centerX: width / 2
         readonly property real centerY: height / 2
-        readonly property real innerX: cover.implicitWidth / 2 + Appearance.spacing.sm
-        readonly property real innerY: cover.implicitHeight / 2 + Appearance.spacing.sm
+        readonly property real innerX: cover.implicitWidth / 2 + Config.appearance.spacing.small
+        readonly property real innerY: cover.implicitHeight / 2 + Config.appearance.spacing.small
         property color colour: Colours.palette.m3primary
 
         anchors.fill: cover
-        anchors.margins: -Config.dashboard.sizes.mediaVisualiserSize
+        anchors.margins: -TokenConfig.sizes.dashboard.mediaVisualiserSize
 
         asynchronous: true
         preferredRendererType: Shape.CurveRenderer
@@ -94,12 +94,12 @@ Item {
             readonly property real value: Math.max(1e-3, Math.min(1, Cava.values[modelData]))
 
             readonly property real angle: modelData * 2 * Math.PI / Config.services.visualiserBars
-            readonly property real magnitude: value * Config.dashboard.sizes.mediaVisualiserSize
+            readonly property real magnitude: value * TokenConfig.sizes.dashboard.mediaVisualiserSize
             readonly property real cos: Math.cos(angle)
             readonly property real sin: Math.sin(angle)
 
-            capStyle: Appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-            strokeWidth: 360 / Config.services.visualiserBars - Appearance.spacing.sm / 4
+            capStyle: Config.appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
+            strokeWidth: 360 / Config.services.visualiserBars - Config.appearance.spacing.small / 4
             strokeColor: Colours.palette.m3primary
 
             startX: visualiser.centerX + (visualiser.innerX + strokeWidth / 2) * cos
@@ -121,10 +121,10 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: Appearance.padding.xl + Config.dashboard.sizes.mediaVisualiserSize
+        anchors.leftMargin: Config.appearance.padding.largeIncreased + TokenConfig.sizes.dashboard.mediaVisualiserSize
 
-        implicitWidth: Config.dashboard.sizes.mediaCoverArtSize
-        implicitHeight: Config.dashboard.sizes.mediaCoverArtSize
+        implicitWidth: TokenConfig.sizes.dashboard.mediaCoverArtSize
+        implicitHeight: TokenConfig.sizes.dashboard.mediaCoverArtSize
 
         color: Colours.tPalette.m3surfaceContainerHigh
         radius: Infinity
@@ -156,9 +156,9 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: visualiser.right
-        anchors.leftMargin: Appearance.spacing.lg
+        anchors.leftMargin: Config.appearance.spacing.large
 
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
 
         StyledText {
             id: title
@@ -170,7 +170,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
             color: Players.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: Config.appearance.font.body.medium.size
         }
 
         StyledText {
@@ -184,7 +184,7 @@ Item {
             visible: !!Players.active
             text: Players.active?.trackAlbum || qsTr("Unknown album")
             color: Colours.palette.m3outline
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
 
         StyledText {
@@ -205,10 +205,10 @@ Item {
             id: controls
 
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Appearance.spacing.sm
-            Layout.bottomMargin: Appearance.spacing.md
+            Layout.topMargin: Config.appearance.spacing.small
+            Layout.bottomMargin: Config.appearance.spacing.medium
 
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             PlayerControl {
                 icon: "skip_previous"
@@ -222,7 +222,7 @@ Item {
             StyledRect {
                 id: playBtn
 
-                property int fontSize: Appearance.font.size.headlineLarge
+                property int fontSize: Config.appearance.font.headline.large.size
                 property int padding
                 property bool fill: true
                 property bool primary
@@ -232,7 +232,7 @@ Item {
                 implicitWidth: Math.max(playIcon.implicitWidth, playIcon.implicitHeight) + padding * 2
                 implicitHeight: implicitWidth
 
-                radius: Players.active?.isPlaying ? Appearance.rounding.small : implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
+                radius: Players.active?.isPlaying ? Config.appearance.rounding.small : implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale)
                 color: {
                     if (!Players.active?.canTogglePlaying)
                         return Qt.alpha(Colours.palette.m3onSurface, 0.1);
@@ -263,7 +263,7 @@ Item {
                             return Qt.alpha(Colours.palette.m3onSurface, 0.38);
                         return Players.active?.isPlaying ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer;
                     }
-                    font.pointSize: Appearance.font.size.headlineLarge
+                    font.pointSize: Config.appearance.font.headline.large.size
                 }
 
                 Behavior on radius {
@@ -286,7 +286,7 @@ Item {
 
             enabled: !!Players.active
             implicitWidth: controls.implicitWidth * 1.5
-            implicitHeight: Appearance.padding.md * 3
+            implicitHeight: Config.appearance.padding.medium * 3
 
             onMoved: {
                 const active = Players.active;
@@ -330,7 +330,7 @@ Item {
 
                 text: root.lengthStr(Players.active?.position ?? -1)
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
 
             StyledText {
@@ -340,19 +340,19 @@ Item {
 
                 text: root.lengthStr(Players.active?.length ?? -1)
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
             }
         }
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             PlayerControl {
                 icon: "flip_to_front"
                 canUse: Players.active?.canRaise ?? false
-                fontSize: Appearance.font.size.bodyLarge
-                padding: Appearance.padding.xs
+                fontSize: Config.appearance.font.body.large.size
+                padding: Config.appearance.padding.extraSmall
                 fill: false
                 color: Colours.tPalette.m3surfaceContainer
 
@@ -370,9 +370,9 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.maximumWidth: slider.implicitWidth * 0.6
 
-                implicitWidth: Math.max(currentPlayer.implicitWidth, 100) + Appearance.padding.sm * 2
-                implicitHeight: currentPlayer.implicitHeight + Appearance.padding.sm * 2
-                radius: Appearance.rounding.normal
+                implicitWidth: Math.max(currentPlayer.implicitWidth, 100) + Config.appearance.padding.small * 2
+                implicitHeight: currentPlayer.implicitHeight + Config.appearance.padding.small * 2
+                radius: Config.appearance.rounding.large
                 color: Colours.tPalette.m3surfaceContainer
 
                 StateLayer {
@@ -387,7 +387,7 @@ Item {
                     id: currentPlayer
 
                     anchors.centerIn: parent
-                    spacing: Appearance.spacing.sm
+                    spacing: Config.appearance.spacing.small
 
                     PlayerIcon {
                         player: Players.active
@@ -395,7 +395,7 @@ Item {
 
                     StyledText {
                         Layout.fillWidth: true
-                        Layout.maximumWidth: playerSelector.implicitWidth - implicitHeight - parent.spacing - Appearance.padding.md * 2
+                        Layout.maximumWidth: playerSelector.implicitWidth - implicitHeight - parent.spacing - Config.appearance.padding.medium * 2
                         text: Players.active ? Players.getIdentity(Players.active) : qsTr("No players")
                         color: Players.active ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant
                         elide: Text.ElideRight
@@ -405,11 +405,11 @@ Item {
                 MaterialIcon {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.rightMargin: Appearance.padding.xs
+                    anchors.rightMargin: Config.appearance.padding.extraSmall
                     text: "expand_more"
                     color: Colours.palette.m3onSurfaceVariant
                     rotation: playerSelector.expanded ? 180 : 0
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
 
                     Behavior on rotation {
                         Anim {}
@@ -420,8 +420,8 @@ Item {
             PlayerControl {
                 icon: "delete"
                 canUse: Players.active?.canQuit ?? false
-                fontSize: Appearance.font.size.bodyLarge
-                padding: Appearance.padding.xs
+                fontSize: Config.appearance.font.body.large.size
+                padding: Config.appearance.padding.extraSmall
                 fill: false
                 color: Colours.tPalette.m3surfaceContainer
 
@@ -449,17 +449,17 @@ Item {
                 var pt2 = playerSelector.mapToItem(dropdownOverlay, 0, 0);
                 if (pt && pt2) {
                     x = pt.x - width / 2;
-                    y = pt2.y - implicitHeight - Appearance.spacing.sm;
+                    y = pt2.y - implicitHeight - Config.appearance.spacing.small;
                 }
             }
 
             onVisibleChanged: Qt.callLater(reposition)
             onImplicitHeightChanged: Qt.callLater(reposition)
 
-            implicitWidth: Math.max(200, playerListCol.implicitWidth + Appearance.padding.md * 2)
-            implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight + Appearance.padding.sm * 2 : 0
+            implicitWidth: Math.max(200, playerListCol.implicitWidth + Config.appearance.padding.medium * 2)
+            implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight + Config.appearance.padding.small * 2 : 0
 
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             color: Colours.palette.m3surfaceContainer
             opacity: playerSelector.expanded ? 1 : 0
 
@@ -468,7 +468,7 @@ Item {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.margins: Appearance.padding.sm
+                anchors.margins: Config.appearance.padding.small
                 spacing: 0
 
                 Repeater {
@@ -480,10 +480,10 @@ Item {
 
                         Layout.fillWidth: true
                         Layout.minimumWidth: playerSelector.implicitWidth
-                        implicitWidth: playerInner.implicitWidth + Appearance.padding.md * 2
-                        implicitHeight: playerInner.implicitHeight + Appearance.padding.sm * 2
+                        implicitWidth: playerInner.implicitWidth + Config.appearance.padding.medium * 2
+                        implicitHeight: playerInner.implicitHeight + Config.appearance.padding.small * 2
 
-                        radius: Appearance.rounding.small
+                        radius: Config.appearance.rounding.small
                         color: Qt.alpha(Colours.palette.m3secondaryContainer, modelData === Players.active ? 1 : 0)
 
                         StateLayer {
@@ -499,11 +499,11 @@ Item {
                         RowLayout {
                             id: playerInner
                             anchors.centerIn: parent
-                            spacing: Appearance.spacing.sm
+                            spacing: Config.appearance.spacing.small
 
                             MaterialIcon {
                                 Layout.alignment: Qt.AlignVCenter
-                                font.pointSize: Appearance.font.size.bodyLarge
+                                font.pointSize: Config.appearance.font.body.large.size
                                 text: modelData === Players.active ? "check" : ""
                                 color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
                             }
@@ -520,14 +520,14 @@ Item {
 
             Behavior on opacity {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
+                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
                 }
             }
 
             Behavior on implicitHeight {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                 }
             }
         }
@@ -538,7 +538,7 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: details.right
-        anchors.leftMargin: Appearance.spacing.lg
+        anchors.leftMargin: Config.appearance.spacing.large
 
         implicitWidth: visualiser.width
         implicitHeight: visualiser.height
@@ -571,10 +571,10 @@ Item {
 
         property bool imageFailed: false
 
-        implicitWidth: Config.dashboard.sizes.mediaIconSize
-        implicitHeight: Config.dashboard.sizes.mediaIconSize
+        implicitWidth: TokenConfig.sizes.dashboard.mediaIconSize
+        implicitHeight: TokenConfig.sizes.dashboard.mediaIconSize
         Layout.fillHeight: true
-        Layout.preferredWidth: Config.dashboard.sizes.mediaIconSize
+        Layout.preferredWidth: TokenConfig.sizes.dashboard.mediaIconSize
 
         IconImage {
             id: iconImage
@@ -602,7 +602,7 @@ Item {
 
         required property string icon
         required property bool canUse
-        property int fontSize: Appearance.font.size.headlineLarge
+        property int fontSize: Config.appearance.font.headline.large.size
         property int padding
         property bool fill: true
         function onClicked(): void {
@@ -610,7 +610,7 @@ Item {
 
         implicitWidth: Math.max(icon.implicitWidth, icon.implicitHeight) + padding * 2
         implicitHeight: implicitWidth
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
 
         StateLayer {
             disabled: !control.canUse

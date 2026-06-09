@@ -1,7 +1,7 @@
 import "../services"
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -12,13 +12,13 @@ Item {
     required property DesktopEntry modelData
     required property PersistentProperties visibilities
 
-    implicitHeight: Config.launcher.sizes.itemHeight
+    implicitHeight: TokenConfig.sizes.launcher.itemHeight
 
     anchors.left: parent?.left
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
 
         function onClicked(): void {
             Apps.launch(root.modelData);
@@ -28,9 +28,9 @@ Item {
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Appearance.padding.lg
-        anchors.rightMargin: Appearance.padding.lg
-        anchors.margins: Appearance.padding.sm
+        anchors.leftMargin: Config.appearance.padding.large
+        anchors.rightMargin: Config.appearance.padding.large
+        anchors.margins: Config.appearance.padding.small
 
         IconImage {
             id: icon
@@ -43,7 +43,7 @@ Item {
 
         Item {
             anchors.left: icon.right
-            anchors.leftMargin: Appearance.spacing.lg
+            anchors.leftMargin: Config.appearance.spacing.large
             anchors.verticalCenter: icon.verticalCenter
 
             implicitWidth: parent.width - icon.width
@@ -53,18 +53,18 @@ Item {
                 id: name
 
                 text: root.modelData?.name ?? ""
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Config.appearance.font.body.medium.size
             }
 
             StyledText {
                 id: comment
 
                 text: (root.modelData?.comment || root.modelData?.genericName || root.modelData?.name) ?? ""
-                font.pointSize: Appearance.font.size.labelLarge
+                font.pointSize: Config.appearance.font.label.large.size
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight
-                width: root.width - icon.width - Appearance.rounding.normal * 2
+                width: root.width - icon.width - Config.appearance.rounding.large * 2
 
                 anchors.top: name.bottom
             }

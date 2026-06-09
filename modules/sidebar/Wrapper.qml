@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import qs.config
+import Caelestia.Config
 import qs.components
 
 Item {
@@ -20,7 +20,7 @@ Item {
         when: root.visibilities.sidebar
 
         PropertyChanges {
-            root.implicitWidth: Tokens.sizes.sidebar.width
+            root.implicitWidth: TokenConfig.sizes.sidebar.width
         }
     }
 
@@ -30,9 +30,9 @@ Item {
             to: "visible"
             Anim {
                 properties: "implicitWidth"
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         },
         Transition {
@@ -40,9 +40,9 @@ Item {
             to: ""
             Anim {
                 properties: "implicitWidth"
-                duration: Appearance.anim.durations.small
+                duration: Config.appearance.anim.durations.small
                 easing.type: Easing.BezierSpline
-                easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
+                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
             }
         }
     ]
@@ -59,7 +59,7 @@ Item {
 
         width: root.width - anchors.margins * 2
         clip: true
-        opacity: Math.min(1, root.width / (Tokens.sizes.sidebar.width * 0.6))
+        opacity: Math.min(1, root.width / (TokenConfig.sizes.sidebar.width * 0.6))
 
         Loader {
             id: content

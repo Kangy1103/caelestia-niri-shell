@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell
-import qs.config
+import Caelestia.Config
 import qs.utils
 
 QtObject {

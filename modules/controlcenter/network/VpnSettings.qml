@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.containers
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
@@ -17,7 +17,7 @@ ColumnLayout {
 
     required property Session session
 
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
 
     SettingsHeader {
         icon: "vpn_key"
@@ -25,7 +25,7 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("General")
         description: qsTr("VPN configuration")
     }
@@ -36,26 +36,25 @@ ColumnLayout {
             checked: Config.utilities.vpn.enabled
             toggle.onToggled: {
                 Config.utilities.vpn.enabled = checked;
-                Config.markDirty("utilities");
             }
         }
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Providers")
         description: qsTr("Manage VPN providers")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.lg
+        contentSpacing: Config.appearance.spacing.large
 
         ListView {
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight
 
             interactive: false
-            spacing: Appearance.spacing.md
+            spacing: Config.appearance.spacing.medium
 
             model: ScriptModel {
                 values: Config.utilities.vpn.provider.map((provider, index) => {
@@ -82,18 +81,18 @@ ColumnLayout {
 
                     width: ListView.view ? ListView.view.width : undefined
                     color: Colours.tPalette.m3surfaceContainerHigh
-                    radius: Appearance.rounding.normal
+                    radius: Config.appearance.rounding.large
 
                     RowLayout {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.margins: Appearance.padding.md
-                        spacing: Appearance.spacing.lg
+                        anchors.margins: Config.appearance.padding.medium
+                        spacing: Config.appearance.spacing.large
 
                         MaterialIcon {
                             text: modelData.isActive ? "vpn_key" : "vpn_key_off"
-                            font.pointSize: Appearance.font.size.titleMedium
+                            font.pointSize: Config.appearance.font.title.medium.size
                             color: modelData.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
                         }
 
@@ -108,7 +107,7 @@ ColumnLayout {
 
                             StyledText {
                                 text: qsTr("%1 • %2").arg(modelData.name).arg(modelData.interface || qsTr("No interface"))
-                                font.pointSize: Appearance.font.size.labelLarge
+                                font.pointSize: Config.appearance.font.label.large.size
                                 color: Colours.palette.m3outline
                             }
                         }
@@ -124,14 +123,12 @@ ColumnLayout {
                                     providers[index] = providers[index + 1];
                                     providers[index + 1] = temp;
                                     Config.utilities.vpn.provider = providers;
-                                    Config.markDirty("utilities");
                                 } else if (!modelData.isActive) {
                                     // Make active (move to top)
                                     const providers = [...Config.utilities.vpn.provider];
                                     const provider = providers.splice(index, 1)[0];
                                     providers.unshift(provider);
                                     Config.utilities.vpn.provider = providers;
-                                    Config.markDirty("utilities");
                                 }
                             }
                         }
@@ -142,7 +139,6 @@ ColumnLayout {
                                 const providers = [...Config.utilities.vpn.provider];
                                 providers.splice(index, 1);
                                 Config.utilities.vpn.provider = providers;
-                                Config.markDirty("utilities");
                             }
                         }
                     }
@@ -154,7 +150,7 @@ ColumnLayout {
 
         TextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Appearance.spacing.lg
+            Layout.topMargin: Config.appearance.spacing.large
             text: qsTr("+ Add Provider")
             inactiveColour: Colours.palette.m3primaryContainer
             inactiveOnColour: Colours.palette.m3onPrimaryContainer
@@ -166,13 +162,13 @@ ColumnLayout {
     }
 
     SectionHeader {
-        Layout.topMargin: Appearance.spacing.xxl
+        Layout.topMargin: Config.appearance.spacing.extraExtraLarge
         title: qsTr("Quick Add")
         description: qsTr("Add common VPN providers")
     }
 
     SectionContainer {
-        contentSpacing: Appearance.spacing.md
+        contentSpacing: Config.appearance.spacing.medium
 
         TextButton {
             Layout.fillWidth: true
@@ -188,7 +184,6 @@ ColumnLayout {
                     interface: "wt0"
                 });
                 Config.utilities.vpn.provider = providers;
-                Config.markDirty("utilities");
             }
         }
 
@@ -206,7 +201,6 @@ ColumnLayout {
                     interface: "tailscale0"
                 });
                 Config.utilities.vpn.provider = providers;
-                Config.markDirty("utilities");
             }
         }
 
@@ -224,7 +218,6 @@ ColumnLayout {
                     interface: "CloudflareWARP"
                 });
                 Config.utilities.vpn.provider = providers;
-                Config.markDirty("utilities");
             }
         }
     }

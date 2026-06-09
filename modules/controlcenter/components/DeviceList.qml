@@ -5,7 +5,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
@@ -26,7 +26,7 @@ ColumnLayout {
 
     signal itemSelected(var item)
 
-    spacing: Appearance.spacing.sm
+    spacing: Config.appearance.spacing.small
 
     Loader {
         id: headerLoader
@@ -39,13 +39,13 @@ ColumnLayout {
     RowLayout {
         Layout.fillWidth: true
         Layout.topMargin: root.headerComponent ? 0 : 0
-        spacing: Appearance.spacing.sm
+        spacing: Config.appearance.spacing.small
         visible: root.title !== "" || root.description !== ""
 
         StyledText {
             visible: root.title !== ""
             text: root.title
-            font.pointSize: Appearance.font.size.titleMedium
+            font.pointSize: Config.appearance.font.title.medium.size
             font.weight: 500
         }
 
@@ -77,7 +77,7 @@ ColumnLayout {
         model: root.model
         delegate: root.delegate
 
-        spacing: Appearance.spacing.sm / 2
+        spacing: Config.appearance.spacing.small / 2
         interactive: false
         clip: false
     }

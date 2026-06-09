@@ -1,6 +1,6 @@
 import ".."
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -12,8 +12,8 @@ Row {
         Tonal
     }
 
-    property real horizontalPadding: Appearance.padding.md
-    property real verticalPadding: Appearance.padding.sm
+    property real horizontalPadding: Config.appearance.padding.medium
+    property real verticalPadding: Config.appearance.padding.small
     property int type: SplitButton.Filled
     property bool disabled
     property bool menuOnTop
@@ -33,12 +33,12 @@ Row {
     property color disabledColour: Qt.alpha(Colours.palette.m3onSurface, 0.1)
     property color disabledTextColour: Qt.alpha(Colours.palette.m3onSurface, 0.38)
 
-    spacing: Math.floor(Appearance.spacing.sm / 2)
+    spacing: Math.floor(Config.appearance.spacing.small / 2)
 
     StyledRect {
-        radius: implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
-        topRightRadius: Appearance.rounding.small / 2
-        bottomRightRadius: Appearance.rounding.small / 2
+        radius: implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale)
+        topRightRadius: Config.appearance.rounding.small / 2
+        bottomRightRadius: Config.appearance.rounding.small / 2
         color: root.disabled ? root.disabledColour : root.colour
 
         implicitWidth: textRow.implicitWidth + root.horizontalPadding * 2
@@ -62,7 +62,7 @@ Row {
 
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: Math.floor(root.verticalPadding / 4)
-            spacing: Appearance.spacing.sm
+            spacing: Config.appearance.spacing.small
 
             MaterialIcon {
                 id: iconLabel
@@ -86,7 +86,7 @@ Row {
 
                 Behavior on Layout.preferredWidth {
                     Anim {
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                        easing.bezierCurve: TokenConfig.appearance.curves.emphasized
                     }
                 }
             }
@@ -96,9 +96,9 @@ Row {
     StyledRect {
         id: expandBtn
 
-        property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, Appearance.rounding.scale) : Appearance.rounding.small / 2
+        property real rad: root.expanded ? implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale) : Config.appearance.rounding.small / 2
 
-        radius: implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
+        radius: implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale)
         topLeftRadius: rad
         bottomLeftRadius: rad
         color: root.disabled ? root.disabledColour : root.colour
@@ -157,8 +157,8 @@ Row {
 
             anchors.top: parent.bottom
             anchors.right: parent.right
-            anchors.topMargin: Appearance.spacing.sm
-            anchors.bottomMargin: Appearance.spacing.sm
+            anchors.topMargin: Config.appearance.spacing.small
+            anchors.bottomMargin: Config.appearance.spacing.small
         }
     }
 }

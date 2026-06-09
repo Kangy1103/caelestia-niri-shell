@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -18,7 +18,7 @@ ColumnLayout {
 
     signal fontSelected(string fontName)
 
-    spacing: Appearance.spacing.xs
+    spacing: Config.appearance.spacing.extraSmall
     Layout.fillWidth: true
 
     // Header/Toggle Button
@@ -26,7 +26,7 @@ ColumnLayout {
         id: header
         Layout.fillWidth: true
         implicitHeight: 56
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
         color: root.expanded ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3surfaceContainer
         border.width: 1
         border.color: root.expanded ? Colours.palette.m3primary : "transparent"
@@ -42,22 +42,22 @@ ColumnLayout {
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.md
-            spacing: Appearance.spacing.md
+            anchors.margins: Config.appearance.padding.medium
+            spacing: Config.appearance.spacing.medium
 
             ColumnLayout {
                 spacing: 0
 
                 StyledText {
                     text: root.label
-                    font.pointSize: Appearance.font.size.labelMedium
+                    font.pointSize: Config.appearance.font.label.medium.size
                     color: Colours.palette.m3onSurfaceVariant
                     font.weight: 500
                 }
 
                 StyledText {
                     text: root.currentFont
-                    font.pointSize: Appearance.font.size.bodyLarge
+                    font.pointSize: Config.appearance.font.body.large.size
                     font.weight: 400
                     elide: Text.ElideRight
                     color: Colours.palette.m3onSurface
@@ -71,7 +71,7 @@ ColumnLayout {
             MaterialIcon {
                 text: root.expanded ? "expand_less" : "expand_more"
                 color: root.expanded ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 
                 Behavior on color { CAnim {} }
                 Behavior on rotation { Anim {} }
@@ -86,40 +86,40 @@ ColumnLayout {
         implicitHeight: root.expanded ? 320 : 0
         visible: root.expanded || opacity > 0
         opacity: root.expanded ? 1 : 0
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
         color: Colours.palette.m3surfaceContainerHigh
         clip: true
 
         Behavior on implicitHeight {
-            Anim { duration: Appearance.anim.durations.normal; easing.type: Easing.OutCubic }
+            Anim { duration: Config.appearance.anim.durations.normal; easing.type: Easing.OutCubic }
         }
         Behavior on opacity {
-            Anim { duration: Appearance.anim.durations.normal }
+            Anim { duration: Config.appearance.anim.durations.normal }
         }
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.sm
-            spacing: Appearance.spacing.sm
+            anchors.margins: Config.appearance.padding.small
+            spacing: Config.appearance.spacing.small
 
             // Search Bar
             StyledRect {
                 Layout.fillWidth: true
                 implicitHeight: 40
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
                 color: Colours.palette.m3surfaceContainerHighest
                 border.width: 1
                 border.color: searchField.hasFocus ? Colours.palette.m3primary : "transparent"
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: Appearance.padding.md
-                    anchors.rightMargin: Appearance.padding.sm
-                    spacing: Appearance.spacing.sm
+                    anchors.leftMargin: Config.appearance.padding.medium
+                    anchors.rightMargin: Config.appearance.padding.small
+                    spacing: Config.appearance.spacing.small
 
                     MaterialIcon {
                         text: "search"
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                         color: Colours.palette.m3onSurfaceVariant
                     }
 
@@ -127,7 +127,7 @@ ColumnLayout {
                         id: searchField
                         Layout.fillWidth: true
                         placeholderText: qsTr("Search fonts...")
-                        font.pointSize: Appearance.font.size.bodyMedium
+                        font.pointSize: Config.appearance.font.body.medium.size
                         
                         onTextChanged: {
                             fontList.positionViewAtBeginning();
@@ -142,7 +142,7 @@ ColumnLayout {
                         visible: searchField.text !== ""
                         icon: "close"
                         type: IconButton.Text
-                        font.pointSize: Appearance.font.size.bodySmall
+                        font.pointSize: Config.appearance.font.body.small.size
                         onClicked: searchField.text = ""
                     }
                 }
@@ -161,7 +161,7 @@ ColumnLayout {
                 }
 
                 model: filteredModel
-                spacing: Appearance.spacing.xs
+                spacing: Config.appearance.spacing.extraSmall
                 clip: true
 
                 StyledScrollBar.vertical: StyledScrollBar {
@@ -173,7 +173,7 @@ ColumnLayout {
                     required property string modelData
                     width: fontList.width
                     implicitHeight: 44
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     
                     readonly property bool isCurrent: modelData === root.currentFont
                     color: isCurrent ? Colours.palette.m3secondaryContainer : "transparent"
@@ -188,15 +188,15 @@ ColumnLayout {
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: Appearance.padding.md
-                        anchors.rightMargin: Appearance.padding.md
-                        spacing: Appearance.spacing.md
+                        anchors.leftMargin: Config.appearance.padding.medium
+                        anchors.rightMargin: Config.appearance.padding.medium
+                        spacing: Config.appearance.spacing.medium
 
                         StyledText {
                             Layout.fillWidth: true
                             text: modelData
                             font.family: modelData
-                            font.pointSize: Appearance.font.size.bodyMedium
+                            font.pointSize: Config.appearance.font.body.medium.size
                             color: isCurrent ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
                             elide: Text.ElideRight
                         }
@@ -204,7 +204,7 @@ ColumnLayout {
                         MaterialIcon {
                             visible: isCurrent
                             text: "check"
-                            font.pointSize: Appearance.font.size.bodyLarge
+                            font.pointSize: Config.appearance.font.body.large.size
                             color: Colours.palette.m3onSecondaryContainer
                         }
                     }

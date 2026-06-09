@@ -8,7 +8,7 @@ import qs.components.controls
 import qs.components.containers
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import QtQuick
@@ -28,7 +28,7 @@ DeviceList {
             visible: Nmcli.scanning
             text: qsTr("Scanning...")
             color: Colours.palette.m3primary
-            font.pointSize: Appearance.font.size.labelLarge
+            font.pointSize: Config.appearance.font.label.large.size
         }
     }
 
@@ -42,11 +42,11 @@ DeviceList {
 
     headerComponent: Component {
         RowLayout {
-            spacing: Appearance.spacing.md
+            spacing: Config.appearance.spacing.medium
 
             StyledText {
                 text: qsTr("Settings")
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 font.weight: 500
             }
 
@@ -58,9 +58,9 @@ DeviceList {
                 toggled: Nmcli.wifiEnabled
                 icon: "wifi"
                 accent: "Tertiary"
-                iconSize: Appearance.font.size.bodyMedium
-                horizontalPadding: Appearance.padding.md
-                verticalPadding: Appearance.padding.sm
+                iconSize: Config.appearance.font.body.medium.size
+                horizontalPadding: Config.appearance.padding.medium
+                verticalPadding: Config.appearance.padding.small
 
                 onClicked: {
                     Nmcli.toggleWifi(null);
@@ -71,9 +71,9 @@ DeviceList {
                 toggled: Nmcli.scanning
                 icon: "wifi_find"
                 accent: "Secondary"
-                iconSize: Appearance.font.size.bodyMedium
-                horizontalPadding: Appearance.padding.md
-                verticalPadding: Appearance.padding.sm
+                iconSize: Config.appearance.font.body.medium.size
+                horizontalPadding: Config.appearance.padding.medium
+                verticalPadding: Config.appearance.padding.small
 
                 onClicked: {
                     Nmcli.rescanWifi();
@@ -84,9 +84,9 @@ DeviceList {
                 toggled: !root.session.network.active
                 icon: "settings"
                 accent: "Primary"
-                iconSize: Appearance.font.size.bodyMedium
-                horizontalPadding: Appearance.padding.md
-                verticalPadding: Appearance.padding.sm
+                iconSize: Config.appearance.font.body.medium.size
+                horizontalPadding: Config.appearance.padding.medium
+                verticalPadding: Config.appearance.padding.small
 
                 onClicked: {
                     if (root.session.network.active)
@@ -106,7 +106,7 @@ DeviceList {
             width: ListView.view ? ListView.view.width : undefined
 
             color: Qt.alpha(Colours.tPalette.m3surfaceContainer, root.activeItem === modelData ? Colours.tPalette.m3surfaceContainer.a : 0)
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
 
             StateLayer {
                 function onClicked(): void {
@@ -123,15 +123,15 @@ DeviceList {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Appearance.padding.md
+                anchors.margins: Config.appearance.padding.medium
 
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: icon.implicitHeight + Appearance.padding.md * 2
+                    implicitHeight: icon.implicitHeight + Config.appearance.padding.medium * 2
 
-                    radius: Appearance.rounding.normal
+                    radius: Config.appearance.rounding.large
                     color: modelData.active ? Colours.palette.m3primaryContainer : Colours.tPalette.m3surfaceContainerHigh
 
                     MaterialIcon {
@@ -139,7 +139,7 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
-                        font.pointSize: Appearance.font.size.titleMedium
+                        font.pointSize: Config.appearance.font.title.medium.size
                         fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
@@ -160,7 +160,7 @@ DeviceList {
 
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: Appearance.spacing.md
+                        spacing: Config.appearance.spacing.medium
 
                         StyledText {
                             Layout.fillWidth: true
@@ -175,7 +175,7 @@ DeviceList {
                                 return qsTr("Open");
                             }
                             color: modelData.active ? Colours.palette.m3primary : Colours.palette.m3outline
-                            font.pointSize: Appearance.font.size.labelLarge
+                            font.pointSize: Config.appearance.font.label.large.size
                             font.weight: modelData.active ? 500 : 400
                             elide: Text.ElideRight
                         }
@@ -184,9 +184,9 @@ DeviceList {
 
                 StyledRect {
                     implicitWidth: implicitHeight
-                    implicitHeight: connectIcon.implicitHeight + Appearance.padding.sm * 2
+                    implicitHeight: connectIcon.implicitHeight + Config.appearance.padding.small * 2
 
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: Qt.alpha(Colours.palette.m3primaryContainer, modelData.active ? 1 : 0)
 
                     StateLayer {
@@ -209,7 +209,7 @@ DeviceList {
                 }
             }
 
-            implicitHeight: rowLayout.implicitHeight + Appearance.padding.md * 2
+            implicitHeight: rowLayout.implicitHeight + Config.appearance.padding.medium * 2
         }
     }
 

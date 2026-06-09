@@ -2,7 +2,7 @@ import qs.components
 import qs.components.containers
 import qs.components.widgets
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -12,13 +12,13 @@ Item {
 
     required property PersistentProperties visibilities
     required property Item panel
-    readonly property int padding: Appearance.padding.xl
+    readonly property int padding: Config.appearance.padding.largeIncreased
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
-    implicitWidth: Config.notifs.sizes.width + padding * 2
+    implicitWidth: TokenConfig.sizes.notifs.width + padding * 2
 
     readonly property real _cachedContentHeight: list.contentHeight
 
@@ -50,7 +50,7 @@ Item {
         anchors.margins: root.padding
 
         color: "transparent"
-        radius: Appearance.rounding.normal
+        radius: Config.appearance.rounding.large
 
         StyledListView {
             id: list
@@ -79,7 +79,7 @@ Item {
                 }
 
                 implicitWidth: notif.implicitWidth
-                implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Appearance.spacing.md)
+                implicitHeight: notif.implicitHeight + (idx === 0 ? 0 : Config.appearance.spacing.medium)
 
                 ListView.onRemove: removeAnim.start()
 
@@ -109,9 +109,9 @@ Item {
                     Anim {
                         target: notif
                         property: "x"
-                        to: (notif.x >= 0 ? Config.notifs.sizes.width : -Config.notifs.sizes.width) * 2
-                        duration: Appearance.anim.durations.normal
-                        easing.bezierCurve: Appearance.anim.curves.emphasized
+                        to: (notif.x >= 0 ? TokenConfig.sizes.notifs.width : -TokenConfig.sizes.notifs.width) * 2
+                        duration: Config.appearance.anim.durations.normal
+                        easing.bezierCurve: TokenConfig.appearance.curves.emphasized
                     }
                     PropertyAction {
                         target: wrapper
@@ -122,7 +122,7 @@ Item {
 
                 ClippingRectangle {
                     anchors.top: parent.top
-                    anchors.topMargin: wrapper.idx === 0 ? 0 : Appearance.spacing.md
+                    anchors.topMargin: wrapper.idx === 0 ? 0 : Config.appearance.spacing.medium
 
                     color: "transparent"
                     radius: notif.radius

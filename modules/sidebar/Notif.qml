@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Notifications
-import qs.config
+import Caelestia.Config
 import qs.components
 import qs.services
 
@@ -68,7 +68,7 @@ StyledRect {
         elide: Text.ElideRight
         wrapMode: Text.WordWrap
         maximumLineCount: 1
-        font.pointSize: Appearance.font.size.labelLarge
+        font.pointSize: Config.appearance.font.label.large.size
     }
 
     StyledText {
@@ -94,7 +94,7 @@ StyledRect {
             text: String(root.modelData?.body ?? "").replace(/\n/g, " ")
             color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             elide: Text.ElideRight
-            font.pointSize: Appearance.font.size.labelMedium
+            font.pointSize: Config.appearance.font.label.medium.size
         }
     }
 
@@ -109,7 +109,7 @@ StyledRect {
             animate: true
             text: root.modelData?.timeStr ?? ""
             color: Colours.palette.m3outline
-            font.pointSize: Appearance.font.size.labelMedium
+            font.pointSize: Config.appearance.font.label.medium.size
         }
     }
 
@@ -138,7 +138,7 @@ StyledRect {
             text: String(root.modelData?.body ?? "").replace(/(.)\n(?!\n)/g, "$1\n\n") || qsTr("No body here! :/")
             color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             wrapMode: Text.WordWrap
-            font.pointSize: Appearance.font.size.labelMedium
+            font.pointSize: Config.appearance.font.label.medium.size
 
             onLinkActivated: link => {
                 Quickshell.execDetached(["app2unit", "-O", "--", link]);

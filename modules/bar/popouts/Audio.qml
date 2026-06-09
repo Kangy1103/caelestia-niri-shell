@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Services.Pipewire
 import QtQuick
@@ -15,8 +15,8 @@ Item {
 
     required property var wrapper
 
-    implicitWidth: layout.implicitWidth + Appearance.padding.md * 2
-    implicitHeight: layout.implicitHeight + Appearance.padding.md * 2
+    implicitWidth: layout.implicitWidth + Config.appearance.padding.medium * 2
+    implicitHeight: layout.implicitHeight + Config.appearance.padding.medium * 2
 
     ButtonGroup {
         id: sinks
@@ -34,7 +34,7 @@ Item {
         spacing: 0
 
         StyledText {
-            Layout.bottomMargin: Appearance.spacing.sm / 2
+            Layout.bottomMargin: Config.appearance.spacing.small / 2
             text: qsTr("Output device")
             font.weight: 500
         }
@@ -55,8 +55,8 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Appearance.spacing.lg
-            Layout.bottomMargin: Appearance.spacing.sm / 2
+            Layout.topMargin: Config.appearance.spacing.large
+            Layout.bottomMargin: Config.appearance.spacing.small / 2
             text: qsTr("Input device")
             font.weight: 500
         }
@@ -75,15 +75,15 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Appearance.spacing.lg
-            Layout.bottomMargin: Appearance.spacing.sm / 2
+            Layout.topMargin: Config.appearance.spacing.large
+            Layout.bottomMargin: Config.appearance.spacing.small / 2
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font.weight: 500
         }
 
         CustomMouseArea {
             Layout.fillWidth: true
-            implicitHeight: Appearance.padding.md * 3
+            implicitHeight: Config.appearance.padding.medium * 3
 
             onWheel: event => {
                 if (event.angleDelta.y > 0)
@@ -107,13 +107,13 @@ Item {
         }
 
         StyledRect {
-            Layout.topMargin: Appearance.spacing.lg
+            Layout.topMargin: Config.appearance.spacing.large
             visible: Config.general.apps.audio.length > 0
 
-            implicitWidth: expandBtn.implicitWidth + Appearance.padding.md * 2
-            implicitHeight: expandBtn.implicitHeight + Appearance.padding.xs
+            implicitWidth: expandBtn.implicitWidth + Config.appearance.padding.medium * 2
+            implicitHeight: expandBtn.implicitHeight + Config.appearance.padding.extraSmall
 
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             color: Colours.palette.m3primaryContainer
 
             StateLayer {
@@ -129,10 +129,10 @@ Item {
                 id: expandBtn
 
                 anchors.centerIn: parent
-                spacing: Appearance.spacing.sm
+                spacing: Config.appearance.spacing.small
 
                 StyledText {
-                    Layout.leftMargin: Appearance.padding.sm
+                    Layout.leftMargin: Config.appearance.padding.small
                     text: qsTr("Open settings")
                     color: Colours.palette.m3onPrimaryContainer
                 }
@@ -140,7 +140,7 @@ Item {
                 MaterialIcon {
                     text: "chevron_right"
                     color: Colours.palette.m3onPrimaryContainer
-                    font.pointSize: Appearance.font.size.titleMedium
+                    font.pointSize: Config.appearance.font.title.medium.size
                 }
             }
         }

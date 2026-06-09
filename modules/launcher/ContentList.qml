@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import "items"
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Quickshell
 import QtQuick
@@ -37,7 +37,7 @@ Item {
             name: "apps"
 
             PropertyChanges {
-                root.implicitWidth: Config.launcher.sizes.itemWidth + (showClipPreview ? 300 + Appearance.spacing.lg : 0)
+                root.implicitWidth: TokenConfig.sizes.launcher.itemWidth + (showClipPreview ? 300 + Config.appearance.spacing.large : 0)
                 root.implicitHeight: Math.max(appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight, showClipPreview ? 400 : 0)
                 appList.active: true
             }
@@ -51,8 +51,8 @@ Item {
             name: "wallpapers"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(Config.launcher.sizes.itemWidth * 1.2, wallpaperList.implicitWidth)
-                root.implicitHeight: Config.launcher.sizes.wallpaperHeight
+                root.implicitWidth: Math.max(TokenConfig.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
+                root.implicitHeight: TokenConfig.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
             }
         }
@@ -65,7 +65,7 @@ Item {
                 property: "opacity"
                 from: 1
                 to: 0
-                duration: Appearance.anim.durations.small
+                duration: Config.appearance.anim.durations.small
             }
             PropertyAction {}
             Anim {
@@ -73,7 +73,7 @@ Item {
                 property: "opacity"
                 from: 0
                 to: 1
-                duration: Appearance.anim.durations.small
+                duration: Config.appearance.anim.durations.small
             }
         }
     }
@@ -81,7 +81,7 @@ Item {
     Row {
         id: mainRow
         anchors.fill: parent
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         Loader {
             id: appList
@@ -90,7 +90,7 @@ Item {
             asynchronous: true
 
             height: parent.height
-            width: Config.launcher.sizes.itemWidth
+            width: TokenConfig.sizes.launcher.itemWidth
 
             sourceComponent: AppList {
                 search: root.search
@@ -132,8 +132,8 @@ Item {
         opacity: root.currentList?.count === 0 ? 1 : 0
         scale: root.currentList?.count === 0 ? 1 : 0.5
 
-        spacing: Appearance.spacing.lg
-        padding: Appearance.padding.xl
+        spacing: Config.appearance.spacing.large
+        padding: Config.appearance.padding.largeIncreased
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -141,7 +141,7 @@ Item {
         MaterialIcon {
             text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.headlineLarge
+            font.pointSize: Config.appearance.font.headline.large.size
 
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -152,14 +152,14 @@ Item {
             StyledText {
                 text: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.bodyLarge
+                font.pointSize: Config.appearance.font.body.large.size
                 font.weight: 500
             }
 
             StyledText {
                 text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(Paths.wallsdir)) : qsTr("Try searching for something else")
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Appearance.font.size.bodyMedium
+                font.pointSize: Config.appearance.font.body.medium.size
             }
         }
 
@@ -176,8 +176,8 @@ Item {
         enabled: root.visibilities.launcher
 
         Anim {
-            duration: Appearance.anim.durations.large
-            easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+            duration: Config.appearance.anim.durations.large
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
         }
     }
 
@@ -185,8 +185,8 @@ Item {
         enabled: root.visibilities.launcher
 
         Anim {
-            duration: Appearance.anim.durations.large
-            easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+            duration: Config.appearance.anim.durations.large
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
         }
     }
 }

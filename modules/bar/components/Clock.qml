@@ -2,25 +2,25 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 StyledRect {
     id: root
 
     readonly property color colour: Colours.palette.m3tertiary
-    readonly property int padding: Config.bar.clock.background ? Appearance.padding.normal : Appearance.padding.small
+    readonly property int padding: Config.bar.clock.background ? Config.appearance.padding.medium : Config.appearance.padding.small
 
-    implicitWidth: Config.bar.sizes.innerWidth
+    implicitWidth: TokenConfig.sizes.bar.innerWidth
     implicitHeight: layout.implicitHeight + root.padding * 2
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.clock.background ? Colours.tPalette.m3surfaceContainer.a : 0)
-    radius: Appearance.rounding.full
+    radius: Config.appearance.rounding.full
 
     Column {
         id: layout
         anchors.centerIn: parent
-        spacing: Appearance.spacing.small
+        spacing: Config.appearance.spacing.small
 
         Loader {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -41,8 +41,8 @@ StyledRect {
 
             horizontalAlignment: StyledText.AlignHCenter
             text: Time.format("ddd\nd")
-            font.pointSize: Appearance.font.size.smaller
-            font.family: Appearance.font.family.mono
+            font.pointSize: Config.appearance.font.body.small.size
+            font.family: Config.appearance.font.mono.family
             color: root.colour
         }
 
@@ -61,8 +61,8 @@ StyledRect {
 
             horizontalAlignment: StyledText.AlignHCenter
             text: Time.format(Config.services.useTwelveHourClock ? "hh\nmm\nA" : "hh\nmm")
-            font.pointSize: Appearance.font.size.smaller
-            font.family: Appearance.font.family.mono
+            font.pointSize: Config.appearance.font.body.small.size
+            font.family: Config.appearance.font.mono.family
             color: root.colour
         }
     }

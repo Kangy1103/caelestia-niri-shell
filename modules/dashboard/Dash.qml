@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import "dash"
 import Quickshell
 import QtQuick.Layouts
@@ -12,8 +12,8 @@ GridLayout {
     required property PersistentProperties state
 
     columns: 6
-    rowSpacing: Appearance.spacing.lg
-    columnSpacing: Appearance.spacing.lg
+    rowSpacing: Config.appearance.spacing.large
+    columnSpacing: Config.appearance.spacing.large
 
     Rect {
         Layout.column: 2
@@ -31,7 +31,7 @@ GridLayout {
     Rect {
         Layout.row: 0
         Layout.columnSpan: 2
-        Layout.preferredWidth: Config.dashboard.sizes.weatherWidth
+        Layout.preferredWidth: TokenConfig.sizes.dashboard.weatherWidth
         Layout.fillHeight: true
 
         Weather {}
@@ -41,7 +41,7 @@ GridLayout {
         Layout.row: 1
         Layout.columnSpan: 4
         Layout.fillWidth: true
-        Layout.minimumHeight: dateTime.implicitHeight + Appearance.padding.md
+        Layout.minimumHeight: dateTime.implicitHeight + Config.appearance.padding.medium
 
         DateTime {
             id: dateTime
@@ -94,7 +94,7 @@ GridLayout {
     }
 
     component Rect: StyledRect {
-        radius: Appearance.rounding.small
+        radius: Config.appearance.rounding.small
         color: Colours.tPalette.m3surfaceContainer
     }
 }

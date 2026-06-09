@@ -8,7 +8,7 @@ import qs.components.effects
 import qs.components.containers
 import qs.components.images
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Caelestia
 import Quickshell
@@ -22,7 +22,7 @@ ColumnLayout {
 
     required property Session session
     
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
     Layout.fillWidth: true
     Layout.minimumHeight: 400
 
@@ -63,7 +63,7 @@ ColumnLayout {
     Item {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        implicitHeight: 4 * (140 + Appearance.spacing.lg)
+        implicitHeight: 4 * (140 + Config.appearance.spacing.large)
         
         GridView {
             id: grid
@@ -72,11 +72,11 @@ ColumnLayout {
 
             cacheBuffer: Math.max(0, height * 2)
 
-            readonly property int minCellWidth: 200 + Appearance.spacing.lg
+            readonly property int minCellWidth: 200 + Config.appearance.spacing.large
             readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
 
             cellWidth: width / columnsCount
-            cellHeight: 140 + Appearance.spacing.lg
+            cellHeight: 140 + Config.appearance.spacing.large
 
             model: root.paginatedWallpapers
             clip: true
@@ -113,9 +113,9 @@ ColumnLayout {
     // Pagination Navigation
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Appearance.spacing.md
+        Layout.topMargin: Config.appearance.spacing.medium
         visible: root.wallpapers.length > root.itemsPerPage && !root.loading
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         IconButton {
             icon: "chevron_left"
@@ -126,7 +126,7 @@ ColumnLayout {
 
         StyledText {
             text: qsTr("Page %1 of %2").arg(root.currentPage + 1).arg(Math.ceil(root.wallpapers.length / root.itemsPerPage))
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: Config.appearance.font.body.medium.size
             font.weight: 500
         }
 

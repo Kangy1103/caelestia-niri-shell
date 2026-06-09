@@ -1,4 +1,4 @@
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 Item {
@@ -20,8 +20,8 @@ Item {
     }
 
     component Anim: NumberAnimation {
-        duration: Appearance.anim.durations.expressiveDefaultSpatial
+        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
         easing.type: Easing.BezierSpline
-        easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
     }
 }

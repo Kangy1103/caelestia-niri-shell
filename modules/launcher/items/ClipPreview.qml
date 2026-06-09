@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Io as Io
 import QtQuick
@@ -20,7 +20,7 @@ StyledRect {
     readonly property string entryText: modelData?.entryText ?? ""
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Appearance.rounding.small
+    radius: Config.appearance.rounding.small
 
     implicitWidth: 300
     implicitHeight: 400
@@ -72,23 +72,23 @@ StyledRect {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Appearance.padding.lg
-        spacing: Appearance.spacing.md
+        anchors.margins: Config.appearance.padding.large
+        spacing: Config.appearance.spacing.medium
 
         // Header
         RowLayout {
             Layout.fillWidth: true
-            spacing: Appearance.spacing.md
+            spacing: Config.appearance.spacing.medium
 
             MaterialIcon {
                 text: root.isImage ? "image" : "description"
                 color: Colours.palette.m3primary
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
             }
 
             StyledText {
                 text: root.isImage ? qsTr("Image Preview") : qsTr("Text Preview")
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 font.weight: 600
                 color: Colours.palette.m3onSurface
                 Layout.fillWidth: true
@@ -100,14 +100,14 @@ StyledRect {
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: Colours.tPalette.m3surfaceContainerLow
-            radius: Appearance.rounding.small
+            radius: Config.appearance.rounding.small
             clip: true
 
             // Image Preview
             Image {
                 visible: root.isImage
                 anchors.fill: parent
-                anchors.margins: Appearance.padding.md
+                anchors.margins: Config.appearance.padding.medium
                 // Only load when ready and path matches current ID to avoid stale/missing file errors
                 source: (root.imageReady && root.entryId === root._decodingId && root.imagePath !== "") ? "file://" + root.imagePath : ""
                 fillMode: Image.PreserveAspectFit
@@ -133,13 +133,13 @@ StyledRect {
 
                 StyledText {
                     id: previewText
-                    width: parent.width - Appearance.padding.md * 2
+                    width: parent.width - Config.appearance.padding.medium * 2
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
-                    anchors.topMargin: Appearance.padding.md
+                    anchors.topMargin: Config.appearance.padding.medium
                     text: root.entryText
                     wrapMode: Text.Wrap
-                    font.pointSize: Appearance.font.size.bodyMedium
+                    font.pointSize: Config.appearance.font.body.medium.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -149,7 +149,7 @@ StyledRect {
                 visible: root.isImage && !root.imageReady
                 anchors.fill: parent
                 color: Colours.tPalette.m3surfaceContainerLow
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
 
                 StyledBusyIndicator {
                     anchors.centerIn: parent

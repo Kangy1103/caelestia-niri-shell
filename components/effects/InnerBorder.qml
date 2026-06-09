@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import ".."
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Effects
 
@@ -37,8 +37,8 @@ StyledRect {
             id: maskInner
 
             anchors.fill: parent
-            anchors.margins: Appearance.padding.md
-            radius: Appearance.rounding.small
+            anchors.margins: Config.appearance.padding.medium
+            radius: Config.appearance.rounding.small
         }
     }
 }

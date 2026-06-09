@@ -2,7 +2,7 @@ import ".."
 import qs.components
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -15,8 +15,8 @@ StyledRect {
     property var onToggled: function (checked) {}
 
     Layout.fillWidth: true
-    implicitHeight: row.implicitHeight + Appearance.padding.xl * 2
-    radius: Appearance.rounding.normal
+    implicitHeight: row.implicitHeight + Config.appearance.padding.largeIncreased * 2
+    radius: Config.appearance.rounding.large
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
 
     Behavior on implicitHeight {
@@ -29,8 +29,8 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Appearance.padding.xl
-        spacing: Appearance.spacing.lg
+        anchors.margins: Config.appearance.padding.largeIncreased
+        spacing: Config.appearance.spacing.large
 
         StyledText {
             Layout.fillWidth: true

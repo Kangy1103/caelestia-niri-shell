@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Bluetooth
 import QtQuick
@@ -14,15 +14,15 @@ StyledRect {
 
     readonly property real iconFontSize: 32
 
-    implicitHeight: togglesRow.implicitHeight + Appearance.padding.md * 2
-    implicitWidth: togglesRow.implicitWidth + Appearance.padding.md * 2
-    radius: Appearance.rounding.normal
+    implicitHeight: togglesRow.implicitHeight + Config.appearance.padding.medium * 2
+    implicitWidth: togglesRow.implicitWidth + Config.appearance.padding.medium * 2
+    radius: Config.appearance.rounding.large
     color: Colours.tPalette.m3surfaceContainer
 
     RowLayout {
         id: togglesRow
         anchors.centerIn: parent
-        spacing: Appearance.spacing.xl
+        spacing: Config.appearance.spacing.largeIncreased
 
         Toggle {
             icon: "wifi"

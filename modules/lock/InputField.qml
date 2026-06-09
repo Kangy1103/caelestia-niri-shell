@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
@@ -47,8 +47,8 @@ Item {
 
         animate: true
         color: root.pam.passwd.active ? Colours.palette.m3secondary : Colours.palette.m3outline
-        font.pointSize: Appearance.font.size.bodySmall
-        font.family: Appearance.font.family.mono
+        font.pointSize: Config.appearance.font.body.small.size
+        font.family: Config.appearance.font.mono.family
 
         opacity: root.buffer ? 0 : 1
 
@@ -72,10 +72,10 @@ Item {
         anchors.horizontalCenterOffset: implicitWidth > root.width ? -(implicitWidth - root.width) / 2 : 0
 
         implicitWidth: fullWidth
-        implicitHeight: Appearance.font.size.bodyMedium
+        implicitHeight: Config.appearance.font.body.medium.size
 
         orientation: Qt.Horizontal
-        spacing: Appearance.spacing.sm / 2
+        spacing: Config.appearance.spacing.small / 2
         interactive: false
 
         model: ScriptModel {
@@ -89,7 +89,7 @@ Item {
             implicitHeight: charList.implicitHeight
 
             color: Colours.palette.m3onSurface
-            radius: Appearance.rounding.small / 2
+            radius: Config.appearance.rounding.small / 2
 
             opacity: 0
             scale: 0
@@ -132,8 +132,8 @@ Item {
 
             Behavior on scale {
                 Anim {
-                    duration: Appearance.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                    duration: Config.appearance.anim.durations.expressiveFastSpatial
+                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
                 }
             }
         }

@@ -1,6 +1,6 @@
 import ".."
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 StyledRect {
@@ -15,8 +15,8 @@ StyledRect {
     property alias text: label.text
     property bool checked
     property bool toggle
-    property real horizontalPadding: Appearance.padding.md
-    property real verticalPadding: Appearance.padding.sm
+    property real horizontalPadding: Config.appearance.padding.medium
+    property real verticalPadding: Config.appearance.padding.small
     property alias font: label.font
     property int type: TextButton.Filled
 
@@ -47,7 +47,7 @@ StyledRect {
 
     onCheckedChanged: internalChecked = checked
 
-    radius: internalChecked ? Appearance.rounding.small : implicitHeight / 2 * Math.min(1, Appearance.rounding.scale)
+    radius: internalChecked ? Config.appearance.rounding.small : implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale)
     color: type === TextButton.Text ? "transparent" : internalChecked ? activeColour : inactiveColour
 
     implicitWidth: label.implicitWidth + horizontalPadding * 2

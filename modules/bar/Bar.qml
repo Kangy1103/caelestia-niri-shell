@@ -1,7 +1,8 @@
 pragma ComponentBehavior: Bound
 
 import qs.services
-import qs.config
+import qs.components
+import Caelestia.Config
 import "popouts" as BarPopouts
 import "components"
 import "components/workspaces"
@@ -15,7 +16,7 @@ ColumnLayout {
     required property ShellScreen screen
     required property PersistentProperties visibilities
     required property BarPopouts.Wrapper popouts
-    readonly property int vPadding: Appearance.padding.xl
+    readonly property int vPadding: Config.appearance.padding.largeIncreased
 
     // Handle Workspace Popouts for Niri
 
@@ -88,7 +89,7 @@ ColumnLayout {
         }
     }
 
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
 
     Repeater {
         id: repeater
@@ -108,7 +109,7 @@ ColumnLayout {
                 roleValue: "divider"
                 delegate: WrappedLoader {
                     sourceComponent: Rectangle {
-                        implicitWidth: Appearance.padding.md
+                        implicitWidth: Config.appearance.padding.medium
                         implicitHeight: 1
                         color: Colours.palette.m3outlineVariant
                     }

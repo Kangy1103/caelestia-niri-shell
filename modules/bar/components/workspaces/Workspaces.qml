@@ -10,7 +10,7 @@ import Quickshell
 import Quickshell.Widgets
 import Caelestia.Internal
 import qs.components
-import qs.config
+import Caelestia.Config
 import qs.services
 import qs.utils
 
@@ -18,9 +18,9 @@ StyledRect {
     id: root
 
     readonly property bool isVertical: true
-    readonly property real barHeight: Config.bar.sizes.innerWidth
-    readonly property real capsuleHeight: Config.bar.sizes.innerWidth * 0.85
-    readonly property real barFontSize: Appearance.font.size.labelLarge
+    readonly property real barHeight: TokenConfig.sizes.bar.innerWidth
+    readonly property real capsuleHeight: TokenConfig.sizes.bar.innerWidth * 0.85
+    readonly property real barFontSize: Config.appearance.font.label.large.size
 
     required property ShellScreen screen
 
@@ -49,8 +49,8 @@ StyledRect {
     property bool effectsActive: false
     property color effectColor: Colours.palette.m3primary
 
-    property int horizontalPadding: Math.round(Appearance.padding.xs)
-    property int spacingBetweenPills: Math.round(Appearance.spacing.sm / 2)
+    property int horizontalPadding: Math.round(Config.appearance.padding.extraSmall)
+    property int spacingBetweenPills: Math.round(Config.appearance.spacing.small / 2)
     property int windowRevision: 0
 
     property int wheelAccumulatedDelta: 0
@@ -58,14 +58,14 @@ StyledRect {
 
     signal requestWindowPopout
 
-    implicitWidth: Config.bar.sizes.innerWidth
+    implicitWidth: TokenConfig.sizes.bar.innerWidth
     implicitHeight: showApplications ? computeGroupedHeight() : (pillColumn.visible ? pillColumn.implicitHeight : groupedGrid.visible ? groupedGrid.implicitHeight : capsuleHeight) + horizontalPadding * 2
     Component.onCompleted: {
         refreshWorkspaces()
     }
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Appearance.rounding.full
+    radius: Config.appearance.rounding.full
 
     Connections {
         target: Niri
@@ -409,7 +409,7 @@ StyledRect {
                 height: iconSize + horizontalPadding
 
                 color: modelData.isFocused ? Colours.palette.m3primaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
                 border.color: modelData.isFocused ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outlineVariant, 0.2)
                 border.width: modelData.isFocused ? 2 : 1
 
@@ -461,7 +461,7 @@ StyledRect {
 
         Behavior on visible {
             NumberAnimation {
-                duration: Appearance.anim.durations.normal
+                duration: Config.appearance.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }

@@ -1,4 +1,4 @@
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland

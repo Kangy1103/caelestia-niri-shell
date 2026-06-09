@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
@@ -60,10 +60,10 @@ Item {
         id: indicator
 
         anchors.top: bar.bottom
-        anchors.topMargin: Config.dashboard.sizes.tabIndicatorSpacing
+        anchors.topMargin: TokenConfig.sizes.dashboard.tabIndicatorSpacing
 
         implicitWidth: bar.currentItem.implicitWidth
-        implicitHeight: Config.dashboard.sizes.tabIndicatorHeight
+        implicitHeight: TokenConfig.sizes.dashboard.tabIndicatorHeight
 
         property real animX: {
             const tab = bar.currentItem;
@@ -81,7 +81,7 @@ Item {
             implicitHeight: parent.implicitHeight * 2
 
             color: Colours.palette.m3primary
-            radius: Appearance.rounding.full
+            radius: Config.appearance.rounding.full
         }
 
         Behavior on animX {
@@ -171,16 +171,16 @@ Item {
                     properties: "implicitWidth,implicitHeight"
                     from: 0
                     to: rippleAnim.radius * 2
-                    duration: Appearance.anim.durations.normal
-                    easing.bezierCurve: Appearance.anim.curves.standardDecel
+                    duration: Config.appearance.anim.durations.normal
+                    easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
                 }
                 Anim {
                     target: ripple
                     property: "opacity"
                     to: 0
-                    duration: Appearance.anim.durations.normal
+                    duration: Config.appearance.anim.durations.normal
                     easing.type: Easing.BezierSpline
-                    easing.bezierCurve: Appearance.anim.curves.standard
+                    easing.bezierCurve: TokenConfig.appearance.curves.standard
                 }
             }
 
@@ -190,10 +190,10 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: parent.height + Config.dashboard.sizes.tabIndicatorSpacing * 2
+                implicitHeight: parent.height + TokenConfig.sizes.dashboard.tabIndicatorSpacing * 2
 
                 color: "transparent"
-                radius: Appearance.rounding.small
+                radius: Config.appearance.rounding.small
 
                 StyledRect {
                     id: stateLayer
@@ -211,7 +211,7 @@ Item {
                 StyledRect {
                     id: ripple
 
-                    radius: Appearance.rounding.full
+                    radius: Config.appearance.rounding.full
                     color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurface
                     opacity: 0
 
@@ -231,7 +231,7 @@ Item {
                 text: tab.iconName
                 color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                 fill: tab.current ? 1 : 0
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
 
                 Behavior on fill {
                     Anim {}

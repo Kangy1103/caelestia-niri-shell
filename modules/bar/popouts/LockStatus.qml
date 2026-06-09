@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -8,7 +8,7 @@ import QtQuick.Layouts
 ColumnLayout {
     id: root
 
-    spacing: Appearance.spacing.sm
+    spacing: Config.appearance.spacing.small
 
     StyledText {
         text: qsTr("Capslock: %1").arg(Niri.capsLock ? "Enabled" : "Disabled")

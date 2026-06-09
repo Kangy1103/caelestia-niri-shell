@@ -4,7 +4,7 @@ import qs.components
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -53,7 +53,7 @@ ColumnLayout {
 
     property bool _initialized: false
 
-    spacing: Appearance.spacing.sm
+    spacing: Config.appearance.spacing.small
 
     Component.onCompleted: {
         // Set initialized flag after a brief delay to allow component to fully load
@@ -64,12 +64,12 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: Appearance.spacing.lg
+        spacing: Config.appearance.spacing.large
 
         StyledText {
             visible: root.label !== ""
             text: root.label
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: Config.appearance.font.body.medium.size
         }
 
         Item {
@@ -130,7 +130,7 @@ ColumnLayout {
             visible: root.suffix !== ""
             text: root.suffix
             color: Colours.palette.m3outline
-            font.pointSize: Appearance.font.size.bodyMedium
+            font.pointSize: Config.appearance.font.body.medium.size
         }
     }
 
@@ -138,7 +138,7 @@ ColumnLayout {
         id: slider
 
         Layout.fillWidth: true
-        implicitHeight: Appearance.padding.md * 3
+        implicitHeight: Config.appearance.padding.medium * 3
 
         from: root.from
         to: root.to

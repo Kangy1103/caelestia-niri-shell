@@ -4,7 +4,7 @@ import ".."
 import "../controls"
 import "../images"
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import Caelestia.Models
 import Quickshell
@@ -42,8 +42,8 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            anchors.margins: Appearance.padding.xs
-            radius: Appearance.rounding.small
+            anchors.margins: Config.appearance.padding.extraSmall
+            radius: Config.appearance.rounding.small
         }
     }
 
@@ -59,14 +59,14 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 text: "scan_delete"
                 color: Colours.palette.m3outline
-                font.pointSize: Appearance.font.size.headlineLarge * 2
+                font.pointSize: Config.appearance.font.headline.large.size * 2
                 font.weight: 500
             }
 
             StyledText {
                 text: qsTr("This folder is empty")
                 color: Colours.palette.m3outline
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 font.weight: 500
             }
         }
@@ -80,10 +80,10 @@ Item {
         id: view
 
         anchors.fill: parent
-        anchors.margins: Appearance.padding.xs + Appearance.padding.md
+        anchors.margins: Config.appearance.padding.extraSmall + Config.appearance.padding.medium
 
-        cellWidth: Sizes.itemWidth + Appearance.spacing.sm
-        cellHeight: Sizes.itemWidth + Appearance.spacing.sm * 2 + Appearance.padding.md * 2 + 1
+        cellWidth: Sizes.itemWidth + Config.appearance.spacing.small
+        cellHeight: Sizes.itemWidth + Config.appearance.spacing.small * 2 + Config.appearance.padding.medium * 2 + 1
 
         clip: true
         focus: true
@@ -117,12 +117,12 @@ Item {
             required property int index
             required property FileSystemEntry modelData
 
-            readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + Appearance.padding.md * 2
+            readonly property real nonAnimHeight: icon.implicitHeight + name.anchors.topMargin + name.implicitHeight + Config.appearance.padding.medium * 2
 
             implicitWidth: Sizes.itemWidth
             implicitHeight: nonAnimHeight
 
-            radius: Appearance.rounding.normal
+            radius: Config.appearance.rounding.large
             color: Qt.alpha(Colours.tPalette.m3surfaceContainerHighest, GridView.isCurrentItem ? Colours.tPalette.m3surfaceContainerHighest.a : 0)
             z: GridView.isCurrentItem || implicitHeight !== nonAnimHeight ? 1 : 0
             clip: true
@@ -145,9 +145,9 @@ Item {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: Appearance.padding.md
+                anchors.topMargin: Config.appearance.padding.medium
 
-                implicitSize: Sizes.itemWidth - Appearance.padding.md * 2
+                implicitSize: Sizes.itemWidth - Config.appearance.padding.medium * 2
 
                 Component.onCompleted: {
                     const file = item.modelData;
@@ -168,8 +168,8 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: icon.bottom
-                anchors.topMargin: Appearance.spacing.sm
-                anchors.margins: Appearance.padding.md
+                anchors.topMargin: Config.appearance.spacing.small
+                anchors.margins: Config.appearance.padding.medium
 
                 horizontalAlignment: Text.AlignHCenter
                 elide: item.GridView.isCurrentItem ? Text.ElideNone : Text.ElideRight
@@ -188,8 +188,8 @@ Item {
                 properties: "opacity,scale"
                 from: 0
                 to: 1
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
             }
         }
 
@@ -208,12 +208,12 @@ Item {
             Anim {
                 properties: "opacity,scale"
                 to: 1
-                easing.bezierCurve: Appearance.anim.curves.standardDecel
+                easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
             }
             Anim {
                 properties: "x,y"
-                duration: Appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveDefaultSpatial
+                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
             }
         }
     }
@@ -221,7 +221,7 @@ Item {
     CurrentItem {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: Appearance.padding.xs
+        anchors.margins: Config.appearance.padding.extraSmall
 
         currentItem: view.currentItem
     }

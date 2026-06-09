@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -15,8 +15,8 @@ Item {
     
     signal clicked()
 
-    readonly property real itemMargin: Appearance.spacing.lg / 2
-    readonly property real itemRadius: Appearance.rounding.normal
+    readonly property real itemMargin: Config.appearance.spacing.large / 2
+    readonly property real itemRadius: Config.appearance.rounding.large
 
     visible: !!modelData
 
@@ -78,7 +78,7 @@ Item {
                 anchors.centerIn: parent
                 width: parent.width - 10
                 text: root.modelData ? root.modelData.slug : ""
-                font.pointSize: Appearance.font.size.bodySmall
+                font.pointSize: Config.appearance.font.body.small.size
                 color: "white"
                 elide: Text.ElideMiddle
                 horizontalAlignment: Text.AlignHCenter

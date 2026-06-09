@@ -1,7 +1,7 @@
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
 
@@ -13,7 +13,7 @@ RowLayout {
     property alias toggle: toggle
 
     Layout.fillWidth: true
-    spacing: Appearance.spacing.lg
+    spacing: Config.appearance.spacing.large
 
     StyledText {
         Layout.fillWidth: true

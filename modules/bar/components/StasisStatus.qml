@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import qs.config
+import Caelestia.Config
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -11,8 +11,8 @@ import QtQuick
 Item {
     id: root
 
-    implicitWidth: icon.implicitHeight + Appearance.padding.xs * 2 + 8
-    implicitHeight: icon.implicitHeight + Appearance.padding.xs * 2
+    implicitWidth: icon.implicitHeight + Config.appearance.padding.extraSmall * 2 + 8
+    implicitHeight: icon.implicitHeight + Config.appearance.padding.extraSmall * 2
 
     property string stasisState: "idle_waiting"
     property string stasisTooltip: "Stasis: waiting"
@@ -52,7 +52,7 @@ Item {
     StyledRect {
         id: bg
         anchors.fill: parent
-        radius: Appearance.rounding.full
+        radius: Config.appearance.rounding.full
         color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle"
             ? Qt.alpha(Colours.palette.m3primaryContainer, 1)
             : "transparent"

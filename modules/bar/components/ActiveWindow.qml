@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.services
 import qs.utils
-import qs.config
+import Caelestia.Config
 import QtQuick
 
 Item {
@@ -62,7 +62,7 @@ Item {
 
     clip: true
     implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight, colIndicator.implicitWidth)
-    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin + (colIndicator.visible ? colIndicator.implicitHeight + Appearance.spacing.xs : 0)
+    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin + (colIndicator.visible ? colIndicator.implicitHeight + Config.appearance.spacing.extraSmall : 0)
 
     MaterialIcon {
         id: icon
@@ -83,8 +83,8 @@ Item {
         visible: root.columnCount > 1
         text: `${root.focusedColumn}/${root.columnCount}`
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Appearance.font.size.labelSmall
-        font.family: Appearance.font.family.mono
+        font.pointSize: Config.appearance.font.label.small.size
+        font.family: Config.appearance.font.mono.family
     }
 
     Title {
@@ -99,8 +99,8 @@ Item {
         id: metrics
 
         text: Config.bar.activeWindow.compact ? root.getCompactName() : root.windowTitle //Niri.focusedWindowTitle ?? qsTr("Desktop")
-        font.pointSize: Appearance.font.size.bodySmall
-        font.family: Appearance.font.family.mono
+        font.pointSize: Config.appearance.font.body.small.size
+        font.family: Config.appearance.font.mono.family
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 
@@ -114,7 +114,7 @@ Item {
 
     Behavior on implicitHeight {
         Anim {
-            easing.bezierCurve: Appearance.anim.curves.emphasized
+            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
         }
     }
 
@@ -123,7 +123,7 @@ Item {
 
         anchors.horizontalCenter: icon.horizontalCenter
         anchors.top: icon.bottom
-        anchors.topMargin: Appearance.spacing.sm
+        anchors.topMargin: Config.appearance.spacing.small
 
         font.pointSize: metrics.font.pointSize
         font.family: metrics.font.family

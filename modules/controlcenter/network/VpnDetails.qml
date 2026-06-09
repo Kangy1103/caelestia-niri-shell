@@ -7,7 +7,7 @@ import qs.components.controls
 import qs.components.effects
 import qs.components.containers
 import qs.services
-import qs.config
+import Caelestia.Config
 import qs.utils
 import QtQuick
 import QtQuick.Controls
@@ -37,7 +37,7 @@ DeviceDetails {
     sections: [
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Connection status")
@@ -79,18 +79,17 @@ DeviceDetails {
                             }
 
                             Config.utilities.vpn.provider = providers;
-                            Config.markDirty("utilities");
                         }
                     }
 
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.topMargin: Appearance.spacing.lg
-                        spacing: Appearance.spacing.lg
+                        Layout.topMargin: Config.appearance.spacing.large
+                        spacing: Config.appearance.spacing.large
 
                         TextButton {
                             Layout.fillWidth: true
-                            Layout.minimumHeight: Appearance.font.size.bodyMedium + Appearance.padding.md * 2
+                            Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
                             visible: root.providerEnabled
                             enabled: !VPN.connecting
                             inactiveColour: Colours.palette.m3primaryContainer
@@ -131,7 +130,6 @@ DeviceDetails {
                                     }
                                 }
                                 Config.utilities.vpn.provider = providers;
-                                Config.markDirty("utilities");
                                 root.session.vpn.active = null;
                             }
                         }
@@ -141,7 +139,7 @@ DeviceDetails {
         },
         Component {
             ColumnLayout {
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 SectionHeader {
                     title: qsTr("Provider details")
@@ -149,7 +147,7 @@ DeviceDetails {
                 }
 
                 SectionContainer {
-                    contentSpacing: Appearance.spacing.sm / 2
+                    contentSpacing: Config.appearance.spacing.small / 2
 
                     PropertyRow {
                         label: qsTr("Provider")
@@ -203,8 +201,8 @@ DeviceDetails {
 
         parent: Overlay.overlay
         anchors.centerIn: parent
-        width: Math.min(400, parent.width - Appearance.padding.xl * 2)
-        padding: Appearance.padding.xl * 1.5
+        width: Math.min(400, parent.width - Config.appearance.padding.largeIncreased * 2)
+        padding: Config.appearance.padding.largeIncreased * 1.5
 
         modal: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -217,15 +215,15 @@ DeviceDetails {
                 property: "opacity"
                 from: 0
                 to: 1
-                duration: Appearance.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                duration: Config.appearance.anim.durations.expressiveFastSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
             }
             Anim {
                 property: "scale"
                 from: 0.7
                 to: 1
-                duration: Appearance.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                duration: Config.appearance.anim.durations.expressiveFastSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
             }
         }
 
@@ -234,15 +232,15 @@ DeviceDetails {
                 property: "opacity"
                 from: 1
                 to: 0
-                duration: Appearance.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                duration: Config.appearance.anim.durations.expressiveFastSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
             }
             Anim {
                 property: "scale"
                 from: 1
                 to: 0.7
-                duration: Appearance.anim.durations.expressiveFastSpatial
-                easing.bezierCurve: Appearance.anim.curves.expressiveFastSpatial
+                duration: Config.appearance.anim.durations.expressiveFastSpatial
+                easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
             }
         }
 
@@ -256,7 +254,7 @@ DeviceDetails {
 
         background: StyledRect {
             color: Colours.palette.m3surfaceContainerHigh
-            radius: Appearance.rounding.large
+            radius: Config.appearance.rounding.large
 
             Elevation {
                 anchors.fill: parent
@@ -267,21 +265,21 @@ DeviceDetails {
         }
 
         contentItem: ColumnLayout {
-            spacing: Appearance.spacing.lg
+            spacing: Config.appearance.spacing.large
 
             StyledText {
                 text: qsTr("Edit VPN Provider")
-                font.pointSize: Appearance.font.size.titleMedium
+                font.pointSize: Config.appearance.font.title.medium.size
                 font.weight: 500
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.md / 2
+                spacing: Config.appearance.spacing.medium / 2
 
                 StyledText {
                     text: qsTr("Display Name")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -289,7 +287,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: displayNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     border.width: 1
                     border.color: displayNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -303,7 +301,7 @@ DeviceDetails {
                     StyledTextField {
                         id: displayNameField
                         anchors.centerIn: parent
-                        width: parent.width - Appearance.padding.md
+                        width: parent.width - Config.appearance.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.displayName
                         onTextChanged: editVpnDialog.displayName = text
@@ -313,11 +311,11 @@ DeviceDetails {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.md / 2
+                spacing: Config.appearance.spacing.medium / 2
 
                 StyledText {
                     text: qsTr("Interface (e.g., wg0, torguard)")
-                    font.pointSize: Appearance.font.size.labelLarge
+                    font.pointSize: Config.appearance.font.label.large.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
 
@@ -325,7 +323,7 @@ DeviceDetails {
                     Layout.fillWidth: true
                     implicitHeight: 40
                     color: interfaceNameField.activeFocus ? Colours.layer(Colours.palette.m3surfaceContainer, 3) : Colours.layer(Colours.palette.m3surfaceContainer, 2)
-                    radius: Appearance.rounding.small
+                    radius: Config.appearance.rounding.small
                     border.width: 1
                     border.color: interfaceNameField.activeFocus ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outline, 0.3)
 
@@ -339,7 +337,7 @@ DeviceDetails {
                     StyledTextField {
                         id: interfaceNameField
                         anchors.centerIn: parent
-                        width: parent.width - Appearance.padding.md
+                        width: parent.width - Config.appearance.padding.medium
                         horizontalAlignment: TextInput.AlignLeft
                         text: editVpnDialog.interfaceName
                         onTextChanged: editVpnDialog.interfaceName = text
@@ -348,9 +346,9 @@ DeviceDetails {
             }
 
             RowLayout {
-                Layout.topMargin: Appearance.spacing.lg
+                Layout.topMargin: Config.appearance.spacing.large
                 Layout.fillWidth: true
-                spacing: Appearance.spacing.lg
+                spacing: Config.appearance.spacing.large
 
                 TextButton {
                     Layout.fillWidth: true
@@ -386,7 +384,6 @@ DeviceDetails {
                         }
 
                         Config.utilities.vpn.provider = providers;
-                        Config.markDirty("utilities");
                         editVpnDialog.closeWithAnimation();
                     }
                 }

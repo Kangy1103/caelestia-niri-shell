@@ -1,6 +1,6 @@
 import qs.modules.controlcenter
 import qs.services
-import qs.config
+import Caelestia.Config
 import Caelestia
 import Quickshell
 import Quickshell.Io
@@ -10,24 +10,6 @@ Scope {
     id: root
 
     property bool launcherInterrupted
-
-    Connections {
-        target: Config
-
-        function onConfigSaved(): void {
-            if (Config.utilities.toasts.configLoaded)
-                Toaster.toast(qsTr("Config saved"), qsTr("Configuration saved successfully"), "rule_settings");
-        }
-
-        function onConfigLoaded(elapsed: int): void {
-            if (Config.utilities.toasts.configLoaded)
-                Toaster.toast(qsTr("Config loaded"), qsTr("Config loaded in %1ms").arg(elapsed), "rule_settings");
-        }
-
-        function onConfigError(message: string): void {
-            Toaster.toast(qsTr("Config error"), message, "settings_alert", Toast.Error);
-        }
-    }
 
     IpcHandler {
         target: "drawers"
