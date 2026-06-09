@@ -1,4 +1,5 @@
 import qs.components
+import qs.components.controls
 import qs.services
 import Caelestia.Config
 import QtQuick
@@ -73,7 +74,6 @@ Item {
             id: utilities
             Layout.fillWidth: true
             title: qsTr("Window Utilities")
-            backgroundMarginTop: 0
             expanded: true
 
             //  toggleWindowOpacity

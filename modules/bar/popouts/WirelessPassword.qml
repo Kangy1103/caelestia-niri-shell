@@ -345,7 +345,6 @@ ColumnLayout {
 
                 StateLayer {
                     radius: height / 2
-                    showFocusRing: false
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
                     onClicked: passwordContainer.forceActiveFocus()

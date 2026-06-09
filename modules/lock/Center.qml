@@ -379,8 +379,6 @@ ColumnLayout {
 
             opacity: shouldBeVisible && !errorMessage.msg ? 0.8 : 0
             color: Colours.palette.m3onSurfaceVariant
-            animateProp: "opacity"
-
             font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
             font.family: Config.appearance.font.mono.family
             horizontalAlignment: Qt.AlignHCenter
