@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.4.0-20260609
+Version: 0.5.0-20260609
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
