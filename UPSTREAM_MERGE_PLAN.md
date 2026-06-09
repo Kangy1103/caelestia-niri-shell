@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.2.0-20260609
+Version: 0.3.0-20260609
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -707,3 +707,99 @@ cmake -B build -G Ninja
 cmake --build build
 sudo cmake --install build
 ```
+
+---
+
+### Phase 2 — Config System Migration ✅ (2026-06-09)
+
+**What was done:**
+
+Fully switched QML config to C++ `Caelestia.Config` module. All 242 QML files now import `Caelestia.Config` directly via the `Config` attached property. Deleted all 18 legacy QML config files (`config/*.qml`).
+
+**Import migration:**
+```
+import qs.config → import Caelestia.Config  (242 files)
+```
+
+**Property name changes (QML → C++ upstream parity):**
+| Old QML name | New C++/TokenConfig name | Files touched |
+|---|---|---|
+| `Config.appearance.font.family.sans` | `Config.appearance.font.body.family` | ~30 |
+| `Config.appearance.font.family.mono` | `Config.appearance.font.mono.family` | ~20 |
+| `Config.appearance.font.family.material` | `Config.appearance.font.icon.family` | ~30 |
+| `Config.appearance.font.family.clock` | `Config.appearance.font.clock` | ~10 |
+| `Config.appearance.font.size.bodySmall` | `Config.appearance.font.body.small.size` | ~50 |
+| `Config.appearance.font.size.bodyMedium` | `Config.appearance.font.body.medium.size` | ~50 |
+| `Config.appearance.font.size.bodyLarge` | `Config.appearance.font.body.large.size` | ~50 |
+| `Config.appearance.font.size.labelSmall` | `Config.appearance.font.label.small.size` | ~30 |
+| `Config.appearance.font.size.labelMedium` | `Config.appearance.font.label.medium.size` | ~30 |
+| `Config.appearance.font.size.labelLarge` | `Config.appearance.font.label.large.size` | ~30 |
+| `Config.appearance.font.size.headlineLarge` | `Config.appearance.font.headline.large.size` | ~5 |
+| `Config.appearance.font.size.titleLarge` | `Config.appearance.font.title.large.size` | ~5 |
+| `Config.appearance.font.size.titleMedium` | `Config.appearance.font.title.medium.size` | ~5 |
+| `Config.appearance.font.size.smaller` | `Config.appearance.font.body.small.size` | ~10 |
+| `Config.appearance.font.size.normal` | `Config.appearance.font.body.medium.size` | ~10 |
+| `Config.appearance.font.size.large` | `Config.appearance.font.title.medium.size` | ~5 |
+| `Config.appearance.font.size.small` | `Config.appearance.font.body.small.size` | ~5 |
+| `Config.appearance.font.size.scale` | `Config.appearance.font.scale` | ~5 |
+| `Config.appearance.spacing.sm` | `Config.appearance.spacing.small` | ~40 |
+| `Config.appearance.spacing.md` | `Config.appearance.spacing.medium` | ~30 |
+| `Config.appearance.spacing.lg` | `Config.appearance.spacing.large` | ~30 |
+| `Config.appearance.spacing.xl` | `Config.appearance.spacing.largeIncreased` | ~10 |
+| `Config.appearance.spacing.xs` | `Config.appearance.spacing.extraSmall` | ~20 |
+| `Config.appearance.spacing.xxl` | `Config.appearance.spacing.extraExtraLarge` | ~5 |
+| `Config.appearance.spacing.smaller` | `Config.appearance.spacing.small` | ~5 |
+| `Config.appearance.spacing.normal` | `Config.appearance.spacing.large` | ~5 |
+| `Config.appearance.padding.sm` | `Config.appearance.padding.small` | ~40 |
+| `Config.appearance.padding.md` | `Config.appearance.padding.medium` | ~30 |
+| `Config.appearance.padding.lg` | `Config.appearance.padding.large` | ~30 |
+| `Config.appearance.padding.xl` | `Config.appearance.padding.largeIncreased` | ~20 |
+| `Config.appearance.padding.xs` | `Config.appearance.padding.extraSmall` | ~20 |
+| `Config.appearance.padding.smaller` | `Config.appearance.padding.small` | ~5 |
+| `Config.appearance.padding.normal` | `Config.appearance.padding.medium` | ~5 |
+| `Config.appearance.anim.curves.*` | `TokenConfig.appearance.curves.*` | ~30 |
+| `Config.appearance.rounding.normal` | `Config.appearance.rounding.large` | ~10 |
+| `Config.bar.sizes.*` | `TokenConfig.sizes.bar.*` | ~10 |
+| `Config.dashboard.sizes.*` | `TokenConfig.sizes.dashboard.*` | ~10 |
+| `Config.launcher.sizes.*` | `TokenConfig.sizes.launcher.*` | ~10 |
+| `Config.lock.sizes.*` | `TokenConfig.sizes.lock.*` | ~5 |
+| `Config.notifs.sizes.*` | `TokenConfig.sizes.notifs.*` | ~5 |
+| `Config.utilities.sizes.*` | `TokenConfig.sizes.utilities.*` | ~5 |
+| `Config.session.sizes.*` | `TokenConfig.sizes.session.*` | ~5 |
+| `Config.osd.sizes.*` | `TokenConfig.sizes.osd.*` | ~5 |
+| `Config.controlCenter.sizes.*` | `TokenConfig.sizes.nexus.*` | ~3 |
+| `Tokens.sizes.*` | `TokenConfig.sizes.*` | ~3 |
+
+**Other changes:**
+- `Appearance.xxx` → `Config.appearance.xxx` (all files that used the old `Appearance` singleton shortcut)
+- Removed `Config.markDirty()` calls throughout (C++ config auto-saves on property change)
+- Fixed `Shortcuts.qml` — removed broken signal connections, ConfigToasts handles them
+- Suppressed screen-context warnings in `configattached.cpp` (`qCWarning` → `qCDebug`)
+
+**C++ additions:**
+- `config.cpp` / `tokens.cpp` — path `caelestia` → `caelestia-niri-shell`
+- `appearanceconfig.hpp` — added `reduceTransparency` to `AppearanceTransparency`
+- `dashboardconfig.hpp` — added `CalendarColors` class with 9 colour properties
+- `config.hpp` — added `controlCenter` Q_PROPERTY alias (maps to `nexus`)
+- `configattached.cpp` — `qCWarning` → `qCDebug` for non-screen context
+
+**Files deleted:**
+```
+config/Appearance.qml, AppearanceConfig.qml, BackgroundConfig.qml,
+BarConfig.qml, BorderConfig.qml, Config.qml, ControlCenterConfig.qml,
+DashboardConfig.qml, GeneralConfig.qml, LauncherConfig.qml, LockConfig.qml,
+NotifsConfig.qml, OsdConfig.qml, ServiceConfig.qml, SessionConfig.qml,
+Tokens.qml, UserPaths.qml, UtilitiesConfig.qml
+```
+
+**Upstream modules added:**
+- `modules/ConfigToasts.qml` — toast notifications on config load/save/error
+- `modules/GSFLoader.qml` — Google Sans Flex font loader
+- `modules/IdleMonitors.qml` — idle monitor (wired but not activated — uses Hypr.dispatch)
+
+**Reversion:**
+```fish
+git checkout phase-2 -- .
+sudo cmake --install ~/.config/quickshell/caelestia-niri-shell/plugin/build
+```
+Reverts all QML files and C++ sources to pre-Phase-2 state (before import switch + naming migration). Plugin needs reinstall to pick up reverted C++.
