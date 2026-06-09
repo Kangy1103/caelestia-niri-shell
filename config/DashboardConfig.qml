@@ -10,6 +10,7 @@ JsonObject {
     property int updateInterval: 1000
     property Sizes sizes: Sizes {}
     property Performance performance: Performance {}
+    property CalendarColors calendarColors: CalendarColors {}
 
     component Performance: JsonObject {
         property bool showBattery: true
@@ -35,5 +36,17 @@ JsonObject {
         readonly property int mediaIconSize: 20
         readonly property int mediaVisualiserSize: 80
         readonly property int resourceSize: 200
+    }
+
+    component CalendarColors: JsonObject {
+        property string blue: "#4285F4"
+        property string red: "#EA4335"
+        property string yellow: "#FBBC04"
+        property string green: "#34A853"
+        property string purple: "#9C27B0"
+        property string teal: "#009688"
+        property string pink: "#E91E63"
+        property string orange: "#FF9800"
+        property string brown: "#795548"
     }
 }

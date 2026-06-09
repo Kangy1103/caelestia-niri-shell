@@ -35,72 +35,52 @@ Item {
         anchors.margins: root.padding
         spacing: Appearance.spacing.sm
 
-        /* ─── NOTIFICATIONS ─── */
-        StyledClippingRect {
-            id: notifSection
+        /* ─── CALENDAR ─── */
+        StyledRect {
             Layout.fillWidth: true
-            Layout.preferredHeight: notifExpanded ? expandedHeight : collapsedHeight
+            implicitHeight: calColumn.implicitHeight + Appearance.padding.md * 2
             radius: Appearance.rounding.normal
             color: Colours.tPalette.m3surfaceContainer
 
-            readonly property bool notifExpanded: root.visibilities.notifsExpanded
-            readonly property int collapsedHeight: notifListWidget.showHeader ? 52 : 0
-            readonly property int screenHalfHeight: (Screen.height || 1080) / 2
-            readonly property int desiredHeight: notifListWidget.desiredContentHeight + Appearance.padding.md * 2
-            readonly property int expandedHeight: Notifs.list.length === 0
-                ? collapsedHeight + 120
-                : Math.max(collapsedHeight + 120, Math.min(desiredHeight, screenHalfHeight))
-
-            // Tracks whether the user manually collapsed the panel while notifications exist.
-            // Reset to false when the notification list empties, so the next incoming
-            // notification triggers an auto-expand again.
-            property bool userCollapsed: false
-            property int notifCount: Notifs.list.length
-
-            onNotifCountChanged: {
-                if (notifCount === 0) {
-                    userCollapsed = false;
-                    root.visibilities.notifsExpanded = false;
-                    notifListWidget.expanded = false;
-                } else if (!userCollapsed) {
-                    root.visibilities.notifsExpanded = true;
-                    notifListWidget.expanded = true;
-                }
-            }
-
-            Component.onCompleted: {
-                if (Notifs.list.length > 0)
-                    root.visibilities.notifsExpanded = true;
-            }
-
-            Behavior on Layout.preferredHeight {
-                Anim {
-                    duration: Appearance.anim.durations.normal
-                    easing.bezierCurve: Appearance.anim.curves.emphasized
-                }
-            }
-
-            NotificationList {
-                id: notifListWidget
+            ColumnLayout {
+                id: calColumn
                 anchors.fill: parent
                 anchors.margins: Appearance.padding.md
-                expanded: notifSection.notifExpanded
-                expandable: true
+                spacing: Appearance.spacing.sm
 
-                Connections {
-                    target: notifListWidget
-                    function onExpandedChanged(): void {
-                        root.visibilities.notifsExpanded = notifListWidget.expanded;
-                        if (!notifListWidget.expanded && Notifs.list.length > 0)
-                            notifSection.userCollapsed = true;
-                        else if (notifListWidget.expanded)
-                            notifSection.userCollapsed = false;
+                QuickCalendar {
+                    id: quickCalendar
+                    Layout.fillWidth: true
+                    visibilities: root.visibilities
+
+                    onMonthTitleClicked: {
+                        root.visibilities.quicktoggles = false;
+                        root.visibilities.dashboard = true;
                     }
-                    function onCleared(): void {
-                        notifSection.userCollapsed = false;
-                        root.visibilities.notifsExpanded = false;
-                        notifListWidget.expanded = false;
-                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 1
+                    color: Qt.alpha(Colours.palette.m3outline, 0.2)
+                }
+
+                UpcomingEvents {
+                    id: upcomingEvents
+                    Layout.fillWidth: true
+                    selectedDate: quickCalendar.selectedDate
+                    visibilities: root.visibilities
+
+                    onAddEventRequested: addEventForm.active = true
+                }
+
+                AddEventForm {
+                    id: addEventForm
+                    Layout.fillWidth: true
+                    selectedDate: quickCalendar.selectedDate
+
+                    onSaved: addEventForm.active = false
+                    onCancelled: addEventForm.active = false
                 }
             }
         }

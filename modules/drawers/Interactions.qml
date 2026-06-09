@@ -205,15 +205,6 @@ CustomMouseArea {
             clearShortcutPanel("quicktoggles");
         }
 
-        // Show keybinds on hover (bottom-right area, same region as quicktoggles)
-        const showKeybinds = inBottomPanel(panels.keybinds, x, y) && inRightPanel(panels.keybinds, x, y);
-
-        if (!isShortcutActive("keybinds")) {
-            visibilities.keybinds = showKeybinds;
-        } else if (showKeybinds) {
-            clearShortcutPanel("keybinds");
-        }
-
         // Show popouts on hover
         if (x < bar.implicitWidth)
             bar.checkPopout(y);

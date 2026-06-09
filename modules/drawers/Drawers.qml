@@ -29,7 +29,7 @@ Variants {
             screen: scope.modelData
             name: "drawers"
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.manga || visibilities.novel || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.manga || visibilities.novel || visibilities.quicktoggles || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
             mask: Region {
                 x: bar.implicitWidth
@@ -79,7 +79,7 @@ Variants {
                 opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
                 layer.enabled: true
                 layer.effect: MultiEffect {
-                    shadowEnabled: true
+                    shadowEnabled: true && !GameMode.enabled
                     blurMax: 15
                     shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
                 }
@@ -107,7 +107,6 @@ Variants {
                 property bool quicktoggles
                 property bool keybinds
                 property bool editingWeatherLocation
-                property bool notifsExpanded
                 property bool sidebar
 
                 Component.onCompleted: Visibilities.screens[scope.modelData.name] = this
