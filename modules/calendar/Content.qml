@@ -12,18 +12,16 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property var visibilities
-
     property date selectedDate: new Date()
     property date currentDate: new Date()
 
-    signal monthTitleClicked()
-
-    implicitHeight: calendarLayout.implicitHeight + Appearance.padding.md * 2
-    implicitWidth: calendarLayout.implicitWidth + Appearance.padding.md * 2
-
     readonly property int currMonth: currentDate.getMonth()
     readonly property int currYear: currentDate.getFullYear()
+
+    readonly property int padding: Appearance.padding.xl
+
+    implicitWidth: 480
+    implicitHeight: calLayout.implicitHeight + padding * 2
 
     function onWheel(event: WheelEvent): void {
         if (event.angleDelta.y > 0)
@@ -32,7 +30,6 @@ Item {
             currentDate = new Date(currYear, currMonth + 1, 1);
     }
 
-    // Detect mouse wheel on the calendar to change months
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
@@ -40,12 +37,12 @@ Item {
     }
 
     ColumnLayout {
-        id: calendarLayout
+        id: calLayout
         anchors.fill: parent
-        spacing: Appearance.spacing.xs
+        anchors.margins: root.padding
+        spacing: Appearance.spacing.sm
 
         RowLayout {
-            id: monthNav
             Layout.fillWidth: true
             spacing: Appearance.spacing.sm
 
@@ -66,7 +63,7 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_left"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Appearance.font.size.bodySmall
+                    font.pointSize: Appearance.font.size.bodyMedium
                     font.weight: 700
                 }
             }
@@ -81,9 +78,14 @@ Item {
                     anchors.leftMargin: -Appearance.padding.md
                     anchors.rightMargin: -Appearance.padding.md
                     radius: Appearance.rounding.full
+                    disabled: {
+                        const now = new Date();
+                        return currMonth === now.getMonth() && currYear === now.getFullYear();
+                    }
 
                     function onClicked(): void {
-                        root.monthTitleClicked();
+                        currentDate = new Date();
+                        selectedDate = new Date();
                     }
                 }
 
@@ -92,7 +94,7 @@ Item {
                     anchors.centerIn: parent
                     text: grid.title
                     color: Colours.palette.m3primary
-                    font.pointSize: Appearance.font.size.bodySmall
+                    font.pointSize: Appearance.font.size.bodyMedium
                     font.weight: 500
                     font.capitalization: Font.Capitalize
                 }
@@ -115,8 +117,21 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_right"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Appearance.font.size.bodySmall
+                    font.pointSize: Appearance.font.size.bodyMedium
                     font.weight: 700
+                }
+            }
+
+            IconTextButton {
+                id: todayBtn
+                text: "Today"
+                icon: "today"
+                type: IconTextButton.Tonal
+                radius: Appearance.rounding.small
+
+                onClicked: {
+                    currentDate = new Date();
+                    selectedDate = new Date();
                 }
             }
         }
@@ -144,20 +159,18 @@ Item {
                 month: root.currMonth
                 year: root.currYear
                 anchors.fill: parent
-                spacing: 2
+                spacing: 3
                 locale: Qt.locale()
 
                 delegate: Item {
                     id: dayItem
                     required property var model
                     implicitWidth: implicitHeight
-                    implicitHeight: 34
+                    implicitHeight: text.implicitHeight + Appearance.padding.xs * 2 + (hasEvents ? 8 : 0)
 
-                    readonly property string dateKey: `${model.year}-${String(model.month + 1).padStart(2, '0')}-${String(model.day).padStart(2, '0')}`
                     readonly property var eventsForDay: CalEvents.eventsForDate(new Date(model.year, model.month, model.day))
                     readonly property var dotColors: eventsForDay.slice(0, 3).map(e => e.color)
                     readonly property bool hasEvents: dotColors.length > 0
-                    readonly property bool isSelected: model.day === root.selectedDate.getDate() && model.month === root.selectedDate.getMonth() && model.year === root.selectedDate.getFullYear()
 
                     StateLayer {
                         anchors.fill: parent
@@ -169,9 +182,9 @@ Item {
                     }
 
                     StyledText {
-                        id: dayText
+                        id: text
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: (parent.height - (dayText.implicitHeight + (dayItem.hasEvents ? dotsRow.height + 2 : 0))) / 2
+                        y: hasEvents ? (parent.height - (text.implicitHeight + dotsRow.height + 2)) / 2 : (parent.height - text.implicitHeight) / 2
                         horizontalAlignment: Text.AlignHCenter
                         text: grid.locale.toString(dayItem.model.day)
                         color: {
@@ -181,25 +194,25 @@ Item {
                             return Colours.palette.m3onSurfaceVariant;
                         }
                         opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
-                        font.pointSize: Appearance.font.size.bodySmall
+                        font.pointSize: Appearance.font.size.bodyMedium
                         font.weight: 500
                     }
 
                     Row {
                         id: dotsRow
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: dayText.bottom
+                        anchors.top: text.bottom
                         anchors.topMargin: 2
-                        spacing: 1
+                        spacing: 2
                         visible: dayItem.hasEvents
 
                         Repeater {
                             model: dayItem.dotColors
                             delegate: Rectangle {
                                 required property var modelData
-                                width: 3
-                                height: 3
-                                radius: 1.5
+                                width: 4
+                                height: 4
+                                radius: 2
                                 color: modelData
                             }
                         }
@@ -255,6 +268,29 @@ Item {
                     }
                 }
             }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: Qt.alpha(Colours.palette.m3outline, 0.2)
+        }
+
+        UpcomingEvents {
+            id: upcomingEvents
+            Layout.fillWidth: true
+            selectedDate: root.selectedDate
+
+            onAddEventRequested: addEventForm.active = true
+        }
+
+        AddEventForm {
+            id: addEventForm
+            Layout.fillWidth: true
+            selectedDate: root.selectedDate
+
+            onSaved: addEventForm.active = false
+            onCancelled: addEventForm.active = false
         }
     }
 }

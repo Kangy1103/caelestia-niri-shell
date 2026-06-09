@@ -29,7 +29,7 @@ Variants {
             screen: scope.modelData
             name: "drawers"
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.manga || visibilities.novel || visibilities.quicktoggles || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.manga || visibilities.novel || visibilities.calendar || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
             mask: Region {
                 x: bar.implicitWidth
@@ -98,13 +98,13 @@ Variants {
                 id: visibilities
 
                 property bool bar
+                property bool calendar
                 property bool osd
                 property bool session
                 property bool launcher
                 property bool dashboard
                 property bool utilities
                 property bool clipboardRequested
-                property bool quicktoggles
                 property bool keybinds
                 property bool editingWeatherLocation
                 property bool sidebar

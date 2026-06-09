@@ -10,8 +10,8 @@ import "components"
 import "modules/drawers"
 import "modules/areapicker"
 import "modules/lock"
-import "modules/quicktoggles"
 import "modules/keybinds"
+import "modules/calendar"
 import "modules/background"
 import "modules/polkit"
 import qs.modules.controlcenter
@@ -28,8 +28,9 @@ ShellRoot {
     Lock {}
 
     Shortcuts {}
-    QuickTogglesPanel {}
     KeybindsPanel {}
+    CalendarPanel {}
+    CalendarAppPanel {}
 
     // Native polkit authentication agent — replaces polkit-kde-authentication-agent-1
     PolkitDialog {}

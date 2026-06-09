@@ -8,21 +8,21 @@ Scope {
     id: root
 
     IpcHandler {
-        target: "quicktoggles"
+        target: "calendar"
 
         function open(): void {
             const visibilities = Visibilities.getForActive()
-            visibilities.quicktoggles = true
+            visibilities.calendar = true
         }
 
         function close(): void {
             const visibilities = Visibilities.getForActive()
-            visibilities.quicktoggles = false
+            visibilities.calendar = false
         }
 
         function toggle(): void {
             const visibilities = Visibilities.getForActive()
-            visibilities.quicktoggles = !visibilities.quicktoggles
+            visibilities.calendar = !visibilities.calendar
         }
     }
 }

@@ -14,7 +14,7 @@ Item {
 
     states: State {
         name: "visible"
-        when: root.visibilities.quicktoggles
+        when: root.visibilities.calendar
 
         PropertyChanges {
             root.implicitHeight: content.implicitHeight
@@ -25,22 +25,20 @@ Item {
         Transition {
             from: ""
             to: "visible"
-
             Anim {
                 target: root
                 property: "implicitHeight"
-                duration: Appearance.anim.durations.small
+                duration: Appearance.anim.durations.normal
                 easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
             }
         },
         Transition {
             from: "visible"
             to: ""
-
             Anim {
                 target: root
                 property: "implicitHeight"
-                duration: Appearance.anim.durations.small / 2
+                duration: Appearance.anim.durations.small
                 easing.bezierCurve: Appearance.anim.curves.emphasizedAccel
             }
         }
@@ -48,8 +46,5 @@ Item {
 
     Content {
         id: content
-
-        wrapper: root
-        visibilities: root.visibilities
     }
 }

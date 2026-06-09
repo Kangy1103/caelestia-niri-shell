@@ -11,6 +11,7 @@ JsonObject {
     property Sizes sizes: Sizes {}
     property Performance performance: Performance {}
     property CalendarColors calendarColors: CalendarColors {}
+    property DashboardToggles toggles: DashboardToggles {}
 
     component Performance: JsonObject {
         property bool showBattery: true
@@ -48,5 +49,15 @@ JsonObject {
         property string pink: "#E91E63"
         property string orange: "#FF9800"
         property string brown: "#795548"
+    }
+
+    component DashboardToggles: JsonObject {
+        property bool showWifi: true
+        property bool showBluetooth: true
+        property bool showMic: true
+        property bool showVpn: true
+        property bool showDnd: true
+        property bool showGameMode: true
+        property bool showSettings: true
     }
 }

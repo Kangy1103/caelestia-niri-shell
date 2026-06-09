@@ -15,13 +15,10 @@ ShapePath {
     strokeWidth: -1
     fillColor: Colours.palette.m3surface
 
-    // Bottom-right panel: starts at (root.width, root.height)
-    // Goes left along bottom edge
     PathLine {
         relativeX: -(root.wrapper.width + root.rounding)
         relativeY: 0
     }
-    // Outer arc curving up (curves away from screen corner)
     PathArc {
         relativeX: root.rounding
         relativeY: -root.roundingY
@@ -29,24 +26,20 @@ ShapePath {
         radiusY: Math.min(root.rounding, root.wrapper.height)
         direction: PathArc.Counterclockwise
     }
-    // Left edge going up
     PathLine {
         relativeX: 0
         relativeY: -(root.wrapper.height - root.roundingY * 2)
     }
-    // Outer arc curving right (curves away from screen corner)
     PathArc {
         relativeX: root.rounding
         relativeY: -root.roundingY
         radiusX: root.rounding
         radiusY: Math.min(root.rounding, root.wrapper.height)
     }
-    // Top edge going right
     PathLine {
         relativeX: root.wrapper.height > 0 ? root.wrapper.width - root.rounding * 2 : root.wrapper.width
         relativeY: 0
     }
-    // Inner arc connecting back to screen edge (bottom-right corner)
     PathArc {
         relativeX: root.rounding
         relativeY: -root.rounding

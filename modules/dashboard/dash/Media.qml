@@ -19,6 +19,7 @@ Item {
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     implicitWidth: Config.dashboard.sizes.mediaWidth
+    implicitHeight: Config.dashboard.sizes.mediaWidth * 2.5
 
     Behavior on playerProgress {
         Anim {

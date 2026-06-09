@@ -96,11 +96,11 @@ CustomMouseArea {
             if (!isShortcutActive("utilities"))
                 visibilities.utilities = false;
 
-            if (!isShortcutActive("quicktoggles"))
-                visibilities.quicktoggles = false;
-
             if (!isShortcutActive("keybinds"))
                 visibilities.keybinds = false;
+
+            if (!isShortcutActive("calendar"))
+                visibilities.calendar = false;
 
             if (popouts.currentName !== "wirelesspassword")
                 popouts.hasCurrent = false;
@@ -194,17 +194,6 @@ CustomMouseArea {
             clearShortcutPanel("utilities");
         }
 
-        // Show quicktoggles on hover (bottom-right area)
-        const showQuicktoggles = inBottomPanel(panels.quicktoggles, x, y) && inRightPanel(panels.quicktoggles, x, y);
-
-        // Always update visibility based on hover if not in shortcut mode
-        if (!isShortcutActive("quicktoggles")) {
-            visibilities.quicktoggles = showQuicktoggles;
-        } else if (showQuicktoggles) {
-            // If hovering over quicktoggles area while in shortcut mode, transition to hover control
-            clearShortcutPanel("quicktoggles");
-        }
-
         // Show popouts on hover
         if (x < bar.implicitWidth)
             bar.checkPopout(y);
@@ -237,21 +226,21 @@ CustomMouseArea {
             root._onPanelVisibility("utilities", root.panels.utilities, root.inBottomPanel);
         }
 
-        function onQuicktogglesChanged(): void {
-            if (root.visibilities.quicktoggles) {
-                if (!root.inBottomPanel(root.panels.quicktoggles, root.mouseX, root.mouseY) || !root.inRightPanel(root.panels.quicktoggles, root.mouseX, root.mouseY))
-                    root.setShortcutPanel("quicktoggles");
-            } else {
-                root.clearShortcutPanel("quicktoggles");
-            }
-        }
-
         function onKeybindsChanged(): void {
             if (root.visibilities.keybinds) {
                 if (!root.inBottomPanel(root.panels.keybinds, root.mouseX, root.mouseY) || !root.inRightPanel(root.panels.keybinds, root.mouseX, root.mouseY))
                     root.setShortcutPanel("keybinds");
             } else {
                 root.clearShortcutPanel("keybinds");
+            }
+        }
+
+        function onCalendarChanged(): void {
+            if (root.visibilities.calendar) {
+                if (!root.inBottomPanel(root.panels.calendar, root.mouseX, root.mouseY) || !root.inRightPanel(root.panels.calendar, root.mouseX, root.mouseY))
+                    root.setShortcutPanel("calendar");
+            } else {
+                root.clearShortcutPanel("calendar");
             }
         }
     }

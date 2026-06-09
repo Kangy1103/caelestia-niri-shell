@@ -9,6 +9,7 @@
 #include <qfuturewatcher.h>
 #include <qimagereader.h>
 #include <qpainter.h>
+#include <qpointer.h>
 #include <qtconcurrentrun.h>
 
 namespace caelestia {
@@ -226,7 +227,7 @@ void CachingImageManager::createCache(
     // Limit concurrent scaling tasks
     static QThreadPool s_cachePool;
     s_cachePool.setMaxThreadCount(qMin(2, QThread::idealThreadCount()));
-    s_cachePool.start([path, cache, fillMode, size, this] {
+    s_cachePool.start([path, cache, fillMode, size, self = QPointer<CachingImageManager>(this)] {
         QImage image(path);
 
         if (image.isNull()) {
@@ -266,10 +267,11 @@ void CachingImageManager::createCache(
             return;
         }
 
-        // Track the new cache entry
+        if (!self) return;
+
         const QFileInfo info(cache);
         QMetaObject::invokeMethod(
-            this, [this, cache, size = info.size()]() { trackCacheEntry(cache, size); },
+            self, [self, cache, size = info.size()]() { self->trackCacheEntry(cache, size); },
             Qt::QueuedConnection);
     });
 }

@@ -11,7 +11,6 @@ Item {
     id: root
 
     required property date selectedDate
-    required property var visibilities
 
     readonly property var events: CalEvents.list.filter(e => {
         const d = e.startDate;

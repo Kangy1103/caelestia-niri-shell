@@ -11,6 +11,7 @@ GridLayout {
     required property PersistentProperties visibilities
     required property PersistentProperties state
 
+    columns: 6
     rowSpacing: Appearance.spacing.lg
     columnSpacing: Appearance.spacing.lg
 
@@ -22,7 +23,6 @@ GridLayout {
 
         User {
             id: user
-
             visibilities: root.visibilities
             state: root.state
         }
@@ -39,33 +39,42 @@ GridLayout {
 
     Rect {
         Layout.row: 1
-        Layout.preferredWidth: dateTime.implicitWidth
-        Layout.fillHeight: true
+        Layout.columnSpan: 4
+        Layout.fillWidth: true
+        Layout.minimumHeight: dateTime.implicitHeight + Appearance.padding.md
 
         DateTime {
             id: dateTime
+            anchors.centerIn: parent
         }
     }
 
     Rect {
-        Layout.row: 1
-        Layout.column: 1
-        Layout.columnSpan: 3
+        Layout.row: 2
+        Layout.columnSpan: 4
         Layout.fillWidth: true
-        Layout.preferredHeight: calendar.implicitHeight
+        Layout.minimumHeight: 90
 
-        Calendar {
-            id: calendar
+        QuickToggles {}
+    }
 
-            state: root.state
-        }
+    Rect {
+        Layout.row: 3
+        Layout.columnSpan: 4
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: 80
+
+        UpcomingEvents {}
     }
 
     Rect {
         Layout.row: 1
         Layout.column: 4
-        Layout.preferredWidth: resources.implicitWidth
+        Layout.rowSpan: 3
         Layout.fillHeight: true
+        Layout.minimumHeight: 200
+        Layout.preferredWidth: resources.implicitWidth
 
         Resources {
             id: resources
@@ -75,7 +84,7 @@ GridLayout {
     Rect {
         Layout.row: 0
         Layout.column: 5
-        Layout.rowSpan: 2
+        Layout.rowSpan: 4
         Layout.preferredWidth: media.implicitWidth
         Layout.fillHeight: true
 

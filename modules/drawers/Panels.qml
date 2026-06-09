@@ -7,9 +7,9 @@ import qs.modules.dashboard as Dashboard
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities as Utilities
 import qs.modules.utilities.toasts as Toasts
-import qs.modules.quicktoggles as QuickToggles
 import qs.modules.keybinds as Keybinds
 import qs.modules.sidebar as Sidebar
+import qs.modules.calendar as Calendar
 import Quickshell
 import QtQuick
 
@@ -27,9 +27,9 @@ Item {
     readonly property Dashboard.Wrapper dashboard: dashboard
     readonly property BarPopouts.Wrapper popouts: popouts
     readonly property Utilities.Wrapper utilities: utilities
-    readonly property QuickToggles.Wrapper quicktoggles: quicktoggles
     readonly property Keybinds.Wrapper keybinds: keybinds
     readonly property Sidebar.Wrapper sidebar: sidebar
+    readonly property Calendar.Wrapper calendar: calendar
 
     anchors.fill: parent
     anchors.margins: Config.border.thickness
@@ -112,16 +112,6 @@ Item {
         anchors.right: parent.right
     }
 
-
-    QuickToggles.Wrapper {
-        id: quicktoggles
-
-        visibilities: root.visibilities
-
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-    }
-
     Keybinds.Wrapper {
         id: keybinds
 
@@ -133,6 +123,15 @@ Item {
 
     Sidebar.Wrapper {
         id: sidebar
+
+        visibilities: root.visibilities
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+    Calendar.Wrapper {
+        id: calendar
 
         visibilities: root.visibilities
 

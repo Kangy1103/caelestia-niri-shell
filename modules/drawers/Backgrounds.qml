@@ -7,9 +7,9 @@ import qs.modules.launcher as Launcher
 import qs.modules.dashboard as Dashboard
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities as Utilities
-import qs.modules.quicktoggles as QuickToggles
 import qs.modules.keybinds as Keybinds
 import qs.modules.sidebar as Sidebar
+import qs.modules.calendar as Calendar
 import QtQuick
 import QtQuick.Shapes
 
@@ -75,13 +75,6 @@ Shape {
     }
 
 
-    QuickToggles.QuickTogglesBackground {
-        wrapper: root.panels.quicktoggles
-
-        startX: root.width
-        startY: root.height
-    }
-
     Keybinds.Background {
         wrapper: root.panels.keybinds
 
@@ -94,5 +87,12 @@ Shape {
 
         startX: root.width
         startY: 0
+    }
+
+    Calendar.Background {
+        wrapper: root.panels.calendar
+
+        startX: root.width
+        startY: root.height
     }
 }
