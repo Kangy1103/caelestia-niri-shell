@@ -17,10 +17,14 @@ import "modules/polkit"
 import qs.modules.controlcenter
 import qs.services
 
+import Caelestia.Config
 import QtQuick
 import Quickshell
 
 ShellRoot {
+    // Font loader — GSFLoader doesn't block on missing fonts, safe to keep always
+    GSFLoader {}
+
     Backdrop {}
     Background {}
     Drawers {}
@@ -37,6 +41,9 @@ ShellRoot {
 
     ReloadPopup {}
 
+    // Config toast notifications (C++ GlobalConfig signals)
+    ConfigToasts {}
+
     // Initialize BatteryMonitor service
     property var _batteryMonitor: BatteryMonitor
 
@@ -48,4 +55,7 @@ ShellRoot {
 
     // Initialize GameMode service
     property var _gameMode: GameMode
+
+    // Initialize C++ Config singleton (populates Caelestia.Config.GlobalConfig)
+    property var _cppConfig: GlobalConfig
 }
