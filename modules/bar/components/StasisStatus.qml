@@ -86,6 +86,11 @@ Item {
 
     Menu {
         id: contextMenu
+        attachTo: bg
+        attachSideX: Menu.Right
+        attachSideY: Menu.Bottom
+        thisSideX: Menu.Right
+        thisSideY: Menu.Top
         expanded: false
 
         items: [
