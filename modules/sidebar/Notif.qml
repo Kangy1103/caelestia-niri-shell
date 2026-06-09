@@ -21,7 +21,7 @@ StyledRect {
 
     implicitHeight: nonAnimHeight
 
-    radius: Tokens.rounding.small
+    radius: Tokens.rounding.medium
     color: {
         const c = root.modelData?.urgency === "critical" ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 2);
         return expanded ? c : Qt.alpha(c, 0);
@@ -68,7 +68,6 @@ StyledRect {
         elide: Text.ElideRight
         wrapMode: Text.WordWrap
         maximumLineCount: 1
-        font.pointSize: Config.appearance.font.label.large.size
     }
 
     StyledText {
@@ -94,7 +93,6 @@ StyledRect {
             text: String(root.modelData?.body ?? "").replace(/\n/g, " ")
             color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             elide: Text.ElideRight
-            font.pointSize: Config.appearance.font.label.medium.size
         }
     }
 
@@ -109,7 +107,7 @@ StyledRect {
             animate: true
             text: root.modelData?.timeStr ?? ""
             color: Colours.palette.m3outline
-            font.pointSize: Config.appearance.font.label.medium.size
+            font: Tokens.font.body.small
         }
     }
 
@@ -125,10 +123,14 @@ StyledRect {
         sourceComponent: ExpandedBody {}
     }
 
+    Behavior on implicitHeight {
+        Anim {}
+    }
+
     component ExpandedBody: ColumnLayout {
         readonly property alias body: bodyText
 
-        spacing: Tokens.spacing.extraSmall
+        spacing: Tokens.spacing.medium
 
         StyledText {
             id: bodyText
@@ -138,7 +140,6 @@ StyledRect {
             text: String(root.modelData?.body ?? "").replace(/(.)\n(?!\n)/g, "$1\n\n") || qsTr("No body here! :/")
             color: root.modelData?.urgency === "critical" ? Colours.palette.m3secondary : Colours.palette.m3outline
             wrapMode: Text.WordWrap
-            font.pointSize: Config.appearance.font.label.medium.size
 
             onLinkActivated: link => {
                 Quickshell.execDetached(["app2unit", "-O", "--", link]);
@@ -180,6 +181,7 @@ StyledRect {
                         property: "active"
                     }
                     Anim {
+                        type: Anim.DefaultEffects
                         property: "opacity"
                     }
                 }
@@ -190,6 +192,7 @@ StyledRect {
 
                 SequentialAnimation {
                     Anim {
+                        type: Anim.DefaultEffects
                         property: "opacity"
                     }
                     PropertyAction {
