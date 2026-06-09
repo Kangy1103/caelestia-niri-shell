@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.5.0-20260609
+Version: 0.5.1-20260609
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -863,6 +863,24 @@ effects/CornerPiece.qml, effects/ElevationGlow.qml, effects/OpacityMask.qml
 widgets/NotificationList.qml, widgets/WindowDecorations.qml
 containers/WrappedLoader.qml
 ```
+
+**Post-merge fixes (2026-06-09):**
+
+| Issue | Root cause | Fix |
+|-------|-----------|-----|
+| Bar/panels not loading | `StyledWindow` added `contentItem.Config.screen: screen.name` — broke PanelWindow creation in Niri | Removed both lines |
+| 5 files still old versions | `CircularProgress`, `CustomSpinBox`, `StyledScrollBar`, `StyledSlider`, `Tooltip` missed in Bucket C copy | Copied from upstream |
+| StyledScrollBar errors | Upstream changed `flickable` to `required` — 28 consumers use Qt auto-attachment without explicit `flickable` | Reverted to `property Flickable flickable: null` |
+| Icons showing as text | `MaterialIcon` changed from single `font: ...build()` to individual sub-property bindings — broke when consumers set `font.pointSize` | Reverted to upstream atomic builder, migrated 58 consumers to `fontStyle` |
+| `placeholderText` missing | Upstream removed the alias | Restored |
+| `toggle` property broken | ButtonBase renamed `toggle` → `isToggle` | Updated Toggle.qml and 2 consumers |
+| `showFocusRing`/`animateProp`/`backgroundMarginTop` | Removed from upstream components | Removed from our consumers |
+| `Menu.attachTo` missing | Upstream Menu requires `attachTo` + positioning properties | Added to StasisStatus.qml |
+| Config warning noise | `qCWarning` on global-only + screen-context config access, `Tokens` screen warnings | Downgraded to `qCDebug` (3 files) |
+| Sidebar notif text too big | `Notif.qml` overrode `font.pointSize` on every text element | Aligned with upstream — removed overrides, use StyledText defaults |
+| `CUtils.clamp` failing | `Q_INVOKABLE static` doesn't resolve in our Qt build | Replaced with pure-QML `Math.max/Min` in StateLayer.qml |
+| `ContentWindow` undefined | Menu.qml cast `win as ContentWindow` — type not available | Duck-typed `win.interactionWrapper` check |
+| `CollapsibleSection` import | Relocated to `controls/`, WindowTools.qml missing import | Added `import qs.components.controls` |
 
 **Reversion:**
 ```fish
