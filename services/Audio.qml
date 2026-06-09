@@ -5,6 +5,7 @@ import qs.services
 import Caelestia
 import Caelestia.Services
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 import QtQuick
 
@@ -27,8 +28,13 @@ Singleton {
     readonly property bool sourceMuted: !!source?.audio?.muted
     readonly property real sourceVolume: source?.audio?.volume ?? 0
 
-    readonly property alias cava: cava
-    readonly property alias beatTracker: beatTracker
+    // CavaProvider / BeatTracker available from Caelestia.Services but
+    // currently disabled: CavaProvider crashes on PipeWire init, BeatTracker
+    // needs further investigation (Element is not creatable in Qt 6.11).
+    // Uncomment when resolved.
+    //
+    // readonly property alias cava: cava
+    // readonly property alias beatTracker: beatTracker
 
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {
@@ -137,15 +143,14 @@ Singleton {
         objects: [...root.sinks, ...root.sources, ...root.streams]
     }
 
-    CavaProvider {
-        id: cava
-
-        bars: Config.services.visualiserBars
-    }
-
-    BeatTracker {
-        id: beatTracker
-    }
+    // CavaProvider {
+    //     id: cava
+    //     bars: Config.services.visualiserBars
+    // }
+    //
+    // BeatTracker {
+    //     id: beatTracker
+    // }
 
     IpcHandler {
         function cycleOutput(): void {
