@@ -57,7 +57,6 @@ StyledRect {
                     property bool _checked: false
 
                     checked: _checked
-                    toggle: false
                     type: TextButton.Tonal
 
                     // Create binding in Component.onCompleted

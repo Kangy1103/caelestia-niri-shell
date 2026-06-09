@@ -85,7 +85,6 @@ StyledRect {
             icon: "settings"
             font.pointSize: root.iconFontSize
             inactiveOnColour: Colours.palette.m3onSurfaceVariant
-            toggle: false
             visible: Config.dashboard.toggles.showSettings
             onClicked: Quickshell.execDetached(["qs", "-c", "caelestia-niri-shell", "ipc", "call", "controlCenter", "open"])
         }

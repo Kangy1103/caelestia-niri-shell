@@ -1,22 +1,20 @@
-import ".."
-import qs.services
-import Caelestia.Config
 import QtQuick
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.services
 
 IconButton {
     id: root
 
-    radius: stateLayer.pressed ? Config.appearance.rounding.small / 2 : internalChecked ? Config.appearance.rounding.small : Config.appearance.rounding.large
+    isToggle: true
+    radius: stateLayer.pressed ? Tokens.rounding.medium / 2 : internalChecked ? Tokens.rounding.medium : Tokens.rounding.large
     inactiveColour: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
-    toggle: true
-    radiusAnim.duration: Config.appearance.anim.durations.expressiveFastSpatial
-    radiusAnim.easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
+    radiusAnim.type: Anim.FastSpatial
 
     Behavior on Layout.preferredWidth {
         Anim {
-            duration: Config.appearance.anim.durations.expressiveFastSpatial
-            easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
+            type: Anim.FastSpatial
         }
     }
 }
