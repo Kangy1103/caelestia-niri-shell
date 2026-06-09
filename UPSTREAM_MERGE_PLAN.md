@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.3.0-20260609
+Version: 0.4.0-20260609
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -803,3 +803,72 @@ git checkout phase-2 -- .
 sudo cmake --install ~/.config/quickshell/caelestia-niri-shell/plugin/build
 ```
 Reverts all QML files and C++ sources to pre-Phase-2 state (before import switch + naming migration). Plugin needs reinstall to pick up reverted C++.
+
+---
+
+### Phase 3 — Shared Components ✅ (2026-06-09)
+
+**What was done:**
+
+All upstream components merged in. 14 new files copied, 46 shared files accepted upstream, 1 relocated, 13 our-only files preserved untouched.
+
+**New upstream files copied (15):**
+```
+components/AnchorAnim.qml                 components/AnimLoader.qml
+components/DashboardState.qml             components/DrawerVisibilities.qml
+components/controls/ButtonBase.qml        components/controls/LoadingIndicator.qml
+components/controls/SpinBoxRow.qml        components/controls/StyledProgressBar.qml
+components/effects/Mask.qml               components/images/FadeImage.qml
+components/misc/CustomShortcut.qml        components/widgets/CoverArt.qml
+components/widgets/WavyTopRect.qml        components/containers/VerticalFadeFlickable.qml
+components/controls/CollapsibleSection.qml  (relocated from root)
+```
+
+**Shared files merged — by bucket:**
+
+| Bucket | Count | Method |
+|--------|-------|--------|
+| 0 diff (identical) | 3 | Skipped (StyledRect, MenuItem, Ref) |
+| <25 lines | 17 | Fast-path — accept upstream |
+| 25–100 lines | 22 | Three-way — accept upstream |
+| >100 lines | 4 | Manual review — accept upstream |
+| Relocated | 1 | CollapsibleSection → controls/ |
+
+**Key upstream changes accepted:**
+
+| Component | Change |
+|-----------|--------|
+| `Anim.qml` | 14-type enum animation system (StandardSmall → SlowEffects) |
+| `IconButton.qml` | Now extends `ButtonBase` instead of `StyledRect` |
+| `TextButton.qml` | Now extends `ButtonBase`, `isToggle` replaces `toggle` |
+| `IconTextButton.qml` | Now extends `ButtonBase`, `fontStyle` for icon sizing |
+| `StyledText.qml` | Opacity-based animate, removed animateProp/From/To properties |
+| `StateLayer.qml` | Shape-based ripple with RadialGradient, `shapeMorph` support |
+| `Menu.qml` | `attachTo` positioning, Scale expand animation, m3tertiaryContainer |
+| `CachingImage.qml` | `IUtils.urlForPath` pattern replaces `CachingImageManager` |
+| `FolderContents.qml` | `FileEntry` component block, `Mask` effect for layer |
+| `CollapsibleSection.qml` | Data-based content (was Loader), relocated to `controls/` |
+
+**Consumer compatibility verified:**
+- `animateProp`/`animateFrom`/`animateTo`: 1 usage (lock screen, matches new default)
+- `showFocusRing`: 1 usage (harmless, silently ignored)
+- `contentComponent` → `content`: 0 external references — all 21 consumers use default property syntax, backward-compatible
+- `backgroundMargins`/`backgroundColor`/`collapsed`/`collapse()`: 0 external references
+
+**Our-only files preserved (13 — untouched):**
+```
+Card.qml, Chip.qml, FocusRing.qml, ReloadPopup.qml
+controls/StyledBusyIndicator.qml, controls/StyledRadialButton.qml, controls/Toggle.qml
+effects/CornerPiece.qml, effects/ElevationGlow.qml, effects/OpacityMask.qml
+widgets/NotificationList.qml, widgets/WindowDecorations.qml
+containers/WrappedLoader.qml
+```
+
+**Reversion:**
+```fish
+git checkout main -- $(git diff-tree --no-commit-id --name-only -r a7f846c febf9f3 -- components/)
+# For the deleted CollapsibleSection.qml at root:
+git checkout main -- components/CollapsibleSection.qml
+rm components/controls/CollapsibleSection.qml
+```
+Restores all component files to pre-Phase-3 state.
