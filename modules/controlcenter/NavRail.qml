@@ -72,8 +72,8 @@ Item {
                         MaterialIcon {
                             text: "open_in_new"
                             color: Colours.palette.m3onPrimaryContainer
-                            font.pointSize: Config.appearance.font.body.large.size
-                        }
+                            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+}
 
                         StyledText {
                             text: qsTr("Float window")
@@ -175,8 +175,8 @@ Item {
 
                 text: item.icon
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.body.large.size
-                fill: item.active ? 1 : 0
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+fill: item.active ? 1 : 0
 
                 Behavior on fill {
                     Anim {}

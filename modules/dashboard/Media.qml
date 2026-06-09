@@ -135,8 +135,8 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: (parent.width * 0.4) || 1
-        }
+            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
+}
 
         Image {
             id: image
@@ -252,8 +252,8 @@ Item {
                     id: playIcon
 
                     anchors.centerIn: parent
-                    anchors.horizontalCenterOffset: -font.pointSize * 0.02
-                    anchors.verticalCenterOffset: font.pointSize * 0.02
+                    anchors.horizontalCenterOffset: -fontStyle.pointSize * 0.02
+                    anchors.verticalCenterOffset: fontStyle.pointSize * 0.02
 
                     animate: true
                     fill: 1
@@ -263,8 +263,8 @@ Item {
                             return Qt.alpha(Colours.palette.m3onSurface, 0.38);
                         return Players.active?.isPlaying ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer;
                     }
-                    font.pointSize: Config.appearance.font.headline.large.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+}
 
                 Behavior on radius {
                     Anim {}
@@ -409,9 +409,8 @@ Item {
                     text: "expand_more"
                     color: Colours.palette.m3onSurfaceVariant
                     rotation: playerSelector.expanded ? 180 : 0
-                    font.pointSize: Config.appearance.font.label.large.size
-
-                    Behavior on rotation {
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+Behavior on rotation {
                         Anim {}
                     }
                 }
@@ -503,8 +502,8 @@ Item {
 
                             MaterialIcon {
                                 Layout.alignment: Qt.AlignVCenter
-                                font.pointSize: Config.appearance.font.body.large.size
-                                text: modelData === Players.active ? "check" : ""
+                                fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+text: modelData === Players.active ? "check" : ""
                                 color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
                             }
 
@@ -592,8 +591,8 @@ Item {
         MaterialIcon {
             visible: !player || playerIcon.imageFailed
             anchors.centerIn: parent
-            font.pointSize: Math.max(1, parent.height * 0.6)
-            text: player ? "animated_images" : "music_off"
+            fontStyle: Tokens.font.icon.size(Math.max(1, parent.height * 0.6)).build()
+text: player ? "animated_images" : "music_off"
         }
     }
 
@@ -625,14 +624,14 @@ Item {
             id: icon
 
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -font.pointSize * 0.02
-            anchors.verticalCenterOffset: font.pointSize * 0.02
+            anchors.horizontalCenterOffset: -fontStyle.pointSize * 0.02
+            anchors.verticalCenterOffset: fontStyle.pointSize * 0.02
 
             animate: true
             fill: control.fill ? 1 : 0
             text: control.icon
             color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font.pointSize: control.fontSize
-        }
+            fontStyle: Tokens.font.icon.size(control.fontSize).build()
+}
     }
 }

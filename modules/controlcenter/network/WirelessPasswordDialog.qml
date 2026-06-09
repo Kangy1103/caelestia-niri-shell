@@ -109,8 +109,8 @@ Item {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "lock"
-                font.pointSize: Config.appearance.font.headline.large.size * 2
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
+}
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter

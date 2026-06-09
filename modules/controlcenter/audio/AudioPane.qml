@@ -113,8 +113,8 @@ Item {
 
                                         MaterialIcon {
                                             text: Audio.sink?.id === modelData.id ? "speaker" : "speaker_group"
-                                            font.pointSize: Config.appearance.font.title.medium.size
-                                            fill: Audio.sink?.id === modelData.id ? 1 : 0
+                                            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: Audio.sink?.id === modelData.id ? 1 : 0
                                         }
 
                                         StyledText {
@@ -191,8 +191,8 @@ Item {
 
                                         MaterialIcon {
                                             text: "mic"
-                                            font.pointSize: Config.appearance.font.title.medium.size
-                                            fill: Audio.source?.id === modelData.id ? 1 : 0
+                                            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: Audio.source?.id === modelData.id ? 1 : 0
                                         }
 
                                         StyledText {
@@ -496,8 +496,8 @@ Item {
 
                                         MaterialIcon {
                                             text: "apps"
-                                            font.pointSize: Config.appearance.font.body.medium.size
-                                            fill: 0
+                                            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+fill: 0
                                         }
 
                                         StyledText {

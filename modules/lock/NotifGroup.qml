@@ -81,8 +81,8 @@ StyledRect {
                 MaterialIcon {
                     text: Icons.getNotifIcon(root.notifs[0]?.summary, root.urgency)
                     color: root.urgency === "critical" ? Colours.palette.m3onError : root.urgency === "low" ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    font.pointSize: Config.appearance.font.title.medium.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
             }
 
             ClippingRectangle {

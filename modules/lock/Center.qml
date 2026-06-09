@@ -175,8 +175,8 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: "person"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Math.max(1, Math.floor(parent.width * 0.45))
-            }
+                fontStyle: Tokens.font.icon.size(Math.max(1, Math.floor(parent.width * 0.45))).build()
+}
 
             CachingImage {
                 id: pfp

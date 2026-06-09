@@ -101,11 +101,11 @@ GridView {
             // Play symbol overlay for videos
             MaterialIcon {
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: font.pointSize * 0.1
+                anchors.horizontalCenterOffset: fontStyle.pointSize * 0.1
                 text: "play_arrow"
                 color: "white"
-                font.pointSize: Config.appearance.font.headline.large.size * 2
-                visible: rootDelegate.isVideo
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
+visible: rootDelegate.isVideo
 
                 layer.enabled: true
                 layer.effect: MultiEffect {
@@ -221,8 +221,8 @@ GridView {
                 visible: isCurrent
                 text: "check_circle"
                 color: Colours.palette.m3primary
-                font.pointSize: Config.appearance.font.title.medium.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
         }
 
         StyledText {

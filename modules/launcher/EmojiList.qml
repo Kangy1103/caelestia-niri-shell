@@ -167,9 +167,8 @@ Item {
                             anchors.verticalCenterOffset: catBtn.active ? -2 : 0
                             text: modelData.icon ?? ""
                             color: catBtn.active ? Colours.palette.m3primary : (catBtn.hovered ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant)
-                            font.pointSize: Config.appearance.font.title.medium.size
-                            
-                            Behavior on color { CAnim {} }
+                            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+Behavior on color { CAnim {} }
                             Behavior on anchors.verticalCenterOffset { Anim { duration: Config.appearance.anim.durations.small } }
                         }
 
@@ -295,8 +294,8 @@ Item {
                     MaterialIcon {
                         Layout.alignment: Qt.AlignHCenter
                         text: "sentiment_dissatisfied"
-                        font.pointSize: 48
-                        color: Colours.palette.m3onSurfaceVariant
+                        fontStyle: Tokens.font.icon.size(48).build()
+color: Colours.palette.m3onSurfaceVariant
                     }
 
                     StyledText {
@@ -370,12 +369,12 @@ Item {
 
                     Row {
                         spacing: 4
-                        MaterialIcon { text: "keyboard_arrow_up"; font.pointSize: 12 }
+                        MaterialIcon { text: "keyboard_arrow_up"; fontStyle: Tokens.font.icon.size(12).build() }
                         StyledText { text: "PgUp"; font.pointSize: 10 }
                     }
                     Row {
                         spacing: 4
-                        MaterialIcon { text: "keyboard_arrow_down"; font.pointSize: 12 }
+                        MaterialIcon { text: "keyboard_arrow_down"; fontStyle: Tokens.font.icon.size(12).build() }
                         StyledText { text: "PgDn"; font.pointSize: 10 }
                     }
                 }

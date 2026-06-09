@@ -97,8 +97,8 @@ Item {
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.title.medium.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
         }
     }
 }

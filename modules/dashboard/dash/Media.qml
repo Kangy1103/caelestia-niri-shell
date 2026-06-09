@@ -101,8 +101,8 @@ Item {
             grade: 200
             text: "art_track"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: (parent.width * 0.4) || 1
-        }
+            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
+}
 
         Image {
             id: image
@@ -252,12 +252,12 @@ Item {
             id: icon
 
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: font.pointSize * 0.05
+            anchors.verticalCenterOffset: fontStyle.pointSize * 0.05
 
             animate: true
             text: control.icon
             color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font.pointSize: Config.appearance.font.title.medium.size
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
     }
 }

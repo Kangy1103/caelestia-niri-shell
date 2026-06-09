@@ -231,9 +231,8 @@ Item {
                 text: tab.iconName
                 color: tab.current ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
                 fill: tab.current ? 1 : 0
-                font.pointSize: Config.appearance.font.title.medium.size
-
-                Behavior on fill {
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+Behavior on fill {
                     Anim {}
                 }
             }

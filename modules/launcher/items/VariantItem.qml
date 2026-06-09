@@ -32,9 +32,8 @@ Item {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            font.pointSize: Config.appearance.font.headline.large.size
-
-            anchors.verticalCenter: parent.verticalCenter
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+anchors.verticalCenter: parent.verticalCenter
         }
 
         Column {
@@ -73,8 +72,8 @@ Item {
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.title.medium.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
         }
     }
 }

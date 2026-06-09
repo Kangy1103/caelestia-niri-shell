@@ -81,8 +81,8 @@ Item {
                     }
                 }
                 color: Colours.palette.m3onTertiaryContainer
-                font.pointSize: Config.appearance.font.label.large.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+}
 
             StyledText {
                 anchors.verticalCenter: parent.verticalCenter

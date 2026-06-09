@@ -324,8 +324,8 @@ MouseArea {
                         default: return Colours.palette.m3onPrimaryContainer;
                         }
                     }
-                    font.pointSize: Config.appearance.font.label.large.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+}
 
                 StyledText {
                     anchors.verticalCenter: parent.verticalCenter

@@ -81,8 +81,8 @@ Item {
                 MaterialIcon {
                     Layout.alignment: Qt.AlignVCenter
                     text: Weather.icon
-                    font.pointSize: 108
-                    color: Colours.palette.m3secondary
+                    fontStyle: Tokens.font.icon.size(108).build()
+color: Colours.palette.m3secondary
                     animate: true
                 }
 
@@ -190,8 +190,8 @@ Item {
                         MaterialIcon {
                             Layout.alignment: Qt.AlignHCenter
                             text: forecastItem.modelData.icon
-                            font.pointSize: 36
-                            color: Colours.palette.m3secondary
+                            fontStyle: Tokens.font.icon.size(36).build()
+color: Colours.palette.m3secondary
                         }
 
                         StyledText {
@@ -229,8 +229,8 @@ Item {
             MaterialIcon {
                 text: detailRoot.icon
                 color: detailRoot.colour
-                font.pointSize: 24
-                anchors.verticalCenter: parent.verticalCenter
+                fontStyle: Tokens.font.icon.size(24).build()
+anchors.verticalCenter: parent.verticalCenter
             }
 
             Column {
@@ -266,8 +266,8 @@ Item {
 
         MaterialIcon {
             text: weatherStat.icon
-            font.pointSize: 36
-            color: weatherStat.colour
+            fontStyle: Tokens.font.icon.size(36).build()
+color: weatherStat.colour
         }
 
         Column {

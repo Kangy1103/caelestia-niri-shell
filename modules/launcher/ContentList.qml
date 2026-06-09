@@ -141,9 +141,8 @@ Item {
         MaterialIcon {
             text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Config.appearance.font.headline.large.size
-
-            anchors.verticalCenter: parent.verticalCenter
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+anchors.verticalCenter: parent.verticalCenter
         }
 
         Column {

@@ -40,8 +40,8 @@ Item {
                 animate: true
                 text: Weather.error ? "cloud_alert" : Weather.icon
                 color: Weather.error ? Colours.palette.m3error : Colours.palette.m3secondary
-                font.pointSize: Config.appearance.font.headline.large.size * 2
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
+}
 
             // Description below icon
             // StyledText {

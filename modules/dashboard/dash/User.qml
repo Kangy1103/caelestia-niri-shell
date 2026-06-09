@@ -29,8 +29,8 @@ Row {
             text: "person"
             fill: 1
             grade: 200
-            font.pointSize: Math.floor(info.implicitHeight / 2) || 1
-        }
+            fontStyle: Tokens.font.icon.size(Math.floor(info.implicitHeight / 2) || 1).build()
+}
 
         CachingImage {
             id: pfp
@@ -88,12 +88,12 @@ Row {
                     id: selectIcon
 
                     anchors.centerIn: parent
-                    anchors.horizontalCenterOffset: -font.pointSize * 0.02
+                    anchors.horizontalCenterOffset: -fontStyle.pointSize * 0.02
 
                     text: "frame_person"
                     color: Colours.palette.m3onPrimary
-                    font.pointSize: Config.appearance.font.headline.large.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+}
 
                 Behavior on scale {
                     Anim {
@@ -182,8 +182,8 @@ Row {
             fill: 1
             text: line.icon
             color: line.colour
-            font.pointSize: Config.appearance.font.body.medium.size
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
 
         StyledText {
             id: text

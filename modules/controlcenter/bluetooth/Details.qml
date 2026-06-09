@@ -643,8 +643,8 @@ StyledFlickable {
                 animate: true
                 text: root.session.bt.fabMenuOpen ? "close" : "settings"
                 color: root.session.bt.fabMenuOpen ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
-                font.pointSize: Config.appearance.font.title.medium.size
-                fill: 1
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: 1
             }
         }
     }

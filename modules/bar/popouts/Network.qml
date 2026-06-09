@@ -107,8 +107,8 @@ ColumnLayout {
             MaterialIcon {
                 visible: networkItem.modelData.isSecure
                 text: "lock"
-                font.pointSize: Config.appearance.font.label.large.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+}
 
             StyledText {
                 Layout.leftMargin: Config.appearance.spacing.small / 2

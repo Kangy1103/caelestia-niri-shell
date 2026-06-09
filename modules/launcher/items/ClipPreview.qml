@@ -83,8 +83,8 @@ StyledRect {
             MaterialIcon {
                 text: root.isImage ? "image" : "description"
                 color: Colours.palette.m3primary
-                font.pointSize: Config.appearance.font.title.medium.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
 
             StyledText {
                 text: root.isImage ? qsTr("Image Preview") : qsTr("Text Preview")

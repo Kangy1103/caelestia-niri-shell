@@ -73,8 +73,8 @@ Item {
                 MaterialIcon {
                     text: "sentiment_stressed"
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Config.appearance.font.headline.large.size * 5
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 5).build()
+}
 
                 Column {
                     anchors.verticalCenter: parent.verticalCenter

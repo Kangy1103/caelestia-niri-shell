@@ -47,8 +47,8 @@ Item {
         // Icon
         MaterialIcon {
             text: root.isImageEntry ? "image" : "content_paste"
-            font.pointSize: Config.appearance.font.headline.large.size
-            color: root.isImageEntry ? Colours.palette.m3tertiary : Colours.palette.m3primary
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+color: root.isImageEntry ? Colours.palette.m3tertiary : Colours.palette.m3primary
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -89,8 +89,8 @@ Item {
                 id: copyIcon
                 anchors.centerIn: parent
                 text: "content_copy"
-                font.pointSize: Config.appearance.font.body.medium.size
-                color: Colours.palette.m3outline
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+color: Colours.palette.m3outline
                 opacity: copyFeedback.opacity === 0 ? 1 : 0
 
                 Behavior on opacity {
@@ -104,8 +104,8 @@ Item {
                 id: copyFeedback
                 anchors.centerIn: parent
                 text: "check"
-                font.pointSize: Config.appearance.font.body.medium.size
-                color: Colours.palette.m3outline
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+color: Colours.palette.m3outline
                 opacity: 0
 
                 Behavior on opacity {
@@ -143,7 +143,7 @@ Item {
             MaterialIcon {
                 anchors.centerIn: parent
                 text: "delete"
-                font.pointSize: Config.appearance.font.body.medium.size
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
                 color: Colours.palette.m3error
             }
         }

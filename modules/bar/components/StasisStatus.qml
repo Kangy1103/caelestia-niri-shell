@@ -66,7 +66,7 @@ Item {
                 ? Colours.palette.m3onSurfaceVariant
                 : Colours.palette.m3primary
             fontStyle: Tokens.font.icon.size(16).weight(Font.Bold).build()
-        }
+}
     }
 
     MouseArea {

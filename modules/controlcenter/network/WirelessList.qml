@@ -139,8 +139,8 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: Icons.getNetworkIcon(modelData.strength, modelData.isSecure)
-                        font.pointSize: Config.appearance.font.title.medium.size
-                        fill: modelData.active ? 1 : 0
+                        fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: modelData.active ? 1 : 0
                         color: modelData.active ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                     }
                 }

@@ -159,8 +159,8 @@ Item {
 
             anchors.centerIn: parent
             color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
-            font.pointSize: Config.appearance.font.title.medium.size
-            fill: control.active ? 1 : 0
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: control.active ? 1 : 0
 
             Behavior on fill {
                 Anim {}

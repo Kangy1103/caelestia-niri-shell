@@ -36,8 +36,8 @@ Item {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "tune"
-                font.pointSize: Config.appearance.font.headline.large.size * 2
-                color: Colours.palette.m3onSurfaceVariant
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
+color: Colours.palette.m3onSurfaceVariant
             }
 
             StyledText {
@@ -213,8 +213,8 @@ Item {
 
                         return charging ? `battery_charging_${(level + 3) * 10}` : `battery_${level}_bar`;
                     }
-                    font.pointSize: Config.appearance.font.title.medium.size
-                    color: batteryTank.accentColor
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+color: batteryTank.accentColor
                 }
 
                 StyledText {
@@ -287,8 +287,8 @@ Item {
             text: parent.icon
             fill: 1
             color: parent.accentColor
-            font.pointSize: Config.appearance.spacing.extraExtraLarge
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.spacing.extraExtraLarge).build()
+}
 
         StyledText {
             Layout.fillWidth: true
@@ -632,8 +632,8 @@ Item {
                 MaterialIcon {
                     text: "unfold_more"
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Config.appearance.font.body.medium.size
-                    visible: storageGaugeCard.diskCount > 1
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+visible: storageGaugeCard.diskCount > 1
                     opacity: 0.7
                     ToolTip.visible: hintHover.hovered
                     ToolTip.text: qsTr("Scroll to switch disks")
@@ -891,8 +891,8 @@ Item {
                 MaterialIcon {
                     text: "download"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Config.appearance.font.body.medium.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
 
                 StyledText {
                     text: qsTr("Download")
@@ -923,8 +923,8 @@ Item {
                 MaterialIcon {
                     text: "upload"
                     color: Colours.palette.m3secondary
-                    font.pointSize: Config.appearance.font.body.medium.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
 
                 StyledText {
                     text: qsTr("Upload")
@@ -955,8 +955,8 @@ Item {
                 MaterialIcon {
                     text: "history"
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Config.appearance.font.body.medium.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
 
                 StyledText {
                     text: qsTr("Total")

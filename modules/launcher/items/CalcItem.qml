@@ -40,8 +40,8 @@ Item {
 
         MaterialIcon {
             text: "function"
-            font.pointSize: Config.appearance.font.headline.large.size
-            Layout.alignment: Qt.AlignVCenter
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+Layout.alignment: Qt.AlignVCenter
         }
 
         StyledText {
@@ -110,8 +110,8 @@ Item {
 
                 text: "open_in_new"
                 color: Colours.palette.m3onTertiary
-                font.pointSize: Config.appearance.font.title.medium.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
 
             Behavior on implicitWidth {
                 Anim {

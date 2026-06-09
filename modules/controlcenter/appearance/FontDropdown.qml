@@ -71,9 +71,8 @@ ColumnLayout {
             MaterialIcon {
                 text: root.expanded ? "expand_less" : "expand_more"
                 color: root.expanded ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.title.medium.size
-                
-                Behavior on color { CAnim {} }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+Behavior on color { CAnim {} }
                 Behavior on rotation { Anim {} }
             }
         }
@@ -119,8 +118,8 @@ ColumnLayout {
 
                     MaterialIcon {
                         text: "search"
-                        font.pointSize: Config.appearance.font.body.medium.size
-                        color: Colours.palette.m3onSurfaceVariant
+                        fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+color: Colours.palette.m3onSurfaceVariant
                     }
 
                     StyledTextField {
@@ -204,8 +203,8 @@ ColumnLayout {
                         MaterialIcon {
                             visible: isCurrent
                             text: "check"
-                            font.pointSize: Config.appearance.font.body.large.size
-                            color: Colours.palette.m3onSecondaryContainer
+                            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+color: Colours.palette.m3onSecondaryContainer
                         }
                     }
                 }

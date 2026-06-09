@@ -101,8 +101,8 @@ DeviceList {
 
                         anchors.centerIn: parent
                         text: "cable"
-                        font.pointSize: Config.appearance.font.title.medium.size
-                        fill: modelData.connected ? 1 : 0
+                        fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: modelData.connected ? 1 : 0
                         color: modelData.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
 
                         Behavior on fill {

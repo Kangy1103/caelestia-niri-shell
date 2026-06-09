@@ -178,8 +178,8 @@ DeviceList {
                         anchors.centerIn: parent
                         text: Icons.getBluetoothIcon(device.modelData ? device.modelData.icon : "")
                         color: device.connected ? Colours.palette.m3onPrimaryContainer : (device.modelData && device.modelData.bonded) ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                        font.pointSize: Config.appearance.font.title.medium.size
-                        fill: device.connected ? 1 : 0
+                        fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: device.connected ? 1 : 0
 
                         Behavior on fill {
                             Anim {}

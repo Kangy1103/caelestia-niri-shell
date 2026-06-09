@@ -31,8 +31,8 @@ ColumnLayout {
         MaterialIcon {
             text: "partly_cloudy_day"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Config.appearance.font.label.large.size
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+}
 
         StyledText {
             text: qsTr("Weather")
@@ -63,8 +63,8 @@ ColumnLayout {
         MaterialIcon {
             text: Weather.icon || "cloud"
             color: Colours.palette.m3secondary
-            font.pointSize: Config.appearance.font.body.medium.size
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
 
         StyledText {
             Layout.fillWidth: true
@@ -78,8 +78,8 @@ ColumnLayout {
         MaterialIcon {
             text: "water_drop"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Config.appearance.font.label.medium.size
-            visible: Weather.humidity > 0
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.label.medium.size).build()
+visible: Weather.humidity > 0
         }
 
         StyledText {
@@ -118,8 +118,8 @@ ColumnLayout {
                             Layout.alignment: Qt.AlignHCenter
                             text: modelData.icon || "cloud"
                             color: Colours.palette.m3onSurfaceVariant
-                            font.pointSize: Config.appearance.font.body.medium.size
-                        }
+                            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
 
                         StyledText {
                             Layout.alignment: Qt.AlignHCenter

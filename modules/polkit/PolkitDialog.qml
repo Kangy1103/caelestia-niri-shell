@@ -118,8 +118,8 @@ Variants {
                                 anchors.centerIn: parent
                                 text: "admin_panel_settings"
                                 color: Colours.palette.m3onSecondaryContainer
-                                font.pointSize: Config.appearance.font.title.medium.size
-                            }
+                                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
                         }
 
                         ColumnLayout {
@@ -217,8 +217,8 @@ Variants {
                                         color: PolkitService.submitting
                                             ? Colours.palette.m3secondary
                                             : Colours.palette.m3onSurfaceVariant
-                                        font.pointSize: Config.appearance.font.body.medium.size
-                                        opacity: PolkitService.submitting ? 0 : 1
+                                        fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+opacity: PolkitService.submitting ? 0 : 1
                                         Behavior on opacity { Anim {} }
                                     }
 
@@ -293,10 +293,8 @@ Variants {
                                         color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                             ? Colours.palette.m3onPrimary
                                             : Colours.palette.m3onSurface
-                                        font.pointSize: Config.appearance.font.body.medium.size
-                                        font.weight: 500
-
-                                        CAnim { properties: "color" }
+                                        fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).weight(500).build()
+CAnim { properties: "color" }
                                     }
                                 }
                             }

@@ -262,8 +262,8 @@ StyledRect {
                             text: Icons.getNotifIcon(root.modelData.summary, root.modelData.urgency)
 
                             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.modelData.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                            font.pointSize: Config.appearance.font.title.medium.size
-                        }
+                            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
                     }
                 }
             }
@@ -420,8 +420,8 @@ StyledRect {
 
                     animate: true
                     text: root.expanded ? "expand_less" : "expand_more"
-                    font.pointSize: Config.appearance.font.body.medium.size
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+}
             }
 
             // Primary action inline (visible when collapsed and actions exist)

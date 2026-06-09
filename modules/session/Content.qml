@@ -135,8 +135,7 @@ Column {
 
             text: button.icon
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            font.pointSize: Config.appearance.font.headline.large.size
-            font.weight: 500
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).weight(500).build()
+}
     }
 }

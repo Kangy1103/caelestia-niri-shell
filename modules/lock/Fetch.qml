@@ -27,8 +27,8 @@ ColumnLayout {
 
         MaterialIcon {
             text: "chevron_right"
-            font.pointSize: Config.appearance.font.body.medium.size
-            color: Colours.palette.m3onSurfaceVariant
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+color: Colours.palette.m3onSurfaceVariant
         }
 
         StyledText {

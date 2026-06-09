@@ -204,8 +204,8 @@ ColumnLayout {
             MaterialIcon {
                 text: "chevron_right"
                 color: Colours.palette.m3onPrimaryContainer
-                font.pointSize: Config.appearance.font.title.medium.size
-            }
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
         }
     }
 

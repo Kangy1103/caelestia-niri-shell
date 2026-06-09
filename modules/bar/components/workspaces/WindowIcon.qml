@@ -114,11 +114,11 @@ Item {
                 anchors.centerIn: parent
                 property var windowData: iconItem.windowData
                 property int windowCount: iconItem.windowCount
-                font.pointSize: ((iconItem.isFocused && iconItem.isWsFocused)) ? Config.bar.workspaces.windowIconSize - Config.appearance.padding.extraSmall : Config.bar.workspaces.windowIconSize - Config.appearance.padding.extraSmall * 2
-                grade: 0
+                fontStyle: Tokens.font.icon.size(((iconItem.isFocused && iconItem.isWsFocused)) ? Config.bar.workspaces.windowIconSize - Config.appearance.padding.extraSmall : Config.bar.workspaces.windowIconSize - Config.appearance.padding.extraSmall * 2).build()
+grade: 0
                 text: Icons.getAppCategoryIcon(windowData.app_id, "help_center")
                 color: (iconItem.isWsFocused ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant)
-                Behavior on font.pointSize {
+                Behavior on fontStyle.pointSize {
                     Anim {
                         easing.bezierCurve: TokenConfig.appearance.curves.emphasized
                     }

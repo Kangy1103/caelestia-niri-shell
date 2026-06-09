@@ -32,8 +32,8 @@ GridLayout {
         MaterialIcon {
             text: "monitor_heart"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Config.appearance.font.label.large.size
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+}
 
         StyledText {
             text: qsTr("System")
@@ -100,9 +100,8 @@ GridLayout {
             anchors.centerIn: parent
             text: res.icon
             color: res.colour
-            font.pointSize: (circ.arcRadius * 0.7) || 1
-            font.weight: 600
-        }
+            fontStyle: Tokens.font.icon.size((circ.arcRadius * 0.7) || 1).weight(600).build()
+}
 
         Behavior on value {
             Anim {

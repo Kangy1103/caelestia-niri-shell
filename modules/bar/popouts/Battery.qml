@@ -62,7 +62,7 @@ Column {
 
                     MaterialIcon {
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -font.pointSize / 10
+                        anchors.verticalCenterOffset: -fontStyle.pointSize / 10
 
                         text: "warning"
                         color: Colours.palette.m3onError
@@ -78,7 +78,7 @@ Column {
 
                     MaterialIcon {
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -font.pointSize / 10
+                        anchors.verticalCenterOffset: -fontStyle.pointSize / 10
 
                         text: "warning"
                         color: Colours.palette.m3onError
@@ -219,8 +219,8 @@ Column {
             anchors.centerIn: parent
 
             text: parent.icon
-            font.pointSize: Config.appearance.font.title.medium.size
-            color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
             fill: profiles.current === text ? 1 : 0
 
             Behavior on fill {

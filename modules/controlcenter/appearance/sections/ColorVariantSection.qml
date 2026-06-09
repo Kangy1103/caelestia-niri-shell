@@ -50,8 +50,8 @@ CollapsibleSection {
 
                     MaterialIcon {
                         text: modelData.icon
-                        font.pointSize: Config.appearance.font.title.medium.size
-                        fill: modelData.variant === Schemes.currentVariant ? 1 : 0
+                        fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+fill: modelData.variant === Schemes.currentVariant ? 1 : 0
                     }
 
                     StyledText {
@@ -64,8 +64,8 @@ CollapsibleSection {
                         visible: modelData.variant === Schemes.currentVariant
                         text: "check"
                         color: Colours.palette.m3primary
-                        font.pointSize: Config.appearance.font.title.medium.size
-                    }
+                        fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+}
                 }
 
                 implicitHeight: variantRow.implicitHeight + Config.appearance.padding.medium * 2

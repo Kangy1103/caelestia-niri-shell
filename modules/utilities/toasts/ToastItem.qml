@@ -84,8 +84,8 @@ StyledRect {
                         return Colours.palette.m3onError;
                     return Colours.palette.m3onSurfaceVariant;
                 }
-                font.pointSize: Math.round(Config.appearance.font.title.medium.size * 1.2)
-            }
+                fontStyle: Tokens.font.icon.size(Math.round(Config.appearance.font.title.medium.size * 1.2)).build()
+}
         }
 
         ColumnLayout {

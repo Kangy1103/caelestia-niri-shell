@@ -64,9 +64,8 @@ Item {
             anchors.centerIn: parent
             text: root.isVideo ? "movie" : "image"
             color: Colours.tPalette.m3outline
-            font.pointSize: Config.appearance.font.headline.large.size * 2
-            font.weight: 600
-        }
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).weight(600).build()
+}
 
         CachingImage {
             path: Wallpapers.getColorSource(root.modelData.path)
@@ -80,11 +79,11 @@ Item {
         // Play symbol overlay for videos
         MaterialIcon {
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: font.pointSize * 0.1 // Adjust for play icon visual centering
+            anchors.horizontalCenterOffset: fontStyle.pointSize * 0.1 // Adjust for play icon visual centering
             text: "play_arrow"
             color: "white"
-            font.pointSize: Config.appearance.font.headline.large.size * 2
-            visible: root.isVideo
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
+visible: root.isVideo
 
             layer.enabled: true
             layer.effect: MultiEffect {

@@ -92,8 +92,8 @@ ColumnLayout {
 
                         MaterialIcon {
                             text: modelData.isActive ? "vpn_key" : "vpn_key_off"
-                            font.pointSize: Config.appearance.font.title.medium.size
-                            color: modelData.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
+                            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+color: modelData.isActive ? Colours.palette.m3primary : Colours.palette.m3outline
                         }
 
                         ColumnLayout {

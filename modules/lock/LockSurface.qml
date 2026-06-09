@@ -407,9 +407,8 @@ WlSessionLockSurface {
             anchors.centerIn: parent
             text: "lock"
             color: Colours.palette.m3primary
-            font.pointSize: Config.appearance.font.headline.large.size * 4
-            font.bold: true
-            rotation: 180
+            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 4).weight(Font.Bold).build()
+rotation: 180
         }
 
         // Center content (clock + avatar + password)

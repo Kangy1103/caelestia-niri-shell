@@ -78,8 +78,8 @@ Item {
             spacing: Config.appearance.spacing.large
             MaterialIcon {
                 text: "keyboard"
-                font.pointSize: Config.appearance.font.title.medium.size
-                color: Colours.palette.m3primary
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+color: Colours.palette.m3primary
             }
             StyledText {
                 text: qsTr("Keybinds")
@@ -100,8 +100,8 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "refresh"
-                    font.pointSize: Config.appearance.font.body.large.size
-                    color: Colours.palette.m3onSurfaceVariant
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+color: Colours.palette.m3onSurfaceVariant
                 }
             }
             StyledRect {
@@ -117,8 +117,8 @@ Item {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "close"
-                    font.pointSize: Config.appearance.font.body.large.size
-                    color: Colours.palette.m3onSurfaceVariant
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+color: Colours.palette.m3onSurfaceVariant
                 }
             }
         }
@@ -286,8 +286,8 @@ Item {
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? "keyboard_hide" : "search_off"
-                    font.pointSize: Config.appearance.font.headline.large.size
-                    color: Colours.palette.m3outline
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+color: Colours.palette.m3outline
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -304,8 +304,8 @@ Item {
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "error_outline"
-                    font.pointSize: Config.appearance.font.headline.large.size
-                    color: Colours.palette.m3error
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+color: Colours.palette.m3error
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -345,8 +345,8 @@ Item {
                 spacing: Config.appearance.spacing.small
                 MaterialIcon {
                     text: "info"
-                    font.pointSize: Config.appearance.font.label.medium.size
-                    color: Colours.palette.m3outline
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.label.medium.size).build()
+color: Colours.palette.m3outline
                 }
                 StyledText {
                     text: qsTr("Arrow keys to navigate")

@@ -244,8 +244,8 @@ Item {
                 id: actionIcon
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: active || accent ? Colours.palette.m3onPrimaryContainer : actionBtn.disabled ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurface
-                font.pointSize: Config.appearance.font.title.medium.size
-                text: "radio_button_unchecked"
+                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+text: "radio_button_unchecked"
 
                 Behavior on color {
                     CAnim {}

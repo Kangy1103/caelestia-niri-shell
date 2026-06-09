@@ -63,9 +63,8 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_left"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Config.appearance.font.body.medium.size
-                    font.weight: 700
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).weight(Font.Bold).build()
+}
             }
 
             Item {
@@ -117,9 +116,8 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_right"
                     color: Colours.palette.m3tertiary
-                    font.pointSize: Config.appearance.font.body.medium.size
-                    font.weight: 700
-                }
+                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).weight(Font.Bold).build()
+}
             }
 
             IconTextButton {
