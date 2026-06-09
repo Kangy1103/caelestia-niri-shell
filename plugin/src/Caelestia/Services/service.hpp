@@ -2,10 +2,12 @@
 
 #include <qmutex.h>
 #include <qobject.h>
+#include <qqmlintegration.h>
 namespace caelestia {
 
 class Service : public QObject {
     Q_OBJECT
+    QML_ELEMENT
 
     Q_PROPERTY(int refCount READ refCount NOTIFY refCountChanged)
 

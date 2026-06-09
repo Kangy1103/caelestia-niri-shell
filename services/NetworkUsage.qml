@@ -1,6 +1,7 @@
 pragma Singleton
 
 import Caelestia.Config
+import Caelestia.Internal
 
 import Quickshell
 import Quickshell.Io
@@ -20,9 +21,11 @@ Singleton {
     readonly property real downloadTotal: _downloadTotal
     readonly property real uploadTotal: _uploadTotal
 
-    // History of speeds for sparkline (most recent at end)
-    readonly property var downloadHistory: _downloadHistory
-    readonly property var uploadHistory: _uploadHistory
+    // History buffers for sparkline (expose values for JS array compat)
+    readonly property var downloadHistory: downloadBuffer.values
+    readonly property var uploadHistory: uploadBuffer.values
+    readonly property alias downloadBuffer: downloadBuffer
+    readonly property alias uploadBuffer: uploadBuffer
     readonly property int historyLength: 30
 
     // Private properties
@@ -30,8 +33,6 @@ Singleton {
     property real _uploadSpeed: 0
     property real _downloadTotal: 0
     property real _uploadTotal: 0
-    property var _downloadHistory: []
-    property var _uploadHistory: []
 
     // Previous readings for calculating speed
     property real _prevRxBytes: 0
@@ -44,67 +45,31 @@ Singleton {
     property bool _initialized: false
 
     function formatBytes(bytes: real): var {
-        // Handle negative or invalid values
-        if (bytes < 0 || isNaN(bytes) || !isFinite(bytes)) {
-            return {
-                value: 0,
-                unit: "B/s"
-            };
-        }
+        if (bytes < 0 || isNaN(bytes) || !isFinite(bytes))
+            return { value: 0, unit: "B/s" };
 
-        if (bytes < 1024) {
-            return {
-                value: bytes,
-                unit: "B/s"
-            };
-        } else if (bytes < 1024 * 1024) {
-            return {
-                value: bytes / 1024,
-                unit: "KB/s"
-            };
-        } else if (bytes < 1024 * 1024 * 1024) {
-            return {
-                value: bytes / (1024 * 1024),
-                unit: "MB/s"
-            };
-        } else {
-            return {
-                value: bytes / (1024 * 1024 * 1024),
-                unit: "GB/s"
-            };
-        }
+        if (bytes < 1024)
+            return { value: bytes, unit: "B/s" };
+        else if (bytes < 1024 * 1024)
+            return { value: bytes / 1024, unit: "KB/s" };
+        else if (bytes < 1024 * 1024 * 1024)
+            return { value: bytes / (1024 * 1024), unit: "MB/s" };
+        else
+            return { value: bytes / (1024 * 1024 * 1024), unit: "GB/s" };
     }
 
     function formatBytesTotal(bytes: real): var {
-        // Handle negative or invalid values
-        if (bytes < 0 || isNaN(bytes) || !isFinite(bytes)) {
-            return {
-                value: 0,
-                unit: "B"
-            };
-        }
+        if (bytes < 0 || isNaN(bytes) || !isFinite(bytes))
+            return { value: 0, unit: "B" };
 
-        if (bytes < 1024) {
-            return {
-                value: bytes,
-                unit: "B"
-            };
-        } else if (bytes < 1024 * 1024) {
-            return {
-                value: bytes / 1024,
-                unit: "KB"
-            };
-        } else if (bytes < 1024 * 1024 * 1024) {
-            return {
-                value: bytes / (1024 * 1024),
-                unit: "MB"
-            };
-        } else {
-            return {
-                value: bytes / (1024 * 1024 * 1024),
-                unit: "GB"
-            };
-        }
+        if (bytes < 1024)
+            return { value: bytes, unit: "B" };
+        else if (bytes < 1024 * 1024)
+            return { value: bytes / 1024, unit: "KB" };
+        else if (bytes < 1024 * 1024 * 1024)
+            return { value: bytes / (1024 * 1024), unit: "MB" };
+        else
+            return { value: bytes / (1024 * 1024 * 1024), unit: "GB" };
     }
 
     function parseNetDev(content: string): var {
@@ -114,29 +79,29 @@ Singleton {
 
         for (let i = 2; i < lines.length; i++) {
             const line = lines[i].trim();
-            if (!line)
-                continue;
+            if (!line) continue;
 
             const parts = line.split(/\s+/);
-            if (parts.length < 10)
-                continue;
+            if (parts.length < 10) continue;
 
             const iface = parts[0].replace(":", "");
-            // Skip loopback interface
-            if (iface === "lo")
-                continue;
+            if (iface === "lo") continue;
 
-            const rxBytes = parseFloat(parts[1]) || 0;
-            const txBytes = parseFloat(parts[9]) || 0;
-
-            totalRx += rxBytes;
-            totalTx += txBytes;
+            totalRx += parseFloat(parts[1]) || 0;
+            totalTx += parseFloat(parts[9]) || 0;
         }
 
-        return {
-            rx: totalRx,
-            tx: totalTx
-        };
+        return { rx: totalRx, tx: totalTx };
+    }
+
+    CircularBuffer {
+        id: downloadBuffer
+        capacity: root.historyLength + 1
+    }
+
+    CircularBuffer {
+        id: uploadBuffer
+        capacity: root.historyLength + 1
     }
 
     FileView {
@@ -189,25 +154,11 @@ Singleton {
                 root._downloadSpeed = rxDelta / timeDelta;
                 root._uploadSpeed = txDelta / timeDelta;
 
-                const maxHistory = root.historyLength + 1;
+                if (root._downloadSpeed >= 0 && isFinite(root._downloadSpeed))
+                    downloadBuffer.push(root._downloadSpeed);
 
-                if (root._downloadSpeed >= 0 && isFinite(root._downloadSpeed)) {
-                    let newDownHist = root._downloadHistory.slice();
-                    newDownHist.push(root._downloadSpeed);
-                    if (newDownHist.length > maxHistory) {
-                        newDownHist.shift();
-                    }
-                    root._downloadHistory = newDownHist;
-                }
-
-                if (root._uploadSpeed >= 0 && isFinite(root._uploadSpeed)) {
-                    let newUpHist = root._uploadHistory.slice();
-                    newUpHist.push(root._uploadSpeed);
-                    if (newUpHist.length > maxHistory) {
-                        newUpHist.shift();
-                    }
-                    root._uploadHistory = newUpHist;
-                }
+                if (root._uploadSpeed >= 0 && isFinite(root._uploadSpeed))
+                    uploadBuffer.push(root._uploadSpeed);
             }
 
             // Calculate totals with overflow handling

@@ -28,13 +28,8 @@ Singleton {
     readonly property bool sourceMuted: !!source?.audio?.muted
     readonly property real sourceVolume: source?.audio?.volume ?? 0
 
-    // CavaProvider / BeatTracker available from Caelestia.Services but
-    // currently disabled: CavaProvider crashes on PipeWire init, BeatTracker
-    // needs further investigation (Element is not creatable in Qt 6.11).
-    // Uncomment when resolved.
-    //
-    // readonly property alias cava: cava
-    // readonly property alias beatTracker: beatTracker
+    // readonly property alias cava: cava (disabled)
+    // readonly property alias beatTracker: beatTracker (disabled)
 
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {
@@ -143,11 +138,17 @@ Singleton {
         objects: [...root.sinks, ...root.sources, ...root.streams]
     }
 
+    // CavaProvider and BeatTracker from Caelestia.Services are disabled:
+    // - CavaProvider: crashes in libcava/fftw3 during PipeWire init
+    // - BeatTracker: "Element is not creatable" under Qt 6.11
+    //   (smpl_t typedef + abstract Service base + optional plugin qmldir)
+    //   Works upstream with older Qt. Re-enable after Qt upgrade.
+    //   Fixes applied: QML_ELEMENT on Service+AudioProvider, smpl_t→float,
+    //   qmldir plugin (not optional), prefer line removed.
     // CavaProvider {
     //     id: cava
     //     bars: Config.services.visualiserBars
     // }
-    //
     // BeatTracker {
     //     id: beatTracker
     // }

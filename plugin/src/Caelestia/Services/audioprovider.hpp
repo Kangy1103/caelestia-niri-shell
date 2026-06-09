@@ -28,6 +28,7 @@ private:
 
 class AudioProvider : public Service {
     Q_OBJECT
+    QML_ELEMENT
 
 public:
     explicit AudioProvider(QObject* parent = nullptr);

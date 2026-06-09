@@ -2,7 +2,7 @@ qml_module(caelestia-internal
     URI Caelestia.Internal
     SOURCES
         cachingimagemanager.hpp cachingimagemanager.cpp
-        circularbuffer.cpp
+        circularbuffer.hpp circularbuffer.cpp
         circularindicatormanager.hpp circularindicatormanager.cpp
         linearindicatormanager.cpp
         logindmanager.cpp
