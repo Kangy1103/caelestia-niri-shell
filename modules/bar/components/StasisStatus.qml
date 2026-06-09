@@ -65,8 +65,7 @@ Item {
             color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle"
                 ? Colours.palette.m3onSurfaceVariant
                 : Colours.palette.m3primary
-            font.bold: true
-            font.pointSize: 16
+            fontStyle: Tokens.font.icon.size(16).weight(Font.Bold).build()
         }
     }
 

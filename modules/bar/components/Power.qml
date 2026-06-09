@@ -34,7 +34,6 @@ Item {
 
         text: "power_settings_new"
         color: Colours.palette.m3error
-        font.bold: true
-        font.pointSize: Config.appearance.font.body.medium.size
+        fontStyle: Tokens.font.icon.builders.medium.weight(Font.Bold).build()
     }
 }
