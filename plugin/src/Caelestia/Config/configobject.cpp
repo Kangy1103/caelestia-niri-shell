@@ -30,7 +30,7 @@ void ConfigObject::loadFromJson(const QJsonObject& obj) {
             continue;
 
         if (isGlobalOnly(key))
-            qCWarning(lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config",
+            qCDebug(lcConfig, "Option '%s' is global-only and will be ignored in per-monitor config",
                 qUtf8Printable(propertyPath(key)));
 
         const auto jsonVal = obj.value(key);
