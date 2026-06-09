@@ -70,7 +70,7 @@ ColumnLayout {
             anchors.fill: parent
             visible: root.wallpapers.length > 0 && !root.loading
 
-            cacheBuffer: height * 2
+            cacheBuffer: Math.max(0, height * 2)
 
             readonly property int minCellWidth: 200 + Appearance.spacing.lg
             readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))

@@ -7,6 +7,7 @@ import qs.components.effects
 import qs.components.images
 import qs.services
 import qs.config
+import Caelestia
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -21,7 +22,7 @@ GridView {
     Layout.minimumHeight: 400
     
     implicitHeight: Math.max(400, contentHeight)
-    cacheBuffer: height * 2
+    cacheBuffer: Math.max(0, height * 2)
 
     readonly property int minCellWidth: 200 + Appearance.spacing.lg
     readonly property int columnsCount: Math.max(1, Math.floor(width / minCellWidth))
@@ -43,6 +44,8 @@ GridView {
 
         readonly property bool isCurrent: rootDelegate.modelData && rootDelegate.modelData.path === Wallpapers.actualCurrent
         readonly property bool isVideo: Wallpapers.isPathVideo(rootDelegate.modelData.path)
+        readonly property string colorSource: Wallpapers.getColorSource(rootDelegate.modelData.path)
+        readonly property bool colorSourceExists: !isVideo || CUtils.exists(colorSource)
         readonly property real itemMargin: Appearance.spacing.lg / 2
         readonly property real itemRadius: Appearance.rounding.normal
 
@@ -76,7 +79,7 @@ GridView {
             CachingImage {
                 id: cachingImage
 
-                path: Wallpapers.getColorSource(rootDelegate.modelData.path)
+                path: rootDelegate.colorSourceExists ? rootDelegate.colorSource : ""
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectCrop
                 cache: true
@@ -117,7 +120,7 @@ GridView {
                 id: fallbackImage
 
                 anchors.fill: parent
-                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? Wallpapers.getColorSource(rootDelegate.modelData.path) : ""
+                source: fallbackTimer.triggered && cachingImage.status !== Image.Ready ? rootDelegate.colorSource : ""
                 asynchronous: true
                 fillMode: Image.PreserveAspectCrop
                 cache: true
