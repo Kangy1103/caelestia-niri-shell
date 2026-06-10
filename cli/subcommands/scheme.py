@@ -1,4 +1,3 @@
-import json
 from argparse import Namespace
 
 from cns.utils.scheme import (
@@ -95,26 +94,31 @@ class List:
                     print("\n".join(scheme_variants))
         else:
             current_scheme = get_scheme()
-            schemes = {}
-            for scheme in get_scheme_names():
-                schemes[scheme] = {}
-                for flavour in get_scheme_flavours(scheme):
+            for scheme_name in get_scheme_names():
+                print(f"\033[1m{scheme_name}\033[0m")
+                flavours = get_scheme_flavours(scheme_name)
+                for flavour in flavours:
                     s = Scheme(
                         {
-                            "name": scheme,
+                            "name": scheme_name,
                             "flavour": flavour,
                             "mode": current_scheme.mode,
                             "variant": current_scheme.variant,
                             "colours": current_scheme.colours,
                         }
                     )
-                    modes = get_scheme_modes(scheme, flavour)
+                    modes = get_scheme_modes(scheme_name, flavour)
                     if s.mode not in modes:
                         s._mode = modes[0]
+                    flavour_available = True
                     try:
                         s._update_colours()
-                        schemes[scheme][flavour] = s.colours
                     except ValueError:
-                        pass
+                        flavour_available = False
 
-            print(json.dumps(schemes))
+                    modes_str = ", ".join(modes)
+                    if flavour_available:
+                        print(f"    {flavour}  (modes: {modes_str})")
+                    else:
+                        print(f"    {flavour}  (modes: {modes_str})  \033[2m[unavailable]\033[0m")
+                print()
