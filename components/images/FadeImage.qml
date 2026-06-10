@@ -21,11 +21,8 @@ Image {
 
     asynchronous: true
     fillMode: Image.PreserveAspectCrop
-
-    sourceSize: {
-        const dpr = (QsWindow.window as QsWindow)?.devicePixelRatio ?? 1;
-        return Qt.size(width * dpr, height * dpr);
-    }
+    mipmap: true
+    smooth: true
 
     retainWhileLoading: true
     opacity: 0
