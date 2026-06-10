@@ -273,9 +273,9 @@ WlSessionLockSurface {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.horizontalCenter
-            anchors.rightMargin: centerWidth / 2 + Tokens.spacing.extraExtraLarge * 2
+            anchors.rightMargin: centerWidth / 2 + Tokens.spacing.medium
 
-            width: Math.min(300, parent.width / 4)
+            width: Math.min(340, parent.width / 4)
             height: centerHeight
 
             radius: Tokens.rounding.large
@@ -319,9 +319,9 @@ WlSessionLockSurface {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.horizontalCenter
-            anchors.leftMargin: centerWidth / 2 + Tokens.spacing.extraExtraLarge * 2
+            anchors.leftMargin: centerWidth / 2 + Tokens.spacing.medium
 
-            width: Math.min(300, parent.width / 4)
+            width: Math.min(340, parent.width / 4)
             height: centerHeight
 
             radius: Tokens.rounding.large
