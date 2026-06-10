@@ -132,11 +132,12 @@ Item {
 
             Connections {
                 function onLauncherChanged(): void {
-                    if (!root.visibilities.launcher)
+                    if (!root.visibilities.launcher) {
                         search.text = "";
-                    else if (root.visibilities.clipboardRequested)
-                        search.text = `${GlobalConfig.launcher.actionPrefix}clip `;
-                    root.visibilities.clipboardRequested = false;
+                    } else if (root.visibilities.requestMode) {
+                        search.text = `${GlobalConfig.launcher.actionPrefix}${root.visibilities.requestMode} `;
+                        root.visibilities.requestMode = "";
+                    }
                 }
 
                 function onSessionChanged(): void {

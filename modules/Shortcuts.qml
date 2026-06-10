@@ -214,7 +214,7 @@ Scope {
         target: "clipboard"
         function open(): void {
             const visibilities = Visibilities.getForActive();
-            visibilities.clipboardRequested = true;
+            visibilities.requestMode = "clip";
             visibilities.launcher = true;
         }
         function close(): void {
@@ -226,7 +226,7 @@ Scope {
             if (visibilities.launcher) {
                 visibilities.launcher = false;
             } else {
-                visibilities.clipboardRequested = true;
+                visibilities.requestMode = "clip";
                 visibilities.launcher = true;
             }
         }

@@ -70,11 +70,6 @@ Variants {
             source: {
                 const src = backdropWindow.wallpaperSource;
                 if (!src) return "";
-                // If it's a local file (file://), check if it exists before trying to load
-                if (src.startsWith("file://")) {
-                    const localPath = src.substring(7);
-                    if (!CUtils.exists(localPath)) return "";
-                }
                 return src;
             }
 

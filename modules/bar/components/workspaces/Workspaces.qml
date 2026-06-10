@@ -25,7 +25,7 @@ StyledRect {
     required property ShellScreen screen
 
     readonly property bool showApplications: Config.bar.workspaces.showWindows
-    readonly property int iconSize: Config.bar.workspaces.windowIconSize
+    readonly property int iconSize: Config.bar.workspaces.windowIconSize || 24
 
     readonly property string labelMode: "index"
     readonly property bool hasLabel: labelMode !== "none"
@@ -167,6 +167,10 @@ StyledRect {
         }
         // Fallback: empty workspace or no focused window — use stale is_focused
         var allWs = Niri.allWorkspaces;
+        if (!allWs) {
+            root._focusedWsId = -1;
+            return;
+        }
         for (var i = 0; i < allWs.length; i++) {
             if (allWs[i].is_focused) {
                 root._focusedWsId = Number(allWs[i].id);
