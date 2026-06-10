@@ -11,5 +11,4 @@ PersistentProperties {
     property bool keybinds
     property bool calendar
     property bool editingWeatherLocation
-    property string requestMode: ""
 }

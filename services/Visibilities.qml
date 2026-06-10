@@ -6,6 +6,7 @@ import Quickshell
 Singleton {
     property var screens: ({})
     property var bars: new Map()
+    property string launcherMode: ""
 
     function load(screen: ShellScreen, visibilities: var): void {
         screens[screen.name] = visibilities;

@@ -134,9 +134,9 @@ Item {
                 function onLauncherChanged(): void {
                     if (!root.visibilities.launcher) {
                         search.text = "";
-                    } else if (root.visibilities.requestMode) {
-                        search.text = `${GlobalConfig.launcher.actionPrefix}${root.visibilities.requestMode} `;
-                        root.visibilities.requestMode = "";
+                    } else if (Visibilities.launcherMode) {
+                        search.text = `${GlobalConfig.launcher.actionPrefix}${Visibilities.launcherMode} `;
+                        Visibilities.launcherMode = "";
                     }
                 }
 
