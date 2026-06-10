@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260610
+// Version: 0.2.0-20260610
 
 pragma ComponentBehavior: Bound
 
@@ -13,9 +13,10 @@ import qs.services
 Item {
     id: root
 
-    required property string entryId
-    required property string entryText
+    property string entryId: ""
+    property string entryText: ""
     property bool isImageEntry: false
+    property bool selected: false
 
     signal activated
     signal deleteRequested
@@ -23,9 +24,20 @@ Item {
     implicitWidth: ListView.view ? ListView.view.width - Tokens.padding.large * 2 : 400
     implicitHeight: Tokens.sizes.launcher.itemHeight
 
+    StyledRect {
+        id: highlight
+        anchors.fill: parent
+        radius: Tokens.rounding.medium
+        color: root.selected ? Qt.alpha(Colours.palette.m3primary, 0.12) : "transparent"
+        border.color: root.selected ? Colours.palette.m3primary : "transparent"
+        border.width: root.selected ? 1 : 0
+    }
+
     StateLayer {
         id: stateLayer
-        radius: Tokens.rounding.large
+        anchors.fill: parent
+        radius: Tokens.rounding.medium
+        z: 0
         onClicked: root.activated()
     }
 
@@ -51,13 +63,15 @@ Item {
 
         IconButton {
             icon: "content_copy"
-            type: IconButton.Standard
-            onClicked: root.activated()
+            font: Tokens.font.icon.small
+            z: 1
+        onClicked: root.activated()
         }
 
         IconButton {
             icon: "delete"
-            type: IconButton.Standard
+            font: Tokens.font.icon.small
+            z: 1
             onClicked: root.deleteRequested()
         }
     }

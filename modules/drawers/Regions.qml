@@ -34,6 +34,12 @@ Region {
     }
 
     R {
+        panel: root.panels.clipboard
+        y: root.win.height - height
+        height: panel.height * (1 - root.panels.clipboard.offsetScale) + root.borderThickness
+    }
+
+    R {
         id: sessionRegion
 
         panel: root.panels.sessionWrapper
@@ -65,6 +71,18 @@ Region {
         panel: root.panels.utilities
         y: root.win.height - height
         height: panel.height * (1 - root.panels.utilities.offsetScale) + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.keybinds
+        y: root.win.height - height
+        height: panel.height + root.borderThickness
+    }
+
+    R {
+        panel: root.panels.calendar
+        y: root.win.height - height
+        height: panel.height + root.borderThickness
     }
 
     R {

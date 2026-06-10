@@ -44,7 +44,7 @@ StyledWindow {
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.calendar || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.calendar || visibilities.clipboard || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     mask: hasFullscreen ? emptyRegion : regions
 
@@ -196,6 +196,27 @@ StyledWindow {
                 Anim {}
             }
         }
+
+        PanelBg {
+            id: clipboardBg
+
+            panel: panels.clipboard
+            deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: calendarBg
+
+            panel: panels.calendar
+            deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: keybindsBg
+
+            panel: panels.keybinds
+            deformAmount: 0.1
+        }
     }
 
     DrawerVisibilities {
@@ -249,6 +270,15 @@ StyledWindow {
             }
             popouts.transform: Matrix4x4 {
                 matrix: popoutBg.deformMatrix
+            }
+            clipboard.transform: Matrix4x4 {
+                matrix: clipboardBg.deformMatrix
+            }
+            calendar.transform: Matrix4x4 {
+                matrix: calendarBg.deformMatrix
+            }
+            keybinds.transform: Matrix4x4 {
+                matrix: keybindsBg.deformMatrix
             }
         }
 

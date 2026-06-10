@@ -5,6 +5,7 @@ import qs.components.effects
 import qs.components.controls
 import qs.services
 import Caelestia.Config
+import Quickshell
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -12,8 +13,13 @@ import QtQuick.Layouts
 Item {
     id: root
 
+    required property PersistentProperties visibilities
+
     property date selectedDate: new Date()
     property date currentDate: new Date()
+
+    Keys.onEscapePressed: root.visibilities.calendar = false
+    focus: true
 
     readonly property int currMonth: currentDate.getMonth()
     readonly property int currYear: currentDate.getFullYear()

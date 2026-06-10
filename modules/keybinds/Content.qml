@@ -20,8 +20,8 @@ Item {
 
     readonly property int padding: Math.max(Config.appearance.padding.largeIncreased, Config.border.rounding)
 
-    implicitWidth: 480
-    implicitHeight: mainLayout.implicitHeight + padding * 2
+    implicitWidth: 420
+    implicitHeight: 600
 
     ListModel { id: filteredModel }
 
@@ -69,13 +69,13 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: root.padding
-        spacing: Config.appearance.spacing.large
+        spacing: Config.appearance.spacing.medium
         anchors.leftMargin: root.padding
         anchors.rightMargin: 10
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.large
+            spacing: Config.appearance.spacing.medium
             MaterialIcon {
                 text: "keyboard"
                 fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
@@ -83,7 +83,7 @@ color: Colours.palette.m3primary
             }
             StyledText {
                 text: qsTr("Keybinds")
-                font.pointSize: Config.appearance.font.title.medium.size
+                font.pointSize: Config.appearance.font.body.large.size
                 font.weight: Font.Bold
                 Layout.fillWidth: true
             }
@@ -142,8 +142,8 @@ color: Colours.palette.m3onSurfaceVariant
                 anchors.right: clearIcon.left
                 anchors.leftMargin: Config.appearance.spacing.small
                 anchors.rightMargin: Config.appearance.spacing.small
-                topPadding: Config.appearance.padding.large
-                bottomPadding: Config.appearance.padding.large
+                topPadding: Config.appearance.padding.small
+                bottomPadding: Config.appearance.padding.small
                 placeholderText: qsTr("Search keybinds...")
                 onTextChanged: filterKeybinds()
                 Keys.onPressed: (event) => {
@@ -191,7 +191,7 @@ color: Colours.palette.m3onSurfaceVariant
                 anchors.fill: parent
                 anchors.margins: Config.appearance.padding.small
                 model: filteredModel
-                spacing: Config.appearance.spacing.small
+                spacing: Config.appearance.spacing.extraSmall
                 currentIndex: 0
                 highlightFollowsCurrentItem: true
                 clip: true
@@ -214,10 +214,10 @@ color: Colours.palette.m3onSurfaceVariant
 
                     StyledRect {
                         anchors.fill: parent
-                        anchors.margins: 2
                         radius: Config.appearance.rounding.small
                         color: "transparent"
                         StateLayer {
+                            anchors.fill: parent
                             radius: parent.radius
                             color: Colours.palette.m3onSurface
                             onClicked: {
@@ -228,31 +228,23 @@ color: Colours.palette.m3onSurfaceVariant
                             id: keybindContent
                             anchors.fill: parent
                             anchors.margins: Config.appearance.padding.small
-                            spacing: Config.appearance.spacing.large
+                            spacing: Config.appearance.spacing.medium
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 spacing: Config.appearance.spacing.extraSmall
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: keybindItem.action
-                                    font.pointSize: Config.appearance.font.label.large.size
+                    font.pointSize: Config.appearance.font.label.medium.size
                                     font.weight: Font.Medium
                                     color: Colours.palette.m3onSurface
                                     elide: Text.ElideRight
                                 }
-                                StyledRect {
-                                    Layout.preferredWidth: keyText.implicitWidth + Config.appearance.padding.medium * 2
-                                    Layout.preferredHeight: keyText.implicitHeight + Config.appearance.padding.small * 2
-                                    radius: Config.appearance.rounding.extraSmall
-                                    color: Colours.tPalette.m3surfaceContainerHighest
-                                    StyledText {
-                                        id: keyText
-                                        anchors.centerIn: parent
-                                        text: keybindItem.key
-                                        font.pointSize: Config.appearance.font.label.medium.size
-                                        font.family: "monospace"
-                                        color: Colours.palette.m3onSurfaceVariant
-                                    }
+                                StyledText {
+                                    text: keybindItem.key
+                    font.pointSize: Config.appearance.font.label.small.size
+                                    font.family: "monospace"
+                                    color: Colours.palette.m3onSurfaceVariant
                                 }
                             }
                         }
@@ -282,7 +274,7 @@ color: Colours.palette.m3onSurfaceVariant
             Column {
                 visible: filteredModel.count === 0 && !Keybinds.loading && !Keybinds.error
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.large
+                spacing: Config.appearance.spacing.medium
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? "keyboard_hide" : "search_off"
@@ -292,7 +284,7 @@ color: Colours.palette.m3outline
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? qsTr("No keybinds found") : qsTr("No results found")
-                    font.pointSize: Config.appearance.font.body.medium.size
+                    font.pointSize: Config.appearance.font.body.small.size
                     color: Colours.palette.m3outline
                 }
             }
@@ -300,7 +292,7 @@ color: Colours.palette.m3outline
             Column {
                 visible: Keybinds.error && !Keybinds.loading
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.large
+                spacing: Config.appearance.spacing.medium
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "error_outline"
@@ -310,7 +302,7 @@ color: Colours.palette.m3error
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: Keybinds.error
-                    font.pointSize: Config.appearance.font.body.medium.size
+                    font.pointSize: Config.appearance.font.body.small.size
                     color: Colours.palette.m3error
                 }
             }
@@ -318,7 +310,7 @@ color: Colours.palette.m3error
             Column {
                 visible: Keybinds.loading
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.large
+                spacing: Config.appearance.spacing.medium
                 StyledBusyIndicator {
                     anchors.horizontalCenter: parent.horizontalCenter
                     running: true
@@ -326,7 +318,7 @@ color: Colours.palette.m3error
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: qsTr("Loading keybinds...")
-                    font.pointSize: Config.appearance.font.body.medium.size
+                    font.pointSize: Config.appearance.font.body.small.size
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -334,10 +326,10 @@ color: Colours.palette.m3error
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.large
+            spacing: Config.appearance.spacing.medium
             StyledText {
                 text: filteredModel.count + " " + qsTr("keybinds")
-                font.pointSize: Config.appearance.font.label.large.size
+                font.pointSize: Config.appearance.font.label.medium.size
                 color: Colours.palette.m3outline
             }
             Item { Layout.fillWidth: true }

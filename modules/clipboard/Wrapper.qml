@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260610
+// Version: 0.3.0-20260610
 
 pragma ComponentBehavior: Bound
 
@@ -16,14 +16,7 @@ Item {
 
     readonly property bool shouldBeActive: visibilities.clipboard
 
-    Connections {
-        target: visibilities
-        function onClipboardChanged(): void {}
-    }
-
     property real offsetScale: shouldBeActive ? 0 : 1
-    readonly property real nonAnimWidth: content.implicitWidth
-    readonly property real nonAnimHeight: content.implicitHeight
 
     onShouldBeActiveChanged: {
         if (shouldBeActive)
@@ -35,7 +28,7 @@ Item {
     visible: offsetScale < 1
     anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
-    implicitWidth: content.implicitWidth || 380
+    implicitWidth: content.implicitWidth || 630
     opacity: 1 - offsetScale
 
     Behavior on offsetScale {
@@ -51,7 +44,6 @@ Item {
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            wrapper: root
             visibilities: root.visibilities
         }
     }

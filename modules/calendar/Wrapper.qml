@@ -46,5 +46,6 @@ Item {
 
     Content {
         id: content
+        visibilities: root.visibilities
     }
 }
