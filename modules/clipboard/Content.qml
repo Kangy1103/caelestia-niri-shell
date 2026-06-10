@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260610
+// Version: 0.2.0-20260610
 
 pragma ComponentBehavior: Bound
 
@@ -14,20 +14,11 @@ import qs.services
 import Quickshell
 import Quickshell.Io
 
-    Item {
+Item {
     id: root
 
     required property Wrapper wrapper
     required property DrawerVisibilities visibilities
-
-    readonly property int padding: Tokens.padding.large
-    readonly property int rounding: Tokens.rounding.large
-
-    implicitWidth: 420
-    implicitHeight: 500
-
-    Keys.onEscapePressed: root.visibilities.clipboard = false
-    focus: true
 
     ListModel { id: clipboardModel }
     ListModel { id: filteredModel }
@@ -93,12 +84,14 @@ import Quickshell.Io
         }
     }
 
+    implicitWidth: 420
+    implicitHeight: 500
+
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: root.padding
+        anchors.margins: Tokens.padding.large
         spacing: Tokens.spacing.medium
 
-        // Search bar
         StyledRect {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.max(searchField.implicitHeight, searchIcon.implicitHeight)
@@ -107,8 +100,8 @@ import Quickshell.Io
 
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: root.padding
-                anchors.rightMargin: root.padding
+                anchors.leftMargin: Tokens.padding.medium
+                anchors.rightMargin: Tokens.padding.medium
                 spacing: Tokens.spacing.small
 
                 MaterialIcon {
@@ -125,6 +118,7 @@ import Quickshell.Io
                         root.searchQuery = text;
                         root.filterItems();
                     }
+                    Keys.onEscapePressed: root.visibilities.clipboard = false
                 }
 
                 MaterialIcon {
@@ -140,7 +134,6 @@ import Quickshell.Io
             }
         }
 
-        // Clipboard list
         ListView {
             id: listView
             Layout.fillWidth: true
@@ -150,7 +143,7 @@ import Quickshell.Io
             model: filteredModel
 
             delegate: ClipboardItem {
-                width: ListView.view.width
+                width: ListView.view ? ListView.view.width - Tokens.padding.large * 2 : 400
                 entryId: modelData.entryId
                 entryText: modelData.entryText
                 isImageEntry: modelData.isImage || false
@@ -164,7 +157,6 @@ import Quickshell.Io
             }
         }
 
-        // Wipe button
         IconTextButton {
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Clear clipboard history")
