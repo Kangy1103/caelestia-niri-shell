@@ -186,7 +186,7 @@ WlSessionLockSurface {
 
     Image {
         id: wallpaperFallback
-        visible: root.isTargetScreen
+        visible: root.isTargetScreen && (status === Image.Ready || status === Image.Loading)
         anchors.fill: parent
         source: {
             const path = Wallpapers.current || Config.paths.wallpaper || "";
@@ -194,13 +194,6 @@ WlSessionLockSurface {
             const source = Wallpapers.getColorSource(path);
             return source.startsWith("/") ? "file://" + source : source;
         }
-        fillMode: Image.PreserveAspectCrop
-        sourceSize.width: root.screen.width
-        sourceSize.height: root.screen.height
-        opacity: 1
-        z: 1
-
-        visible: status === Image.Ready || status === Image.Loading
 
         layer.enabled: true
         layer.effect: MultiEffect {
