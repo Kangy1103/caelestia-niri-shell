@@ -16,6 +16,11 @@ Item {
 
     readonly property bool shouldBeActive: visibilities.clipboard
 
+    Connections {
+        target: visibilities
+        function onClipboardChanged(): void {}
+    }
+
     property real offsetScale: shouldBeActive ? 0 : 1
     readonly property real nonAnimWidth: content.implicitWidth
     readonly property real nonAnimHeight: content.implicitHeight
