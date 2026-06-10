@@ -202,6 +202,16 @@ WlSessionLockSurface {
             blurMax: 64
             blurMultiplier: 1
         }
+
+        fillMode: Image.PreserveAspectFit
+        sourceSize.width: root.screen.width
+        sourceSize.height: root.screen.height
+        opacity: 1
+        z: 1
+
+        onStatusChanged: {
+            if (status === Image.Error) { }
+        }
     }
 
     ScreencopyView {
