@@ -1,80 +1,84 @@
-import qs.components
-import qs.services
-import Caelestia.Config
 import "dash"
-import Quickshell
 import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.components.filedialog
+import qs.services
 
 GridLayout {
     id: root
 
-    required property PersistentProperties visibilities
-    required property PersistentProperties state
+    required property DrawerVisibilities visibilities
+    required property DashboardState dashState
+    required property FileDialog facePicker
 
-    columns: 6
-    rowSpacing: Config.appearance.spacing.large
-    columnSpacing: Config.appearance.spacing.large
+    rowSpacing: Tokens.spacing.medium
+    columnSpacing: Tokens.spacing.medium
 
     Rect {
         Layout.column: 2
         Layout.columnSpan: 3
-        Layout.preferredWidth: user.implicitWidth
-        Layout.preferredHeight: user.implicitHeight
+        Layout.preferredWidth: Tokens.sizes.dashboard.userWidth
+        Layout.fillHeight: true
+
+        radius: Tokens.rounding.extraLarge
 
         User {
             id: user
+
             visibilities: root.visibilities
-            state: root.state
+            facePicker: root.facePicker
         }
     }
 
     Rect {
         Layout.row: 0
         Layout.columnSpan: 2
-        Layout.preferredWidth: TokenConfig.sizes.dashboard.weatherWidth
-        Layout.fillHeight: true
+        Layout.preferredWidth: Tokens.sizes.dashboard.weatherWidth
+        Layout.preferredHeight: weather.implicitHeight
 
-        Weather {}
-    }
+        radius: Tokens.rounding.extraLarge * 1.5
 
-    Rect {
-        Layout.row: 1
-        Layout.columnSpan: 4
-        Layout.fillWidth: true
-        Layout.minimumHeight: dateTime.implicitHeight + Config.appearance.padding.medium
-
-        DateTime {
-            id: dateTime
-            anchors.centerIn: parent
+        SmallWeather {
+            id: weather
         }
     }
 
     Rect {
-        Layout.row: 2
-        Layout.columnSpan: 4
-        Layout.fillWidth: true
-        Layout.minimumHeight: 90
+        Layout.row: 1
+        Layout.preferredWidth: dateTime.implicitWidth
+        Layout.fillHeight: true
 
-        QuickToggles {}
+        radius: Tokens.rounding.large
+
+        DateTime {
+            id: dateTime
+        }
     }
 
     Rect {
-        Layout.row: 3
-        Layout.columnSpan: 4
+        Layout.row: 1
+        Layout.column: 1
+        Layout.columnSpan: 3
         Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.minimumHeight: 80
+        Layout.preferredHeight: calendar.implicitHeight
 
-        UpcomingEvents {}
+        radius: Tokens.rounding.extraLarge
+
+        Calendar {
+            id: calendar
+
+            dashState: root.dashState
+        }
     }
 
     Rect {
         Layout.row: 1
         Layout.column: 4
-        Layout.rowSpan: 3
-        Layout.fillHeight: true
-        Layout.minimumHeight: 200
         Layout.preferredWidth: resources.implicitWidth
+        Layout.fillHeight: true
+
+        radius: Tokens.rounding.large
 
         Resources {
             id: resources
@@ -84,9 +88,11 @@ GridLayout {
     Rect {
         Layout.row: 0
         Layout.column: 5
-        Layout.rowSpan: 4
+        Layout.rowSpan: 2
         Layout.preferredWidth: media.implicitWidth
         Layout.fillHeight: true
+
+        radius: Tokens.rounding.extraLarge * 2
 
         Media {
             id: media
@@ -94,7 +100,6 @@ GridLayout {
     }
 
     component Rect: StyledRect {
-        radius: Config.appearance.rounding.small
         color: Colours.tPalette.m3surfaceContainer
     }
 }

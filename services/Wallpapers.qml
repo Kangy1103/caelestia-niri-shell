@@ -275,6 +275,7 @@ Searcher {
 
         recursive: true
         path: Paths.wallsdir
-        filter: FileSystemModel.ImagesAndVideos
+        filter: FileSystemModel.Images
+        nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.webp", "*.mp4", "*.webm", "*.mkv"]
     }
 }

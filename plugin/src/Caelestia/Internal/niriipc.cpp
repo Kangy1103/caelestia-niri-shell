@@ -323,6 +323,8 @@ void NiriIpc::onEvent(const QJsonObject& event) {
         handleWindowLayoutsChanged(event.value(QStringLiteral("WindowLayoutsChanged")).toObject());
     } else if (event.contains(QStringLiteral("KeyboardLayoutsChanged"))) {
         handleKeyboardLayoutsChanged(event.value(QStringLiteral("KeyboardLayoutsChanged")).toObject());
+    } else if (event.contains(QStringLiteral("KeyboardLayoutSwitched"))) {
+        handleKeyboardLayoutSwitched(event.value(QStringLiteral("KeyboardLayoutSwitched")).toObject());
     } else if (event.contains(QStringLiteral("OverviewOpenedOrClosed"))) {
         handleOverviewOpenedOrClosed(event.value(QStringLiteral("OverviewOpenedOrClosed")).toObject());
     } else if (event.contains(QStringLiteral("OutputsChanged"))) {
@@ -611,6 +613,14 @@ void NiriIpc::handleKeyboardLayoutsChanged(const QJsonObject& data) {
     m_kbLayoutIndex = (idx >= 0 && idx < m_kbLayoutsArray.size()) ? idx : 0;
 
     emit keyboardChanged();
+}
+
+void NiriIpc::handleKeyboardLayoutSwitched(const QJsonObject& data) {
+    const int idx = data.value(QStringLiteral("idx")).toInt(-1);
+    if (idx >= 0 && idx < m_kbLayoutsArray.size()) {
+        m_kbLayoutIndex = idx;
+        emit keyboardChanged();
+    }
 }
 
 void NiriIpc::handleOverviewOpenedOrClosed(const QJsonObject& data) {

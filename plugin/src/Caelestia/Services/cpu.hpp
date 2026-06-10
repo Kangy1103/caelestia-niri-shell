@@ -16,6 +16,7 @@ class Cpu : public TickingService {
     Q_PROPERTY(qreal temperature READ temperature NOTIFY temperatureChanged)
 
 public:
+    static Cpu* create(QQmlEngine*, QJSEngine*);
     explicit Cpu(QObject* parent = nullptr);
 
     [[nodiscard]] QString name() const;

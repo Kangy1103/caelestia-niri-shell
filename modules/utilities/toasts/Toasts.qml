@@ -1,48 +1,37 @@
 pragma ComponentBehavior: Bound
 
-import qs.components
-import Caelestia.Config
-import qs.services
-import Caelestia
-import Quickshell
 import QtQuick
+import Quickshell
+import Caelestia
+import Caelestia.Config
+import qs.components
+import qs.services
 
 Item {
     id: root
 
-    readonly property int spacing: Config.appearance.spacing.small
+    readonly property int spacing: Tokens.spacing.small
     property bool flag
-    property var _yCache: []
-    property int _totalHeight: 0
 
-    implicitWidth: TokenConfig.sizes.utilities.toastWidth - Config.appearance.padding.medium * 2
-    implicitHeight: _totalHeight
-
-    onFlagChanged: _recalcLayout()
-
-    function _recalcLayout(): void {
-        Qt.callLater(_doRecalc);
+    function shouldShowToast(toast: Toast): bool {
+        if (!Notifs.hasFullscreen())
+            return true;
+        if (Config.utilities.toasts.fullscreen === "all")
+            return true;
+        if (Config.utilities.toasts.fullscreen === "important")
+            return toast.type === Toast.Warning || toast.type === Toast.Error;
+        return false;
     }
 
-    function _doRecalc(): void {
-        const positions = [];
-        let h = 0;
-        let visible = 0;
+    implicitWidth: Tokens.sizes.utilities.toastWidth - Tokens.padding.medium * 2
+    implicitHeight: {
+        let h = -spacing;
         for (let i = 0; i < repeater.count; i++) {
-            const item = repeater.itemAt(i);
-            if (!item) { positions[i] = h; continue; }
-            const closed = item.modelData?.closed ?? true;
-            const hidden = !closed && visible >= Config.utilities.maxToasts;
-            if (!closed && !hidden) {
-                positions[i] = h;
-                h += (item.implicitHeight || 0) + spacing;
-                visible++;
-            } else {
-                positions[i] = h;
-            }
+            const item = repeater.itemAt(i) as ToastWrapper;
+            if (!item.modelData.closed && !item.previewHidden)
+                h += item.implicitHeight + spacing;
         }
-        root._yCache = positions;
-        root._totalHeight = h > 0 ? h - spacing : 0;
+        return h;
     }
 
     Repeater {
@@ -53,10 +42,12 @@ Item {
                 const toasts = [];
                 let count = 0;
                 for (const toast of Toaster.toasts) {
+                    if (!root.shouldShowToast(toast))
+                        continue;
                     toasts.push(toast);
                     if (!toast.closed) {
                         count++;
-                        if (count > Config.utilities.maxToasts)
+                        if (count > root.Config.utilities.maxToasts)
                             break;
                     }
                 }
@@ -90,7 +81,16 @@ Item {
         opacity: modelData.closed || previewHidden ? 0 : 1
         scale: modelData.closed || previewHidden ? 0.7 : 1
 
-        anchors.bottomMargin: root._yCache[index] ?? 0
+        anchors.bottomMargin: {
+            root.flag; // Force update
+            let y = 0;
+            for (let i = 0; i < index; i++) {
+                const item = repeater.itemAt(i) as ToastWrapper;
+                if (item && !item.modelData.closed && !item.previewHidden)
+                    y += item.implicitHeight + root.spacing;
+            }
+            return y;
+        }
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -111,19 +111,15 @@ Item {
             properties: "opacity,scale"
             from: 0
             to: 1
-            duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-            easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
         }
 
         ParallelAnimation {
             running: toast.modelData.closed
-            onStarted: {
-                toast.anchors.bottomMargin = toast.anchors.bottomMargin;
-                root._recalcLayout();
-            }
+            onStarted: toast.anchors.bottomMargin = toast.anchors.bottomMargin
             onFinished: toast.modelData.unlock(toast)
 
             Anim {
+                type: Anim.DefaultEffects
                 target: toast
                 property: "opacity"
                 to: 0
@@ -142,7 +138,9 @@ Item {
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {
@@ -150,10 +148,7 @@ Item {
         }
 
         Behavior on anchors.bottomMargin {
-            Anim {
-                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
-            }
+            Anim {}
         }
     }
 }

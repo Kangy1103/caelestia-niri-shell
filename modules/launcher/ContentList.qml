@@ -1,30 +1,25 @@
 pragma ComponentBehavior: Bound
 
-import "items"
-import qs.components
-import qs.services
-import Caelestia.Config
-import qs.utils
-import Quickshell
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
+import Caelestia.Config
+import qs.components
+import qs.components.controls
+import qs.services
+import qs.utils
 
 Item {
     id: root
 
-    required property var wrapper
-    required property PersistentProperties visibilities
+    required property var content
+    required property DrawerVisibilities visibilities
     required property var panels
-    required property TextField search
+    required property real maxHeight
+    required property StyledTextField search
     required property int padding
     required property int rounding
 
-    readonly property bool showWallpapers: search.text.startsWith(`${Config.launcher.actionPrefix}wallpaper `)
-    readonly property Item currentList: showWallpapers ? wallpaperList.item : appList.item
-    readonly property string activeMode: showWallpapers ? "wallpapers" : (appList.item?.state ?? "apps")
-
-    readonly property bool showClipPreview: activeMode === "clip" && Boolean(currentList?.currentItem?.modelData)
+    readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
+    readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
@@ -37,8 +32,8 @@ Item {
             name: "apps"
 
             PropertyChanges {
-                root.implicitWidth: TokenConfig.sizes.launcher.itemWidth + (showClipPreview ? 300 + Config.appearance.spacing.large : 0)
-                root.implicitHeight: Math.max(appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight, showClipPreview ? 400 : 0)
+                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
+                root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
                 appList.active: true
             }
 
@@ -51,8 +46,8 @@ Item {
             name: "wallpapers"
 
             PropertyChanges {
-                root.implicitWidth: Math.max(TokenConfig.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
-                root.implicitHeight: TokenConfig.sizes.launcher.wallpaperHeight
+                root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
+                root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
             }
         }
@@ -65,7 +60,7 @@ Item {
                 property: "opacity"
                 from: 1
                 to: 0
-                duration: Config.appearance.anim.durations.small
+                type: Anim.DefaultEffects
             }
             PropertyAction {}
             Anim {
@@ -73,46 +68,29 @@ Item {
                 property: "opacity"
                 from: 0
                 to: 1
-                duration: Config.appearance.anim.durations.small
+                type: Anim.DefaultEffects
             }
         }
     }
 
-    Row {
-        id: mainRow
+    Loader {
+        id: appList
+
+        active: false
+
         anchors.fill: parent
-        spacing: Config.appearance.spacing.large
 
-        Loader {
-            id: appList
-
-            active: false
-            asynchronous: true
-
-            height: parent.height
-            width: TokenConfig.sizes.launcher.itemWidth
-
-            sourceComponent: AppList {
-                search: root.search
-                visibilities: root.visibilities
-            }
-        }
-
-        ClipPreview {
-            id: clipPreview
-            visible: root.showClipPreview
-            modelData: root.currentList?.currentItem?.modelData
-            list: appList.item
-            height: parent.height
-            width: 300
+        sourceComponent: AppList {
+            search: root.search
+            visibilities: root.visibilities
         }
     }
 
     Loader {
         id: wallpaperList
 
-        active: false
         asynchronous: true
+        active: false
 
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -122,7 +100,7 @@ Item {
             search: root.search
             visibilities: root.visibilities
             panels: root.panels
-            wrapper: root.wrapper
+            content: root.content
         }
     }
 
@@ -132,8 +110,8 @@ Item {
         opacity: root.currentList?.count === 0 ? 1 : 0
         scale: root.currentList?.count === 0 ? 1 : 0.5
 
-        spacing: Config.appearance.spacing.large
-        padding: Config.appearance.padding.largeIncreased
+        spacing: Tokens.spacing.medium
+        padding: Tokens.padding.large
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -141,8 +119,9 @@ Item {
         MaterialIcon {
             text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
             color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
-anchors.verticalCenter: parent.verticalCenter
+            fontStyle: Tokens.font.icon.extraLarge
+
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         Column {
@@ -151,19 +130,20 @@ anchors.verticalCenter: parent.verticalCenter
             StyledText {
                 text: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.body.large.size
-                font.weight: 500
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             StyledText {
                 text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(Paths.wallsdir)) : qsTr("Try searching for something else")
                 color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.body.medium.size
+                font: Tokens.font.body.medium
             }
         }
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {
@@ -174,18 +154,12 @@ anchors.verticalCenter: parent.verticalCenter
     Behavior on implicitWidth {
         enabled: root.visibilities.launcher
 
-        Anim {
-            duration: Config.appearance.anim.durations.large
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
-        }
+        Anim {}
     }
 
     Behavior on implicitHeight {
         enabled: root.visibilities.launcher
 
-        Anim {
-            duration: Config.appearance.anim.durations.large
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
-        }
+        Anim {}
     }
 }

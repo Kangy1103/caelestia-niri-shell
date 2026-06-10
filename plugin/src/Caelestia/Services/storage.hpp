@@ -22,6 +22,7 @@ class Storage : public TickingService {
     Q_PROPERTY(caelestia::services::DiskInfo* primaryDisk READ primaryDisk NOTIFY primaryDiskChanged)
 
 public:
+    static Storage* create(QQmlEngine*, QJSEngine*);
     explicit Storage(QObject* parent = nullptr);
 
     [[nodiscard]] qreal percentage() const;

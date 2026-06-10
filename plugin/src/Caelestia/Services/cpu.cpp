@@ -8,6 +8,9 @@
 
 namespace caelestia::services {
 
+Cpu* Cpu::create(QQmlEngine*, QJSEngine*) {
+    return new Cpu();
+}
 Cpu::Cpu(QObject* parent)
     : TickingService(parent) {
     readNameOnce();

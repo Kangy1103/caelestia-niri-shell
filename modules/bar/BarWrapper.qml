@@ -1,34 +1,48 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
-import qs.components
-import Caelestia.Config
-import "popouts" as BarPopouts
-import Quickshell
 import QtQuick
+import Quickshell
+import Caelestia.Config
+import qs.components
+import qs.utils
+import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root
 
     required property ShellScreen screen
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
+    required property bool fullscreen
 
-    readonly property int padding: Math.max(Config.appearance.padding.small, Config.border.thickness)
-    readonly property int contentWidth: TokenConfig.sizes.bar.innerWidth + padding * 2
-    readonly property int exclusiveZone: Config.bar.persistent || visibilities.bar ? contentWidth : Config.border.thickness
-    readonly property bool shouldBeVisible: Config.bar.persistent || visibilities.bar || isHovered
+    readonly property bool disabled: Strings.testRegexList(Config.bar.excludedScreens, screen.name)
+
+    readonly property int clampedWidth: Math.max(Config.border.minThickness, implicitWidth)
+    readonly property int padding: Math.max(Tokens.padding.small, Config.border.thickness)
+    readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
+    readonly property int exclusiveZone: !disabled && (Config.bar.persistent || visibilities.bar) ? contentWidth : Config.border.thickness
+    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
     property bool isHovered
 
+    function closeTray(): void {
+        (content.item as Bar)?.closeTray();
+    }
+
     function checkPopout(y: real): void {
-        content.item?.checkPopout(y);
+        (content.item as Bar)?.checkPopout(y);
     }
 
     function handleWheel(y: real, angleDelta: point): void {
-        content.item?.handleWheel(y, angleDelta);
+        (content.item as Bar)?.handleWheel(y, angleDelta);
     }
 
+    clip: true
     visible: width > Config.border.thickness
-    implicitWidth: Config.border.thickness
+    implicitWidth: fullscreen ? 0 : Config.border.thickness
 
     states: State {
         name: "visible"
@@ -47,8 +61,6 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Config.appearance.anim.durations.normal
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
             }
         },
         Transition {
@@ -58,8 +70,7 @@ Item {
             Anim {
                 target: root
                 property: "implicitWidth"
-                duration: Config.appearance.anim.durations.small
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
+                type: Anim.Emphasized
             }
         }
     ]
@@ -71,13 +82,14 @@ Item {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
 
-        active: root.shouldBeVisible || root.visible
+        active: root.shouldBeVisible
 
         sourceComponent: Bar {
             width: root.contentWidth
             screen: root.screen
             visibilities: root.visibilities
-            popouts: root.popouts
+            popouts: root.popouts // qmllint disable incompatible-type
+            fullscreen: root.fullscreen
         }
     }
 }

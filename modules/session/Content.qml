@@ -1,51 +1,47 @@
 pragma ComponentBehavior: Bound
 
-import qs.components
-import qs.services
-import Caelestia.Config
-import qs.utils
-import Quickshell
 import QtQuick
+import Quickshell
+import Caelestia
+import Caelestia.Config
+import qs.components
+import qs.components.controls
+import qs.services
+import qs.utils
 
 Column {
     id: root
 
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
-    padding: Config.appearance.padding.largeIncreased
-
-    anchors.verticalCenter: parent.verticalCenter
-    anchors.left: parent.left
-
-    spacing: Config.appearance.spacing.extraExtraLarge
+    padding: Tokens.padding.large
+    rightPadding: CUtils.clamp(padding - Config.border.thickness, 0, padding)
+    spacing: Tokens.spacing.large
 
     SessionButton {
         id: logout
 
-        icon: "logout"
+        icon: Config.session.icons.logout
         command: Config.session.commands.logout
 
         KeyNavigation.down: shutdown
 
+        Component.onCompleted: forceActiveFocus()
+
         Connections {
-            target: root.visibilities
-
-            function onSessionChanged(): void {
-                if (root.visibilities.session)
-                    logout.focus = true;
-            }
-
             function onLauncherChanged(): void {
-                if (root.visibilities.session && !root.visibilities.launcher)
-                    logout.focus = true;
+                if (!root.visibilities.launcher)
+                    logout.forceActiveFocus();
             }
+
+            target: root.visibilities
         }
     }
 
     SessionButton {
         id: shutdown
 
-        icon: "power_settings_new"
+        icon: Config.session.icons.shutdown
         command: Config.session.commands.shutdown
 
         KeyNavigation.up: logout
@@ -53,21 +49,21 @@ Column {
     }
 
     AnimatedImage {
-        width: TokenConfig.sizes.session.button
-        height: TokenConfig.sizes.session.button
-        sourceSize.width: width
-        sourceSize.height: height
+        width: Tokens.sizes.session.button
+        height: Tokens.sizes.session.button
+        sourceSize.width: width * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
 
         playing: visible
         asynchronous: true
-        speed: 0.7
+        speed: Config.general.sessionGifSpeed
         source: Paths.absolutePath(Config.paths.sessionGif)
+        fillMode: AnimatedImage.PreserveAspectFit
     }
 
     SessionButton {
         id: hibernate
 
-        icon: "downloading"
+        icon: Config.session.icons.hibernate
         command: Config.session.commands.hibernate
 
         KeyNavigation.up: shutdown
@@ -77,36 +73,38 @@ Column {
     SessionButton {
         id: reboot
 
-        icon: "cached"
+        icon: Config.session.icons.reboot
         command: Config.session.commands.reboot
 
         KeyNavigation.up: hibernate
     }
 
-    component SessionButton: StyledRect {
+    component SessionButton: IconButton {
         id: button
 
-        required property string icon
         required property list<string> command
 
-        implicitWidth: TokenConfig.sizes.session.button
-        implicitHeight: TokenConfig.sizes.session.button
+        implicitWidth: Tokens.sizes.session.button
+        implicitHeight: Tokens.sizes.session.button
 
-        radius: Config.appearance.rounding.large
-        color: button.activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
+        inactiveColour: activeFocus ? Colours.palette.m3secondaryContainer : Colours.tPalette.m3surfaceContainer
+        inactiveOnColour: activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
+        radius: pressed ? Tokens.rounding.medium : activeFocus ? Tokens.rounding.extraLarge : Tokens.rounding.largeIncreased
+        font: Tokens.font.icon.builders.large.scale(1.3).build()
+        onClicked: Quickshell.execDetached(button.command)
 
         Keys.onEnterPressed: Quickshell.execDetached(button.command)
         Keys.onReturnPressed: Quickshell.execDetached(button.command)
         Keys.onEscapePressed: root.visibilities.session = false
         Keys.onPressed: event => {
-            // ...existing code...
+            if (!Config.session.vimKeybinds)
                 return;
 
             if (event.modifiers & Qt.ControlModifier) {
-                if (event.key === Qt.Key_J && KeyNavigation.down) {
+                if ((event.key === Qt.Key_J || event.key === Qt.Key_N) && KeyNavigation.down) {
                     KeyNavigation.down.focus = true;
                     event.accepted = true;
-                } else if (event.key === Qt.Key_K && KeyNavigation.up) {
+                } else if ((event.key === Qt.Key_K || event.key === Qt.Key_P) && KeyNavigation.up) {
                     KeyNavigation.up.focus = true;
                     event.accepted = true;
                 }
@@ -120,22 +118,5 @@ Column {
                 }
             }
         }
-
-        StateLayer {
-            radius: parent.radius
-            color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-
-            onClicked: {
-                Quickshell.execDetached(button.command);
-            }
-        }
-
-        MaterialIcon {
-            anchors.centerIn: parent
-
-            text: button.icon
-            color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).weight(500).build()
-}
     }
 }

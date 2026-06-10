@@ -6,6 +6,10 @@
 #include <qlist.h>
 #include <qqmlengine.h>
 
+#include "anim.hpp"
+#include "appearanceconfig.hpp"
+#include "font.hpp"
+
 namespace caelestia::config {
 
 class AnimCurves : public ConfigObject {
@@ -362,15 +366,24 @@ class TokenConfig : public RootConfig {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
+    Q_MOC_INCLUDE("font.hpp")
+    Q_MOC_INCLUDE("anim.hpp")
+    Q_MOC_INCLUDE("appearanceconfig.hpp")
 
     CONFIG_SUBOBJECT(AppearanceTokens, appearance)
     CONFIG_SUBOBJECT(SizeTokens, sizes)
+
+    Q_PROPERTY(caelestia::config::FontTokens* font READ font CONSTANT FINAL)
+    Q_PROPERTY(caelestia::config::AnimTokens* anim READ anim CONSTANT FINAL)
 
 public:
     static TokenConfig* instance();
     [[nodiscard]] Q_INVOKABLE TokenConfig* defaults();
     [[nodiscard]] Q_INVOKABLE static TokenConfig* forScreen(const QString& screen);
     static TokenConfig* create(QQmlEngine*, QJSEngine*);
+
+    [[nodiscard]] FontTokens* font() const;
+    [[nodiscard]] AnimTokens* anim() const;
 
 private:
     friend class MonitorConfigManager;
@@ -379,6 +392,8 @@ private:
         TokenConfig* fallback, const QString& filePath, const QString& screen = {}, QObject* parent = nullptr);
 
     TokenConfig* m_defaults = nullptr;
+    FontTokens* m_font;
+    AnimTokens* m_anim;
 };
 
 } // namespace caelestia::config

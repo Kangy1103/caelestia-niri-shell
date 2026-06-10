@@ -1,77 +1,45 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Quickshell
+import Caelestia
 import Caelestia.Config
 import qs.components
 
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     readonly property Props props: Props {}
 
-    visible: width > 0
-    implicitWidth: 0
-    implicitHeight: root.parent ? root.parent.height : 0
+    readonly property bool shouldBeActive: visibilities.sidebar && Config.sidebar.enabled
+    property real offsetScale: shouldBeActive ? 0 : 1
 
-    states: State {
-        name: "visible"
-        when: root.visibilities.sidebar
+    visible: offsetScale < 1
+    anchors.rightMargin: (-implicitWidth - 5) * offsetScale
+    implicitWidth: Tokens.sizes.sidebar.width
+    opacity: 1 - offsetScale
+    readonly property real utilsRoundingX: Config.border.rounding
 
-        PropertyChanges {
-            root.implicitWidth: TokenConfig.sizes.sidebar.width
-        }
+    Behavior on offsetScale {
+        Anim {}
     }
 
-    transitions: [
-        Transition {
-            from: ""
-            to: "visible"
-            Anim {
-                properties: "implicitWidth"
-                duration: Config.appearance.anim.durations.normal
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
-            }
-        },
-        Transition {
-            from: "visible"
-            to: ""
-            Anim {
-                properties: "implicitWidth"
-                duration: Config.appearance.anim.durations.small
-                easing.type: Easing.BezierSpline
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
-            }
-        }
-    ]
-
-    Item {
-        id: contentArea
+    Loader {
+        id: content
 
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: Tokens.padding.large
+        anchors.left: parent.left
+        anchors.leftMargin: Tokens.padding.large
+        anchors.margins: CUtils.clamp(anchors.leftMargin - Config.border.thickness, 0, anchors.leftMargin)
         anchors.bottomMargin: 0
-        anchors.topMargin: 0
 
-        width: root.width - anchors.margins * 2
-        clip: true
-        opacity: Math.min(1, root.width / (TokenConfig.sizes.sidebar.width * 0.6))
+        active: root.shouldBeActive || root.visible
 
-        Loader {
-            id: content
-
-            anchors.fill: parent
-            active: root.visibilities.sidebar || root.width > 0
-
-            sourceComponent: Content {
-                implicitWidth: contentArea.width
-                props: root.props
-                visibilities: root.visibilities
-            }
+        sourceComponent: Content {
+            implicitWidth: Tokens.sizes.sidebar.width - content.anchors.leftMargin - content.anchors.margins
+            props: root.props
+            visibilities: root.visibilities
         }
     }
 }

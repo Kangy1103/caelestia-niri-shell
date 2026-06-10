@@ -14,8 +14,10 @@ ShapePath {
     readonly property real roundingY: flatten ? wrapper.height / 2 : rounding
     property real fullHeightRounding: wrapper.height >= QsWindow.window?.height - Config.border.thickness * 2 ? -rounding : rounding
 
-    strokeWidth: -1
-    fillColor: Colours.palette.m3surface
+    readonly property bool active: wrapper.shouldBeActive
+
+    strokeWidth: root.active ? -1 : 0
+    fillColor: root.active ? Colours.palette.m3surface : "transparent"
 
     PathLine {
         relativeX: -(root.wrapper.width + root.rounding)

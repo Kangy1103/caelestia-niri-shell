@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Services.Notifications
 import Caelestia.Config
 import qs.components
 import qs.components.containers
@@ -14,14 +13,14 @@ import qs.services
 Item {
     id: root
 
-    required property Notifs.Notif notif
+    required property NotifData notif
 
     Layout.fillWidth: true
     implicitHeight: flickable.contentHeight
 
     layer.enabled: true
     layer.smooth: true
-    layer.effect: OpacityMask {
+    layer.effect: Mask {
         maskSource: gradientMask
     }
 
@@ -66,7 +65,9 @@ Item {
             opacity: flickable.contentX > 0 ? 0 : 1
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -79,7 +80,9 @@ Item {
             opacity: flickable.contentX < flickable.contentWidth - parent.width ? 0 : 1
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
     }
@@ -116,10 +119,10 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     implicitWidth: actionInner.implicitWidth + Tokens.padding.medium * 2
-                    implicitHeight: actionInner.implicitHeight + Tokens.padding.small * 2
+                    implicitHeight: actionInner.implicitHeight + Tokens.padding.small
 
                     Layout.preferredWidth: implicitWidth + (actionStateLayer.pressed ? Tokens.padding.large : 0)
-                    radius: actionStateLayer.pressed ? Tokens.rounding.small / 2 : Tokens.rounding.small
+                    radius: actionStateLayer.pressed ? Tokens.rounding.medium / 2 : Tokens.rounding.medium
                     color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 4)
 
                     Timer {
@@ -184,11 +187,13 @@ Item {
 
                     Behavior on Layout.preferredWidth {
                         Anim {
+                            type: Anim.FastSpatial
                         }
                     }
 
                     Behavior on radius {
                         Anim {
+                            type: Anim.FastSpatial
                         }
                     }
                 }

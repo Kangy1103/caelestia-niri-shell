@@ -1,36 +1,58 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import Quickshell
+import Quickshell.Services.SystemTray
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
-import Quickshell.Io
-import Quickshell.Services.SystemTray
-import QtQuick
 
 StyledRect {
     id: root
 
+    readonly property alias layout: layout
     readonly property alias items: items
+    readonly property alias expandIcon: expandIcon
+
+    readonly property int padding: Config.bar.tray.background ? TokenConfig.appearance.padding.medium : TokenConfig.appearance.padding.extraSmall
+    readonly property int spacing: Config.bar.tray.background ? TokenConfig.appearance.spacing.small : 0
+
+    property bool expanded
+
+    readonly property real nonAnimHeight: {
+        if (!Config.bar.tray.compact)
+            return layout.implicitHeight + padding * 2;
+        return (expanded ? expandIcon.implicitHeight + layout.implicitHeight + spacing : expandIcon.implicitHeight) + padding * 2;
+    }
 
     clip: true
-    visible: width > 0 && height > 0 // To avoid warnings about being visible with no size
+    visible: height > 0
 
     implicitWidth: TokenConfig.sizes.bar.innerWidth
-    implicitHeight: layout.implicitHeight + (Config.bar.tray.background ? Config.appearance.padding.medium : Config.appearance.padding.extraSmall) * 2
+    implicitHeight: nonAnimHeight
 
-    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, Config.bar.tray.background ? Colours.tPalette.m3surfaceContainer.a : 0)
+    color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (Config.bar.tray.background && items.count > 0) ? Colours.tPalette.m3surfaceContainer.a : 0)
     radius: Config.appearance.rounding.full
 
     Column {
         id: layout
 
-        anchors.centerIn: parent
-        spacing: Config.appearance.spacing.small
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: root.padding
+        spacing: TokenConfig.appearance.spacing.small
+
+        opacity: root.expanded || !Config.bar.tray.compact ? 1 : 0
 
         add: Transition {
             Anim {
                 properties: "scale"
                 from: 0
                 to: 1
-                easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
             }
         }
 
@@ -38,7 +60,6 @@ StyledRect {
             Anim {
                 properties: "scale"
                 to: 1
-                easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -48,33 +69,55 @@ StyledRect {
         Repeater {
             id: items
 
-            model: SystemTray.items
+            model: ScriptModel {
+                values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
+            }
+
             TrayItem {}
+        }
+
+        Behavior on opacity {
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
-    Behavior on implicitWidth {
-        Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+    Loader {
+        id: expandIcon
+
+        asynchronous: true
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+
+        active: Config.bar.tray.compact && items.count > 0
+
+        sourceComponent: Item {
+            implicitWidth: expandIconInner.implicitWidth
+            implicitHeight: expandIconInner.implicitHeight - TokenConfig.appearance.padding.small
+
+            MaterialIcon {
+                id: expandIconInner
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: Config.bar.tray.background ? TokenConfig.appearance.padding.extraSmall : -TokenConfig.appearance.padding.extraSmall
+                text: "expand_less"
+                rotation: root.expanded ? 180 : 0
+
+                Behavior on rotation {
+                    Anim {}
+                }
+
+                Behavior on anchors.bottomMargin {
+                    Anim {}
+                }
+            }
         }
     }
 
     Behavior on implicitHeight {
-        Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
-        }
-    }
-
-    // Refresh tray items after startup — recovers icons that don't
-    // automatically re-register with the StatusNotifierWatcher on reload
-    Timer {
-        interval: 3000
-        running: true
-        onTriggered: refreshTrayProcess.running = true
-    }
-
-    Process {
-        id: refreshTrayProcess
-        command: ["bash", "/home/kangy/.config/quickshell/caelestia-niri-shell/scripts/refresh-tray.sh"]
+        Anim {}
     }
 }

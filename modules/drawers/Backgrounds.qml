@@ -69,6 +69,8 @@ Shape {
 
     Utilities.Background {
         wrapper: root.panels.utilities
+        sidebar: root.panels.sidebar
+        rounding: Config.border.rounding
 
         startX: root.width
         startY: root.height

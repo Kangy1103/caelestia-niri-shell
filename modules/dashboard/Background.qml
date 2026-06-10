@@ -8,12 +8,13 @@ ShapePath {
     id: root
 
     required property Wrapper wrapper
+    readonly property bool active: wrapper.shouldBeActive
     readonly property real rounding: Config.border.rounding
     readonly property bool flatten: wrapper.height < rounding * 2
     readonly property real roundingY: flatten ? wrapper.height / 2 : rounding
 
-    strokeWidth: -1
-    fillColor: Colours.palette.m3surface
+    strokeWidth: root.active ? -1 : 0
+    fillColor: root.active ? Colours.palette.m3surface : "transparent"
 
     PathArc {
         relativeX: root.rounding

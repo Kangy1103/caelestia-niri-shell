@@ -12,14 +12,14 @@ LazyListView {
 
     required property Props props
     required property Flickable container
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     anchors.left: parent?.left
     anchors.right: parent?.right
     implicitHeight: contentHeight
 
     spacing: Tokens.spacing.small
-    readyDelay: 0
+    readyDelay: 1
     cacheBuffer: 400
     asynchronous: true
 
@@ -65,8 +65,8 @@ LazyListView {
             LazyListView.visibleHeight: notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
 
-            opacity: LazyListView.removing || closed ? 0 : 1
-            scale: LazyListView.removing || closed ? 0.6 : 1
+            opacity: LazyListView.removing || closed || LazyListView.adding ? 0 : 1
+            scale: LazyListView.removing || closed ? 0.6 : LazyListView.adding ? 0 : 1
 
             hoverEnabled: true
             cursorShape: pressed ? Qt.ClosedHandCursor : undefined
@@ -123,6 +123,26 @@ LazyListView {
                 props: root.props
                 container: root.container
                 visibilities: root.visibilities
+            }
+
+            Behavior on y {
+                enabled: notif.LazyListView.ready
+
+                Anim {}
+            }
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
+
+            Behavior on scale {
+                Anim {}
+            }
+
+            Behavior on x {
+                Anim {}
             }
         }
     }

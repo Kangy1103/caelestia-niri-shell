@@ -5,6 +5,9 @@
 
 namespace caelestia::services {
 
+Memory* Memory::create(QQmlEngine*, QJSEngine*) {
+    return new Memory();
+}
 Memory::Memory(QObject* parent)
     : TickingService(parent) {}
 

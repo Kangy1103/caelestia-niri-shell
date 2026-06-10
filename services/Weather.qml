@@ -33,6 +33,14 @@ Singleton {
     readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
     readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
 
+    function formatTemp(temp: var): string {
+        return GlobalConfig.services.useFahrenheit ? `${temp !== undefined ? Math.round(toFahrenheit(temp)) : "--"}°F` : `${temp !== undefined ? Math.round(temp) : "--"}°C`;
+    }
+
+    function toFahrenheit(celcius: real): real {
+        return celcius * 9 / 5 + 32;
+    }
+
     function reload(): void {
         let configLocation = Config.services.weatherLocation;
 

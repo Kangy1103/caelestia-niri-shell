@@ -1,15 +1,19 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
+import QtQuick
+import Quickshell
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
-import Quickshell
-import QtQuick
 
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
-    implicitWidth: icon.implicitHeight + Config.appearance.padding.extraSmall * 2
+    implicitWidth: icon.implicitHeight + TokenConfig.appearance.padding.small
     implicitHeight: icon.implicitHeight
 
     StateLayer {
@@ -17,13 +21,9 @@ Item {
         anchors.fill: undefined
         anchors.centerIn: parent
         implicitWidth: implicitHeight
-        implicitHeight: icon.implicitHeight + Config.appearance.padding.extraSmall * 2
-
+        implicitHeight: icon.implicitHeight + TokenConfig.appearance.padding.small
         radius: Config.appearance.rounding.full
-
-        onClicked: {
-            root.visibilities.session = !root.visibilities.session;
-        }
+        onClicked: root.visibilities.session = !root.visibilities.session
     }
 
     MaterialIcon {
@@ -34,6 +34,5 @@ Item {
 
         text: "power_settings_new"
         color: Colours.palette.m3error
-        fontStyle: Tokens.font.icon.builders.medium.weight(Font.Bold).build()
-}
+    }
 }

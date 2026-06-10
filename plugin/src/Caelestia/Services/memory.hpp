@@ -17,6 +17,7 @@ class Memory : public TickingService {
     Q_PROPERTY(qreal percentage READ percentage NOTIFY changed)
 
 public:
+    static Memory* create(QQmlEngine*, QJSEngine*);
     explicit Memory(QObject* parent = nullptr);
 
     [[nodiscard]] qreal used() const;

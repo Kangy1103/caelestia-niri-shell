@@ -1,19 +1,22 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Quickshell.Services.Pipewire
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
-import Caelestia.Config
-import Quickshell
-import Quickshell.Services.Pipewire
-import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls
 
 Item {
     id: root
 
-    required property var wrapper
+    required property PopoutState popouts
 
     implicitWidth: layout.implicitWidth + Config.appearance.padding.medium * 2
     implicitHeight: layout.implicitHeight + Config.appearance.padding.medium * 2
@@ -31,12 +34,10 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 0
+        spacing: Config.appearance.spacing.medium
 
         StyledText {
-            Layout.bottomMargin: Config.appearance.spacing.small / 2
             text: qsTr("Output device")
-            font.weight: 500
         }
 
         Repeater {
@@ -55,10 +56,8 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Config.appearance.spacing.large
-            Layout.bottomMargin: Config.appearance.spacing.small / 2
+            Layout.topMargin: Config.appearance.spacing.medium
             text: qsTr("Input device")
-            font.weight: 500
         }
 
         Repeater {
@@ -75,10 +74,8 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Config.appearance.spacing.large
-            Layout.bottomMargin: Config.appearance.spacing.small / 2
+            Layout.topMargin: Config.appearance.spacing.medium
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
-            font.weight: 500
         }
 
         CustomMouseArea {
@@ -98,51 +95,20 @@ Item {
                 implicitHeight: parent.implicitHeight
 
                 value: Audio.volume
-                onMoved: Audio.setVolume(value)
-
-                Behavior on value {
-                    Anim {}
-                }
+                onInteraction: value => Audio.setVolume(value)
             }
         }
 
-        StyledRect {
-            Layout.topMargin: Config.appearance.spacing.large
-            visible: Config.general.apps.audio.length > 0
+        IconTextButton {
+            Layout.fillWidth: true
+            Layout.topMargin: Config.appearance.spacing.medium
+            inactiveColour: Colours.palette.m3primaryContainer
+            inactiveOnColour: Colours.palette.m3onPrimaryContainer
+            verticalPadding: Config.appearance.padding.extraSmall
+            text: qsTr("Open settings")
+            icon: "settings"
 
-            implicitWidth: expandBtn.implicitWidth + Config.appearance.padding.medium * 2
-            implicitHeight: expandBtn.implicitHeight + Config.appearance.padding.extraSmall
-
-            radius: Config.appearance.rounding.large
-            color: Colours.palette.m3primaryContainer
-
-            StateLayer {
-                color: Colours.palette.m3onPrimaryContainer
-
-                onClicked: {
-                    root.wrapper.hasCurrent = false;
-                    Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.audio]);
-                }
-            }
-
-            RowLayout {
-                id: expandBtn
-
-                anchors.centerIn: parent
-                spacing: Config.appearance.spacing.small
-
-                StyledText {
-                    Layout.leftMargin: Config.appearance.padding.small
-                    text: qsTr("Open settings")
-                    color: Colours.palette.m3onPrimaryContainer
-                }
-
-                MaterialIcon {
-                    text: "chevron_right"
-                    color: Colours.palette.m3onPrimaryContainer
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
-}
-            }
+            onClicked: root.popouts.detachRequested("audio")
         }
     }
 }

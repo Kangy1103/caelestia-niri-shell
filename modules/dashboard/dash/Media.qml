@@ -1,120 +1,74 @@
-import qs.components
-import qs.components.misc
-import qs.services
-import Caelestia.Config
-import qs.utils
-import Caelestia.Services
-import Quickshell.Services.Mpris
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Shapes
+import Caelestia.Components
+import Caelestia.Config
+import Caelestia.Services
+import qs.components
+import qs.components.controls
+import qs.components.widgets
+import qs.services
+import qs.utils
 
 Item {
     id: root
 
     property real playerProgress: {
         const active = Players.active;
-        return active?.length ? active.position / active.length : 0;
+        return active?.length ? (active.position % active.length) / active.length : 0;
     }
+
+    readonly property real arcCoverGap: Tokens.spacing.extraSmall
 
     anchors.top: parent.top
     anchors.bottom: parent.bottom
-    implicitWidth: TokenConfig.sizes.dashboard.mediaWidth
-    implicitHeight: TokenConfig.sizes.dashboard.mediaWidth * 2.5
+    implicitWidth: Tokens.sizes.dashboard.mediaWidth
 
     Behavior on playerProgress {
         Anim {
-            duration: Config.appearance.anim.durations.large
+            type: Anim.StandardLarge
         }
     }
 
     Timer {
         running: Players.active?.isPlaying ?? false
-        interval: Config.dashboard.mediaUpdateInterval
+        interval: GlobalConfig.dashboard.mediaUpdateInterval
         triggeredOnStart: true
         repeat: true
         onTriggered: Players.active?.positionChanged()
     }
 
-    ServiceRef {
-        service: BeatTracker
+    // BeatTracker not creatable under Qt 6.11 — disabled (Phase 6)
+    // ServiceRef {
+    //     service: Audio.beatTracker
+    // }
+
+    CircularProgress {
+        id: prog
+
+        anchors.centerIn: cover
+        implicitSize: cover.width + root.arcCoverGap + thickness * 2
+
+        fgColour: Colours.palette.m3primary
+        strokeWidth: Tokens.sizes.dashboard.mediaProgressThickness
+        startAngle: -90 - sweepAngle / 2
+        sweepAngle: Tokens.sizes.dashboard.mediaProgressSweep
+        value: root.playerProgress
+
+        wavy: true
+        waveFrequency: 8
+        waveDuration: 2000
+        wavePaused: !Players.active?.isPlaying
     }
 
-    Shape {
-        preferredRendererType: Shape.CurveRenderer
-
-        ShapePath {
-            fillColor: "transparent"
-            strokeColor: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
-            strokeWidth: TokenConfig.sizes.dashboard.mediaProgressThickness
-            capStyle: Config.appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-
-            PathAngleArc {
-                centerX: cover.x + cover.width / 2
-                centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + TokenConfig.sizes.dashboard.mediaProgressThickness) / 2 + Config.appearance.spacing.small
-                radiusY: (cover.height + TokenConfig.sizes.dashboard.mediaProgressThickness) / 2 + Config.appearance.spacing.small
-                startAngle: -90 - TokenConfig.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: TokenConfig.sizes.dashboard.mediaProgressSweep
-            }
-
-            Behavior on strokeColor {
-                CAnim {}
-            }
-        }
-
-        ShapePath {
-            fillColor: "transparent"
-            strokeColor: Colours.palette.m3primary
-            strokeWidth: TokenConfig.sizes.dashboard.mediaProgressThickness
-            capStyle: Config.appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-
-            PathAngleArc {
-                centerX: cover.x + cover.width / 2
-                centerY: cover.y + cover.height / 2
-                radiusX: (cover.width + TokenConfig.sizes.dashboard.mediaProgressThickness) / 2 + Config.appearance.spacing.small
-                radiusY: (cover.height + TokenConfig.sizes.dashboard.mediaProgressThickness) / 2 + Config.appearance.spacing.small
-                startAngle: -90 - TokenConfig.sizes.dashboard.mediaProgressSweep / 2
-                sweepAngle: TokenConfig.sizes.dashboard.mediaProgressSweep * root.playerProgress
-            }
-
-            Behavior on strokeColor {
-                CAnim {}
-            }
-        }
-    }
-
-    StyledClippingRect {
+    CoverArt {
         id: cover
 
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Config.appearance.padding.largeIncreased + TokenConfig.sizes.dashboard.mediaProgressThickness + Config.appearance.spacing.small
-
+        anchors.margins: Tokens.padding.medium + root.arcCoverGap + prog.thickness
         implicitHeight: width
-        color: Colours.tPalette.m3surfaceContainerHigh
-        radius: Infinity
-
-        MaterialIcon {
-            anchors.centerIn: parent
-
-            grade: 200
-            text: "art_track"
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
-}
-
-        Image {
-            id: image
-
-            anchors.fill: parent
-
-            source: Players.active?.trackArtUrl ?? ""
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-            sourceSize.width: width
-            sourceSize.height: height
-        }
     }
 
     StyledText {
@@ -122,15 +76,15 @@ Item {
 
         anchors.top: cover.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Config.appearance.spacing.large
+        anchors.topMargin: Tokens.spacing.medium
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
         color: Colours.palette.m3primary
-        font.pointSize: Config.appearance.font.body.medium.size
+        font: Tokens.font.title.small
 
-        width: parent.implicitWidth - Config.appearance.padding.largeIncreased * 2
+        width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
     }
 
@@ -139,15 +93,15 @@ Item {
 
         anchors.top: title.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Config.appearance.spacing.small
+        anchors.topMargin: Tokens.spacing.small
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackAlbum ?? qsTr("No media")) || qsTr("Unknown album")
         color: Colours.palette.m3outline
-        font.pointSize: Config.appearance.font.label.large.size
+        font: Tokens.font.body.small
 
-        width: parent.implicitWidth - Config.appearance.padding.largeIncreased * 2
+        width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
     }
 
@@ -156,58 +110,55 @@ Item {
 
         anchors.top: album.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Config.appearance.spacing.small
+        anchors.topMargin: Tokens.spacing.small
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
         text: (Players.active?.trackArtist ?? qsTr("No media")) || qsTr("Unknown artist")
         color: Colours.palette.m3secondary
 
-        width: parent.implicitWidth - Config.appearance.padding.largeIncreased * 2
+        width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
         elide: Text.ElideRight
     }
 
-    Row {
+    ButtonRow {
         id: controls
 
         anchors.top: artist.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: Config.appearance.spacing.medium
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.topMargin: Tokens.spacing.medium
+        anchors.margins: Tokens.padding.large
 
-        spacing: Config.appearance.spacing.small
+        spacing: Tokens.spacing.extraSmall
 
-        Control {
+        IconButton {
+            type: IconButton.Tonal
             icon: "skip_previous"
-            canUse: Players.active?.canGoPrevious ?? false
-
-            function onClicked(): void {
-                Players.active?.previous();
-            }
+            isRound: true
+            shapeMorph: true
+            disabled: !Players.active?.canGoPrevious
+            onClicked: Players.active?.previous()
         }
 
-        Control {
+        IconButton {
+            fillWidth: true
             icon: Players.active?.isPlaying ? "pause" : "play_arrow"
-            canUse: Players.active?.canTogglePlaying ?? false
-
-            function onClicked(): void {
-                Players.active?.togglePlaying();
-            }
+            isRound: true
+            shapeMorph: true
+            checked: Players.active?.isPlaying ?? false
+            disabled: !Players.active?.canTogglePlaying
+            onClicked: Players.active?.togglePlaying()
         }
 
-        Control {
+        IconButton {
+            type: IconButton.Tonal
             icon: "skip_next"
-            canUse: Players.active?.canGoNext ?? false
-
-            function onClicked(): void {
-                Players.active?.next();
-            }
+            isRound: true
+            shapeMorph: true
+            disabled: !Players.active?.canGoNext
+            onClicked: Players.active?.next()
         }
-    }
-
-    readonly property real bongoSpeed: {
-        var bpm = 0;
-        try { bpm = BeatTracker.bpm || 0; } catch(e) {}
-        return bpm > 0 ? bpm / Config.services.mediaGifSpeedAdjustment : 0.5;
     }
 
     AnimatedImage {
@@ -217,47 +168,14 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Config.appearance.spacing.small
-        anchors.bottomMargin: Config.appearance.padding.largeIncreased
-        anchors.margins: Config.appearance.padding.largeIncreased * 2
+        anchors.topMargin: Tokens.spacing.small
+        anchors.bottomMargin: Tokens.padding.large
+        anchors.margins: Tokens.padding.extraLargeIncreased
 
         playing: Players.active?.isPlaying ?? false
-        speed: root.bongoSpeed
+        speed: 0.5 // Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment — BeatTracker not creatable (Qt 6.11)
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit
-    }
-
-    component Control: StyledRect {
-        id: control
-
-        required property string icon
-        required property bool canUse
-        function onClicked(): void {
-        }
-
-        implicitWidth: Math.max(icon.implicitWidth, icon.implicitHeight) + Config.appearance.padding.extraSmall
-        implicitHeight: implicitWidth
-
-        StateLayer {
-            disabled: !control.canUse
-            radius: Config.appearance.rounding.full
-
-            onClicked: {
-                control.onClicked();
-            }
-        }
-
-        MaterialIcon {
-            id: icon
-
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: fontStyle.pointSize * 0.05
-
-            animate: true
-            text: control.icon
-            color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
-}
     }
 }

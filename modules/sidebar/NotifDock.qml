@@ -16,7 +16,7 @@ Item {
     id: root
 
     required property Props props
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
     readonly property int notifCount: Notifs.list.reduce((acc, n) => n.closed ? acc : acc + 1, 0)
 
     anchors.fill: parent
@@ -44,14 +44,16 @@ Item {
 
             text: root.notifCount
             color: Colours.palette.m3outline
-            font.pointSize: Config.appearance.font.body.small.size
+            font: Tokens.font.label.large
 
             Behavior on anchors.leftMargin {
                 Anim {}
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
 
@@ -61,11 +63,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: count.right
             anchors.right: parent.right
-            anchors.leftMargin: Tokens.spacing.small
+            anchors.leftMargin: Tokens.spacing.extraSmall
 
             text: root.notifCount > 0 ? qsTr("notification%1").arg(root.notifCount === 1 ? "" : "s") : qsTr("Notifications")
             color: Colours.palette.m3outline
-            font.pointSize: Config.appearance.font.body.small.size
+            font: Tokens.font.label.large
             elide: Text.ElideRight
         }
     }
@@ -77,9 +79,9 @@ Item {
         anchors.right: parent.right
         anchors.top: title.bottom
         anchors.bottom: parent.bottom
-        anchors.topMargin: Tokens.spacing.extraSmall
+        anchors.topMargin: Tokens.spacing.medium
 
-        radius: Tokens.rounding.small
+        radius: Tokens.rounding.medium
         color: "transparent"
 
         Loader {
@@ -106,15 +108,15 @@ Item {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("No Notifications")
+                    text: qsTr("All up to date!")
                     color: Colours.palette.m3outlineVariant
-                    font.pointSize: Config.appearance.font.body.small.size
+                    font: Tokens.font.headline.builders.small.width(90).build()
                 }
             }
 
             Behavior on opacity {
                 Anim {
-                    duration: Tokens.anim.durations.expressiveFastSpatial
+                    type: Anim.StandardExtraLarge
                 }
             }
         }
@@ -182,9 +184,7 @@ Item {
             id: clearBtn
 
             icon: "clear_all"
-            radius: Tokens.rounding.medium
-            padding: Tokens.padding.medium
-            font.pointSize: Math.round(Config.appearance.font.body.medium.size * 1.2)
+            font: Tokens.font.icon.large
             onClicked: clearTimer.start()
 
             Elevation {
@@ -197,13 +197,13 @@ Item {
 
         Behavior on scale {
             Anim {
-                duration: Tokens.anim.durations.expressiveFastSpatial
+                type: Anim.FastSpatial
             }
         }
 
         Behavior on opacity {
             Anim {
-                duration: Tokens.anim.durations.expressiveFastSpatial
+                type: Anim.DefaultEffects
             }
         }
     }

@@ -1,74 +1,109 @@
-import Caelestia.Config
-import qs.modules.osd as Osd
-import qs.modules.notifications as Notifications
-import qs.modules.session as Session
-import qs.modules.launcher as Launcher
-import qs.modules.dashboard as Dashboard
-import qs.modules.bar.popouts as BarPopouts
-import qs.modules.utilities as Utilities
-import qs.modules.utilities.toasts as Toasts
-import qs.modules.keybinds as Keybinds
-import qs.modules.sidebar as Sidebar
-import qs.modules.calendar as Calendar
-import Quickshell
 import QtQuick
+import Quickshell
+import Caelestia.Config
+import qs.components
+import qs.modules.bar as Bar
+import qs.modules.dashboard as Dashboard
+import qs.modules.launcher as Launcher
+import qs.modules.notifications as Notifications
+import qs.modules.osd as Osd
+import qs.modules.session as Session
+import qs.modules.sidebar as Sidebar
+import qs.modules.utilities as Utilities
+import qs.modules.keybinds as Keybinds
+import qs.modules.calendar as Calendar
+import qs.modules.bar.popouts as BarPopouts
+import qs.modules.utilities.toasts as Toasts
 
 Item {
     id: root
 
     required property ShellScreen screen
-    required property PersistentProperties visibilities
-    required property Item bar
+    required property DrawerVisibilities visibilities
+    required property Bar.BarWrapper bar
+    required property real borderThickness
 
-    readonly property Osd.Wrapper osd: osd
-    readonly property Notifications.Wrapper notifications: notifications
-    readonly property Session.Wrapper session: session
-    readonly property Launcher.Wrapper launcher: launcher
-    readonly property Dashboard.Wrapper dashboard: dashboard
-    readonly property BarPopouts.Wrapper popouts: popouts
-    readonly property Utilities.Wrapper utilities: utilities
-    readonly property Keybinds.Wrapper keybinds: keybinds
-    readonly property Sidebar.Wrapper sidebar: sidebar
-    readonly property Calendar.Wrapper calendar: calendar
+    readonly property alias osd: osd
+    readonly property alias osdWrapper: osdWrapper
+    readonly property alias notifications: notifications
+    readonly property alias session: session
+    readonly property alias sessionWrapper: sessionWrapper
+    readonly property alias launcher: launcher
+    readonly property alias dashboard: dashboard
+    readonly property alias popouts: popoutsWrapper.content
+    readonly property alias popoutsWrapper: popoutsWrapper
+    readonly property alias utilities: utilities
+    readonly property alias toasts: toasts
+    readonly property alias sidebar: sidebar
+    readonly property alias keybinds: keybinds
+    readonly property alias calendar: calendar
 
     anchors.fill: parent
-    anchors.margins: Config.border.thickness
+    anchors.margins: borderThickness
     anchors.leftMargin: bar.implicitWidth
 
-    Osd.Wrapper {
-        id: osd
-
-        clip: root.visibilities.session
-        screen: root.screen
-        visibilities: root.visibilities
+    Item {
+        id: osdWrapper
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: session.width
+        anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
+        clip: sidebar.visible || session.visible
+
+        implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
+        implicitHeight: osd.implicitHeight
+
+        Osd.Wrapper {
+            id: osd
+
+            screen: root.screen
+            visibilities: root.visibilities
+            sidebarOrSessionVisible: sidebar.visible || session.visible
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+        }
     }
 
     Notifications.Wrapper {
         id: notifications
 
         visibilities: root.visibilities
-        panel: root
+        sidebarPanel: sidebar
+        osdPanel: osdWrapper
+        sessionPanel: sessionWrapper
+        utilitiesPanel: utilities
 
         anchors.top: parent.top
         anchors.right: parent.right
     }
 
-    Session.Wrapper {
-        id: session
-
-        visibilities: root.visibilities
+    Item {
+        id: sessionWrapper
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
+        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
+        clip: sidebar.visible
+
+        implicitWidth: session.implicitWidth * (1 - session.offsetScale)
+        implicitHeight: session.implicitHeight
+
+        Session.Wrapper {
+            id: session
+
+            visibilities: root.visibilities
+            sidebarVisible: sidebar.visible
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+        }
     }
 
     Launcher.Wrapper {
         id: launcher
 
+        screen: root.screen
         visibilities: root.visibilities
         panels: root
 
@@ -85,44 +120,45 @@ Item {
         anchors.top: parent.top
     }
 
-    BarPopouts.Wrapper {
-        id: popouts
+    BarPopouts.ClipWrapper {
+        id: popoutsWrapper
 
         screen: root.screen
-
-        x: isDetached ? (root.width - nonAnimWidth) / 2 : 0
-        y: {
-            if (isDetached)
-                return (root.height - nonAnimHeight) / 2;
-
-            const off = currentCenter - Config.border.thickness - nonAnimHeight / 2;
-            const diff = root.height - Math.floor(off + nonAnimHeight);
-            if (diff < 0)
-                return off + diff;
-            return Math.max(off, 0);
-        }
+        borderThickness: root.borderThickness
     }
 
     Utilities.Wrapper {
         id: utilities
 
-        visibility: root.visibilities.utilities
+        visibilities: root.visibilities
+        sidebar: sidebar
+        popouts: popoutsWrapper.content
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
     }
 
-    Keybinds.Wrapper {
-        id: keybinds
+    Toasts.Toasts {
+        id: toasts
 
-        visibilities: root.visibilities
-
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
+        anchors.right: sidebar.left
+        anchors.margins: Tokens.padding.medium
     }
 
     Sidebar.Wrapper {
         id: sidebar
+
+        visibilities: root.visibilities
+
+        anchors.top: notifications.bottom
+        anchors.bottom: utilities.top
+        anchors.right: parent.right
+        anchors.topMargin: -notifications.anchors.topMargin
+    }
+
+    Keybinds.Wrapper {
+        id: keybinds
 
         visibilities: root.visibilities
 
@@ -137,14 +173,5 @@ Item {
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-    }
-
-    Toasts.Toasts {
-        id: toasts
-
-        width: implicitWidth
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: Config.appearance.padding.medium
     }
 }

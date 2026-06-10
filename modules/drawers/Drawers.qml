@@ -94,7 +94,7 @@ Variants {
                 }
             }
 
-            PersistentProperties {
+            DrawerVisibilities {
                 id: visibilities
 
                 property bool bar
@@ -118,6 +118,8 @@ Variants {
                 visibilities: visibilities
                 panels: panels
                 bar: bar
+                borderThickness: Config.border.thickness
+                fullscreen: false
 
                 Panels {
                     id: panels
@@ -125,6 +127,7 @@ Variants {
                     screen: scope.modelData
                     visibilities: visibilities
                     bar: bar
+                    borderThickness: Config.border.thickness
                 }
 
                 BarWrapper {
@@ -136,6 +139,7 @@ Variants {
                     screen: scope.modelData
                     visibilities: visibilities
                     popouts: panels.popouts
+                    fullscreen: false
 
                     Component.onCompleted: Visibilities.bars.set(scope.modelData, this)
                 }

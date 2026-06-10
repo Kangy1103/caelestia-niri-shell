@@ -1,15 +1,19 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import Quickshell.Services.UPower
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
-import Quickshell.Services.UPower
-import QtQuick
 
 Column {
     id: root
 
-    spacing: Config.appearance.spacing.large
+    spacing: Config.appearance.spacing.medium
     width: TokenConfig.sizes.bar.batteryWidth
 
     StyledText {
@@ -37,16 +41,16 @@ Column {
     }
 
     Loader {
+        asynchronous: true
         anchors.horizontalCenter: parent.horizontalCenter
 
         active: PowerProfiles.degradationReason !== PerformanceDegradationReason.None
-        asynchronous: true
 
-        height: active ? (item?.implicitHeight ?? 0) : 0
+        height: active ? ((item as Item)?.implicitHeight ?? 0) : 0
 
         sourceComponent: StyledRect {
             implicitWidth: child.implicitWidth + Config.appearance.padding.medium * 2
-            implicitHeight: child.implicitHeight + Config.appearance.padding.small * 2
+            implicitHeight: child.implicitHeight + Config.appearance.padding.large
 
             color: Colours.palette.m3error
             radius: Config.appearance.rounding.large
@@ -62,7 +66,7 @@ Column {
 
                     MaterialIcon {
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -fontStyle.pointSize / 10
+                        anchors.verticalCenterOffset: -font.pointSize / 10
 
                         text: "warning"
                         color: Colours.palette.m3onError
@@ -72,13 +76,11 @@ Column {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Performance Degraded")
                         color: Colours.palette.m3onError
-                        font.family: Config.appearance.font.mono.family
-                        font.weight: 500
                     }
 
                     MaterialIcon {
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: -fontStyle.pointSize / 10
+                        anchors.verticalCenterOffset: -font.pointSize / 10
 
                         text: "warning"
                         color: Colours.palette.m3onError
@@ -109,8 +111,8 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Config.appearance.padding.medium * 2 + Config.appearance.spacing.extraExtraLarge * 2
-        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Config.appearance.padding.extraSmall * 2
+        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Config.appearance.padding.medium * 2 + Config.appearance.spacing.largeIncreased * 2
+        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Config.appearance.padding.small
 
         color: Colours.tPalette.m3surfaceContainer
         radius: Config.appearance.rounding.full
@@ -147,11 +149,7 @@ Column {
             ]
 
             transitions: Transition {
-                AnchorAnimation {
-                    duration: Config.appearance.anim.durations.normal
-                    easing.type: Easing.BezierSpline
-                    easing.bezierCurve: TokenConfig.appearance.curves.emphasized
-                }
+                AnchorAnim {}
             }
         }
 
@@ -201,16 +199,13 @@ Column {
         required property string icon
         required property int profile
 
-        implicitWidth: icon.implicitHeight + Config.appearance.padding.extraSmall * 2
-        implicitHeight: icon.implicitHeight + Config.appearance.padding.extraSmall * 2
+        implicitWidth: icon.implicitHeight + Config.appearance.padding.small
+        implicitHeight: icon.implicitHeight + Config.appearance.padding.small
 
         StateLayer {
             radius: Config.appearance.rounding.full
             color: profiles.current === parent.icon ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
-
-            onClicked: {
-                PowerProfiles.profile = parent.profile;
-            }
+            onClicked: PowerProfiles.profile = parent.profile
         }
 
         MaterialIcon {
@@ -219,12 +214,13 @@ Column {
             anchors.centerIn: parent
 
             text: parent.icon
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
-color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+            color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
             fill: profiles.current === text ? 1 : 0
 
             Behavior on fill {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
         }
     }

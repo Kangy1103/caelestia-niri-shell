@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.services
@@ -9,7 +8,7 @@ Item {
     id: root
 
     required property Props props
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     ColumnLayout {
         id: layout
@@ -21,7 +20,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            radius: Tokens.rounding.medium
+            radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainerLow
 
             NotifDock {

@@ -12,13 +12,15 @@ Item {
     id: root
 
     required property ShellScreen screen
+    required property real offsetScale
 
     readonly property real nonAnimWidth: isDetached || hasCurrent ? children.find(c => c.shouldBeActive)?.implicitWidth ?? content.implicitWidth : 0
     readonly property real nonAnimHeight: children.find(c => c.shouldBeActive)?.implicitHeight ?? content.implicitHeight
 
-    property string currentName
+    readonly property alias popoutState: popoutState
+    property alias currentName: popoutState.currentName
+    property alias hasCurrent: popoutState.hasCurrent
     property real currentCenter
-    property bool hasCurrent
 
     property string detachedMode
     property string queuedMode
@@ -26,6 +28,12 @@ Item {
 
     property int animLength: Config.appearance.anim.durations.normal
     property list<real> animCurve: TokenConfig.appearance.curves.emphasized
+
+    PopoutState {
+        id: popoutState
+
+        onDetachRequested: mode => root.detach(mode)
+    }
 
     function detach(mode: string): void {
         animLength = Config.appearance.anim.durations.large;
@@ -141,7 +149,7 @@ Item {
     }
 
     Behavior on implicitHeight {
-        enabled: root.implicitWidth > 0
+        enabled: root.offsetScale < 1
 
         Anim {
             duration: root.animLength

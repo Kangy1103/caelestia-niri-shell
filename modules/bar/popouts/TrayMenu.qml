@@ -1,21 +1,25 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
-import qs.components
-import qs.services
-import Caelestia.Config
-import Quickshell
-import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
+import Quickshell
+import Quickshell.Widgets
+import Caelestia.Config
+import qs.components
+import qs.services
 
 StackView {
     id: root
 
-    required property Item popouts
+    required property PopoutState popouts
     required property QsMenuHandle trayItem
 
-    implicitWidth: currentItem.implicitWidth
-    implicitHeight: currentItem.implicitHeight
+    implicitWidth: currentItem?.implicitWidth ?? 0
+    implicitHeight: currentItem?.implicitHeight ?? 0
 
     initialItem: SubMenu {
         handle: root.trayItem
@@ -26,9 +30,11 @@ StackView {
     popEnter: NoAnim {}
     popExit: NoAnim {}
 
-    // FocusGrab removed - HyprlandFocusGrab is Hyprland-specific
-    // Menu closing is handled by the popouts state management
-    // TODO: Implement compositor-agnostic focus grab if needed
+    Component {
+        id: subMenuComp
+
+        SubMenu {}
+    }
 
     component NoAnim: Transition {
         NumberAnimation {
@@ -55,7 +61,9 @@ StackView {
         StackView.onRemoved: destroy()
 
         Behavior on opacity {
-            Anim {}
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
 
         Behavior on scale {
@@ -85,11 +93,11 @@ StackView {
                 Loader {
                     id: children
 
+                    asynchronous: true
                     anchors.left: parent.left
                     anchors.right: parent.right
 
                     active: !item.modelData.isSeparator
-                    asynchronous: true
 
                     sourceComponent: Item {
                         implicitHeight: label.implicitHeight
@@ -119,12 +127,13 @@ StackView {
                         Loader {
                             id: icon
 
+                            asynchronous: true
                             anchors.left: parent.left
 
                             active: item.modelData.icon !== ""
-                            asynchronous: true
 
                             sourceComponent: IconImage {
+                                asynchronous: true
                                 implicitSize: label.implicitHeight
 
                                 source: item.modelData.icon
@@ -145,21 +154,20 @@ StackView {
                             id: labelMetrics
 
                             text: item.modelData.text
-                            font.pointSize: label.font.pointSize
-                            font.family: label.font.family
+                            font: label.font
 
                             elide: Text.ElideRight
-                            elideWidth: TokenConfig.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Config.appearance.spacing.large : 0)
+                            elideWidth: TokenConfig.sizes.bar.trayMenuWidth - (icon.active ? icon.implicitWidth + label.anchors.leftMargin : 0) - (expand.active ? expand.implicitWidth + Config.appearance.spacing.medium : 0)
                         }
 
                         Loader {
                             id: expand
 
+                            asynchronous: true
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.right: parent.right
 
                             active: item.modelData.hasChildren
-                            asynchronous: true
 
                             sourceComponent: MaterialIcon {
                                 text: "chevron_right"
@@ -172,12 +180,12 @@ StackView {
         }
 
         Loader {
-            active: menu.isSubMenu
             asynchronous: true
+            active: menu.isSubMenu
 
             sourceComponent: Item {
                 implicitWidth: back.implicitWidth
-                implicitHeight: back.implicitHeight + Config.appearance.spacing.small / 2
+                implicitHeight: back.implicitHeight + Config.appearance.spacing.extraSmall
 
                 Item {
                     anchors.bottom: parent.bottom
@@ -188,7 +196,7 @@ StackView {
                         anchors.fill: parent
                         anchors.margins: -Config.appearance.padding.extraSmall / 2
                         anchors.leftMargin: -Config.appearance.padding.small
-                        anchors.rightMargin: -Config.appearance.padding.small * 2
+                        anchors.rightMargin: -Config.appearance.padding.large
 
                         radius: Config.appearance.rounding.full
                         color: Colours.palette.m3secondaryContainer
@@ -196,10 +204,7 @@ StackView {
                         StateLayer {
                             radius: parent.radius
                             color: Colours.palette.m3onSecondaryContainer
-
-                            onClicked: {
-                                root.pop();
-                            }
+                            onClicked: root.pop()
                         }
                     }
 
@@ -223,11 +228,5 @@ StackView {
                 }
             }
         }
-    }
-
-    Component {
-        id: subMenuComp
-
-        SubMenu {}
     }
 }

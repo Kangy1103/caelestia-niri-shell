@@ -1,37 +1,37 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260603
+// Version: 0.2.0-20260610
 
 pragma ComponentBehavior: Bound
 
-import qs.components
-import Caelestia.Config
+import "./kblayout"
+import QtQuick
 import Quickshell
 import Quickshell.Services.SystemTray
-import QtQuick
+import Caelestia.Config
+import qs.components
 
 Item {
     id: root
 
     required property Item wrapper
+    readonly property PopoutState popouts: root.wrapper ? root.wrapper.popoutState : null
+    readonly property Popout currentPopout: content.children.find(c => c.shouldBeActive) ?? null
+    readonly property Item current: currentPopout?.item ?? null
 
-    anchors.centerIn: parent
-
-    implicitWidth: (content.children.find(c => c.shouldBeActive)?.implicitWidth ?? 0) + Config.appearance.padding.largeIncreased * 2
-    implicitHeight: (content.children.find(c => c.shouldBeActive)?.implicitHeight ?? 0) + Config.appearance.padding.largeIncreased * 2
-
-    // Persistent storage for the password network - survives network popout deactivation
-    property var pendingPasswordNetwork: null
+    readonly property real margin: Config.appearance.padding.largeIncreased
+    implicitWidth: (currentPopout?.implicitWidth ?? 0) + margin
+    implicitHeight: (currentPopout?.implicitHeight ?? 0) + margin
 
     Item {
         id: content
 
         anchors.fill: parent
-        anchors.margins: Config.appearance.padding.largeIncreased
+        anchors.margins: Config.appearance.padding.large
 
+        // Niri workspace context popout — uses Niri.wsContextAnchor
         Popout {
             name: "wsWindow"
             sourceComponent:
-            // Bind y to currentCenter for dynamic following
             WsContextPopout {}
         }
 
@@ -40,21 +40,15 @@ Item {
 
             name: "network"
             sourceComponent: Network {
-                wrapper: root.wrapper
+                popouts: root.popouts
                 view: "wireless"
-                onPasswordNetworkChanged: {
-                    // Capture network to persistent storage whenever it changes
-                    if (passwordNetwork) {
-                        root.pendingPasswordNetwork = passwordNetwork;
-                    }
-                }
             }
         }
 
         Popout {
             name: "ethernet"
             sourceComponent: Network {
-                wrapper: root.wrapper
+                popouts: root.popouts
                 view: "ethernet"
             }
         }
@@ -64,49 +58,48 @@ Item {
 
             name: "wirelesspassword"
             sourceComponent: WirelessPassword {
-                wrapper: root.wrapper
-                // Use the persistent copy, not a binding to the network popout's item
-                network: root.pendingPasswordNetwork
+                popouts: root.popouts
+                network: (networkPopout.item as Network)?.passwordNetwork ?? null
             }
         }
 
         Popout {
             name: "bluetooth"
             sourceComponent: Bluetooth {
-                wrapper: root.wrapper
+                popouts: root.popouts
             }
         }
 
         Popout {
             name: "battery"
-            source: "Battery.qml"
+            sourceComponent: Battery {}
         }
 
         Popout {
             name: "audio"
             sourceComponent: Audio {
-                wrapper: root.wrapper
+                popouts: root.popouts
             }
         }
 
         Popout {
             name: "kblayout"
-            source: "KbLayout.qml"
+            sourceComponent: KbLayout {}
         }
 
         Popout {
             name: "lockstatus"
-            source: "LockStatus.qml"
+            sourceComponent: LockStatus {}
         }
 
         Popout {
             name: "stasis"
-            source: "Stasis.qml"
+            sourceComponent: Stasis {}
         }
 
         Repeater {
             model: ScriptModel {
-                values: [...SystemTray.items.values]
+                values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
             }
 
             Popout {
@@ -119,22 +112,22 @@ Item {
                 sourceComponent: trayMenuComp
 
                 Connections {
-                    target: root.wrapper
-
                     function onHasCurrentChanged(): void {
-                        if (root.wrapper.hasCurrent && trayMenu.shouldBeActive) {
+                        if (root.popouts.hasCurrent && trayMenu.shouldBeActive) {
                             trayMenu.sourceComponent = null;
                             trayMenu.sourceComponent = trayMenuComp;
                         }
                     }
+
+                    target: root.popouts
                 }
 
                 Component {
                     id: trayMenuComp
 
                     TrayMenu {
-                        popouts: root.wrapper
-                        trayItem: trayMenu.modelData.menu
+                        popouts: root.popouts
+                        trayItem: trayMenu.modelData.menu // qmllint disable unresolved-type
                     }
                 }
             }
@@ -145,14 +138,11 @@ Item {
         id: popout
 
         required property string name
-        property bool shouldBeActive: root.wrapper.currentName === name
+        readonly property bool shouldBeActive: root.popouts ? root.popouts.currentName === name : false
 
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
+        anchors.centerIn: parent
 
-        asynchronous: true
         opacity: 0
-        scale: 0.8
         active: false
 
         states: State {
@@ -162,7 +152,6 @@ Item {
             PropertyChanges {
                 popout.active: true
                 popout.opacity: 1
-                popout.scale: 1
             }
         }
 
@@ -173,11 +162,10 @@ Item {
 
                 SequentialAnimation {
                     Anim {
-                        properties: "opacity,scale"
-                        duration: Config.appearance.anim.durations.small
+                        property: "opacity"
+                        type: Anim.DefaultEffects
                     }
                     PropertyAction {
-                        target: popout
                         property: "active"
                     }
                 }
@@ -188,11 +176,11 @@ Item {
 
                 SequentialAnimation {
                     PropertyAction {
-                        target: popout
                         property: "active"
                     }
                     Anim {
-                        properties: "opacity,scale"
+                        property: "opacity"
+                        type: Anim.SlowEffects
                     }
                 }
             }

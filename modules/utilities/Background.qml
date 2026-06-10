@@ -1,19 +1,21 @@
-import qs.components
-import qs.services
-import Caelestia.Config
 import QtQuick
 import QtQuick.Shapes
+import qs.components
+import qs.services
 
 ShapePath {
     id: root
 
     required property Wrapper wrapper
-    readonly property real rounding: Config.border.rounding
+    required property var sidebar
+    required property real rounding
     readonly property bool flatten: wrapper.height < rounding * 2
     readonly property real roundingY: flatten ? wrapper.height / 2 : rounding
 
-    strokeWidth: -1
-    fillColor: Colours.palette.m3surface
+    readonly property bool active: wrapper.shouldBeActive
+
+    strokeWidth: root.active ? -1 : 0
+    fillColor: root.active ? Colours.palette.m3surface : "transparent"
 
     PathLine {
         relativeX: -(root.wrapper.width + root.rounding)
@@ -31,13 +33,13 @@ ShapePath {
         relativeY: -(root.wrapper.height - root.roundingY * 2)
     }
     PathArc {
-        relativeX: root.rounding
+        relativeX: root.sidebar.utilsRoundingX
         relativeY: -root.roundingY
-        radiusX: root.rounding
+        radiusX: root.sidebar.utilsRoundingX
         radiusY: Math.min(root.rounding, root.wrapper.height)
     }
     PathLine {
-        relativeX: root.wrapper.height > 0 ? root.wrapper.width - root.rounding * 2 : root.wrapper.width
+        relativeX: root.wrapper.height > 0 ? root.wrapper.width - root.rounding - root.sidebar.utilsRoundingX : root.wrapper.width
         relativeY: 0
     }
     PathArc {

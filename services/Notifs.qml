@@ -38,6 +38,10 @@ Singleton {
     /** Number of notifications received since last markAllRead(). */
     property int unread: 0
 
+    function hasFullscreen(): bool {
+        return false; // Niri doesn't expose per-window fullscreen state in IPC
+    }
+
     /**
      * When true, new notifications will not create a popup.
      * Currently driven only by DND; extend as needed (e.g. fullscreen).

@@ -16,7 +16,7 @@ StyledRect {
     required property string modelData
     required property Props props
     required property Flickable container
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     readonly property list<var> notifs: Notifs.list.filter(n => n.appName === modelData)
     readonly property list<var> activeNotifs: notifs.filter(n => !n.closed)
@@ -32,7 +32,7 @@ StyledRect {
     }
 
     readonly property int nonAnimHeight: {
-        const headerHeight = header.implicitHeight + (root.expanded ? Tokens.spacing.extraSmall : 0);
+        const headerHeight = header.implicitHeight + (root.expanded ? Math.round(Tokens.spacing.extraSmall) : 0);
         const columnHeight = headerHeight + notifList.layoutHeight;
         return Math.round(Math.max(TokenConfig.sizes.notifs.image, columnHeight) + Tokens.padding.medium * 2);
     }
@@ -57,8 +57,12 @@ StyledRect {
     implicitHeight: nonAnimHeight
 
     clip: true
-    radius: Tokens.rounding.medium
+    radius: Tokens.rounding.large
     color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
+
+    Behavior on implicitHeight {
+        Anim {}
+    }
 
     RowLayout {
         id: content
@@ -109,8 +113,8 @@ StyledRect {
                 MaterialIcon {
                     text: Icons.getNotifIcon(root.activeNotifs[0]?.summary, root.urgency)
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
-}
+                    fontStyle: Tokens.font.icon.medium
+                }
             }
 
             StyledClippingRect {
@@ -121,6 +125,7 @@ StyledRect {
                 Loader {
                     asynchronous: true
                     anchors.centerIn: parent
+                    anchors.verticalCenterOffset: sourceComponent === materialIconComp ? 1 : 0
                     sourceComponent: root.image ? imageComp : root.appIcon ? appIconComp : materialIconComp
                 }
             }
@@ -132,15 +137,15 @@ StyledRect {
                 active: root.appIcon && root.image
 
                 sourceComponent: StyledRect {
-                    implicitWidth: TokenConfig.sizes.notifs.badge
-                    implicitHeight: TokenConfig.sizes.notifs.badge
+                    implicitWidth: Tokens.sizes.notifs.badge
+                    implicitHeight: Tokens.sizes.notifs.badge
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : root.urgency === NotificationUrgency.Low ? Colours.palette.m3surfaceContainerHigh : Colours.palette.m3secondaryContainer
                     radius: Tokens.rounding.full
 
                     ColouredIcon {
                         anchors.centerIn: parent
-                        implicitSize: Math.round(TokenConfig.sizes.notifs.badge * 0.6)
+                        implicitSize: Math.round(Tokens.sizes.notifs.badge * 0.6)
                         source: Quickshell.iconPath(root.appIcon)
                         colour: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : root.urgency === NotificationUrgency.Low ? Colours.palette.m3onSurface : Colours.palette.m3onSecondaryContainer
                         layer.enabled: root.appIcon.endsWith("symbolic")
@@ -153,7 +158,7 @@ StyledRect {
             id: column
 
             Layout.fillWidth: true
-            spacing: root.expanded ? Tokens.spacing.extraSmall : 0
+            spacing: root.expanded ? Math.round(Tokens.spacing.extraSmall) : 0
 
             Behavior on spacing {
                 Anim {}
@@ -164,13 +169,13 @@ StyledRect {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                spacing: Tokens.spacing.extraSmall
+                spacing: Tokens.spacing.small
 
                 StyledText {
                     Layout.fillWidth: true
                     text: root.modelData
                     color: Colours.palette.m3onSurfaceVariant
-                    font.pointSize: Config.appearance.font.label.small.size
+                    font: Tokens.font.body.small
                     elide: Text.ElideRight
                 }
 
@@ -178,12 +183,12 @@ StyledRect {
                     animate: true
                     text: root.activeNotifs[0]?.timeStr ?? ""
                     color: Colours.palette.m3outline
-                    font.pointSize: Config.appearance.font.label.medium.size
+                    font: Tokens.font.body.small
                 }
 
                 StyledRect {
-                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.extraSmall * 2
-                    implicitHeight: groupCount.implicitHeight + Tokens.padding.small
+                    implicitWidth: expandBtn.implicitWidth + Tokens.padding.large
+                    implicitHeight: groupCount.implicitHeight + Tokens.padding.extraSmall
 
                     color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.layer(Colours.palette.m3surfaceContainerHigh, 3)
                     radius: Tokens.rounding.full
@@ -202,28 +207,26 @@ StyledRect {
                         StyledText {
                             id: groupCount
 
-                            Layout.leftMargin: Tokens.padding.small / 2
+                            Layout.leftMargin: Tokens.padding.extraSmall / 2
                             animate: true
                             text: root.notifCount
-                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
-                            font.pointSize: Config.appearance.font.label.medium.size
+                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
+                            font: Tokens.font.body.small
                         }
 
                         MaterialIcon {
-                            Layout.rightMargin: -Tokens.padding.small / 2
+                            Layout.rightMargin: -Tokens.padding.extraSmall / 2
                             text: "expand_more"
-                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurface
+                            color: root.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSurfaceVariant
                             rotation: root.expanded ? 180 : 0
-                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.extraSmall / 2) : 0
+                            Layout.topMargin: root.expanded ? -Math.floor(Tokens.padding.extraSmall) : 0
 
                             Behavior on rotation {
-                                Anim {
-                                }
+                                Anim {}
                             }
 
                             Behavior on Layout.topMargin {
-                                Anim {
-                                }
+                                Anim {}
                             }
                         }
                     }

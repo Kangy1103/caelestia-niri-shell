@@ -1,589 +1,151 @@
-pragma ComponentBehavior: Bound
-
-import qs.components
-import qs.components.effects
-import qs.components.misc
-import qs.components.controls
-import qs.services
-import qs.utils
-import Caelestia.Config
-import Caelestia.Services
-import Quickshell
-import Quickshell.Widgets
-import Quickshell.Services.Mpris
+import "media"
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Shapes
+import M3Shapes
+import Caelestia.Config
+import qs.components
+import qs.services
 
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
-    property real playerProgress: {
-        const active = Players.active;
-        return active?.length ? active.position / active.length : 0;
+    implicitWidth: Tokens.sizes.dashboard.mediaTabWidth
+    implicitHeight: Tokens.sizes.dashboard.mediaTabHeight
+
+    BackgroundShapes {
+        anchors.fill: parent
     }
 
-    function lengthStr(length: int): string {
-        if (length < 0)
-            return "-1:-1";
+    RowLayout {
+        anchors.fill: parent
+        anchors.margins: Tokens.padding.large
+        spacing: Tokens.spacing.extraLarge
 
-        const hours = Math.floor(length / 3600);
-        const mins = Math.floor((length % 3600) / 60);
-        const secs = Math.floor(length % 60).toString().padStart(2, "0");
-
-        if (hours > 0)
-            return `${hours}:${mins.toString().padStart(2, "0")}:${secs}`;
-        return `${mins}:${secs}`;
-    }
-
-    readonly property real visualiserSize: TokenConfig.sizes.dashboard.mediaVisualiserSize || 0
-
-    implicitWidth: cover.implicitWidth + visualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Config.appearance.padding.largeIncreased * 2
-    implicitHeight: Math.max(cover.implicitHeight + visualiserSize * 2, details.implicitHeight, bongocat.implicitHeight) + Config.appearance.padding.largeIncreased * 2
-
-    Behavior on playerProgress {
-        Anim {
-            duration: Config.appearance.anim.durations.large
-        }
-    }
-
-    Timer {
-        running: Players.active?.isPlaying ?? false
-        interval: Config.dashboard.mediaUpdateInterval
-        triggeredOnStart: true
-        repeat: true
-        onTriggered: Players.active?.positionChanged()
-    }
-
-    // ServiceRef disabled: CavaProvider crashes in libcava/fftw3, BeatTracker not creatable (Qt 6.11)
-    // ServiceRef { service: Cava.provider }
-    // ServiceRef { service: BeatTracker }
-
-    // Visualiser disabled: CavaProvider not started (no ref() call), Cava.values returns empty.
-    // Re-enable when CavaProvider/BeatTracker are fixed.
-    // Shape {
-    //     id: visualiser
-    //     ...
-    // }
-    // Variants {
-    //     id: visualiserBars
-    //     ...
-    // }
-
-    StyledClippingRect {
-        id: cover
-
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: Config.appearance.padding.largeIncreased + visualiserSize
-
-        implicitWidth: TokenConfig.sizes.dashboard.mediaCoverArtSize
-        implicitHeight: TokenConfig.sizes.dashboard.mediaCoverArtSize
-
-        color: Colours.tPalette.m3surfaceContainerHigh
-        radius: Infinity
-
-        MaterialIcon {
-            anchors.centerIn: parent
-
-            grade: 200
-            text: "art_track"
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.size((parent.width * 0.4) || 1).build()
-}
-
-        Image {
-            id: image
-
-            anchors.fill: parent
-
-            source: Players.active?.trackArtUrl ?? ""
-            asynchronous: true
-            fillMode: Image.PreserveAspectCrop
-            sourceSize.width: width
-            sourceSize.height: height
-        }
-    }
-
-    ColumnLayout {
-        id: details
-
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: cover.right
-        anchors.leftMargin: Config.appearance.spacing.large
-
-        spacing: Config.appearance.spacing.small
-
-        StyledText {
-            id: title
-
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.implicitWidth
-
-            animate: true
-            horizontalAlignment: Text.AlignHCenter
-            text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
-            color: Players.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
-            font.pointSize: Config.appearance.font.body.medium.size
-        }
-
-        StyledText {
-            id: album
-
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.implicitWidth
-
-            animate: true
-            horizontalAlignment: Text.AlignHCenter
-            visible: !!Players.active
-            text: Players.active?.trackAlbum || qsTr("Unknown album")
-            color: Colours.palette.m3outline
-            font.pointSize: Config.appearance.font.label.large.size
-        }
-
-        StyledText {
-            id: artist
-
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.implicitWidth
-
-            animate: true
-            horizontalAlignment: Text.AlignHCenter
-            text: (Players.active?.trackArtist ?? qsTr("Play some music for stuff to show up here!")) || qsTr("Unknown artist")
-            color: Players.active ? Colours.palette.m3secondary : Colours.palette.m3outline
-            elide: Text.ElideRight
-            wrapMode: Players.active ? Text.NoWrap : Text.WordWrap
-        }
-
-        RowLayout {
-            id: controls
-
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Config.appearance.spacing.small
-            Layout.bottomMargin: Config.appearance.spacing.medium
-
-            spacing: Config.appearance.spacing.small
-
-            PlayerControl {
-                icon: "skip_previous"
-                canUse: Players.active?.canGoPrevious ?? false
-
-                function onClicked(): void {
-                    Players.active?.previous();
-                }
-            }
-
-            StyledRect {
-                id: playBtn
-
-                property int fontSize: Config.appearance.font.headline.large.size
-                property int padding
-                property bool fill: true
-                property bool primary
-                function onClicked(): void {
-                }
-
-                implicitWidth: Math.max(playIcon.implicitWidth, playIcon.implicitHeight) + padding * 2
-                implicitHeight: implicitWidth
-
-                radius: Players.active?.isPlaying ? Config.appearance.rounding.small : implicitHeight / 2 * Math.min(1, Config.appearance.rounding.scale)
-                color: {
-                    if (!Players.active?.canTogglePlaying)
-                        return Qt.alpha(Colours.palette.m3onSurface, 0.1);
-                    return Players.active?.isPlaying ? Colours.palette.m3primary : Colours.palette.m3primaryContainer;
-                }
-
-                StateLayer {
-                    disabled: !Players.active?.canTogglePlaying
-                    color: Players.active?.isPlaying ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
-
-                    onClicked: {
-                        Players.active?.togglePlaying();
-                    }
-                }
-
-                MaterialIcon {
-                    id: playIcon
-
-                    anchors.centerIn: parent
-                    anchors.horizontalCenterOffset: -fontStyle.pointSize * 0.02
-                    anchors.verticalCenterOffset: fontStyle.pointSize * 0.02
-
-                    animate: true
-                    fill: 1
-                    text: Players.active?.isPlaying ? "pause" : "play_arrow"
-                    color: {
-                        if (!Players.active?.canTogglePlaying)
-                            return Qt.alpha(Colours.palette.m3onSurface, 0.38);
-                        return Players.active?.isPlaying ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer;
-                    }
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
-}
-
-                Behavior on radius {
-                    Anim {}
-                }
-            }
-
-            PlayerControl {
-                icon: "skip_next"
-                canUse: Players.active?.canGoNext ?? false
-
-                function onClicked(): void {
-                    Players.active?.next();
-                }
-            }
-        }
-
-        StyledSlider {
-            id: slider
-
-            enabled: !!Players.active
-            implicitWidth: controls.implicitWidth * 1.5
-            implicitHeight: Config.appearance.padding.medium * 3
-
-            onMoved: {
-                const active = Players.active;
-                if (active?.canSeek && active?.positionSupported)
-                    active.position = value * active.length;
-            }
-
-            Binding {
-                target: slider
-                property: "value"
-                value: root.playerProgress
-                when: !slider.pressed
-            }
-
-            CustomMouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton
-
-                function onWheel(event: WheelEvent) {
-                    const active = Players.active;
-                    if (!active?.canSeek || !active?.positionSupported)
-                        return;
-
-                    event.accepted = true;
-                    const delta = event.angleDelta.y > 0 ? 10 : -10; // Time 10 seconds
-                    Qt.callLater(() => {
-                        active.position = Math.max(0, Math.min(active.length, active.position + delta));
-                    });
-                }
-            }
+        CoverVisualiser {
+            Layout.fillHeight: true
+            implicitWidth: Tokens.sizes.dashboard.mediaSectionWidth
         }
 
         Item {
             Layout.fillWidth: true
-            implicitHeight: Math.max(position.implicitHeight, length.implicitHeight)
+            Layout.fillHeight: true
 
-            StyledText {
-                id: position
+            state: Players.active ? "" : "noMedia"
 
-                anchors.left: parent.left
+            states: State {
+                name: "noMedia"
 
-                text: root.lengthStr(Players.active?.position ?? -1)
-                color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.label.large.size
-            }
-
-            StyledText {
-                id: length
-
-                anchors.right: parent.right
-
-                text: root.lengthStr(Players.active?.length ?? -1)
-                color: Colours.palette.m3onSurfaceVariant
-                font.pointSize: Config.appearance.font.label.large.size
-            }
-        }
-
-        RowLayout {
-            Layout.alignment: Qt.AlignHCenter
-            spacing: Config.appearance.spacing.small
-
-            PlayerControl {
-                icon: "flip_to_front"
-                canUse: Players.active?.canRaise ?? false
-                fontSize: Config.appearance.font.body.large.size
-                padding: Config.appearance.padding.extraSmall
-                fill: false
-                color: Colours.tPalette.m3surfaceContainer
-
-                function onClicked(): void {
-                    Players.active?.raise();
-                    root.visibilities.dashboard = false;
+                PropertyChanges {
+                    noMedia.opacity: 1
+                    content.opacity: 0
                 }
             }
 
-            StyledRect {
-                id: playerSelector
+            transitions: [
+                Transition {
+                    from: ""
 
-                property bool expanded
+                    SequentialAnimation {
+                        Anim {
+                            target: content
+                            property: "opacity"
+                            type: Anim.DefaultEffects
+                        }
+                        Anim {
+                            target: noMedia
+                            property: "opacity"
+                            type: Anim.SlowEffects
+                        }
+                    }
+                },
+                Transition {
+                    to: ""
 
-                Layout.alignment: Qt.AlignVCenter
-                Layout.maximumWidth: slider.implicitWidth * 0.6
-
-                implicitWidth: Math.max(currentPlayer.implicitWidth, 100) + Config.appearance.padding.small * 2
-                implicitHeight: currentPlayer.implicitHeight + Config.appearance.padding.small * 2
-                radius: Config.appearance.rounding.large
-                color: Colours.tPalette.m3surfaceContainer
-
-                StateLayer {
-                    disabled: playerSelector.expanded
-
-                    onClicked: {
-                        playerSelector.expanded = !playerSelector.expanded;
+                    SequentialAnimation {
+                        Anim {
+                            target: noMedia
+                            property: "opacity"
+                            type: Anim.DefaultEffects
+                        }
+                        Anim {
+                            target: content
+                            property: "opacity"
+                            type: Anim.SlowEffects
+                        }
                     }
                 }
+            ]
 
-                RowLayout {
-                    id: currentPlayer
+            Loader {
+                id: noMedia
 
-                    anchors.centerIn: parent
-                    spacing: Config.appearance.spacing.small
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: -Tokens.padding.extraLarge * 2
+                asynchronous: true
+                active: opacity > 0
+                opacity: 0
 
-                    PlayerIcon {
-                        player: Players.active
+                sourceComponent: ColumnLayout {
+                    spacing: Tokens.spacing.small
+
+                    MaterialShape {
+                        Layout.topMargin: (pathBounds().height - implicitSize) / 2
+                        Layout.bottomMargin: (pathBounds().height - implicitSize) / 2 + Tokens.spacing.small
+                        Layout.alignment: Qt.AlignHCenter
+                        color: Colours.palette.m3primaryContainer
+                        implicitSize: icon.implicitHeight + Tokens.padding.extraLarge * 2
+                        shape: MaterialShape.ClamShell
+
+                        Behavior on color {
+                            CAnim {}
+                        }
+
+                        MaterialIcon {
+                            id: icon
+
+                            anchors.centerIn: parent
+                            text: "queue_music"
+                            fontStyle: Tokens.font.icon.builders.large.scale(2).build()
+                            color: Colours.palette.m3onPrimaryContainer
+                        }
                     }
 
                     StyledText {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: qsTr("Nothing playing")
+                        font: Tokens.font.headline.medium
+                    }
+
+                    StyledText {
+                        text: qsTr("Play something for it to show up here!")
+                        color: Colours.palette.m3onSurfaceVariant
+                        font: Tokens.font.body.large
+                    }
+                }
+            }
+
+            Loader {
+                id: content
+
+                anchors.fill: parent
+                asynchronous: true
+                active: opacity > 0
+
+                sourceComponent: RowLayout {
+                    spacing: Tokens.spacing.extraLarge
+
+                    Details {
                         Layout.fillWidth: true
-                        Layout.maximumWidth: playerSelector.implicitWidth - implicitHeight - parent.spacing - Config.appearance.padding.medium * 2
-                        text: Players.active ? Players.getIdentity(Players.active) : qsTr("No players")
-                        color: Players.active ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant
-                        elide: Text.ElideRight
                     }
-                }
 
-                MaterialIcon {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.rightMargin: Config.appearance.padding.extraSmall
-                    text: "expand_more"
-                    color: Colours.palette.m3onSurfaceVariant
-                    rotation: playerSelector.expanded ? 180 : 0
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
-Behavior on rotation {
-                        Anim {}
+                    LyricsAndSelector {
+                        Layout.fillHeight: true
+                        implicitWidth: Tokens.sizes.dashboard.mediaSectionWidth
                     }
                 }
             }
-
-            PlayerControl {
-                icon: "delete"
-                canUse: Players.active?.canQuit ?? false
-                fontSize: Config.appearance.font.body.large.size
-                padding: Config.appearance.padding.extraSmall
-                fill: false
-                color: Colours.tPalette.m3surfaceContainer
-
-                function onClicked(): void {
-                    Players.active?.quit();
-                }
-            }
         }
-    }
-
-    MouseArea {
-        id: dropdownOverlay
-        anchors.fill: parent
-        enabled: playerSelector.expanded
-        visible: playerSelector.expanded
-        onClicked: playerSelector.expanded = false
-        z: 9
-
-        StyledRect {
-            id: dropdown
-
-            function reposition(): void {
-                if (!playerSelector || !playerSelector.expanded) return;
-                var pt = playerSelector.mapToItem(dropdownOverlay, playerSelector.width / 2, 0);
-                var pt2 = playerSelector.mapToItem(dropdownOverlay, 0, 0);
-                if (pt && pt2) {
-                    x = pt.x - width / 2;
-                    y = pt2.y - implicitHeight - Config.appearance.spacing.small;
-                }
-            }
-
-            onVisibleChanged: Qt.callLater(reposition)
-            onImplicitHeightChanged: Qt.callLater(reposition)
-
-            implicitWidth: Math.max(200, playerListCol.implicitWidth + Config.appearance.padding.medium * 2)
-            implicitHeight: playerSelector.expanded ? playerListCol.implicitHeight + Config.appearance.padding.small * 2 : 0
-
-            radius: Config.appearance.rounding.large
-            color: Colours.palette.m3surfaceContainer
-            opacity: playerSelector.expanded ? 1 : 0
-
-            ColumnLayout {
-                id: playerListCol
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-                anchors.margins: Config.appearance.padding.small
-                spacing: 0
-
-                Repeater {
-                    model: Players.list
-
-                    StyledRect {
-                        id: playerItem
-                        required property MprisPlayer modelData
-
-                        Layout.fillWidth: true
-                        Layout.minimumWidth: playerSelector.implicitWidth
-                        implicitWidth: playerInner.implicitWidth + Config.appearance.padding.medium * 2
-                        implicitHeight: playerInner.implicitHeight + Config.appearance.padding.small * 2
-
-                        radius: Config.appearance.rounding.small
-                        color: Qt.alpha(Colours.palette.m3secondaryContainer, modelData === Players.active ? 1 : 0)
-
-                        StateLayer {
-                            color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                            disabled: !playerSelector.expanded
-
-                            onClicked: {
-                                playerSelector.expanded = false;
-                                Players.manualActive = playerItem.modelData;
-                            }
-                        }
-
-                        RowLayout {
-                            id: playerInner
-                            anchors.centerIn: parent
-                            spacing: Config.appearance.spacing.small
-
-                            MaterialIcon {
-                                Layout.alignment: Qt.AlignVCenter
-                                fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
-text: modelData === Players.active ? "check" : ""
-                                color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
-                            }
-
-                            StyledText {
-                                Layout.alignment: Qt.AlignVCenter
-                                text: Players.getIdentity(modelData)
-                                color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
-                            }
-                        }
-                    }
-                }
-            }
-
-            Behavior on opacity {
-                Anim {
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                }
-            }
-
-            Behavior on implicitHeight {
-                Anim {
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
-                }
-            }
-        }
-    }
-
-    Item {
-        id: bongocat
-
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: details.right
-        anchors.leftMargin: Config.appearance.spacing.large
-
-        implicitWidth: Math.max(cover.implicitWidth, 200)
-        implicitHeight: cover.implicitHeight
-
-        readonly property real bongoSpeed: 0.5  // BeatTracker disabled (Qt 6.11 bug)
-
-        AnimatedImage {
-            anchors.centerIn: parent
-
-            width: parent.width * 0.75
-            height: parent.height * 0.75
-
-            playing: Players.active?.isPlaying ?? false
-            speed: parent.bongoSpeed
-            source: Paths.absolutePath(Config.paths.mediaGif)
-            asynchronous: true
-            fillMode: AnimatedImage.PreserveAspectFit
-        }
-    }
-
-    component PlayerIcon: Item {
-        id: playerIcon
-
-        required property MprisPlayer player
-        readonly property string iconName: player ? Icons.getAppIcon(player.desktopEntry || player.identity) : ""
-
-        property bool imageFailed: false
-
-        implicitWidth: TokenConfig.sizes.dashboard.mediaIconSize || 48
-        implicitHeight: TokenConfig.sizes.dashboard.mediaIconSize || 48
-        Layout.fillHeight: true
-        Layout.preferredWidth: TokenConfig.sizes.dashboard.mediaIconSize || 48
-
-        IconImage {
-            id: iconImage
-            visible: !playerIcon.imageFailed
-            anchors.fill: parent
-            source: playerIcon.iconName
-            asynchronous: true
-
-            onStatusChanged: {
-                if (status === Image.Error)
-                    playerIcon.imageFailed = true;
-            }
-        }
-
-        MaterialIcon {
-            visible: !player || playerIcon.imageFailed
-            anchors.centerIn: parent
-            fontStyle: Tokens.font.icon.size(Math.max(1, parent.height * 0.6)).build()
-text: player ? "animated_images" : "music_off"
-        }
-    }
-
-    component PlayerControl: StyledRect {
-        id: control
-
-        required property string icon
-        required property bool canUse
-        property int fontSize: Config.appearance.font.headline.large.size
-        property int padding
-        property bool fill: true
-        function onClicked(): void {
-        }
-
-        implicitWidth: Math.max(icon.implicitWidth, icon.implicitHeight) + padding * 2
-        implicitHeight: implicitWidth
-        radius: Config.appearance.rounding.full
-
-        StateLayer {
-            disabled: !control.canUse
-            color: Colours.palette.m3onSurface
-
-            onClicked: {
-                control.onClicked();
-            }
-        }
-
-        MaterialIcon {
-            id: icon
-
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -fontStyle.pointSize * 0.02
-            anchors.verticalCenterOffset: fontStyle.pointSize * 0.02
-
-            animate: true
-            fill: control.fill ? 1 : 0
-            text: control.icon
-            color: control.canUse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            fontStyle: Tokens.font.icon.size(control.fontSize).build()
-}
     }
 }

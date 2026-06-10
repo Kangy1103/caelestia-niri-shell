@@ -15,6 +15,10 @@ Q_LOGGING_CATEGORY(lcStorage, "caelestia.services.storage", QtInfoMsg)
 
 namespace caelestia::services {
 
+Storage* Storage::create(QQmlEngine*, QJSEngine*) {
+    return new Storage();
+}
+
 namespace {
 
 struct Accum {

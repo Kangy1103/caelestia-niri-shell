@@ -1,11 +1,15 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import Quickshell.Services.SystemTray
+import Caelestia.Config
 import qs.components.effects
 import qs.services
-import Caelestia.Config
 import qs.utils
-import Quickshell.Services.SystemTray
-import QtQuick
 
 MouseArea {
     id: root

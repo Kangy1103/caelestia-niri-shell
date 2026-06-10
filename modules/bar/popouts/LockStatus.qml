@@ -1,13 +1,13 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
+import QtQuick.Layouts
+import Caelestia.Config
 import qs.components
 import qs.services
-import Caelestia.Config
-import QtQuick
-import QtQuick.Layouts
 
-// Lock status display - uses Niri service for reactive state
 ColumnLayout {
-    id: root
-
     spacing: Config.appearance.spacing.small
 
     StyledText {

@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Services.Notifications
 import Caelestia.Components
 import Caelestia.Config
 import qs.components
@@ -15,7 +14,7 @@ LazyListView {
     required property list<var> notifs
     required property bool expanded
     required property Flickable container
-    required property PersistentProperties visibilities
+    required property DrawerVisibilities visibilities
 
     signal requestToggleExpand(expand: bool)
 
@@ -23,10 +22,10 @@ LazyListView {
     anchors.right: parent.right
     implicitHeight: contentHeight
 
-    spacing: Tokens.spacing.extraSmall
+    spacing: Math.round(Tokens.spacing.extraSmall)
     asynchronous: true
 
-    readyDelay: 0
+    readyDelay: 1
     cacheBuffer: 400
     removeDuration: Tokens.anim.durations.normal
 
@@ -59,7 +58,7 @@ LazyListView {
             id: notif
 
             required property int index
-            required property Notifs.Notif modelData
+            required property NotifData modelData
 
             property int startY
 
@@ -70,8 +69,8 @@ LazyListView {
             LazyListView.visibleHeight: modelData?.closed || LazyListView.removing ? 0 : notifInner.implicitHeight
             implicitHeight: notifInner.implicitHeight
 
-            opacity: LazyListView.removing ? 0 : 1
-            scale: LazyListView.removing ? 0.7 : 1
+            opacity: LazyListView.removing || LazyListView.adding ? 0 : 1
+            scale: LazyListView.removing || LazyListView.adding ? 0.7 : 1
 
             hoverEnabled: true
             cursorShape: notifInner.body?.hoveredLink ? Qt.PointingHandCursor : pressed ? Qt.ClosedHandCursor : undefined
@@ -108,6 +107,7 @@ LazyListView {
                 onFinished: notif.modelData?.unlock(notif)
 
                 Anim {
+                    type: Anim.DefaultEffects
                     target: notif
                     property: "opacity"
                     to: 0
@@ -127,6 +127,26 @@ LazyListView {
                 props: root.props
                 expanded: root.expanded
                 visibilities: root.visibilities
+            }
+
+            Behavior on y {
+                enabled: notif.LazyListView.ready
+
+                Anim {}
+            }
+
+            Behavior on opacity {
+                Anim {
+                    type: Anim.DefaultEffects
+                }
+            }
+
+            Behavior on scale {
+                Anim {}
+            }
+
+            Behavior on x {
+                Anim {}
             }
         }
     }

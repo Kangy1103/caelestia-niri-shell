@@ -623,6 +623,22 @@ git checkout main -- path/to/file.qml
 
 ## Completed Phases
 
+### Phase 0 — Prep ✅ (2026-06-09)
+
+**What was done:**
+
+Tagged current state and set up upstream remote for reference during merge:
+
+```
+git tag pre-merge/v0.4
+git remote add upstream /mnt/Gogeta/Personal Projects/caelestia-shell-reference
+git fetch upstream
+```
+
+Note: `merge-upstream` branch was not created — all work committed directly to `main`.
+
+---
+
 ### Phase 1 — Plugin C++ modules ✅ (2026-06-09)
 
 **What was done:**
@@ -1079,3 +1095,205 @@ When the Media pane Loader activated, multiple issues cascaded:
 | [#1483](https://github.com/caelestia-dots/shell/issues/1483) — PipeWireWorker deadlock on libpipewire 1.6.5 | Open | Same distro, same Qt. `CavaProvider`/`BeatTracker` destruction hangs. |
 | [#1442](https://github.com/caelestia-dots/shell/issues/1442) — QQuickPropertyChanges SIGSEGV on Qt 6.11 | Open | Qt 6.11 QML engine crash. |
 | [#1401](https://github.com/caelestia-dots/shell/issues/1401) — "Unavailable Types" after PR 1392 | Closed | Similar pattern to our BeatTracker "not creatable." |
+
+## Phase 5 — Bar Module + Drawer Infrastructure ✅ (2026-06-09 / 2026-06-10)
+
+**What was done:**
+
+Full upstream adoption of the bar module AND the drawer orchestration layer (`Interactions.qml`, `Panels.qml`, `Backgrounds.qml`) that all modules plug into. This was a two-day effort — initial bar QML merge on 2026-06-09, then the drawer infrastructure cascade + module wrappers on 2026-06-10.
+
+### Day 1 — Bar QML (2026-06-09)
+
+**New upstream files copied (4):**
+```
+modules/bar/popouts/PopoutState.qml          # Popout state tracker (8 lines)
+modules/bar/popouts/ClipWrapper.qml          # Popout positioning wrapper
+modules/bar/popouts/kblayout/KbLayout.qml    # Rich keyboard layout popout UI
+modules/bar/popouts/kblayout/KbLayoutModel.qml  # Niri-adapted layout data model
+```
+
+**Skipped Hyprland-specific (5):**
+```
+modules/bar/popouts/ActiveWindow.qml
+modules/bar/components/workspaces/ActiveIndicator.qml
+modules/bar/components/workspaces/OccupiedBg.qml
+modules/bar/components/workspaces/SpecialWorkspaces.qml
+modules/bar/components/workspaces/Workspace.qml
+```
+
+**Accepted upstream (11 shared files):**
+```
+modules/bar/components/Clock.qml, Power.qml, Tray.qml, TrayItem.qml (merged—kept iconSubs)
+modules/bar/popouts/Audio.qml, Battery.qml, Bluetooth.qml, Network.qml, TrayMenu.qml, WirelessPassword.qml, LockStatus.qml (Niri-adapted capsLock/numLock)
+```
+
+**Adopted upstream structure (3):**
+```
+modules/bar/BarWrapper.qml   # fullscreen, disabled regex, exclusiveZone, Anim.Emphasized
+modules/bar/popouts/Wrapper.qml   # Added PopoutState child + offsetScale property
+modules/bar/popouts/Content.qml   # Upstream Popout pattern + wsWindow/stasis Niri popouts
+```
+
+**Type migration — PersistentProperties → DrawerVisibilities:**
+```
+modules/drawers/Drawers.qml → DrawerVisibilities
+modules/bar/Bar.qml → DrawerVisibilities + fullscreen
+modules/bar/components/Power.qml → DrawerVisibilities
+```
+
+**KbLayout Niri adaptation:**
+- `KbLayoutModel.qml`: Removed all `hyprctl` Processes. `Niri.kbLayoutsArray` + `Niri.kbLayoutIndex` for state, `cycleLayout()` calls `Niri.action("switch-layout", [])`. Kept XKB XML display name parsing.
+- `KbLayout.qml`: "Next Layout" cycle button, display-only layout list, active highlight with pop-in animation.
+- Old `popouts/KbLayout.qml` deleted.
+
+### Day 2 — Drawer Infrastructure Cascade + Module Wrappers (2026-06-10)
+
+The initial bar merge kept our custom `Interactions.qml` and `Panels.qml`. This caused the dashboard hover to break (no `offsetScale`-aware `inTopPanel`). Full upstream adoption cascaded:
+
+**Drawer orchestration (3 files adopted upstream):**
+```
+modules/drawers/Interactions.qml  # offsetScale-aware panel hover, fullscreen support, sidebar drag
+modules/drawers/Panels.qml        # Upstream panel registry with wrapper aliases
+modules/drawers/Drawers.qml       # borderThickness + fullscreen propagation
+```
+
+**Module wrappers adopted upstream (6):**
+```
+modules/osd/Wrapper.qml             # sidebarOrSessionVisible, hovered, brightness/volume props
+modules/notifications/Wrapper.qml   # sidebarPanel, osdPanel/sessionPanel/utilitiesPanel aliases
+modules/session/Wrapper.qml         # offsetScale, shouldBeActive
+modules/launcher/Wrapper.qml        # offsetScale, shouldBeActive
+modules/utilities/Wrapper.qml       # offsetScale, shouldBeActive
+modules/sidebar/Wrapper.qml         # offsetScale, shouldBeActive, utilsRoundingX added
+```
+
+**Module backgrounds fixed (6 — upstream ShapePath always rendered, added Active-based visibility):**
+```
+modules/dashboard/Background.qml  # strokeWidth: 0 + fillColor: "transparent" when !shouldBeActive
+modules/sidebar/Background.qml    # Same pattern
+modules/osd/Background.qml        # Same pattern
+modules/launcher/Background.qml   # Same pattern
+modules/session/Background.qml    # Same pattern
+modules/utilities/Background.qml  # Same pattern + sidebar + rounding required props
+```
+
+**Notifications upstream adopted (kept our Notifs service):**
+```
+modules/notifications/*          # Upstream QML files, restored custom Notifs.qml service
+modules/notifications/Wrapper.qml # Upstream version
+modules/notifications/Background.qml # Fixed: active when wrapper.height > 0
+```
+
+**Custom panels preserved (2):**
+```
+modules/drawers/Panels.qml → added Keybinds.Wrapper + Calendar.Wrapper entries (not in upstream)
+modules/drawers/Backgrounds.qml → kept references to Keybinds.Background + Calendar.Background
+```
+
+### C++ additions (both days)
+
+**Day 1:**
+- `niriipc.cpp/.hpp`: Added `handleKeyboardLayoutSwitched` — listens for `KeyboardLayoutSwitched` event with `idx: u8`, updates `m_kbLayoutIndex` reactively (no polling).
+- `tokens.hpp/.cpp`: Added `font` (FontTokens*) and `anim` (AnimTokens*) Q_PROPERTY to `TokenConfig` singleton. Bound in `TokenConfig::create()`.
+
+**Day 2:**
+- `cutils.hpp/.cpp`: Added `exists(const QString& path)` Q_INVOKABLE — file-existence check.
+- `cpu.hpp/.cpp`, `memory.hpp/.cpp`, `storage.hpp/.cpp`: Added `static create(QQmlEngine*, QJSEngine*)` factory methods — required by Qt 6.11 for `QML_SINGLETON` types.
+- `filesystemmodel.hpp/.cpp`: Replaced with upstream version — adds `sortReverse`, `Filter` enum (`NoFilter`, `Images`, `Files`, `Dirs`).
+- `services/Weather.qml`: Added `formatTemp()` and `toFahrenheit()` to match upstream API.
+- `services/Notifs.qml`: Added `hasFullscreen()` — returns false (Niri doesn't expose fullscreen state in IPC).
+- `services/Wallpapers.qml`: Changed `FileSystemModel.ImagesAndVideos` → `FileSystemModel.Images` + `nameFilters` (upstream FileSystemModel changed Filter enum).
+
+**Stale `.so` cleanup (3 files removed):**
+```
+/usr/lib/qt6/qml/Caelestia/Services/libcaelestia-services.so   # Jun 8, shadowing fresh .so in ../lib/
+/usr/lib/qt6/qml/Caelestia/libcaelestia.so                     # Jun 8, shadowing fresh .so in lib/
+/usr/lib/qt6/qml/Caelestia/Models/libcaelestia-models.so       # Jun 8, shadowing fresh .so in ../lib/
+```
+Root cause: old cmake installs put shared libs in module directories. RUNPATH `$ORIGIN` resolved to stale file first. Clean rebuild (`rm -rf build`) + fresh install fixed.
+
+**Dash Media BeatTracker (Qt 6.11 workaround):**
+- `modules/dashboard/dash/Media.qml`: Disabled `ServiceRef { service: Audio.beatTracker }`, hardcoded `speed: 0.5`.
+
+### Post-merge fixes summary
+
+| Issue | Root cause | Fix |
+|-------|-----------|-----|
+| Clock.qml font builder | `TokenConfig` lacked `font`/`anim` Q_PROPERTY | Added FontTokens/AnimTokens to singleton |
+| Dashboard hover broken | `Interactions.qml` used old `inTopPanel` without `offsetScale` | Adopted upstream Interactions.qml |
+| Dashboard background stuck | `visible: false` on Wrapper → height 0 → mask hole gone | Changed to `visible: true`, use `anchors.topMargin` for hiding |
+| Sidebar/OSD/Launcher/Session/Utilities backgrounds stuck | ShapePath always renders | Added `strokeWidth: 0` + `fillColor: transparent` when !shouldBeActive |
+| `Cpu`/`Memory`/`Storage` not found | Qt 6.11 requires `create()` for QML_SINGLETON; stale .so blocking | Added `create()` methods; removed stale .so |
+| `CUtils.clamp` / `CUtils.exists` | Stale .so + missing method | Removed stale .so; added `exists()` to CUtils |
+| `FileSystemModel.ImagesAndVideos` | Upstream changed Filter enum | Changed to `FileSystemModel.Images` + `nameFilters` |
+| `FileSystemModel.sortReverse` | Old FileSystemModel lacked property | Adopted upstream FileSystemModel |
+| `Weather.formatTemp` | Missing method on our Weather service | Added `formatTemp()` + `toFahrenheit()` |
+| `Notifs.hasFullscreen` | Missing method on our Notifs service | Added `hasFullscreen()` stub |
+
+---
+
+## Phase 6 — Dashboard ✅ (2026-06-10)
+
+**What was done:**
+
+Full upstream dashboard replacement. Backed up 6 custom files to `.backup/`.
+
+**New upstream files copied (14):**
+```
+modules/dashboard/dash/Calendar.qml
+modules/dashboard/dash/SmallWeather.qml
+modules/dashboard/media/BackgroundShapes.qml
+modules/dashboard/media/CoverVisualiser.qml
+modules/dashboard/media/Details.qml
+modules/dashboard/media/LyricList.qml
+modules/dashboard/media/LyricsAndSelector.qml
+modules/dashboard/media/LyricsInfo.qml
+modules/dashboard/performance/BatteryTank.qml
+modules/dashboard/performance/HeroCard.qml
+modules/dashboard/performance/MemoryCard.qml
+modules/dashboard/performance/NetworkCard.qml
+modules/dashboard/performance/StorageCard.qml
+modules/dashboard/WeatherTab.qml
+```
+
+**Shared files replaced with upstream (7):**
+```
+modules/dashboard/Content.qml, Dash.qml, Media.qml, Performance.qml, Tabs.qml, Wrapper.qml
+modules/dashboard/dash/DateTime.qml, Media.qml, Resources.qml, User.qml
+```
+
+**Custom files backed up (6 → .backup/):**
+```
+WeatherPanel.qml, WindowTools.qml, Background.qml (restored—needed by drawers)
+QuickToggles.qml, UpcomingEvents.qml, Weather.qml
+```
+
+---
+
+## Merge Rules for Remaining Phases (7-10)
+
+Established after Phase 5 lessons learned:
+
+1. **Copy-first, fix-forward** — upstream version goes in first. Any cascade gets chased to completion with MORE upstream files, never a revert to ours.
+
+2. **Dependency tree first** — before touching any file, map the full import/reference graph. If adopting `File A` means also adopting `File B` through `File Z`, that's the plan — not a surprise.
+
+3. **Services over hacks** — missing API on our services gets added to match upstream expectations. QML never gets rewritten to work around gaps.
+
+4. **Shared = upstream** — any file present in both trees gets the upstream version. Our-only files stay; upstream-only files get copied; no "merge" that quietly keeps our old version.
+
+5. **One module tree at a time** — each phase gets its own full dependency analysis up front, so the cascade is planned, not discovered.
+
+6. **Three-way merge via `git merge-file`** — for any file present in both trees with custom Niri additions:
+   - Get three versions: ours, upstream, merge base (from git common ancestor)
+   - Run `git merge-file ours base upstream` — auto-resolves non-conflicting changes
+   - Manual resolution only for conflicts — always keep our Niri-specific additions inside the upstream structure
+   - Post-merge: diff against upstream to confirm only intentional differences remain
+
+### Additional enforcement
+
+7. **No `git checkout` to restore old files** — once upstream is in, fixes go forward, never back.
+
+8. **Every phase ends with `rm -rf build && cmake -B build && cmake --build build && sudo cmake --install build`** — clean rebuild prevents stale `.so` issues.
+
+9. **Post-install verification**: `qs -c caelestia-niri-shell` must load with zero scene warnings (cosmetic QML type warnings and other-agent-registration warnings are acceptable).

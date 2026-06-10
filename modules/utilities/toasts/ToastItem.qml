@@ -1,10 +1,10 @@
+import QtQuick
+import QtQuick.Layouts
+import Caelestia
+import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.services
-import Caelestia.Config
-import Caelestia
-import QtQuick
-import QtQuick.Layouts
 
 StyledRect {
     id: root
@@ -13,9 +13,9 @@ StyledRect {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    implicitHeight: layout.implicitHeight + Config.appearance.padding.small * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.large
 
-    radius: Config.appearance.rounding.large
+    radius: Tokens.rounding.large
     color: {
         if (root.modelData.type === Toast.Success)
             return Colours.palette.m3successContainer;
@@ -50,13 +50,13 @@ StyledRect {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: Config.appearance.padding.small
-        anchors.leftMargin: Config.appearance.padding.medium
-        anchors.rightMargin: Config.appearance.padding.medium
-        spacing: Config.appearance.spacing.large
+        anchors.margins: Tokens.padding.small
+        anchors.leftMargin: Tokens.padding.medium
+        anchors.rightMargin: Tokens.padding.medium
+        spacing: Tokens.spacing.medium
 
         StyledRect {
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
             color: {
                 if (root.modelData.type === Toast.Success)
                     return Colours.palette.m3success;
@@ -68,7 +68,7 @@ StyledRect {
             }
 
             implicitWidth: implicitHeight
-            implicitHeight: icon.implicitHeight + Config.appearance.padding.small * 2
+            implicitHeight: icon.implicitHeight + Tokens.padding.large
 
             MaterialIcon {
                 id: icon
@@ -84,8 +84,8 @@ StyledRect {
                         return Colours.palette.m3onError;
                     return Colours.palette.m3onSurfaceVariant;
                 }
-                fontStyle: Tokens.font.icon.size(Math.round(Config.appearance.font.title.medium.size * 1.2)).build()
-}
+                fontStyle: Tokens.font.icon.builders.large.scale(1.2).build()
+            }
         }
 
         ColumnLayout {
@@ -106,7 +106,7 @@ StyledRect {
                         return Colours.palette.m3onErrorContainer;
                     return Colours.palette.m3onSurface;
                 }
-                font.pointSize: Config.appearance.font.body.medium.size
+                font: Tokens.font.title.small
                 elide: Text.ElideRight
             }
 
@@ -127,10 +127,6 @@ StyledRect {
                 elide: Text.ElideRight
             }
         }
-    }
-
-    Behavior on color {
-        CAnim {}
     }
 
     Behavior on border.color {

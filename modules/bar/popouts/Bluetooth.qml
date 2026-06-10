@@ -1,19 +1,23 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Bluetooth
+import Caelestia.Config
 import qs.components
 import qs.components.controls
 import qs.services
-import Caelestia.Config
 import qs.utils
-import Quickshell
-import Quickshell.Bluetooth
-import QtQuick
-import QtQuick.Layouts
 
 ColumnLayout {
     id: root
 
-    required property Item wrapper
+    required property PopoutState popouts
 
     width: 300
     spacing: Config.appearance.spacing.small
@@ -21,15 +25,14 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Config.appearance.padding.medium
         Layout.rightMargin: Config.appearance.padding.extraSmall
-        text: qsTr("Bluetooth %1").arg(BluetoothAdapterState.toString(Bluetooth.defaultAdapter?.state).toLowerCase())
-        font.weight: 500
+        text: qsTr("Bluetooth")
     }
 
     Toggle {
         label: qsTr("Enabled")
-        checked: Bluetooth.defaultAdapter?.enabled ?? false
+        checked: Bluetooth.defaultAdapter?.enabled ?? false // qmllint disable unresolved-type
         toggle.onToggled: {
-            const adapter = Bluetooth.defaultAdapter;
+            const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
             if (adapter)
                 adapter.enabled = checked;
         }
@@ -37,9 +40,9 @@ ColumnLayout {
 
     Toggle {
         label: qsTr("Discovering")
-        checked: Bluetooth.defaultAdapter?.discovering ?? false
+        checked: Bluetooth.defaultAdapter?.discovering ?? false // qmllint disable unresolved-type
         toggle.onToggled: {
-            const adapter = Bluetooth.defaultAdapter;
+            const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
             if (adapter)
                 adapter.discovering = checked;
         }
@@ -49,7 +52,7 @@ ColumnLayout {
         Layout.topMargin: Config.appearance.spacing.small
         Layout.rightMargin: Config.appearance.padding.extraSmall
         text: {
-            const devices = Bluetooth.devices.values;
+            const devices = Bluetooth.devices.values; // qmllint disable unresolved-type
             let available = qsTr("%1 device%2 available").arg(devices.length).arg(devices.length === 1 ? "" : "s");
             const connected = devices.filter(d => d.connected).length;
             if (connected > 0)
@@ -57,19 +60,18 @@ ColumnLayout {
             return available;
         }
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Config.appearance.font.label.large.size
     }
 
     Repeater {
         model: ScriptModel {
-            values: [...Bluetooth.devices.values].sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired)).slice(0, 5)
+            values: [...Bluetooth.devices.values].sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired) || a.name.localeCompare(b.name)).slice(0, 5) // qmllint disable unresolved-type
         }
 
         RowLayout {
             id: device
 
             required property BluetoothDevice modelData
-            readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting
+            readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting // qmllint disable unresolved-type
 
             Layout.fillWidth: true
             Layout.rightMargin: Config.appearance.padding.extraSmall
@@ -84,7 +86,9 @@ ColumnLayout {
             }
 
             Behavior on opacity {
-                Anim {}
+                Anim {
+                    type: Anim.DefaultEffects
+                }
             }
 
             Behavior on scale {
@@ -96,17 +100,17 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.leftMargin: Config.appearance.spacing.small / 2
-                Layout.rightMargin: Config.appearance.spacing.small / 2
+                Layout.leftMargin: Config.appearance.spacing.extraSmall
+                Layout.rightMargin: Config.appearance.spacing.extraSmall
                 Layout.fillWidth: true
                 text: device.modelData.name
                 elide: Text.ElideRight
             }
 
             MaterialIcon {
-                visible: device.modelData.state === BluetoothDeviceState.Connected // qmllint disable unresolved-type
-                text: Icons.getBatteryIcon(device.modelData.batteryAvailable ? device.modelData.battery * 100 : -1)
-                color: device.modelData.battery < 0.2 ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+                visible: device.modelData.state === BluetoothDeviceState.Connected  // qmllint disable unresolved-type
+                text: device.modelData.batteryAvailable ? Icons.getBatteryIcon(device.modelData.battery) : "battery_alert"
+                color: device.modelData.batteryAvailable && device.modelData.battery < 0.2 ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
             }
 
             StyledRect {
@@ -116,20 +120,17 @@ ColumnLayout {
                 implicitHeight: connectIcon.implicitHeight + Config.appearance.padding.extraSmall
 
                 radius: Config.appearance.rounding.full
-                color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0)
+                color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0) // qmllint disable unresolved-type
 
-                StyledBusyIndicator {
+                CircularIndicator {
                     anchors.fill: parent
                     running: device.loading
                 }
 
                 StateLayer {
-                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
                     disabled: device.loading
-
-                    onClicked: {
-                        device.modelData.connected = !device.modelData.connected;
-                    }
+                    onClicked: device.modelData.connected = !device.modelData.connected
                 }
 
                 MaterialIcon {
@@ -138,12 +139,14 @@ ColumnLayout {
                     anchors.centerIn: parent
                     animate: true
                     text: device.modelData.connected ? "link_off" : "link"
-                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
+                    color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface // qmllint disable unresolved-type
 
                     opacity: device.loading ? 0 : 1
 
                     Behavior on opacity {
-                        Anim {}
+                        Anim {
+                            type: Anim.DefaultEffects
+                        }
                     }
                 }
             }
@@ -158,10 +161,7 @@ ColumnLayout {
 
                     StateLayer {
                         radius: Config.appearance.rounding.full
-
-                        onClicked: {
-                            device.modelData.forget();
-                        }
+                        onClicked: device.modelData.forget()
                     }
 
                     MaterialIcon {
@@ -173,40 +173,16 @@ ColumnLayout {
         }
     }
 
-    StyledRect {
-        Layout.topMargin: Config.appearance.spacing.small
-        implicitWidth: expandBtn.implicitWidth + Config.appearance.padding.medium * 2
-        implicitHeight: expandBtn.implicitHeight + Config.appearance.padding.extraSmall
+    IconTextButton {
+        Layout.fillWidth: true
+        Layout.topMargin: Config.appearance.spacing.medium
+        inactiveColour: Colours.palette.m3primaryContainer
+        inactiveOnColour: Colours.palette.m3onPrimaryContainer
+        verticalPadding: Config.appearance.padding.extraSmall
+        text: qsTr("Open settings")
+        icon: "settings"
 
-        radius: Config.appearance.rounding.large
-        color: Colours.palette.m3primaryContainer
-
-        StateLayer {
-            color: Colours.palette.m3onPrimaryContainer
-
-            onClicked: {
-                root.wrapper.detach("bluetooth");
-            }
-        }
-
-        RowLayout {
-            id: expandBtn
-
-            anchors.centerIn: parent
-            spacing: Config.appearance.spacing.small
-
-            StyledText {
-                Layout.leftMargin: Config.appearance.padding.small
-                text: qsTr("Settings")
-                color: Colours.palette.m3onPrimaryContainer
-            }
-
-            MaterialIcon {
-                text: "chevron_right"
-                color: Colours.palette.m3onPrimaryContainer
-                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
-}
-        }
+        onClicked: root.popouts.detachRequested("bluetooth")
     }
 
     component Toggle: RowLayout {
@@ -216,7 +192,7 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.rightMargin: Config.appearance.padding.extraSmall
-        spacing: Config.appearance.spacing.large
+        spacing: Config.appearance.spacing.medium
 
         StyledText {
             Layout.fillWidth: true
