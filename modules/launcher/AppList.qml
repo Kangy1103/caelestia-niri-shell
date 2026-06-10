@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Caelestia.Config
 import qs.components
 import qs.components.containers
@@ -20,6 +21,52 @@ StyledListView {
         id: model
 
         onValuesChanged: root.currentIndex = 0
+    }
+
+    // Clipboard data
+    ListModel { id: clipboardModel }
+
+    property var _clipFilteredValues: {
+        const query = search.text.slice(`${GlobalConfig.launcher.actionPrefix}clip `.length).toLowerCase();
+        let result = [];
+        for (let i = 0; i < clipboardModel.count; i++) {
+            const item = clipboardModel.get(i);
+            if (query === "" || item.entryText.toLowerCase().includes(query)) {
+                result.push({ entryId: item.entryId, entryText: item.entryText, isImage: item.isImage });
+            }
+        }
+        return result;
+    }
+
+    Process {
+        id: cliphistProc
+        command: ["cliphist", "list"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                clipboardModel.clear();
+                const lines = text.trim().split("\n");
+                for (const line of lines) {
+                    if (!line) continue;
+                    const parts = line.split("\t");
+                    clipboardModel.append({
+                        entryId: parts[0],
+                        entryText: parts.slice(1).join("\t"),
+                        isImage: line.includes("[[ binary data")
+                    });
+                }
+            }
+        }
+    }
+
+    function refreshClipboard(): void { cliphistProc.running = true; }
+
+    function removeClipEntry(entryId: string): void {
+        for (let i = 0; i < clipboardModel.count; i++) {
+            if (clipboardModel.get(i).entryId === entryId) {
+                clipboardModel.remove(i);
+                break;
+            }
+        }
     }
 
     spacing: Tokens.spacing.small
@@ -49,7 +96,7 @@ StyledListView {
         const text = search.text;
         const prefix = GlobalConfig.launcher.actionPrefix;
         if (text.startsWith(prefix)) {
-            for (const action of ["calc", "scheme", "variant"])
+            for (const action of ["calc", "scheme", "variant", "clip"])
                 if (text.startsWith(`${prefix}${action} `))
                     return action;
 
@@ -62,6 +109,8 @@ StyledListView {
     onStateChanged: {
         if (state === "scheme" || state === "variant")
             Schemes.reload();
+        if (state === "clip")
+            refreshClipboard();
     }
 
     states: [
@@ -103,6 +152,14 @@ StyledListView {
             PropertyChanges {
                 model.values: M3Variants.query(search.text)
                 root.delegate: variantItem
+            }
+        },
+        State {
+            name: "clip"
+
+            PropertyChanges {
+                model.values: root._clipFilteredValues
+                root.delegate: clipItem
             }
         }
     ]
@@ -253,6 +310,14 @@ StyledListView {
         id: variantItem
 
         VariantItem {
+            list: root
+        }
+    }
+
+    Component {
+        id: clipItem
+
+        ClipItem {
             list: root
         }
     }
