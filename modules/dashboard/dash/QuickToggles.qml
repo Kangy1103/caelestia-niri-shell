@@ -61,7 +61,7 @@ StyledRect {
             font.pointSize: root.iconFontSize
             checked: VPN.connected
             enabled: !VPN.connecting
-            visible: Config.dashboard.toggles?.showVpn ?? true && Config.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false)
+            visible: (Config.dashboard.toggles?.showVpn ?? true) && Config.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false)
             onClicked: VPN.toggle()
         }
 
