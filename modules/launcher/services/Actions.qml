@@ -1,6 +1,7 @@
 pragma Singleton
 
 import qs.modules.launcher
+import qs.modules.nexus
 import qs.services
 import Caelestia.Config
 import qs.utils
