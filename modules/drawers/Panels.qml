@@ -183,7 +183,7 @@ Item {
         screen: root.screen
         visibilities: root.visibilities
 
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.right: parent.right
     }
 }

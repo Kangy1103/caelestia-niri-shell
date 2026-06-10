@@ -14,16 +14,20 @@ import qs.services
 import Quickshell
 import Quickshell.Io
 
-Item {
+    Item {
     id: root
 
     required property Wrapper wrapper
+    required property DrawerVisibilities visibilities
 
     readonly property int padding: Tokens.padding.large
     readonly property int rounding: Tokens.rounding.large
 
     implicitWidth: 420
     implicitHeight: 500
+
+    Keys.onEscapePressed: root.visibilities.clipboard = false
+    focus: true
 
     ListModel { id: clipboardModel }
     ListModel { id: filteredModel }

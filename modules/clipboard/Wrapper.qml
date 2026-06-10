@@ -47,6 +47,7 @@ Item {
 
         sourceComponent: Content {
             wrapper: root
+            visibilities: root.visibilities
         }
     }
 }

@@ -102,7 +102,7 @@ Shape {
     Clipboard.Background {
         wrapper: root.panels.clipboard
 
-        startX: root.width
+        startX: (root.width - wrapper.width) / 2 - rounding
         startY: root.height
     }
 }
