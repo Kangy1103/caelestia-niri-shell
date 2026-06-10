@@ -11,4 +11,5 @@ PersistentProperties {
     property bool keybinds
     property bool calendar
     property bool editingWeatherLocation
+    property bool clipboardRequested: false
 }
