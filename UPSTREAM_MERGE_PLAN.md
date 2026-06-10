@@ -447,9 +447,17 @@ modules/nexus/pages/*                      # ~25 settings pages
 - Zero Hyprland leaks in Nexus module
 - Plugin rebuilt and installed — shell launches with zero warnings/errors
 
+### Previous-phase regression fixed
+
+`caelestia` Python CLI targets Hyprland Caelestia (`qs -c caelestia`), not CNS.
+Fixed by adding `cns` fish abbreviation (`qs -c caelestia-niri-shell`) to
+`~/.config/fish/conf.d/myabbrs.fish`. IPC commands now use: `cns ipc call nexus open`.
+
 ### Verify
 
-`qs -c caelestia-niri-shell` loads clean. `caelestia shell nexus open` launches Nexus FloatingWindow. All pages render. Config persists to `~/.config/caelestia-niri-shell/shell.json`.
+`qs -c caelestia-niri-shell -d` loads clean as daemon. `cns ipc call nexus open`
+launches Nexus FloatingWindow (renders on Niri desktop). All pages render.
+Config persists to `~/.config/caelestia-niri-shell/shell.json`.
 
 **Reversion:**
 ```fish
@@ -701,6 +709,16 @@ shortcuts in "adopt upstream" execution. These rules are binding for all remaini
     - `Caelestia.Services.X` where X lacks `QML_ELEMENT` → not creatable at runtime
     - `Tokens.font.*` when `TokenConfig` singleton lacks `font` Q_PROPERTY
     - `Hypr.*` in accepted-upstream file → Hyprland leak, needs Niri adaptation
+
+12. **No deferred regressions** — any bug or regression from a previous phase
+    discovered during the current phase MUST be fixed before the current phase
+    is marked complete. "Pre-existing issue" is not an acceptable label.
+    Previous-phase regressions discovered now are blockers, not items for a
+    backlog. Common failure patterns:
+    - Config path mismatch (`caelestia` vs `caelestia-niri-shell`)
+    - Broken IPC targets (CLI tool using wrong config name)
+    - Stale imports of deleted modules (e.g. import of removed ControlCenter)
+    - Installed plugin stale despite rebuild (timestamp-based install check)
 
 ---
 
