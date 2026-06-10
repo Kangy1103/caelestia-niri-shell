@@ -16,7 +16,7 @@ Niri fork **without** undoing custom Niri work or quality-of-life improvements.
 |------|-------|
 | Upstream repo | `https://github.com/caelestia-dots/shell` |
 | Upstream ref | `main` (HEAD `3c7df45505f8364f1a397468bf1e3db018260ba0`) |
-| Upstream clone | `/mnt/Gogeta/Personal Projects/caelestia-shell-reference` |
+| Upstream clone | `/mnt/Gogeta/Personal Projects/quickshell-things/caelestia-upstream` |
 | Our fork | `~/.config/quickshell/caelestia-niri-shell` |
 | Our remote | `origin` → `git@github.com:Kangy1103/caelestia-niri-shell.git` |
 | Total upstream files | 446 |
@@ -49,7 +49,7 @@ Tag current state so we can roll back if needed:
 ```fish
 git tag pre-merge/v0.4
 git checkout -b merge-upstream
-git remote add upstream /mnt/Gogeta/Personal\ Projects/caelestia-shell-reference
+git remote add upstream /mnt/Gogeta/Personal\ Projects/quickshell-things/caelestia-upstream
 git fetch upstream
 ```
 

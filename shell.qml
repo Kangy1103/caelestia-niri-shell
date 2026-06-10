@@ -14,7 +14,7 @@ import "modules/keybinds"
 import "modules/calendar"
 import "modules/background"
 import "modules/polkit"
-import qs.modules.controlcenter
+import "modules/nexus"
 import qs.services
 
 import Caelestia.Config

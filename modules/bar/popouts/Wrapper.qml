@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.services
 import Caelestia.Config
-import qs.modules.controlcenter
+import qs.modules.nexus
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
@@ -107,13 +107,10 @@ Item {
         asynchronous: true
         anchors.centerIn: parent
 
-        sourceComponent: ControlCenter {
-            screen: root.screen
-            active: root.queuedMode
-
-            function close(): void {
-                root.close();
-            }
+        sourceComponent: Nexus {
+            nState.screen: root.screen
+            nState.isWindow: false
+            onClose: root.close()
         }
     }
 
