@@ -109,12 +109,6 @@ WlSessionLockSurface {
             to: 1
             type: Anim.StandardLarge
         }
-        Anim {
-            target: wallpaperFallback
-            property: "opacity"
-            to: 0
-            type: Anim.StandardLarge
-        }
         SequentialAnimation {
             ParallelAnimation {
                 Anim {
@@ -181,37 +175,6 @@ WlSessionLockSurface {
         anchors.fill: parent
         color: Colours.palette.m3surface
         z: 0
-    }
-
-    Image {
-        id: wallpaperFallback
-        visible: status === Image.Ready || status === Image.Loading
-        anchors.fill: parent
-        source: {
-            const path = Wallpapers.current || Config.paths.wallpaper || "";
-            if (!path) return "";
-            const source = Wallpapers.getColorSource(path);
-            return source.startsWith("/") ? "file://" + source : source;
-        }
-
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            autoPaddingEnabled: false
-            blurEnabled: true
-            blur: 1
-            blurMax: 64
-            blurMultiplier: 1
-        }
-
-        fillMode: Image.PreserveAspectFit
-        sourceSize.width: root.screen.width
-        sourceSize.height: root.screen.height
-        opacity: 1
-        z: 1
-
-        onStatusChanged: {
-            if (status === Image.Error) { }
-        }
     }
 
     ScreencopyView {
