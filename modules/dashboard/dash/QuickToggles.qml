@@ -28,7 +28,7 @@ StyledRect {
             icon: "wifi"
             font.pointSize: root.iconFontSize
             checked: Network.wifiEnabled
-            visible: Config.dashboard.toggles.showWifi
+            visible: Config.dashboard.toggles?.showWifi ?? true
             onClicked: Network.toggleWifi()
         }
 
@@ -36,7 +36,7 @@ StyledRect {
             icon: "bluetooth"
             font.pointSize: root.iconFontSize
             checked: Bluetooth.defaultAdapter?.enabled ?? false
-            visible: Config.dashboard.toggles.showBluetooth
+            visible: Config.dashboard.toggles?.showBluetooth ?? true
             onClicked: {
                 const adapter = Bluetooth.defaultAdapter;
                 if (adapter)
@@ -48,7 +48,7 @@ StyledRect {
             icon: "mic"
             font.pointSize: root.iconFontSize
             checked: !Audio.sourceMuted
-            visible: Config.dashboard.toggles.showMic
+            visible: Config.dashboard.toggles?.showMic ?? true
             onClicked: {
                 const audio = Audio.source?.audio;
                 if (audio)
@@ -61,7 +61,7 @@ StyledRect {
             font.pointSize: root.iconFontSize
             checked: VPN.connected
             enabled: !VPN.connecting
-            visible: Config.dashboard.toggles.showVpn && Config.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false)
+            visible: Config.dashboard.toggles?.showVpn ?? true && Config.utilities.vpn.provider.some(p => typeof p === "object" ? (p.enabled === true) : false)
             onClicked: VPN.toggle()
         }
 
@@ -69,7 +69,7 @@ StyledRect {
             icon: "do_not_disturb_on"
             font.pointSize: root.iconFontSize
             checked: Notifs.dnd
-            visible: Config.dashboard.toggles.showDnd
+            visible: Config.dashboard.toggles?.showDnd ?? true
             onClicked: Notifs.dnd = !Notifs.dnd
         }
 
@@ -77,7 +77,7 @@ StyledRect {
             icon: "sports_esports"
             font.pointSize: root.iconFontSize
             checked: GameMode.enabled
-            visible: Config.dashboard.toggles.showGameMode
+            visible: Config.dashboard.toggles?.showGameMode ?? true
             onClicked: GameMode.toggle()
         }
 
@@ -85,7 +85,7 @@ StyledRect {
             icon: "settings"
             font.pointSize: root.iconFontSize
             inactiveOnColour: Colours.palette.m3onSurfaceVariant
-            visible: Config.dashboard.toggles.showSettings
+            visible: Config.dashboard.toggles?.showSettings ?? true
             onClicked: Quickshell.execDetached(["qs", "-c", "caelestia-niri-shell", "ipc", "call", "controlCenter", "open"])
         }
     }

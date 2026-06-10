@@ -38,8 +38,10 @@ Item {
         return `${mins}:${secs}`;
     }
 
-    implicitWidth: cover.implicitWidth + TokenConfig.sizes.dashboard.mediaVisualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Config.appearance.padding.largeIncreased * 2
-    implicitHeight: Math.max(cover.implicitHeight + TokenConfig.sizes.dashboard.mediaVisualiserSize * 2, details.implicitHeight, bongocat.implicitHeight) + Config.appearance.padding.largeIncreased * 2
+    readonly property real visualiserSize: TokenConfig.sizes.dashboard.mediaVisualiserSize || 0
+
+    implicitWidth: cover.implicitWidth + visualiserSize * 2 + details.implicitWidth + details.anchors.leftMargin + bongocat.implicitWidth + bongocat.anchors.leftMargin * 2 + Config.appearance.padding.largeIncreased * 2
+    implicitHeight: Math.max(cover.implicitHeight + visualiserSize * 2, details.implicitHeight, bongocat.implicitHeight) + Config.appearance.padding.largeIncreased * 2
 
     Behavior on playerProgress {
         Anim {
@@ -75,7 +77,7 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: Config.appearance.padding.largeIncreased + TokenConfig.sizes.dashboard.mediaVisualiserSize
+        anchors.leftMargin: Config.appearance.padding.largeIncreased + visualiserSize
 
         implicitWidth: TokenConfig.sizes.dashboard.mediaCoverArtSize
         implicitHeight: TokenConfig.sizes.dashboard.mediaCoverArtSize
@@ -520,10 +522,10 @@ text: modelData === Players.active ? "check" : ""
 
         property bool imageFailed: false
 
-        implicitWidth: TokenConfig.sizes.dashboard.mediaIconSize
-        implicitHeight: TokenConfig.sizes.dashboard.mediaIconSize
+        implicitWidth: TokenConfig.sizes.dashboard.mediaIconSize || 48
+        implicitHeight: TokenConfig.sizes.dashboard.mediaIconSize || 48
         Layout.fillHeight: true
-        Layout.preferredWidth: TokenConfig.sizes.dashboard.mediaIconSize
+        Layout.preferredWidth: TokenConfig.sizes.dashboard.mediaIconSize || 48
 
         IconImage {
             id: iconImage

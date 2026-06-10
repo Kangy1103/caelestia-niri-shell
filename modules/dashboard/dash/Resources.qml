@@ -53,7 +53,7 @@ Row {
             anchors.bottom: icon.top
             anchors.bottomMargin: Config.appearance.spacing.small
 
-            implicitWidth: TokenConfig.sizes.dashboard.resourceProgessThickness
+            implicitWidth: TokenConfig.sizes.dashboard.resourceProgessThickness ?? 8
 
             color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
             radius: Config.appearance.rounding.full
