@@ -209,34 +209,6 @@ Scope {
         }
     }
 
-    // ── IPC: clipboard (custom — not in upstream) ──
-    IpcHandler {
-        target: "clipboard"
-        function open(): void {
-            const visibilities = Visibilities.getForActive();
-            Visibilities.launcherMode = "clip";
-            visibilities.launcher = true;
-        }
-        function close(): void {
-            const visibilities = Visibilities.getForActive();
-            visibilities.launcher = false;
-        }
-        function toggle(): void {
-            const visibilities = Visibilities.getForActive();
-            if (visibilities.launcher) {
-                visibilities.launcher = false;
-            } else {
-                Visibilities.launcherMode = "clip";
-                visibilities.launcher = true;
-            }
-        }
-        function clear(): void {
-            Quickshell.execDetached(["cliphist", "wipe"]);
-            Quickshell.execDetached(["wl-copy", "--clear"]);
-            Toaster.toast(qsTr("Clipboard cleared"), qsTr("The clipboard history has been wiped."), "content_paste_off");
-        }
-    }
-
     LoggingCategory {
         id: lc
         name: "caelestia.qml.shortcuts"

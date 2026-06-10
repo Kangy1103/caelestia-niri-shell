@@ -10,5 +10,6 @@ PersistentProperties {
     property bool sidebar
     property bool keybinds
     property bool calendar
+    property bool clipboard
     property bool editingWeatherLocation
 }

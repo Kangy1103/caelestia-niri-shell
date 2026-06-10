@@ -14,6 +14,7 @@ import "modules/keybinds"
 import "modules/calendar"
 import "modules/background"
 import "modules/polkit"
+import "modules/clipboard"
 import "modules/nexus"
 import qs.services
 
@@ -32,6 +33,7 @@ ShellRoot {
     Lock {}
 
     Shortcuts {}
+    ClipboardPanel {}
     KeybindsPanel {}
     CalendarPanel {}
     CalendarAppPanel {}

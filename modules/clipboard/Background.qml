@@ -1,0 +1,65 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+import qs.components
+import qs.services
+import Caelestia.Config
+import QtQuick
+import QtQuick.Shapes
+
+ShapePath {
+    id: root
+
+    required property Wrapper wrapper
+    readonly property real rounding: Config.border.rounding
+    readonly property bool flatten: wrapper.height < rounding * 2
+    readonly property real roundingY: flatten ? wrapper.height / 2 : rounding
+
+    readonly property bool active: wrapper.shouldBeActive
+
+    strokeWidth: root.active ? -1 : 0
+    fillColor: root.active ? Colours.palette.m3surface : "transparent"
+
+    PathArc {
+        relativeX: root.rounding
+        relativeY: -root.roundingY
+        radiusX: root.rounding
+        radiusY: Math.min(root.rounding, root.wrapper.height)
+        direction: PathArc.Counterclockwise
+    }
+    PathLine {
+        relativeX: 0
+        relativeY: -(root.wrapper.height - root.roundingY * 2)
+    }
+    PathArc {
+        relativeX: root.rounding
+        relativeY: -root.roundingY
+        radiusX: root.rounding
+        radiusY: Math.min(root.rounding, root.wrapper.height)
+    }
+    PathLine {
+        relativeX: root.wrapper.width - root.rounding * 2
+        relativeY: 0
+    }
+    PathArc {
+        relativeX: root.rounding
+        relativeY: root.roundingY
+        radiusX: root.rounding
+        radiusY: Math.min(root.rounding, root.wrapper.height)
+    }
+    PathLine {
+        relativeX: 0
+        relativeY: root.wrapper.height - root.roundingY * 2
+    }
+    PathArc {
+        relativeX: root.rounding
+        relativeY: root.roundingY
+        radiusX: root.rounding
+        radiusY: Math.min(root.rounding, root.wrapper.height)
+        direction: PathArc.Counterclockwise
+    }
+
+    Behavior on fillColor {
+        CAnim {}
+    }
+}

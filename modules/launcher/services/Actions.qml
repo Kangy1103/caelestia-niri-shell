@@ -28,7 +28,7 @@ Searcher {
             icon: "calculate"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "calc");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}calc `;
             }
         },
         Action {
@@ -37,7 +37,7 @@ Searcher {
             icon: "palette"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "scheme");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}scheme `;
             }
         },
         Action {
@@ -46,7 +46,7 @@ Searcher {
             icon: "image"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "wallpaper");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
             }
         },
         Action {
@@ -55,7 +55,7 @@ Searcher {
             icon: "colors"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "variant");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}variant `;
             }
         },
         Action {
@@ -64,7 +64,8 @@ Searcher {
             icon: "content_paste"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "clip");
+                list.visibilities.launcher = false;
+                list.visibilities.clipboard = true;
             }
         },
         Action {
@@ -73,7 +74,7 @@ Searcher {
             icon: "travel_explore"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "web");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}web `;
             }
         },
         Action {
@@ -82,7 +83,7 @@ Searcher {
             icon: "mood"
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "emoji");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}emoji `;
             }
         },
         Action {
@@ -114,7 +115,7 @@ Searcher {
             disabled: true
 
             function onClicked(list: AppList): void {
-                root.autocomplete(list, "transparency");
+                list.search.text = `${GlobalConfig.launcher.actionPrefix}transparency `;
             }
         },
         Action {

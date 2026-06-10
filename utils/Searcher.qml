@@ -1,5 +1,4 @@
 import Quickshell
-import Caelestia.Config
 
 import "scripts/fzf.js" as Fzf
 import "scripts/fuzzysort.js" as Fuzzy
@@ -34,11 +33,6 @@ Singleton {
     function selector(item: var): string {
         // Only for fzf
         return item[key];
-    }
-
-    function autocomplete(list: var, mode: string): void {
-        if (list && list.search)
-            list.search.text = `${GlobalConfig.launcher.actionPrefix}${mode} `;
     }
 
     function query(search: string): list<var> {

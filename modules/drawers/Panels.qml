@@ -12,6 +12,7 @@ import qs.modules.sidebar as Sidebar
 import qs.modules.utilities as Utilities
 import qs.modules.keybinds as Keybinds
 import qs.modules.calendar as Calendar
+import qs.modules.clipboard as Clipboard
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
 
@@ -37,6 +38,7 @@ Item {
     readonly property alias sidebar: sidebar
     readonly property alias keybinds: keybinds
     readonly property alias calendar: calendar
+    readonly property alias clipboard: clipboard
 
     anchors.fill: parent
     anchors.margins: borderThickness
@@ -169,6 +171,16 @@ Item {
     Calendar.Wrapper {
         id: calendar
 
+        visibilities: root.visibilities
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+    Clipboard.Wrapper {
+        id: clipboard
+
+        screen: root.screen
         visibilities: root.visibilities
 
         anchors.bottom: parent.bottom

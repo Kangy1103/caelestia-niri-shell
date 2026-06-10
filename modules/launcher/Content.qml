@@ -15,8 +15,6 @@ Item {
     required property var panels
     required property real maxHeight
 
-    readonly property alias searchField: search
-
     readonly property int padding: Tokens.padding.large
     readonly property int rounding: Tokens.rounding.extraLarge
 

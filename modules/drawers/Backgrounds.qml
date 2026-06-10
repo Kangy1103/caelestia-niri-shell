@@ -10,6 +10,7 @@ import qs.modules.utilities as Utilities
 import qs.modules.keybinds as Keybinds
 import qs.modules.sidebar as Sidebar
 import qs.modules.calendar as Calendar
+import qs.modules.clipboard as Clipboard
 import QtQuick
 import QtQuick.Shapes
 
@@ -93,6 +94,13 @@ Shape {
 
     Calendar.Background {
         wrapper: root.panels.calendar
+
+        startX: root.width
+        startY: root.height
+    }
+
+    Clipboard.Background {
+        wrapper: root.panels.clipboard
 
         startX: root.width
         startY: root.height
