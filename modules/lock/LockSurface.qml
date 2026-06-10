@@ -275,7 +275,7 @@ WlSessionLockSurface {
             anchors.right: parent.horizontalCenter
             anchors.rightMargin: centerWidth / 2 + Tokens.spacing.medium
 
-            width: Math.min(340, parent.width / 4)
+            width: Math.min(370, parent.width / 4)
             height: centerHeight
 
             radius: Tokens.rounding.large
@@ -321,7 +321,7 @@ WlSessionLockSurface {
             anchors.left: parent.horizontalCenter
             anchors.leftMargin: centerWidth / 2 + Tokens.spacing.medium
 
-            width: Math.min(340, parent.width / 4)
+            width: Math.min(370, parent.width / 4)
             height: centerHeight
 
             radius: Tokens.rounding.large
@@ -360,8 +360,9 @@ WlSessionLockSurface {
 
     // ── Main floating panel ────────────────────────────────────────────────────
 
-    readonly property real centerWidth: Tokens.sizes.lock.centerWidth * Math.min(1, (root.screen?.height ?? 1440) / 1440)
-    readonly property real centerHeight: Math.round(centerWidth * 1.43)
+    readonly property real centerFullWidth: Tokens.sizes.lock.centerWidth * Math.min(1, (root.screen?.height ?? 1440) / 1440)
+    readonly property real centerWidth: Math.round(centerFullWidth * 0.75)
+    readonly property real centerHeight: Math.round(centerFullWidth * 1.43)
 
     Item {
         id: lockContent
