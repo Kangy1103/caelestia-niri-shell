@@ -16,7 +16,6 @@ ColumnLayout {
     readonly property int centerWidth: Tokens.sizes.lock.centerWidth * centerScale
 
     Layout.preferredWidth: centerWidth
-    Layout.fillWidth: false
     Layout.fillHeight: true
 
     spacing: Tokens.spacing.largeIncreased

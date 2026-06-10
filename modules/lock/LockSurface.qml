@@ -278,7 +278,7 @@ WlSessionLockSurface {
             width: Math.min(370, parent.width / 4)
             height: centerHeight
 
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
@@ -324,7 +324,7 @@ WlSessionLockSurface {
             width: Math.min(370, parent.width / 4)
             height: centerHeight
 
-            radius: Tokens.rounding.large
+            radius: Tokens.rounding.extraLarge
             color: Colours.tPalette.m3surfaceContainer
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
