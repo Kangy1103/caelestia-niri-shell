@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
 import qs.components
 import qs.services
 import Caelestia.Config
@@ -28,8 +31,8 @@ ColumnLayout {
         visible: root.showLeft
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumHeight: Config.appearance.padding.largeIncreased * 4
-        Fetch {}
+        Layout.minimumHeight: Tokens.padding.largeIncreased * 4
+        Fetch { rootHeight: root.height }
     }
     Rectangle {
         visible: root.showLeft && media.implicitHeight > 0

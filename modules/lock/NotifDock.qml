@@ -1,14 +1,18 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
 pragma ComponentBehavior: Bound
 
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
+import Caelestia.Config
 import qs.components
 import qs.components.containers
 import qs.components.effects
 import qs.services
-import Caelestia.Config
-import Quickshell
-import Quickshell.Widgets
-import QtQuick
-import QtQuick.Layouts
+import qs.utils
 
 ColumnLayout {
     id: root
@@ -16,16 +20,15 @@ ColumnLayout {
     required property var lock
 
     anchors.fill: parent
-    anchors.margins: Config.appearance.padding.largeIncreased
+    anchors.margins: Tokens.padding.large
 
-    spacing: Config.appearance.spacing.medium
+    spacing: Tokens.spacing.medium
 
     StyledText {
         Layout.fillWidth: true
         text: Notifs.list.length > 0 ? qsTr("%1 notification%2").arg(Notifs.list.length).arg(Notifs.list.length === 1 ? "" : "s") : qsTr("Notifications")
         color: Colours.palette.m3outline
-        font.family: Config.appearance.font.mono.family
-        font.weight: 500
+        font: Tokens.font.mono.builders.small.weight(Font.Medium).build()
         elide: Text.ElideRight
     }
 
@@ -35,23 +38,23 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        radius: Config.appearance.rounding.small
+        radius: Tokens.rounding.medium
         color: "transparent"
 
         Loader {
-            anchors.centerIn: parent
             asynchronous: true
+            anchors.centerIn: parent
             active: opacity > 0
-            opacity: Notifs.list.length > 0 ? 0 : 1
+            opacity: Notifs.list.length > 0 && !Config.lock.hideNotifs ? 0 : 1
 
             sourceComponent: ColumnLayout {
-                spacing: Config.appearance.spacing.extraExtraLarge
+                spacing: Tokens.spacing.largeIncreased
 
                 Image {
                     asynchronous: true
-                    source: `file://${Quickshell.shellDir}/assets/dino.png`
+                    source: Paths.absolutePath(Config.paths.lockNoNotifsPic)
                     fillMode: Image.PreserveAspectFit
-                    sourceSize.width: clipRect.width * 0.8
+                    sourceSize.width: clipRect.width * 0.8 * ((QsWindow.window as QsWindow)?.devicePixelRatio ?? 1)
 
                     layer.enabled: true
                     layer.effect: Colouriser {
@@ -62,35 +65,37 @@ ColumnLayout {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("No Notifications")
+                    text: Config.lock.hideNotifs ? qsTr("Unlock for Notifications") : qsTr("No Notifications")
                     color: Colours.palette.m3outlineVariant
-                    font.pointSize: Config.appearance.font.title.medium.size
-                    font.family: Config.appearance.font.mono.family
-                    font.weight: 500
+                    font: Tokens.font.mono.builders.large.weight(Font.Medium).build()
                 }
             }
 
             Behavior on opacity {
                 Anim {
-                    duration: Config.appearance.anim.durations.extraLarge
+                    type: Anim.StandardExtraLarge
                 }
             }
         }
 
         StyledListView {
             anchors.fill: parent
-
-            spacing: Config.appearance.spacing.small
+            visible: !Config.lock.hideNotifs
+            spacing: Tokens.spacing.small
             clip: true
 
             model: ScriptModel {
-                values: Notifs.appNameList
+                values: {
+                    const list = Notifs.notClosed.map(n => [n.appName, null]);
+                    return [...new Map(list).keys()];
+                }
             }
 
             delegate: NotifGroup {}
 
             add: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     property: "opacity"
                     from: 0
                     to: 1
@@ -99,13 +104,12 @@ ColumnLayout {
                     property: "scale"
                     from: 0
                     to: 1
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                 }
             }
 
             remove: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     property: "opacity"
                     to: 0
                 }
@@ -117,25 +121,23 @@ ColumnLayout {
 
             move: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     properties: "opacity,scale"
                     to: 1
                 }
                 Anim {
                     property: "y"
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                 }
             }
 
             displaced: Transition {
                 Anim {
+                    type: Anim.DefaultEffects
                     properties: "opacity,scale"
                     to: 1
                 }
                 Anim {
                     property: "y"
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
                 }
             }
         }

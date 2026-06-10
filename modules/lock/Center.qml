@@ -1,502 +1,56 @@
-pragma ComponentBehavior: Bound
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
 
-import qs.components
-import qs.components.controls
-import qs.components.images
-import qs.services
-import Caelestia.Config
-import qs.utils
+import "center"
 import QtQuick
-import Quickshell.Io
 import QtQuick.Layouts
-import QtQuick.Effects
+import Caelestia.Config
+import qs.components
+import qs.services
 
-// Floating panel center content: clock + date + divider + avatar + input + status
 ColumnLayout {
     id: root
 
     required property var lock
+    readonly property real centerScale: Math.min(1, (lock.screen?.height ?? 1440) / 1440)
+    readonly property int centerWidth: Tokens.sizes.lock.centerWidth * centerScale
 
-    readonly property list<string> timeComponents: Time.format(Config.services.useTwelveHourClock ? "hh:mm:A" : "hh:mm").split(":")
-    readonly property real panelScale: Math.min(1, (lock.screen?.height ?? 1080) / 1080)
+    Layout.preferredWidth: centerWidth
+    Layout.fillWidth: false
+    Layout.fillHeight: true
 
-    spacing: 0
+    spacing: Tokens.spacing.largeIncreased
 
-    // Top flex spacer (1 part) — upper breathing room
-    Item {
-        Layout.fillHeight: true
-        Layout.preferredHeight: 1
+    Clock {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: Tokens.padding.large
+        centerScale: root.centerScale
     }
 
-    // ── Clock ──────────────────────────────────────────────────────────────────
-    Item {
-        Layout.fillWidth: true
-        implicitHeight: clockRow.implicitHeight
-
-        RowLayout {
-            id: clockRow
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: Config.appearance.spacing.extraSmall
-
-            StyledText {
-                text: root.timeComponents[0]
-                color: Colours.palette.m3onSurface
-                font.pointSize: Math.floor(Config.appearance.font.headline.large.size * 2.8 * root.panelScale)
-                font.family: Config.appearance.font.clock
-                font.weight: Font.Bold
-            }
-
-            // Blinking colon — synced to wall-clock seconds
-            StyledText {
-                id: colonText
-                text: ":"
-                color: Colours.palette.m3primary
-                font.pointSize: Math.floor(Config.appearance.font.headline.large.size * 2.8 * root.panelScale)
-                font.family: Config.appearance.font.clock
-                font.weight: Font.Bold
-                opacity: 1
-
-                Connections {
-                    target: Time
-                    function onSecondsChanged(): void {
-                        colonText.opacity = 1;
-                        colonFadeOut.restart();
-                    }
-                }
-
-                SequentialAnimation {
-                    id: colonFadeOut
-                    PauseAnimation { duration: 300 }
-                    Anim { target: colonText; property: "opacity"; to: 0.25; duration: 300; easing.type: Easing.InOutSine }
-                    PauseAnimation { duration: 100 }
-                    Anim { target: colonText; property: "opacity"; to: 1; duration: 300; easing.type: Easing.InOutSine }
-                }
-            }
-
-            StyledText {
-                text: root.timeComponents[1]
-                color: Colours.palette.m3onSurface
-                font.pointSize: Math.floor(Config.appearance.font.headline.large.size * 2.8 * root.panelScale)
-                font.family: Config.appearance.font.clock
-                font.weight: Font.Bold
-            }
-
-            // AM/PM badge
-            Loader {
-                Layout.leftMargin: Config.appearance.spacing.small
-                Layout.alignment: Qt.AlignVCenter
-
-                asynchronous: true
-                active: Config.services.useTwelveHourClock
-                visible: active
-
-                sourceComponent: StyledRect {
-                    implicitWidth: amPmLabel.implicitWidth + Config.appearance.padding.small * 2
-                    implicitHeight: amPmLabel.implicitHeight + Config.appearance.padding.extraSmall
-
-                    radius: Config.appearance.rounding.small
-                    color: Qt.alpha(Colours.palette.m3secondaryContainer, 0.7)
-
-                    StyledText {
-                        id: amPmLabel
-                        anchors.centerIn: parent
-                        text: root.timeComponents[2] ?? ""
-                        color: Colours.palette.m3onSecondaryContainer
-                        font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
-                        font.family: Config.appearance.font.clock
-                        font.weight: Font.DemiBold
-                    }
-                }
-            }
-        }
-    }
-
-    // Date
     StyledText {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Config.appearance.spacing.extraSmall
 
-        text: Time.format("dddd, d MMMM yyyy")
-        color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Math.floor(Config.appearance.font.body.medium.size * root.panelScale)
-        font.family: Config.appearance.font.mono.family
+        text: Time.format("dddd • d MMM").toUpperCase()
+        color: Colours.palette.m3onSurface
+        font: Tokens.font.title.builders.medium.weight(Font.DemiBold).build()
     }
 
-    // Gradient divider — fades at edges for a refined look
-    Rectangle {
-        Layout.fillWidth: true
-        Layout.topMargin: Config.appearance.spacing.medium
-        Layout.bottomMargin: Config.appearance.spacing.medium
-        Layout.leftMargin: Config.appearance.padding.largeIncreased
-        Layout.rightMargin: Config.appearance.padding.largeIncreased
-        height: 1
-        color: "transparent"
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-            GradientStop { position: 0.0;  color: "transparent" }
-            GradientStop { position: 0.15; color: Qt.alpha(Colours.palette.m3outlineVariant, 0.6) }
-            GradientStop { position: 0.85; color: Qt.alpha(Colours.palette.m3outlineVariant, 0.6) }
-            GradientStop { position: 1.0;  color: "transparent" }
-        }
-    }
-
-    // ── Avatar ─────────────────────────────────────────────────────────────────
-    Item {
+    ProfilePic {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Config.appearance.spacing.large
-        implicitWidth: avatarSize
-        implicitHeight: avatarSize
-
-        readonly property int avatarSize: Math.round(96 * root.panelScale)
-
-        // Circular avatar background
-        StyledRect {
-            anchors.fill: parent
-            radius: Config.appearance.rounding.full
-            color: Qt.alpha(Colours.palette.m3secondaryContainer, 0.55)
-        }
-
-        // Accent ring
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: -3
-            radius: Config.appearance.rounding.full
-            color: "transparent"
-            border.width: 2
-            border.color: Qt.alpha(Colours.palette.m3primary, 0.45)
-        }
-
-        StyledClippingRect {
-            anchors.fill: parent
-            radius: Config.appearance.rounding.full
-            color: "transparent"
-
-            MaterialIcon {
-                anchors.centerIn: parent
-                text: "person"
-                color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.size(Math.max(1, Math.floor(parent.width * 0.45))).build()
-}
-
-            CachingImage {
-                id: pfp
-                anchors.fill: parent
-                path: `${Paths.home}/.face`
-            }
-
-            CachingImage {
-                id: wallpaperFallback
-                anchors.fill: parent
-                path: Wallpapers.getColorSource(Wallpapers.current)
-                visible: pfp.status !== Image.Ready && Config.dashboard.useWallpaperAvatar
-            }
-        }
+        Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
+        Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
+        centerWidth: root.centerWidth
     }
 
-    // Username hint
-    StyledText {
+    PasswordInput {
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Config.appearance.spacing.small
-
-        text: SysInfo.user
-        color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Math.floor(Config.appearance.font.body.medium.size * root.panelScale)
-        font.weight: Font.Medium
+        centerScale: Math.max(0.8, root.centerScale)
+        centerWidth: root.centerWidth
+        lock: root.lock
     }
 
-    // ── Password input ─────────────────────────────────────────────────────────
-
-    // Input bar: fprint icon │ dots │ enter button
-    StyledRect {
-        id: inputBar
+    StateMessage {
         Layout.fillWidth: true
-        Layout.topMargin: Config.appearance.spacing.medium
-        Layout.leftMargin: Config.appearance.padding.large
-        Layout.rightMargin: Config.appearance.padding.large
-        implicitHeight: inputRow.implicitHeight + Config.appearance.padding.small * 2
-
-        color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.75)
-        radius: Config.appearance.rounding.full
-        border.width: activeFocus ? 2 : 0
-        border.color: Colours.palette.m3primary
-
-        CAnim { properties: "color,border.width" }
-
-        // Keyboard focus receiver
-        focus: true
-        onActiveFocusChanged: {
-            if (!activeFocus && !root.lock.unlocking)
-                forceActiveFocus();
-        }
-
-        Keys.onPressed: event => {
-            if (root.lock.unlocking)
-                return;
-
-            if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
-                inputField.placeholder.animate = false;
-
-            root.lock.pam.handleKey(event);
-        }
-
-        StateLayer {
-            hoverEnabled: false
-            cursorShape: Qt.IBeamCursor
-            onClicked: {
-                parent.forceActiveFocus();
-            }
-        }
-
-        RowLayout {
-            id: inputRow
-
-            anchors.fill: parent
-            anchors.margins: Config.appearance.padding.small
-            spacing: Config.appearance.spacing.medium
-
-            // Fprint / busy indicator
-            Item {
-                implicitWidth: implicitHeight
-                implicitHeight: fprintIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
-
-                MaterialIcon {
-                    id: fprintIcon
-
-                    anchors.centerIn: parent
-                    animate: true
-                    text: {
-                        if (root.lock.pam.fprint.tries >= Config.lock.maxFprintTries)
-                            return "fingerprint_off";
-                        if (root.lock.pam.fprint.active)
-                            return "fingerprint";
-                        return "lock";
-                    }
-                    color: root.lock.pam.fprint.tries >= Config.lock.maxFprintTries
-                        ? Colours.palette.m3error
-                        : root.lock.pam.fprint.active
-                            ? Colours.palette.m3secondary
-                            : Colours.palette.m3onSurfaceVariant
-                    opacity: root.lock.pam.passwd.active ? 0 : 1
-
-                    Behavior on opacity { Anim {} }
-                }
-
-                StyledBusyIndicator {
-                    anchors.fill: parent
-                    running: root.lock.pam.passwd.active
-                }
-            }
-
-            InputField {
-                id: inputField
-                Layout.fillWidth: true
-                pam: root.lock.pam
-            }
-
-            // Enter / submit button
-            StyledRect {
-                implicitWidth: implicitHeight
-                implicitHeight: enterIcon.implicitHeight + Config.appearance.padding.small * 2
-
-                color: root.lock.pam.buffer
-                    ? Colours.palette.m3primary
-                    : Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.8)
-                radius: Config.appearance.rounding.full
-
-                CAnim { properties: "color" }
-
-                StateLayer {
-                    color: root.lock.pam.buffer
-                        ? Colours.palette.m3onPrimary
-                        : Colours.palette.m3onSurface
-
-                    onClicked: {
-                        root.lock.pam.passwd.start();
-                    }
-                }
-
-                MaterialIcon {
-                    id: enterIcon
-                    anchors.centerIn: parent
-                    text: "arrow_forward"
-                    color: root.lock.pam.buffer
-                        ? Colours.palette.m3onPrimary
-                        : Colours.palette.m3onSurface
-                    font.weight: 500
-
-                    CAnim { properties: "color" }
-                }
-            }
-        }
-    }
-
-    // ── Status messages ────────────────────────────────────────────────────────
-    readonly property bool isCapsLock: Niri.capsLock
-
-    Item {
-        Layout.fillWidth: true
-        Layout.topMargin: Config.appearance.spacing.small
-        Layout.bottomMargin: Config.appearance.spacing.small
-        Layout.leftMargin: Config.appearance.padding.large
-        Layout.rightMargin: Config.appearance.padding.large
-
-        implicitHeight: Math.max(stateMessage.implicitHeight, errorMessage.implicitHeight)
-
-        Behavior on implicitHeight { Anim {} }
-
-        // Caps lock / layout indicator
-        StyledText {
-            id: stateMessage
-
-            readonly property string msg: {
-                let layoutName = (Niri.kbLayoutFull ?? Niri.kbLayout);
-                if (root.isCapsLock)
-                    return qsTr("Caps lock ON · Layout: %1").arg(layoutName);
-                if (Niri.kbLayout !== Niri.defaultKbLayout)
-                    return qsTr("Layout: %1").arg(layoutName);
-                return "";
-            }
-
-            property bool shouldBeVisible
-
-            onMsgChanged: {
-                if (msg) {
-                    if (opacity > 0) {
-                        animate = true;
-                        text = msg;
-                        animate = false;
-                    } else {
-                        text = msg;
-                    }
-                    shouldBeVisible = true;
-                } else {
-                    shouldBeVisible = false;
-                }
-            }
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            opacity: shouldBeVisible && !errorMessage.msg ? 0.8 : 0
-            color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
-            font.family: Config.appearance.font.mono.family
-            horizontalAlignment: Qt.AlignHCenter
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-
-            Behavior on opacity { Anim {} }
-        }
-
-        // Auth error / PAM message
-        StyledText {
-            id: errorMessage
-
-            readonly property Pam pam: root.lock.pam
-            readonly property string msg: {
-                if (pam.fprintState === "error")
-                    return qsTr("Error: %1").arg(pam.fprint.message);
-                if (pam.state === "error")
-                    return qsTr("Error: %1").arg(pam.passwd.message);
-                if (pam.lockMessage)
-                    return pam.lockMessage;
-                if (pam.state === "max" && pam.fprintState === "max")
-                    return qsTr("Maximum attempts reached.");
-                if (pam.state === "max")
-                    return pam.fprint.available
-                        ? qsTr("Max password attempts. Use fingerprint.")
-                        : qsTr("Maximum password attempts reached.");
-                if (pam.fprintState === "max")
-                    return qsTr("Max fingerprint attempts. Use password.");
-                if (pam.state === "fail")
-                    return pam.fprint.available
-                        ? qsTr("Wrong password. Try again or use fingerprint.")
-                        : qsTr("Incorrect password. Please try again.");
-                if (pam.fprintState === "fail")
-                    return qsTr("Fingerprint not recognized (%1/%2).").arg(pam.fprint.tries).arg(Config.lock.maxFprintTries);
-                return "";
-            }
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            opacity: 0
-            color: Colours.palette.m3error
-
-            font.pointSize: Math.floor(Config.appearance.font.label.large.size * root.panelScale)
-            font.family: Config.appearance.font.mono.family
-            horizontalAlignment: Qt.AlignHCenter
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-
-            onMsgChanged: {
-                if (msg) {
-                    if (opacity > 0) {
-                        animate = true;
-                        text = msg;
-                        animate = false;
-                        exitAnim.stop();
-                        if (opacity < 1)
-                            appearAnim.restart();
-                        else
-                            flashAnim.restart();
-                    } else {
-                        text = msg;
-                        exitAnim.stop();
-                        appearAnim.restart();
-                    }
-                } else {
-                    appearAnim.stop();
-                    flashAnim.stop();
-                    exitAnim.start();
-                }
-            }
-
-            Connections {
-                target: root.lock.pam
-                function onFlashMsg(): void {
-                    exitAnim.stop();
-                    if (errorMessage.opacity < 1)
-                        appearAnim.restart();
-                    else
-                        flashAnim.restart();
-                }
-            }
-
-            Anim {
-                id: appearAnim
-                target: errorMessage
-                property: "opacity"
-                to: 1
-                onFinished: flashAnim.restart()
-            }
-
-            SequentialAnimation {
-                id: flashAnim
-                loops: 2
-                FlashAnim { to: 0.35 }
-                FlashAnim { to: 1 }
-            }
-
-            Anim {
-                id: exitAnim
-                target: errorMessage
-                property: "opacity"
-                to: 0
-                duration: Config.appearance.anim.durations.large
-            }
-        }
-    }
-
-    component FlashAnim: NumberAnimation {
-        target: errorMessage
-        property: "opacity"
-        duration: Config.appearance.anim.durations.small
-        easing.type: Easing.Linear
-    }
-
-    // Bottom flex spacer (2 parts) — keeps status messages above the floor
-    Item {
-        Layout.fillHeight: true
-        Layout.preferredHeight: 2
+        pam: root.lock.pam
     }
 }
-

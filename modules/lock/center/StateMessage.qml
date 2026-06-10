@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
@@ -42,21 +45,21 @@ Item {
     }
 
     readonly property string stateMsg: {
-        if (Hypr.kbLayout !== Hypr.defaultKbLayout) {
-            if (Hypr.capsLock && Hypr.numLock)
-                return qsTr("Caps lock and Num lock are ON.\nKeyboard layout: %1").arg(Hypr.kbLayoutFull);
-            if (Hypr.capsLock)
-                return qsTr("Caps lock is ON. Kb layout: %1").arg(Hypr.kbLayoutFull);
-            if (Hypr.numLock)
-                return qsTr("Num lock is ON. Kb layout: %1").arg(Hypr.kbLayoutFull);
-            return qsTr("Keyboard layout: %1").arg(Hypr.kbLayoutFull);
+        if (Niri.kbLayout !== Niri.defaultKbLayout) {
+            if (Niri.capsLock && Niri.numLock)
+                return qsTr("Caps lock and Num lock are ON.\nKeyboard layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+            if (Niri.capsLock)
+                return qsTr("Caps lock is ON. Kb layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+            if (Niri.numLock)
+                return qsTr("Num lock is ON. Kb layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+            return qsTr("Keyboard layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
         }
 
-        if (Hypr.capsLock && Hypr.numLock)
+        if (Niri.capsLock && Niri.numLock)
             return qsTr("Caps lock and Num lock are ON.");
-        if (Hypr.capsLock)
+        if (Niri.capsLock)
             return qsTr("Caps lock is ON.");
-        if (Hypr.numLock)
+        if (Niri.numLock)
             return qsTr("Num lock is ON.");
 
         return "";

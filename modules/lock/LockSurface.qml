@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
 pragma ComponentBehavior: Bound
 
 import qs.components
@@ -15,13 +18,14 @@ WlSessionLockSurface {
 
     readonly property alias unlocking: unlockAnim.running
 
-    // Floating panel geometry — narrow vertical card
     readonly property real panelScale: Math.min(1, (root.screen?.height ?? 1080) / 1080)
     readonly property int panelWidth: Math.round(420 * panelScale)
     readonly property int panelHeight: Math.round(600 * panelScale)
     readonly property int panelRadius: Config.appearance.rounding.large * 1.5
 
     color: "transparent"
+    contentItem.Config.screen: screen.name
+    contentItem.Tokens.screen: screen.name
 
     Connections {
         target: root.lock
@@ -31,7 +35,6 @@ WlSessionLockSurface {
         }
     }
 
-    // Unlock: shrink panel back to icon → release session lock
     SequentialAnimation {
         id: unlockAnim
 
@@ -40,44 +43,41 @@ WlSessionLockSurface {
                 target: lockContent
                 properties: "implicitWidth,implicitHeight"
                 to: lockContent.iconSize
-                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                type: Anim.DefaultSpatial
             }
             Anim {
                 target: lockBg
                 property: "radius"
-                to: lockContent.iconSize / 4 * Config.appearance.rounding.scale
-                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                to: lockContent.iconSize / 4 * Tokens.rounding.scale
+                type: Anim.DefaultSpatial
             }
             Anim {
                 target: centerPanel
                 property: "scale"
                 to: 0
-                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                type: Anim.DefaultSpatial
             }
             Anim {
                 target: centerPanel
                 property: "opacity"
                 to: 0
-                duration: Config.appearance.anim.durations.small
+                type: Anim.StandardSmall
             }
             Anim {
                 target: lockIcon
                 property: "opacity"
                 to: 1
-                duration: Config.appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
             Anim {
                 target: background
                 property: "opacity"
                 to: 0
-                duration: Config.appearance.anim.durations.large
+                type: Anim.StandardLarge
             }
             SequentialAnimation {
                 PauseAnimation {
-                    duration: Config.appearance.anim.durations.small
+                    duration: Tokens.anim.durations.small
                 }
                 Anim {
                     target: lockContent
@@ -93,7 +93,6 @@ WlSessionLockSurface {
         }
     }
 
-    // Init: spin icon → expand to floating panel
     ParallelAnimation {
         id: initAnim
 
@@ -103,13 +102,13 @@ WlSessionLockSurface {
             target: background
             property: "opacity"
             to: 1
-            duration: Config.appearance.anim.durations.large
+            type: Anim.StandardLarge
         }
         Anim {
             target: wallpaperFallback
             property: "opacity"
             to: 0
-            duration: Config.appearance.anim.durations.large
+            type: Anim.StandardLarge
         }
         SequentialAnimation {
             ParallelAnimation {
@@ -117,15 +116,13 @@ WlSessionLockSurface {
                     target: lockContent
                     property: "scale"
                     to: 1
-                    duration: Config.appearance.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveFastSpatial
+                    type: Anim.FastSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "rotation"
                     to: 360
-                    duration: Config.appearance.anim.durations.expressiveFastSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.standardAccel
+                    type: Anim.FastSpatial
                 }
             }
             ParallelAnimation {
@@ -149,37 +146,30 @@ WlSessionLockSurface {
                     target: centerPanel
                     property: "scale"
                     to: 1
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockBg
                     property: "radius"
                     to: root.panelRadius
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
                     to: root.panelWidth
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
                     to: root.panelHeight
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                    type: Anim.DefaultSpatial
                 }
             }
         }
     }
 
-    // ── Background layers ──────────────────────────────────────────────────────
-
-    // Layer 0: solid surface color fallback
     Rectangle {
         id: solidFallback
         anchors.fill: parent
@@ -187,7 +177,6 @@ WlSessionLockSurface {
         z: 0
     }
 
-    // Layer 1: blurred wallpaper image (fades out when live screencopy is ready)
     Image {
         id: wallpaperFallback
         anchors.fill: parent
@@ -219,7 +208,6 @@ WlSessionLockSurface {
         }
     }
 
-    // Layer 2: live screen capture with heavy blur
     ScreencopyView {
         id: background
 
@@ -238,7 +226,6 @@ WlSessionLockSurface {
         }
     }
 
-    // Layer 3: subtle dark scrim — deepens blur contrast so the panel pops
     Rectangle {
         id: dimScrim
         anchors.fill: parent
@@ -246,7 +233,6 @@ WlSessionLockSurface {
         color: Qt.alpha("#000000", 0.2)
     }
 
-    // ── Optional flanking side panels (showExtras) ─────────────────────────────
     Item {
         id: extrasLayer
         anchors.fill: parent
@@ -262,23 +248,21 @@ WlSessionLockSurface {
                 target: extrasLayer
                 property: "opacity"
                 to: 1
-                duration: Config.appearance.anim.durations.normal
+                type: Anim.Standard
             }
             Anim {
                 target: leftPanel
                 property: "x"
-                from: Config.appearance.spacing.extraExtraLarge
+                from: Tokens.spacing.extraExtraLarge
                 to: 0
-                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                type: Anim.DefaultSpatial
             }
             Anim {
                 target: rightPanel
                 property: "x"
-                from: -Config.appearance.spacing.extraExtraLarge
+                from: -Tokens.spacing.extraExtraLarge
                 to: 0
-                duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                type: Anim.DefaultSpatial
             }
         }
 
@@ -289,18 +273,17 @@ WlSessionLockSurface {
             }
         }
 
-        // Left extras card (weather + fetch + media)
         StyledRect {
             id: leftPanel
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.horizontalCenter
-            anchors.rightMargin: root.panelWidth / 2 + Config.appearance.spacing.extraExtraLarge * 2
+            anchors.rightMargin: root.panelWidth / 2 + Tokens.spacing.extraExtraLarge * 2
 
             width: Math.min(Math.round(300 * root.panelScale), parent.width / 4)
             height: root.panelHeight
 
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
@@ -322,18 +305,17 @@ WlSessionLockSurface {
             }
         }
 
-        // Right extras card (resources + notifications)
         StyledRect {
             id: rightPanel
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.horizontalCenter
-            anchors.leftMargin: root.panelWidth / 2 + Config.appearance.spacing.extraExtraLarge * 2
+            anchors.leftMargin: root.panelWidth / 2 + Tokens.spacing.extraExtraLarge * 2
 
             width: Math.min(Math.round(300 * root.panelScale), parent.width / 4)
             height: root.panelHeight
 
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
@@ -356,11 +338,10 @@ WlSessionLockSurface {
         }
     }
 
-    // ── Main floating panel ────────────────────────────────────────────────────
     Item {
         id: lockContent
 
-        readonly property int iconSize: lockIcon.implicitHeight + Config.appearance.padding.largeIncreased * 4
+        readonly property int iconSize: lockIcon.implicitHeight + Tokens.padding.largeIncreased * 4
 
         anchors.centerIn: parent
         implicitWidth: iconSize
@@ -370,13 +351,12 @@ WlSessionLockSurface {
         rotation: 180
         scale: 0
 
-        // Frosted glass surface card
         StyledRect {
             id: lockBg
 
             anchors.fill: parent
             color: Colours.palette.m3surfaceContainer
-            radius: lockContent.iconSize / 4 * Config.appearance.rounding.scale
+            radius: lockContent.iconSize / 4 * Tokens.rounding.scale
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
             layer.enabled: true
@@ -390,7 +370,6 @@ WlSessionLockSurface {
             }
         }
 
-        // Subtle inner border for depth
         Rectangle {
             anchors.fill: parent
             radius: lockBg.radius
@@ -400,7 +379,6 @@ WlSessionLockSurface {
             z: 1
         }
 
-        // Lock icon shown during spin-up / unlock animation
         MaterialIcon {
             id: lockIcon
 
@@ -408,15 +386,14 @@ WlSessionLockSurface {
             text: "lock"
             color: Colours.palette.m3primary
             fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 4).weight(Font.Bold).build()
-rotation: 180
+            rotation: 180
         }
 
-        // Center content (clock + avatar + password)
         Center {
             id: centerPanel
 
             anchors.fill: parent
-            anchors.margins: Config.appearance.padding.largeIncreased
+            anchors.margins: Tokens.padding.largeIncreased
 
             lock: root
             opacity: 0
