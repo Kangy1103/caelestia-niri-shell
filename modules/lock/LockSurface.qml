@@ -103,12 +103,6 @@ WlSessionLockSurface {
 
         running: root.isTargetScreen
 
-        Anim {
-            target: background
-            property: "opacity"
-            to: 1
-            type: Anim.StandardLarge
-        }
         SequentialAnimation {
             ParallelAnimation {
                 Anim {
@@ -185,7 +179,9 @@ WlSessionLockSurface {
         opacity: 0
         z: 2
 
-        layer.enabled: true
+        Component.onCompleted: opacity = 1
+
+        Behavior on opacity {
         layer.effect: MultiEffect {
             autoPaddingEnabled: false
             blurEnabled: true
