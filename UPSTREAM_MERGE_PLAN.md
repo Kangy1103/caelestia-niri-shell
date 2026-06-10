@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.6.2-20260609
+Version: 0.7.0-20260610
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -1039,3 +1039,43 @@ modules/controlcenter/components/WallpaperGrid.qml
 modules/launcher/EmojiList.qml
 components/widgets/WindowDecorations.qml
 ```
+
+### Config key fallbacks — NaN layout crashes ✅ Fixed (2026-06-10)
+
+Several config keys were deleted in Phase 2 (C++ Config migration) but consumers weren't updated with fallbacks. Undefined values propagated to `implicitWidth`/`implicitHeight`/anchors, producing `NaN` and collapsing layouts.
+
+| Key | Used in | Fallback | Effect |
+|-----|---------|----------|--------|
+| `TokenConfig.sizes.dashboard.mediaVisualiserSize` | `Media.qml` root `implicitWidth`/`implicitHeight`, cover `anchors.leftMargin` | `|| 0` | NaN → RowLayout collapse, dashboard transparent |
+| `TokenConfig.sizes.dashboard.mediaIconSize` | `Media.qml` `PlayerIcon` | `|| 48` | `undefined` assign to double warnings |
+| `TokenConfig.sizes.dashboard.resourceProgessThickness` | `Resources.qml` progress bar | `?? 8` | `undefined` assign to double warnings |
+| `Config.dashboard.toggles.*` (showWifi, showBluetooth, etc.) | `QuickToggles.qml` `visible` bindings | `?. ?? true` | `undefined` assigned to bool warnings |
+
+### CUtils.clamp — stale installed plugin ✅ Fixed (2026-06-10)
+
+`CUtils.clamp` worked in the built `.so` but the installed copy was stale. `cmake --install` compared timestamps and marked `libcaelestia.so` and `caelestia.qmltypes` as "Up-to-date" — never overwriting them. The QML engine reads `qmltypes` to resolve methods; without `clamp` listed, it threw `is not a function`.
+
+**Fix:** Manually installed `libcaelestia.so` and `caelestia.qmltypes` from build directory. Same issue affected all Phase 1 C++ changes — any `touch`/rebuild must be followed by explicit install since cmake timestamp checks are unreliable.
+
+### Dashboard Media tab — visualiser/BeatTracker/bongocat ✅ Fixed (2026-06-10)
+
+When the Media pane Loader activated, multiple issues cascaded:
+1. `CavaProvider` (`Cava.values`) not started — `ServiceRef` disabled, no `ref()` call. `Cava.values[modelData]` returned `undefined` → visualiser bars rendered NaN geometry
+2. `BeatTracker.bpm` — ServiceRef disabled, type not creatable under Qt 6.11
+3. `visualiser.width`/`visualiser.height`/`visualiser.right` — dead references after visualiser commented out (bongocat + details anchors)
+
+**Fix:** Visualiser + ServiceRef instances commented out. `visualiserSize` property with `|| 0` fallback. Details anchor `visualiser.right` → `cover.right`. Bongocat dimensions → parent-relative. `bongoSpeed` hardcoded to 0.5.
+
+### Album art quality — FadeImage sourceSize + YouTube resolution ✅ Fixed (2026-06-10)
+
+**FadeImage sourceSize:** `sourceSize: Qt.size(width * dpr, height * dpr)` downscaled album art to component pixel dimensions before render. On high-DPI displays with DPR detection failure, this halved the effective resolution. Removed `sourceSize`; added `mipmap: true` + `smooth: true` for GPU-native scaling.
+
+**YouTube thumbnails:** `hqdefault.jpg` (480×360) → `maxresdefault.jpg` (1280×720). YouTube URL now checked before `trackArtUrl` to prevent MPRIS metadata updates from overwriting with lower-res player thumbnail.
+
+### Upstream issues matching our Qt 6.11 deferred items (2026-06-09)
+
+| Issue | Status | Relevance |
+|-------|--------|-----------|
+| [#1483](https://github.com/caelestia-dots/shell/issues/1483) — PipeWireWorker deadlock on libpipewire 1.6.5 | Open | Same distro, same Qt. `CavaProvider`/`BeatTracker` destruction hangs. |
+| [#1442](https://github.com/caelestia-dots/shell/issues/1442) — QQuickPropertyChanges SIGSEGV on Qt 6.11 | Open | Qt 6.11 QML engine crash. |
+| [#1401](https://github.com/caelestia-dots/shell/issues/1401) — "Unavailable Types" after PR 1392 | Closed | Similar pattern to our BeatTracker "not creatable." |
