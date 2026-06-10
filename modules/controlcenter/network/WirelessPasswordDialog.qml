@@ -240,7 +240,7 @@ Item {
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
 
-                    function onClicked(): void {
+                    onClicked: {
                         passwordContainer.forceActiveFocus();
                     }
                 }

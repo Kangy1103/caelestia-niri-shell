@@ -243,7 +243,7 @@ Item {
                     disabled: !Players.active?.canTogglePlaying
                     color: Players.active?.isPlaying ? Colours.palette.m3onPrimary : Colours.palette.m3onPrimaryContainer
 
-                    function onClicked(): void {
+                    onClicked: {
                         Players.active?.togglePlaying();
                     }
                 }
@@ -378,7 +378,7 @@ Item {
                 StateLayer {
                     disabled: playerSelector.expanded
 
-                    function onClicked(): void {
+                    onClicked: {
                         playerSelector.expanded = !playerSelector.expanded;
                     }
                 }
@@ -489,7 +489,7 @@ Behavior on rotation {
                             color: modelData === Players.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
                             disabled: !playerSelector.expanded
 
-                            function onClicked(): void {
+                            onClicked: {
                                 playerSelector.expanded = false;
                                 Players.manualActive = playerItem.modelData;
                             }
@@ -615,7 +615,7 @@ text: player ? "animated_images" : "music_off"
             disabled: !control.canUse
             color: Colours.palette.m3onSurface
 
-            function onClicked(): void {
+            onClicked: {
                 control.onClicked();
             }
         }

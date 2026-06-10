@@ -160,7 +160,7 @@ StyledRect {
                     StateLayer {
                         color: root.urgency === "critical" ? Colours.palette.m3onError : Colours.palette.m3onSurface
 
-                        function onClicked(): void {
+                        onClicked: {
                             root.expanded = !root.expanded;
                         }
                     }

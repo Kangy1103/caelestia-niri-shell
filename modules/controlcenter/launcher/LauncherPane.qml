@@ -326,7 +326,7 @@ Item {
                             }
 
                             StateLayer {
-                                function onClicked(): void {
+                                onClicked: {
                                     root.session.launcher.active = modelData;
                                 }
                             }

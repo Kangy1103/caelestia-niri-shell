@@ -78,7 +78,7 @@ Row {
                 StateLayer {
                     color: Colours.palette.m3onPrimary
 
-                    function onClicked(): void {
+                    onClicked: {
                         root.visibilities.launcher = false;
                         root.state.facePicker.open();
                     }

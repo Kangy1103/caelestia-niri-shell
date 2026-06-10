@@ -408,7 +408,7 @@ StyledRect {
                     radius: Config.appearance.rounding.full
                     color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
-                    function onClicked() {
+                    onClicked: {
                         root.expanded = !root.expanded;
                     }
                 }
@@ -451,7 +451,7 @@ StyledRect {
                         radius: Config.appearance.rounding.full
                         color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
 
-                        function onClicked(): void {
+                        onClicked: {
                             Notifs.attemptInvokeAction(root.modelData.notificationId, root.modelData.actions[0].identifier);
                         }
                     }
@@ -606,7 +606,7 @@ StyledRect {
                     radius: Config.appearance.rounding.full
                     color: Colours.palette.m3onSecondaryContainer
 
-                    function onClicked(): void {
+                    onClicked: {
                         root.undoDismiss();
                     }
                 }
@@ -642,7 +642,7 @@ StyledRect {
             radius: Config.appearance.rounding.full
             color: root.modelData.urgency === NotificationUrgency.Critical ? Colours.palette.m3onSecondary : Colours.palette.m3onSurface
 
-            function onClicked(): void {
+            onClicked: {
                 // Route through service if this is a real notification action
                 // (has identifier); otherwise call invoke() directly (e.g. Close button)
                 if (action.modelData.identifier !== undefined && action.modelData.identifier !== "")

@@ -208,7 +208,7 @@ Column {
             radius: Config.appearance.rounding.full
             color: profiles.current === parent.icon ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
 
-            function onClicked(): void {
+            onClicked: {
                 PowerProfiles.profile = parent.profile;
             }
         }

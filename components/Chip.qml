@@ -26,7 +26,7 @@ StyledRect {
         radius: root.radius
         color: selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
-        function onClicked(): void {
+        onClicked: {
             root.clicked();
         }
     }

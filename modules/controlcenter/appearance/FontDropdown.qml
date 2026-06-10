@@ -35,7 +35,7 @@ ColumnLayout {
         Behavior on border.color { CAnim {} }
 
         StateLayer {
-            function onClicked(): void {
+            onClicked: {
                 root.expanded = !root.expanded;
             }
         }
@@ -178,7 +178,7 @@ color: Colours.palette.m3onSurfaceVariant
                     color: isCurrent ? Colours.palette.m3secondaryContainer : "transparent"
 
                     StateLayer {
-                        function onClicked(): void {
+                        onClicked: {
                             root.fontSelected(modelData);
                             root.expanded = false;
                             searchField.text = "";

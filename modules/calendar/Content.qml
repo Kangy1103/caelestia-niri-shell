@@ -53,7 +53,7 @@ Item {
                 StateLayer {
                     radius: Config.appearance.rounding.full
 
-                    function onClicked(): void {
+                    onClicked: {
                         currentDate = new Date(currYear, currMonth - 1, 1);
                     }
                 }
@@ -82,7 +82,7 @@ Item {
                         return currMonth === now.getMonth() && currYear === now.getFullYear();
                     }
 
-                    function onClicked(): void {
+                    onClicked: {
                         currentDate = new Date();
                         selectedDate = new Date();
                     }
@@ -106,7 +106,7 @@ Item {
                 StateLayer {
                     radius: Config.appearance.rounding.full
 
-                    function onClicked(): void {
+                    onClicked: {
                         currentDate = new Date(currYear, currMonth + 1, 1);
                     }
                 }
@@ -174,7 +174,7 @@ Item {
                         anchors.fill: parent
                         radius: Config.appearance.rounding.full
 
-                        function onClicked(): void {
+                        onClicked: {
                             root.selectedDate = new Date(model.year, model.month, model.day);
                         }
                     }

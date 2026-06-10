@@ -38,7 +38,7 @@ Item {
     StateLayer {
         radius: Config.appearance.rounding.full
 
-        function onClicked(): void {
+        onClicked: {
             root.onClicked();
         }
     }
@@ -92,7 +92,7 @@ Layout.alignment: Qt.AlignVCenter
             StateLayer {
                 color: Colours.palette.m3onTertiary
 
-                function onClicked(): void {
+                onClicked: {
                     root.onClicked();
                 }
             }

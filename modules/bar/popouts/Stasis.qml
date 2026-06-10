@@ -60,7 +60,7 @@ Column {
         color: stasisState === "manually_inhibited" ? Colours.palette.m3tertiary : Colours.palette.m3primary
 
         StateLayer {
-            function onClicked(): void {
+            onClicked: {
                 Quickshell.execDetached(["stasis", "toggle-inhibit"]);
             }
         }
@@ -89,7 +89,7 @@ Column {
             : Colours.tPalette.m3surfaceContainer
 
         StateLayer {
-            function onClicked(): void {
+            onClicked: {
                 Quickshell.execDetached(["stasis", "profile", "default"]);
             }
         }
@@ -114,7 +114,7 @@ Column {
             : Colours.tPalette.m3surfaceContainer
 
         StateLayer {
-            function onClicked(): void {
+            onClicked: {
                 Quickshell.execDetached(["stasis", "profile", "gaming"]);
             }
         }
@@ -139,7 +139,7 @@ Column {
             : Colours.tPalette.m3surfaceContainer
 
         StateLayer {
-            function onClicked(): void {
+            onClicked: {
                 Quickshell.execDetached(["stasis", "profile", "video"]);
             }
         }

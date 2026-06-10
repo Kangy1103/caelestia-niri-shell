@@ -107,7 +107,7 @@ Item {
                             radius: parent.radius
                             color: Colours.palette.m3onPrimary
 
-                            function onClicked(): void {
+                            onClicked: {
                                 dialog.open();
                             }
                         }

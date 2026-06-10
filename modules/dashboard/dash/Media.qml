@@ -243,7 +243,7 @@ Item {
             disabled: !control.canUse
             radius: Config.appearance.rounding.full
 
-            function onClicked(): void {
+            onClicked: {
                 control.onClicked();
             }
         }

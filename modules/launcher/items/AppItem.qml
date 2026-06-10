@@ -20,7 +20,7 @@ Item {
     StateLayer {
         radius: Config.appearance.rounding.small
 
-        function onClicked(): void {
+        onClicked: {
             Apps.launch(root.modelData);
             root.visibilities.launcher = false;
         }

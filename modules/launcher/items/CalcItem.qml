@@ -25,7 +25,7 @@ Item {
     StateLayer {
         radius: Config.appearance.rounding.full
 
-        function onClicked(): void {
+        onClicked: {
             root.onClicked();
         }
     }
@@ -77,7 +77,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 color: Colours.palette.m3onTertiary
 
-                function onClicked(): void {
+                onClicked: {
                     Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.terminal, "fish", "-C", `exec qalc -i '${root.math}'`]);
                     root.list.visibilities.launcher = false;
                 }

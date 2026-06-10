@@ -136,7 +136,7 @@ ColumnLayout {
                     color: networkItem.modelData.active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                     disabled: networkItem.isConnecting || !Nmcli.wifiEnabled
 
-                    function onClicked(): void {
+                    onClicked: {
                         if (networkItem.modelData.active) {
                             Nmcli.disconnectFromNetwork();
                         } else {
@@ -183,7 +183,7 @@ ColumnLayout {
             color: Colours.palette.m3onPrimaryContainer
             disabled: Nmcli.scanning || !Nmcli.wifiEnabled
 
-            function onClicked(): void {
+            onClicked: {
                 Nmcli.rescanWifi();
             }
         }
@@ -302,7 +302,7 @@ ColumnLayout {
                     color: ethItem.modelData.connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                     disabled: ethItem.loading
 
-                    function onClicked(): void {
+                    onClicked: {
                         if (ethItem.modelData.connected && ethItem.modelData.connection) {
                             Nmcli.disconnectEthernet(ethItem.modelData.connection, () => {});
                         } else {

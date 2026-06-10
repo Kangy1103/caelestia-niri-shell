@@ -96,7 +96,7 @@ Item {
                                     radius: Config.appearance.rounding.large
 
                                     StateLayer {
-                                        function onClicked(): void {
+                                        onClicked: {
                                             Audio.setAudioSink(modelData);
                                         }
                                     }
@@ -174,7 +174,7 @@ fill: Audio.sink?.id === modelData.id ? 1 : 0
                                     radius: Config.appearance.rounding.large
 
                                     StateLayer {
-                                        function onClicked(): void {
+                                        onClicked: {
                                             Audio.setAudioSource(modelData);
                                         }
                                     }
@@ -317,7 +317,7 @@ fill: Audio.source?.id === modelData.id ? 1 : 0
                                     color: Audio.muted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
                                     StateLayer {
-                                        function onClicked(): void {
+                                        onClicked: {
                                             if (Audio.sink?.audio) {
                                                 Audio.sink.audio.muted = !Audio.sink.audio.muted;
                                             }
@@ -432,7 +432,7 @@ fill: Audio.source?.id === modelData.id ? 1 : 0
                                     color: Audio.sourceMuted ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
                                     StateLayer {
-                                        function onClicked(): void {
+                                        onClicked: {
                                             if (Audio.source?.audio) {
                                                 Audio.source.audio.muted = !Audio.source.audio.muted;
                                             }
@@ -563,7 +563,7 @@ fill: 0
                                             color: Audio.getStreamMuted(modelData) ? Colours.palette.m3secondary : Colours.palette.m3secondaryContainer
 
                                             StateLayer {
-                                                function onClicked(): void {
+                                                onClicked: {
                                                     Audio.setStreamMuted(modelData, !Audio.getStreamMuted(modelData));
                                                 }
                                             }

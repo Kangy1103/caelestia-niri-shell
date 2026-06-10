@@ -71,7 +71,7 @@ Item {
                     radius: parent.radius
                     color: Notifs.dnd ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
 
-                    function onClicked(): void {
+                    onClicked: {
                         Notifs.dnd = !Notifs.dnd;
                     }
                 }
@@ -95,7 +95,7 @@ Item {
                     radius: parent.radius
                     color: Colours.palette.m3error
 
-                    function onClicked(): void {
+                    onClicked: {
                         Notifs.discardAllNotifications();
                         root.cleared();
                     }
@@ -120,7 +120,7 @@ Item {
                     radius: parent.radius
                     color: Colours.palette.m3onSurface
 
-                    function onClicked(): void {
+                    onClicked: {
                         root.expanded = !root.expanded;
                     }
                 }
@@ -212,7 +212,7 @@ Item {
             color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3onErrorContainer : Colours.palette.m3onSurface
             disabled: !notifItem.bodyTruncated && !notifItem.itemExpanded
 
-            function onClicked(): void {
+            onClicked: {
                 notifItem.itemExpanded = !notifItem.itemExpanded;
             }
         }
@@ -335,7 +335,7 @@ Item {
                                 radius: parent.radius
                                 color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSecondaryContainer
 
-                                function onClicked(): void {
+                                onClicked: {
                                     modelData.invoke();
                                 }
                             }
@@ -384,7 +384,7 @@ Item {
                         radius: parent.radius
                         color: Colours.palette.m3onSurface
 
-                        function onClicked(): void {
+                        onClicked: {
                             if (notifItem.notif)
                                 Notifs.discardNotification(notifItem.notif.notificationId);
                         }

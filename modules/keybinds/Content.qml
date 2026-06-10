@@ -95,7 +95,7 @@ color: Colours.palette.m3primary
                 StateLayer {
                     radius: parent.radius
                     color: Colours.palette.m3onSurface
-                    function onClicked(): void { Keybinds.refresh() }
+                    onClicked: { Keybinds.refresh() }
                 }
                 MaterialIcon {
                     anchors.centerIn: parent
@@ -112,7 +112,7 @@ color: Colours.palette.m3onSurfaceVariant
                 StateLayer {
                     radius: parent.radius
                     color: Colours.palette.m3onSurface
-                    function onClicked(): void { root.visibilities.keybinds = false }
+                    onClicked: { root.visibilities.keybinds = false }
                 }
                 MaterialIcon {
                     anchors.centerIn: parent
@@ -220,7 +220,7 @@ color: Colours.palette.m3onSurfaceVariant
                         StateLayer {
                             radius: parent.radius
                             color: Colours.palette.m3onSurface
-                            function onClicked(): void {
+                            onClicked: {
                                 listView.currentIndex = keybindItem.index
                             }
                         }

@@ -32,7 +32,7 @@ Item {
     StateLayer {
         radius: Config.appearance.rounding.large
 
-        function onClicked(): void {
+        onClicked: {
             Wallpapers.setWallpaper(root.modelData.path);
             root.visibilities.launcher = false;
         }

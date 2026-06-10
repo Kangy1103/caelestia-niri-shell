@@ -127,7 +127,7 @@ ColumnLayout {
                     color: device.modelData.state === BluetoothDeviceState.Connected ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
                     disabled: device.loading
 
-                    function onClicked(): void {
+                    onClicked: {
                         device.modelData.connected = !device.modelData.connected;
                     }
                 }
@@ -159,7 +159,7 @@ ColumnLayout {
                     StateLayer {
                         radius: Config.appearance.rounding.full
 
-                        function onClicked(): void {
+                        onClicked: {
                             device.modelData.forget();
                         }
                     }
@@ -184,7 +184,7 @@ ColumnLayout {
         StateLayer {
             color: Colours.palette.m3onPrimaryContainer
 
-            function onClicked(): void {
+            onClicked: {
                 root.wrapper.detach("bluetooth");
             }
         }

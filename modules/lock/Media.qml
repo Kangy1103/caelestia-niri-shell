@@ -149,7 +149,7 @@ Item {
 
             color: control.active ? Colours.palette[`m3on${control.colour}`] : Colours.palette[`m3on${control.colour}Container`]
 
-            function onClicked(): void {
+            onClicked: {
                 control.onClicked();
             }
         }

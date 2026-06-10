@@ -36,7 +36,7 @@ StyledRect {
     StateLayer {
         id: stateLayer
         color: parent.onColor
-        function onClicked(): void {
+        onClicked: {
             parent.onClicked();
         }
     }

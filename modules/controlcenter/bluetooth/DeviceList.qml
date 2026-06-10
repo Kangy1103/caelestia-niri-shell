@@ -145,7 +145,7 @@ DeviceList {
             StateLayer {
                 id: stateLayer
 
-                function onClicked(): void {
+                onClicked: {
                     if (device.modelData)
                         root.session.bt.active = device.modelData;
                 }
@@ -225,7 +225,7 @@ fill: device.connected ? 1 : 0
                         color: device.connected ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
                         disabled: device.loading
 
-                        function onClicked(): void {
+                        onClicked: {
                             if (device.loading)
                                 return;
 

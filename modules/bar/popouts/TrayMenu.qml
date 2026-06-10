@@ -102,7 +102,7 @@ StackView {
                             radius: item.radius
                             disabled: !item.modelData.enabled
 
-                            function onClicked(): void {
+                            onClicked: {
                                 const entry = item.modelData;
                                 if (entry.hasChildren)
                                     root.push(subMenuComp.createObject(null, {
@@ -197,7 +197,7 @@ StackView {
                             radius: parent.radius
                             color: Colours.palette.m3onSecondaryContainer
 
-                            function onClicked(): void {
+                            onClicked: {
                                 root.pop();
                             }
                         }

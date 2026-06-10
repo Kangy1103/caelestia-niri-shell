@@ -54,7 +54,7 @@ Item {
                     StateLayer {
                         color: Colours.palette.m3onPrimaryContainer
 
-                        function onClicked(): void {
+                        onClicked: {
                             root.session.root.close();
                             WindowFactory.create(null, {
                                 active: root.session.active,
@@ -159,7 +159,7 @@ Item {
             StateLayer {
                 color: item.active ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
-                function onClicked(): void {
+                onClicked: {
                     if (!root.initialOpeningComplete)
                         return;
                     root.session.active = item.label;

@@ -36,7 +36,7 @@ CollapsibleSection {
                 border.color: Colours.palette.m3primary
 
                 StateLayer {
-                    function onClicked(): void {
+                    onClicked: {
                         const name = modelData.name;
                         const flavour = modelData.flavour;
                         const schemeKey = `${name} ${flavour}`;

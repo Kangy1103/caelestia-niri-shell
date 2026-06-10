@@ -119,7 +119,7 @@ Item {
             StateLayer {
                 color: Colours.palette.m3onPrimaryContainer
 
-                function onClicked(): void {
+                onClicked: {
                     root.wrapper.hasCurrent = false;
                     Quickshell.execDetached(["app2unit", "--", ...Config.general.apps.audio]);
                 }

@@ -36,7 +36,7 @@ StyledRect {
         StateLayer {
             radius: Config.appearance.rounding.full
 
-            function onClicked(): void {
+            onClicked: {
                 QsWindow.window.destroy();
             }
         }

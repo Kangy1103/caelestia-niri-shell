@@ -101,7 +101,7 @@ ColumnLayout {
                 radius: Config.appearance.rounding.large
 
                 StateLayer {
-                    function onClicked(): void {
+                    onClicked: {
                         if (root.session && root.session.vpn) {
                             root.session.vpn.active = modelData;
                         }
@@ -181,7 +181,7 @@ fill: modelData.enabled && VPN.connected ? 1 : 0
 
                         StateLayer {
                             enabled: !VPN.connecting
-                            function onClicked(): void {
+                            onClicked: {
                                 const clickedIndex = modelData.index;
 
                                 if (modelData.enabled) {
@@ -233,7 +233,7 @@ fill: modelData.enabled && VPN.connected ? 1 : 0
                         color: "transparent"
 
                         StateLayer {
-                            function onClicked(): void {
+                            onClicked: {
                                 const providers = [];
                                 for (let i = 0; i < Config.utilities.vpn.provider.length; i++) {
                                     if (i !== modelData.index) {

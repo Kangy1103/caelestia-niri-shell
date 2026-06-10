@@ -18,7 +18,7 @@ Item {
     StateLayer {
         radius: Config.appearance.rounding.small
 
-        function onClicked(): void {
+        onClicked: {
             root.modelData?.onClicked(root.list);
         }
     }

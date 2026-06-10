@@ -133,7 +133,7 @@ ColumnLayout {
                     StateLayer {
                         radius: Config.appearance.rounding.small
 
-                        function onClicked(): void {
+                        onClicked: {
                             adapterPickerButton.expanded = !adapterPickerButton.expanded;
                         }
                     }
@@ -212,7 +212,7 @@ ColumnLayout {
                                     StateLayer {
                                         disabled: !adapterPickerButton.expanded
 
-                                        function onClicked(): void {
+                                        onClicked: {
                                             adapterPickerButton.expanded = false;
                                             root.session.bt.currentAdapter = adapter.modelData;
                                         }
@@ -384,7 +384,7 @@ ColumnLayout {
                         color: Colours.palette.m3onSecondaryContainer
                         disabled: !root.session.bt.editingAdapterName
 
-                        function onClicked(): void {
+                        onClicked: {
                             root.session.bt.editingAdapterName = false;
                             adapterNameEdit.text = Qt.binding(() => root.session.bt.currentAdapter?.name ?? "");
                         }
@@ -421,7 +421,7 @@ ColumnLayout {
                     StateLayer {
                         color: root.session.bt.editingAdapterName ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
 
-                        function onClicked(): void {
+                        onClicked: {
                             root.session.bt.editingAdapterName = !root.session.bt.editingAdapterName;
                             if (root.session.bt.editingAdapterName)
                                 adapterNameEdit.forceActiveFocus();

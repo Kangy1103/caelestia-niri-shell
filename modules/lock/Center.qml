@@ -242,7 +242,7 @@ ColumnLayout {
         StateLayer {
             hoverEnabled: false
             cursorShape: Qt.IBeamCursor
-            function onClicked(): void {
+            onClicked: {
                 parent.forceActiveFocus();
             }
         }
@@ -310,7 +310,7 @@ ColumnLayout {
                         ? Colours.palette.m3onPrimary
                         : Colours.palette.m3onSurface
 
-                    function onClicked(): void {
+                    onClicked: {
                         root.lock.pam.passwd.start();
                     }
                 }

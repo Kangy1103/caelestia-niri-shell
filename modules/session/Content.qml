@@ -125,7 +125,7 @@ Column {
             radius: parent.radius
             color: button.activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
 
-            function onClicked(): void {
+            onClicked: {
                 Quickshell.execDetached(button.command);
             }
         }

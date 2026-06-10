@@ -281,7 +281,7 @@ opacity: PolkitService.submitting ? 0 : 1
                                             : Colours.palette.m3onSurface
                                         radius: Config.appearance.rounding.full
 
-                                        function onClicked(): void {
+                                        onClicked: {
                                             dialogContent.trySubmit();
                                         }
                                     }
@@ -340,7 +340,7 @@ CAnim { properties: "color" }
                                 radius: Config.appearance.rounding.full
                                 color: Colours.palette.m3onSurface
 
-                                function onClicked(): void {
+                                onClicked: {
                                     PolkitService.cancel();
                                 }
                             }
@@ -372,7 +372,7 @@ CAnim { properties: "color" }
                                 color: Colours.palette.m3onPrimary
                                 enabled: inputField.text.length > 0 && PolkitService.interactionAvailable
 
-                                function onClicked(): void {
+                                onClicked: {
                                     dialogContent.trySubmit();
                                 }
                             }

@@ -33,7 +33,7 @@ CollapsibleSection {
                 border.color: Colours.palette.m3primary
 
                 StateLayer {
-                    function onClicked(): void {
+                    onClicked: {
                         M3Variants.setVariant(modelData.variant);
                     }
                 }

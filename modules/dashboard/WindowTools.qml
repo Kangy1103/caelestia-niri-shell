@@ -178,7 +178,7 @@ Item {
             radius: parent.radius
             color: active ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
 
-            function onClicked(): void {
+            onClicked: {
                 wsBtn.onClicked();
             }
         }
@@ -230,7 +230,7 @@ Item {
             radius: parent.radius
             color: active || accent ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurface
 
-            function onClicked(): void {
+            onClicked: {
                 actionBtn.onClicked();
             }
         }

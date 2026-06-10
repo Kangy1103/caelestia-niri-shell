@@ -33,7 +33,7 @@ Item {
     StateLayer {
         radius: Config.appearance.rounding.small
 
-        function onClicked(): void {
+        onClicked: {
             root.onClicked();
         }
     }
@@ -75,7 +75,7 @@ color: root.isImageEntry ? Colours.palette.m3tertiary : Colours.palette.m3primar
                 radius: parent.radius
                 color: Colours.palette.m3primary
 
-                function onClicked(): void {
+                onClicked: {
                     Quickshell.execDetached([
                         "sh", "-c",
                         "cliphist decode '" + root.entryId + "' | wl-copy"
@@ -134,7 +134,7 @@ color: Colours.palette.m3outline
                 radius: parent.radius
                 color: Colours.palette.m3error
 
-                function onClicked(): void {
+                onClicked: {
                     Quickshell.execDetached(["cliphist", "delete", root.entryId]);
                     root.list.removeClipEntry(root.entryId);
                 }
