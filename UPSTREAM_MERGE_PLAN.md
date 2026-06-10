@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.9.0-20260610
+Version: 1.0.0-20260610
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -450,14 +450,52 @@ modules/nexus/pages/*                      # ~25 settings pages
 ### Previous-phase regression fixed
 
 `caelestia` Python CLI targets Hyprland Caelestia (`qs -c caelestia`), not CNS.
-Fixed by adding `cns` fish abbreviation (`qs -c caelestia-niri-shell`) to
-`~/.config/fish/conf.d/myabbrs.fish`. IPC commands now use: `cns ipc call nexus open`.
+Fixed by creating a standalone `cns` CLI (ported from caelestia-cli, Niri-adapted):
+- `cli/` — full Python CLI with shell/scheme/screenshot/clipboard/emoji/wallpaper subcommands
+- Namespace renamed `caelestia` → `cns`, config name `caelestia-niri-shell`
+- Hyprland-specific subcommands stripped (toggle, resizer, record)
+- Installed via CMake to `/usr/bin/cns`, Python package to site-packages
+- Added `cns` fish abbreviation as fallback in `~/.config/fish/conf.d/myabbrs.fish`
+
+### Dedicated clipboard panel (restored from pre-merge git history)
+
+Original `modules/clipboard/` panel was removed by upstream merge (Phase 2/3/5/6).
+Rebuilt as dedicated drawer panel alongside launcher/dashboard/session/sidebar:
+- `modules/clipboard/` — Wrapper, Content, ClipboardItem, ClipboardPanel (5 files)
+- ColumnLayout-based layout, cliphist Process, search/filter, copy/delete/wipe
+- Keyboard navigation: up/down arrows, Enter to select, Delete to remove, Escape to close
+- Mod+V toggles open/close via `cns shell clipboard toggle`
+- Wired through: `DrawerVisibilities.clipboard`, `Panels.qml` (Wrapper instance),
+  `ContentWindow.qml` (PanelBg + transform + WlrKeyboardFocus), `Regions.qml` (input mask)
+
+### Panel wiring fixes (also applied to calendar + keybinds)
+
+Calendar and keybinds panels had the same missing wiring as clipboard:
+- `Regions.qml` — added input mask entries for clipboard, keybinds, calendar
+  (without these, mouse events pass through the layershell surface)
+- `ContentWindow.qml` — added PanelBg + transform for clipboard, keybinds, calendar
+- `ContentWindow.qml:47` — added `visibilities.clipboard` to WlrKeyboardFocus
+- Calendar: Escape key to close, visibilities wired from Wrapper to Content
+- Keybinds: tightened font sizes / spacing, removed key pill box, Escape key handler
+
+### Keybinds styling refinements
+- Width 480 → 420, list height 400 → 320
+- Title font `title.medium` → `body.large`
+- Action font `label.large` → `label.medium`, key font `label.medium` → `label.small`
+- Spacing tightened throughout (`large` → `medium`, `small` → `extraSmall`)
+- Removed key pill box — key displayed as plain monospace text below action
+- Selection highlight fills full delegate height (removed 2px margins)
 
 ### Verify
 
 `qs -c caelestia-niri-shell -d` loads clean as daemon. `cns ipc call nexus open`
 launches Nexus FloatingWindow (renders on Niri desktop). All pages render.
 Config persists to `~/.config/caelestia-niri-shell/shell.json`.
+
+`cns shell clipboard toggle` opens/closes dedicated clipboard panel with full
+cliphist integration, search, keyboard/mouse navigation. Mod+V toggles.
+Calendar and keybinds panels have proper input masks, backgrounds, keyboard
+focus, and escape-to-close.
 
 **Reversion:**
 ```fish
