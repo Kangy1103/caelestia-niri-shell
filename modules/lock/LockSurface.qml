@@ -182,6 +182,10 @@ WlSessionLockSurface {
         Component.onCompleted: opacity = 1
 
         Behavior on opacity {
+            Anim { type: Anim.StandardLarge }
+        }
+
+        layer.enabled: true
         layer.effect: MultiEffect {
             autoPaddingEnabled: false
             blurEnabled: true
