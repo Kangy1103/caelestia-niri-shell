@@ -16,6 +16,7 @@ Singleton {
     readonly property string config: `${Quickshell.env("XDG_CONFIG_HOME") || `${home}/.config`}/caelestia-niri-shell`
 
     readonly property string imagecache: `${cache}/imagecache`
+    readonly property string notifimagecache: `${imagecache}/notifs`
     readonly property string notificationsData: `${data}/notifications.json`
     readonly property string eventsData: `${data}/events.json`
     readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(Config.paths.wallpaperDir)

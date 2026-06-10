@@ -668,6 +668,15 @@ shortcuts in "adopt upstream" execution. These rules are binding for all remaini
     Anything else is a bug that must be fixed before the phase is marked complete.
     Run the audit blindly — don't assume files are clean.
 
+11. **Dependency verification** — after copying any upstream file, grep for all external
+    references (imports, service references, property paths, type names) and confirm each
+    resolves in our tree BEFORE testing. Common failure patterns:
+    - `Paths.x` that doesn't exist → creates `undefined/` directories
+    - `QML_SINGLETON` without `create()` → type silently unavailable under Qt 6.11
+    - `Caelestia.Services.X` where X lacks `QML_ELEMENT` → not creatable at runtime
+    - `Tokens.font.*` when `TokenConfig` singleton lacks `font` Q_PROPERTY
+    - `Hypr.*` in accepted-upstream file → Hyprland leak, needs Niri adaptation
+
 ---
 
 ## Rollback
