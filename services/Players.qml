@@ -32,7 +32,7 @@ Singleton {
         const url = player.metadata["xesam:url"] ?? "";
         if (url.startsWith("https://www.youtube.com/watch")) {
             const id = url.match(/[?&]v=([\w-]{11})/)?.[1];
-            return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : "";
+            return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : "";
         }
         return "";
     }
