@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260610
+// Version: 0.2.0-20260610
 
 pragma ComponentBehavior: Bound
 
@@ -9,6 +9,7 @@ import Caelestia.Config
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Layouts
 
 WlSessionLockSurface {
     id: root
@@ -18,21 +19,17 @@ WlSessionLockSurface {
 
     readonly property alias unlocking: unlockAnim.running
 
-    readonly property real panelScale: Math.min(1, (root.screen?.height ?? 1080) / 1080)
-    readonly property int panelWidth: Math.round(420 * panelScale)
-    readonly property int panelHeight: Math.round(600 * panelScale)
-    readonly property int panelRadius: Config.appearance.rounding.large * 1.5
-
-    color: "transparent"
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name
 
-    Connections {
-        target: root.lock
+    color: "transparent"
 
+    Connections {
         function onUnlock(): void {
             unlockAnim.start();
         }
+
+        target: root.lock
     }
 
     SequentialAnimation {
@@ -52,13 +49,13 @@ WlSessionLockSurface {
                 type: Anim.DefaultSpatial
             }
             Anim {
-                target: centerPanel
+                target: content
                 property: "scale"
                 to: 0
                 type: Anim.DefaultSpatial
             }
             Anim {
-                target: centerPanel
+                target: content
                 property: "opacity"
                 to: 0
                 type: Anim.StandardSmall
@@ -138,12 +135,12 @@ WlSessionLockSurface {
                     to: 0
                 }
                 Anim {
-                    target: centerPanel
+                    target: content
                     property: "opacity"
                     to: 1
                 }
                 Anim {
-                    target: centerPanel
+                    target: content
                     property: "scale"
                     to: 1
                     type: Anim.DefaultSpatial
@@ -151,24 +148,25 @@ WlSessionLockSurface {
                 Anim {
                     target: lockBg
                     property: "radius"
-                    to: root.panelRadius
-                    type: Anim.DefaultSpatial
+                    to: Tokens.rounding.extraLarge * 1.5
                 }
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
-                    to: root.panelWidth
+                    to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio
                     type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
-                    to: root.panelHeight
+                    to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult
                     type: Anim.DefaultSpatial
                 }
             }
         }
     }
+
+    // ── Background layers ──────────────────────────────────────────────────────
 
     Rectangle {
         id: solidFallback
@@ -202,10 +200,6 @@ WlSessionLockSurface {
             blurMax: 64
             blurMultiplier: 1
         }
-
-        onStatusChanged: {
-            if (status === Image.Error) { }
-        }
     }
 
     ScreencopyView {
@@ -232,6 +226,8 @@ WlSessionLockSurface {
         z: 3
         color: Qt.alpha("#000000", 0.2)
     }
+
+    // ── Optional flanking side panels ──────────────────────────────────────────
 
     Item {
         id: extrasLayer
@@ -278,10 +274,10 @@ WlSessionLockSurface {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.horizontalCenter
-            anchors.rightMargin: root.panelWidth / 2 + Tokens.spacing.extraExtraLarge * 2
+            anchors.rightMargin: contentWidth / 2 + Tokens.spacing.extraExtraLarge * 2
 
-            width: Math.min(Math.round(300 * root.panelScale), parent.width / 4)
-            height: root.panelHeight
+            width: Math.min(300, parent.width / 4)
+            height: contentHeight
 
             radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
@@ -296,12 +292,26 @@ WlSessionLockSurface {
                 shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.4)
             }
 
-            Content {
+            ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 0
-                lock: root
-                showLeft: true
-                showRight: false
+                anchors.margins: Tokens.padding.large
+                spacing: Tokens.spacing.medium
+
+                WeatherInfo {
+                    Layout.fillWidth: true
+                    rootHeight: parent.height
+                }
+
+                Fetch {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    rootHeight: parent.height
+                }
+
+                Media {
+                    Layout.fillWidth: true
+                    lock: root
+                }
             }
         }
 
@@ -310,10 +320,10 @@ WlSessionLockSurface {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.horizontalCenter
-            anchors.leftMargin: root.panelWidth / 2 + Tokens.spacing.extraExtraLarge * 2
+            anchors.leftMargin: contentWidth / 2 + Tokens.spacing.extraExtraLarge * 2
 
-            width: Math.min(Math.round(300 * root.panelScale), parent.width / 4)
-            height: root.panelHeight
+            width: Math.min(300, parent.width / 4)
+            height: contentHeight
 
             radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
@@ -328,15 +338,28 @@ WlSessionLockSurface {
                 shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.4)
             }
 
-            Content {
+            ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 0
-                lock: root
-                showLeft: false
-                showRight: true
+                anchors.margins: Tokens.padding.large
+                spacing: Tokens.spacing.medium
+
+                Resources {
+                    Layout.fillWidth: true
+                }
+
+                NotifDock {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    lock: root
+                }
             }
         }
     }
+
+    // ── Main floating panel ────────────────────────────────────────────────────
+
+    readonly property real contentWidth: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio
+    readonly property real contentHeight: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult
 
     Item {
         id: lockContent
@@ -356,7 +379,7 @@ WlSessionLockSurface {
 
             anchors.fill: parent
             color: Colours.palette.m3surfaceContainer
-            radius: lockContent.iconSize / 4 * Tokens.rounding.scale
+            radius: parent.iconSize / 4 * Tokens.rounding.scale
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
             layer.enabled: true
@@ -389,11 +412,12 @@ WlSessionLockSurface {
             rotation: 180
         }
 
-        Center {
-            id: centerPanel
+        Content {
+            id: content
 
-            anchors.fill: parent
-            anchors.margins: Tokens.padding.largeIncreased
+            anchors.centerIn: parent
+            width: root.contentWidth - Tokens.padding.extraLargeIncreased
+            height: root.contentHeight - Tokens.padding.extraLargeIncreased
 
             lock: root
             opacity: 0
