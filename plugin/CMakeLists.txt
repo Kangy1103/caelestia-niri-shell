@@ -30,3 +30,4 @@ if(NOT INSTALL_QMLDIR)
 endif()
 
 add_subdirectory(src/Caelestia)
+add_subdirectory(../extras ${CMAKE_BINARY_DIR}/extras)
