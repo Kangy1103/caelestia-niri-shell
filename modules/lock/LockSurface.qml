@@ -61,6 +61,12 @@ WlSessionLockSurface {
                 type: Anim.StandardSmall
             }
             Anim {
+                target: extrasLayer
+                property: "opacity"
+                to: 0
+                type: Anim.StandardSmall
+            }
+            Anim {
                 target: lockIcon
                 property: "opacity"
                 to: 1
