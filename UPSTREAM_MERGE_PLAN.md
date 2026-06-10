@@ -506,10 +506,11 @@ sudo cmake --install build
 
 ---
 
-## Phase 8 — Lock screen
+## Phase 8 — Lock screen ✅
 
 **Depends on:** Phase 2, 3 (config, components)
 **Goal:** Upstream lock screen refactoring merged in.
+**Completed:** 2026-06-11 — see [[Changelog/upstream-merge-completed#Phase 8 — Lock Screen ✅ (2026-06-11)|Wiki Changelog]] for full details.
 
 ### New upstream files
 
