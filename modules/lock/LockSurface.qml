@@ -19,10 +19,12 @@ WlSessionLockSurface {
 
     readonly property alias unlocking: unlockAnim.running
 
+    readonly property bool isTargetScreen: screen && screen.name === "DP-3"
+
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name
 
-    color: "transparent"
+    color: isTargetScreen ? "transparent" : "#000000"
 
     Connections {
         function onUnlock(): void {
@@ -99,7 +101,7 @@ WlSessionLockSurface {
     ParallelAnimation {
         id: initAnim
 
-        running: true
+        running: root.isTargetScreen
 
         Anim {
             target: background
@@ -176,6 +178,7 @@ WlSessionLockSurface {
 
     Rectangle {
         id: solidFallback
+        visible: root.isTargetScreen
         anchors.fill: parent
         color: Colours.palette.m3surface
         z: 0
@@ -183,6 +186,7 @@ WlSessionLockSurface {
 
     Image {
         id: wallpaperFallback
+        visible: root.isTargetScreen
         anchors.fill: parent
         source: {
             const path = Wallpapers.current || Config.paths.wallpaper || "";
@@ -210,6 +214,7 @@ WlSessionLockSurface {
 
     ScreencopyView {
         id: background
+        visible: root.isTargetScreen
 
         anchors.fill: parent
         captureSource: root.screen
@@ -228,6 +233,7 @@ WlSessionLockSurface {
 
     Rectangle {
         id: dimScrim
+        visible: root.isTargetScreen
         anchors.fill: parent
         z: 3
         color: Qt.alpha("#000000", 0.2)
@@ -237,6 +243,7 @@ WlSessionLockSurface {
 
     Item {
         id: extrasLayer
+        visible: root.isTargetScreen
         anchors.fill: parent
         z: 4
         opacity: 0
@@ -372,6 +379,7 @@ WlSessionLockSurface {
 
     Item {
         id: lockContent
+        visible: root.isTargetScreen
 
         readonly property int iconSize: lockIcon.implicitHeight + Tokens.padding.largeIncreased * 4
 
