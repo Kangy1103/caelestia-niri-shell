@@ -59,58 +59,16 @@ Item {
     // ServiceRef { service: Cava.provider }
     // ServiceRef { service: BeatTracker }
 
-    Shape {
-        id: visualiser
-
-        readonly property real centerX: width / 2
-        readonly property real centerY: height / 2
-        readonly property real innerX: cover.implicitWidth / 2 + Config.appearance.spacing.small
-        readonly property real innerY: cover.implicitHeight / 2 + Config.appearance.spacing.small
-        property color colour: Colours.palette.m3primary
-
-        anchors.fill: cover
-        anchors.margins: -TokenConfig.sizes.dashboard.mediaVisualiserSize
-
-        asynchronous: true
-        preferredRendererType: Shape.CurveRenderer
-        data: visualiserBars.instances
-    }
-
-    Variants {
-        id: visualiserBars
-
-        model: Array.from({
-            length: Config.services.visualiserBars
-        }, (_, i) => i)
-
-        ShapePath {
-            id: visualiserBar
-
-            required property int modelData
-            readonly property real value: Math.max(1e-3, Math.min(1, Cava.values[modelData]))
-
-            readonly property real angle: modelData * 2 * Math.PI / Config.services.visualiserBars
-            readonly property real magnitude: value * TokenConfig.sizes.dashboard.mediaVisualiserSize
-            readonly property real cos: Math.cos(angle)
-            readonly property real sin: Math.sin(angle)
-
-            capStyle: Config.appearance.rounding.scale === 0 ? ShapePath.SquareCap : ShapePath.RoundCap
-            strokeWidth: 360 / Config.services.visualiserBars - Config.appearance.spacing.small / 4
-            strokeColor: Colours.palette.m3primary
-
-            startX: visualiser.centerX + (visualiser.innerX + strokeWidth / 2) * cos
-            startY: visualiser.centerY + (visualiser.innerY + strokeWidth / 2) * sin
-
-            PathLine {
-                x: visualiser.centerX + (visualiser.innerX + visualiserBar.strokeWidth / 2 + visualiserBar.magnitude) * visualiserBar.cos
-                y: visualiser.centerY + (visualiser.innerY + visualiserBar.strokeWidth / 2 + visualiserBar.magnitude) * visualiserBar.sin
-            }
-
-            Behavior on strokeColor {
-                CAnim {}
-            }
-        }
-    }
+    // Visualiser disabled: CavaProvider not started (no ref() call), Cava.values returns empty.
+    // Re-enable when CavaProvider/BeatTracker are fixed.
+    // Shape {
+    //     id: visualiser
+    //     ...
+    // }
+    // Variants {
+    //     id: visualiserBars
+    //     ...
+    // }
 
     StyledClippingRect {
         id: cover
