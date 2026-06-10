@@ -1,14 +1,8 @@
 pragma ComponentBehavior: Bound
 
-import qs.components
-import qs.components.containers
-import qs.services
-import Caelestia.Config
-import qs.modules.bar
-import Quickshell
-import Quickshell.Wayland
 import QtQuick
-import QtQuick.Effects
+import Quickshell
+import qs.services
 
 Variants {
     model: Quickshell.screens
@@ -20,131 +14,13 @@ Variants {
 
         Exclusions {
             screen: scope.modelData
-            bar: bar
+            bar: content.bar
         }
 
-        StyledWindow {
-            id: win
+        ContentWindow {
+            id: content
 
             screen: scope.modelData
-            name: "drawers"
-            WlrLayershell.exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.manga || visibilities.novel || visibilities.calendar || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-
-            mask: Region {
-                x: bar.implicitWidth
-                y: Config.border.thickness
-                width: win.width - bar.implicitWidth - Config.border.thickness
-                height: win.height - Config.border.thickness * 2
-                intersection: Intersection.Xor
-
-                regions: regions.instances
-            }
-
-            anchors.top: true
-            anchors.bottom: true
-            anchors.left: true
-            anchors.right: true
-
-            Variants {
-                id: regions
-
-                model: panels.children
-
-                Region {
-                    required property Item modelData
-
-                    x: modelData.x + bar.implicitWidth
-                    y: modelData.y + Config.border.thickness
-                    width: modelData.width
-                    height: modelData.height
-                    intersection: Intersection.Subtract
-                }
-            }
-
-            // TODO: Implement focus grab for Niri when available
-
-            StyledRect {
-                anchors.fill: parent
-                opacity: visibilities.session && Config.session.enabled ? 0.5 : 0
-                color: Colours.palette.m3scrim
-
-                Behavior on opacity {
-                    Anim {}
-                }
-            }
-
-            Item {
-                anchors.fill: parent
-                opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true && !GameMode.enabled
-                    blurMax: 15
-                    shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
-                }
-
-                Border {
-                    bar: bar
-                }
-
-                Backgrounds {
-                    panels: panels
-                    bar: bar
-                }
-            }
-
-            DrawerVisibilities {
-                id: visibilities
-
-                property bool bar
-                property bool calendar
-                property bool osd
-                property bool session
-                property bool launcher
-                property bool dashboard
-                property bool utilities
-                property bool clipboardRequested
-                property bool keybinds
-                property bool editingWeatherLocation
-                property bool sidebar
-
-                Component.onCompleted: Visibilities.screens[scope.modelData.name] = this
-            }
-
-            Interactions {
-                screen: scope.modelData
-                popouts: panels.popouts
-                visibilities: visibilities
-                panels: panels
-                bar: bar
-                borderThickness: Config.border.thickness
-                fullscreen: false
-
-                Panels {
-                    id: panels
-
-                    screen: scope.modelData
-                    visibilities: visibilities
-                    bar: bar
-                    borderThickness: Config.border.thickness
-                }
-
-                BarWrapper {
-                    id: bar
-
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-
-                    screen: scope.modelData
-                    visibilities: visibilities
-                    popouts: panels.popouts
-                    fullscreen: false
-
-                    Component.onCompleted: Visibilities.bars.set(scope.modelData, this)
-                }
-            }
         }
     }
-
 }

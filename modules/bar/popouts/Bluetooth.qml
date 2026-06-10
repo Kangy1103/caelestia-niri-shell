@@ -26,6 +26,7 @@ ColumnLayout {
         Layout.topMargin: Config.appearance.padding.medium
         Layout.rightMargin: Config.appearance.padding.extraSmall
         text: qsTr("Bluetooth")
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     Toggle {
@@ -60,6 +61,7 @@ ColumnLayout {
             return available;
         }
         color: Colours.palette.m3onSurfaceVariant
+        font: Tokens.font.body.small
     }
 
     Repeater {

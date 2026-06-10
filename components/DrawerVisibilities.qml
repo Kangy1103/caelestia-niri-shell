@@ -8,4 +8,7 @@ PersistentProperties {
     property bool dashboard
     property bool utilities
     property bool sidebar
+    property bool keybinds
+    property bool calendar
+    property bool editingWeatherLocation
 }

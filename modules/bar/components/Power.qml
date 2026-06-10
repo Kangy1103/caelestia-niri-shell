@@ -34,5 +34,6 @@ Item {
 
         text: "power_settings_new"
         color: Colours.palette.m3error
+        fontStyle: Tokens.font.icon.builders.small.weight(Font.Bold).build()
     }
 }

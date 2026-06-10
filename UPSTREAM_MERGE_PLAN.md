@@ -659,6 +659,15 @@ shortcuts in "adopt upstream" execution. These rules are binding for all remaini
 9. **Post-install verification:** `qs -c caelestia-niri-shell` must load with zero scene
    warnings (cosmetic QML type warnings and other-agent-registration warnings are acceptable).
 
+10. **Diff audit before closing any phase** — after every upstream file copy or merge,
+    run `diff upstream ours`. Every difference must be one of:
+    - Deliberate Niri adaptation (`Hypr.x` → `Niri.x`)
+    - Removed Hyprland-specific block (`HyprlandFocusGrab`, `ScreencopyView`, etc.)
+    - Config path change (`caelestia` → `caelestia-niri-shell`)
+    - Version header we added
+    Anything else is a bug that must be fixed before the phase is marked complete.
+    Run the audit blindly — don't assume files are clean.
+
 ---
 
 ## Rollback

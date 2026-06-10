@@ -76,6 +76,7 @@ Column {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Performance Degraded")
                         color: Colours.palette.m3onError
+                        font: Tokens.font.mono.builders.medium.weight(Font.Medium).build()
                     }
 
                     MaterialIcon {
@@ -214,6 +215,7 @@ Column {
             anchors.centerIn: parent
 
             text: parent.icon
+            fontStyle: Tokens.font.icon.large
             color: profiles.current === text ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
             fill: profiles.current === text ? 1 : 0
 

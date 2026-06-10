@@ -68,13 +68,13 @@ Singleton {
     function increaseBrightness(): void {
         const monitor = getMonitor("active");
         if (monitor)
-            monitor.setBrightness(monitor.brightness + 0.1);
+            monitor.setBrightness(monitor.brightness + monitor.brightnessIncrement);
     }
 
     function decreaseBrightness(): void {
         const monitor = getMonitor("active");
         if (monitor)
-            monitor.setBrightness(monitor.brightness - 0.1);
+            monitor.setBrightness(monitor.brightness - monitor.brightnessIncrement);
     }
 
     onMonitorsChanged: {
@@ -121,40 +121,10 @@ Singleton {
 
         command: ["ddcutil", "detect", "--brief"]
         stdout: StdioCollector {
-            onStreamFinished: {
-                const parts = text.trim().split("\n\n").filter(d => d.startsWith("Display "));
-                const results = [];
-                for (const d of parts) {
-                    const lines = d.split("\n");
-                    let busNum = "";
-                    let connector = "";
-                    for (const line of lines) {
-                        const t = line.trim();
-                        if (t.startsWith("I2C bus:")) {
-                            const i2cMatch = t.split("/dev/i2c-");
-                            if (i2cMatch.length > 1) {
-                                busNum = i2cMatch[1].trim();
-                            }
-                        } else if (t.startsWith("DRM connector:")) {
-                            const connSplit = t.split("DRM connector:");
-                            if (connSplit.length > 1) {
-                                let c = connSplit[1].trim();
-                                if (c.startsWith("card")) {
-                                    const hyphenIdx = c.indexOf("-");
-                                    if (hyphenIdx !== -1) {
-                                        c = c.substring(hyphenIdx + 1);
-                                    }
-                                }
-                                connector = c;
-                            }
-                        }
-                    }
-                    if (busNum && connector) {
-                        results.push({ busNum, connector });
-                    }
-                }
-                root.ddcMonitors = results;
-            }
+            onStreamFinished: root.ddcMonitors = text.trim().split("\n\n").filter(d => d.startsWith("Display ")).map(d => ({
+                        busNum: d.match(/I2C bus:[ ]*\/dev\/i2c-([0-9]+)/)[1],
+                        connector: d.match(/DRM connector:\s+(.*)/)[1].replace(/^card\d+-/, "")
+                    }))
         }
         onExited: (exitCode) => {
             if (exitCode !== 0) {
@@ -225,6 +195,7 @@ Singleton {
         readonly property bool isAppleDisplay: root.appleDisplayPresent && modelData.model.startsWith("StudioDisplay")
         property real brightness
         property real queuedBrightness: NaN
+        property real brightnessIncrement: 0.1
 
         readonly property Process initProc: Process {
             stdout: StdioCollector {

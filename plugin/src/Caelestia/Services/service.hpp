@@ -8,6 +8,7 @@ namespace caelestia {
 class Service : public QObject {
     Q_OBJECT
     QML_ELEMENT
+    QML_UNCREATABLE("Service is abstract")
 
     Q_PROPERTY(int refCount READ refCount NOTIFY refCountChanged)
 

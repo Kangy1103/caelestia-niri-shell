@@ -184,11 +184,13 @@ ColumnLayout {
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
                 text: "lock"
+                fontStyle: Tokens.font.icon.builders.extraLarge.scale(2).build()
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Enter password")
+                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
             }
 
             StyledText {
@@ -205,6 +207,7 @@ ColumnLayout {
                     return qsTr("Network: Unknown");
                 }
                 color: Colours.palette.m3outline
+                font: Tokens.font.body.small
             }
 
             Timer {
@@ -252,6 +255,7 @@ ColumnLayout {
                     return "";
                 }
                 color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+                font: Tokens.font.body.builders.small.weight(Font.Normal).build()
                 wrapMode: Text.WordWrap
                 Layout.maximumWidth: parent.width - Config.appearance.padding.extraLargeIncreased
             }
@@ -376,6 +380,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: qsTr("Password")
                     color: Colours.palette.m3outline
+                    font: Tokens.font.mono.medium
                     opacity: passwordContainer.passwordBuffer ? 0 : 1
 
                     Behavior on opacity {

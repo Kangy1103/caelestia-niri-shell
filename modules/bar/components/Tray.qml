@@ -53,6 +53,7 @@ StyledRect {
                 properties: "scale"
                 from: 0
                 to: 1
+                easing: Tokens.anim.standardDecel
             }
         }
 
@@ -60,6 +61,7 @@ StyledRect {
             Anim {
                 properties: "scale"
                 to: 1
+                easing: Tokens.anim.standardDecel
             }
             Anim {
                 properties: "x,y"
@@ -104,6 +106,7 @@ StyledRect {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Config.bar.tray.background ? TokenConfig.appearance.padding.extraSmall : -TokenConfig.appearance.padding.extraSmall
                 text: "expand_less"
+                fontStyle: Tokens.font.icon.large
                 rotation: root.expanded ? 180 : 0
 
                 Behavior on rotation {

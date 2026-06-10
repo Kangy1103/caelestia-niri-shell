@@ -8,7 +8,7 @@ Singleton {
     property var bars: new Map()
 
     function load(screen: ShellScreen, visibilities: var): void {
-        screens[Niri.focusedMonitorName] = visibilities;
+        screens[screen.name] = visibilities;
     }
 
     function getForActive(): PersistentProperties {

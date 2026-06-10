@@ -1,12 +1,12 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260603
+// Version: 0.2.0-20260610
 
+import QtQuick
+import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.services
-import Caelestia.Config
 import qs.utils
-import QtQuick
 
 Item {
     id: root
@@ -24,6 +24,7 @@ Item {
     }
 
     Loader {
+        asynchronous: true
         anchors.centerIn: parent
         sourceComponent: Config.general.isDistLogo ? distroIcon : caelestiaLogo
     }
@@ -41,7 +42,7 @@ Item {
         id: distroIcon
 
         ColouredIcon {
-            source:  SysInfo.osLogo
+            source: SysInfo.osLogo
             implicitSize: Math.round(Config.appearance.font.title.medium.size * 1.2)
             width: implicitWidth
             height: implicitHeight

@@ -33,6 +33,7 @@ ColumnLayout {
         Layout.topMargin: visible ? Config.appearance.padding.medium : 0
         Layout.rightMargin: Config.appearance.padding.extraSmall
         text: qsTr("Wireless")
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     Toggle {
@@ -50,6 +51,7 @@ ColumnLayout {
         Layout.rightMargin: Config.appearance.padding.extraSmall
         text: qsTr("%1 networks available").arg(Nmcli.networks.length) // qmllint disable missing-property
         color: Colours.palette.m3onSurfaceVariant
+        font: Tokens.font.body.small
     }
 
     Repeater {
@@ -101,6 +103,7 @@ ColumnLayout {
             MaterialIcon {
                 visible: networkItem.modelData.isSecure
                 text: "lock"
+                fontStyle: Tokens.font.icon.small
             }
 
             StyledText {
@@ -109,6 +112,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: networkItem.modelData.ssid
                 elide: Text.ElideRight
+                font: Tokens.font.body.builders.medium.weight(networkItem.modelData.active ? Font.Medium : Font.Normal).build()
                 color: networkItem.modelData.active ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 
@@ -227,6 +231,7 @@ ColumnLayout {
         Layout.topMargin: visible ? Config.appearance.padding.medium : 0
         Layout.rightMargin: Config.appearance.padding.extraSmall
         text: qsTr("Ethernet")
+        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
 
     StyledText {
@@ -236,6 +241,7 @@ ColumnLayout {
         Layout.rightMargin: Config.appearance.padding.extraSmall
         text: qsTr("%1 devices available").arg(Nmcli.ethernetDevices.length)
         color: Colours.palette.m3onSurfaceVariant
+        font: Tokens.font.body.small
     }
 
     Repeater {
@@ -289,6 +295,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: ethernetItem.modelData.interface || qsTr("Unknown")
                 elide: Text.ElideRight
+                font: Tokens.font.body.builders.medium.weight(ethernetItem.modelData.connected ? Font.Medium : Font.Normal).build()
                 color: ethernetItem.modelData.connected ? Colours.palette.m3primary : Colours.palette.m3onSurface
             }
 
