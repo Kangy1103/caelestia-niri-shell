@@ -21,7 +21,7 @@ Item {
 
         radius: Config.appearance.rounding.full
 
-        function onClicked(): void {
+        onClicked: {
             root.visibilities.session = !root.visibilities.session;
         }
     }
