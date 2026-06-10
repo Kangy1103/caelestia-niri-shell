@@ -15,6 +15,8 @@ Item {
     required property var panels
     required property real maxHeight
 
+    readonly property alias searchField: search
+
     readonly property int padding: Tokens.padding.large
     readonly property int rounding: Tokens.rounding.extraLarge
 
@@ -132,12 +134,8 @@ Item {
 
             Connections {
                 function onLauncherChanged(): void {
-                    if (!root.visibilities.launcher) {
+                    if (!root.visibilities.launcher)
                         search.text = "";
-                    } else if (Visibilities.launcherMode) {
-                        search.text = `${GlobalConfig.launcher.actionPrefix}${Visibilities.launcherMode} `;
-                        Visibilities.launcherMode = "";
-                    }
                 }
 
                 function onSessionChanged(): void {

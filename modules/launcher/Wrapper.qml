@@ -5,6 +5,7 @@ import Quickshell
 import Caelestia.Config
 import qs.components
 import qs.modules.launcher.services
+import qs.services
 
 Item {
     id: root
@@ -25,10 +26,20 @@ Item {
     property real offsetScale: shouldBeActive ? 0 : 1
 
     onShouldBeActiveChanged: {
-        if (shouldBeActive)
+        if (shouldBeActive) {
             implicitHeight = Qt.binding(() => content.implicitHeight);
-        else
+            if (Visibilities.launcherMode) {
+                Qt.callLater(() => {
+                    const c = content.item;
+                    if (c && c.searchField) {
+                        c.searchField.text = `${GlobalConfig.launcher.actionPrefix}${Visibilities.launcherMode} `;
+                        Visibilities.launcherMode = "";
+                    }
+                });
+            }
+        } else {
             implicitHeight = implicitHeight; // Break binding during close anim
+        }
     }
 
     visible: offsetScale < 1
