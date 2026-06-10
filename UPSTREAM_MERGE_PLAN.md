@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.6.0-20260609
+Version: 0.6.2-20260609
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -977,4 +977,65 @@ git checkout main -- plugin/src/Caelestia/Services/beattracker.hpp
 git checkout main -- plugin/src/Caelestia/Internal/CMakeLists.txt
 # Rebuild and reinstall:
 cmake -B build -G Ninja && cmake --build build && sudo cmake --install build
+```
+
+---
+
+## Phase 3 Regressions (discovered 2026-06-09 during Phase 4 testing)
+
+### StateLayer onClicked — BROKEN across 44 files ✅ Fixed
+
+**Root cause:** Phase 3 converted `StateLayer` from a custom click-handling component to a plain `MouseArea`. The old StateLayer internally called a user-defined `onClicked()` method when clicked. The new `MouseArea` has a `clicked` signal instead.
+
+85 instances of `function onClicked(): void {}` inside `StateLayer { }` blocks across 44 files were silently broken — `function onClicked()` defines a JS method that shadows `MouseArea.onClicked`, so the method is never called.
+
+**Fix:** `function onClicked(): void {` → `onClicked: {` (QML signal handler syntax with colon). Applied to all instances inside `StateLayer { }` blocks via Python script.
+
+**Files fixed (44):**
+```
+components/Chip.qml, components/controls/StyledRadialButton.qml
+components/widgets/NotificationList.qml
+modules/background/Wallpaper.qml
+modules/bar/components/Power.qml
+modules/bar/popouts/{Audio,Battery,Bluetooth,Network,Stasis,TrayMenu}.qml
+modules/calendar/Content.qml
+modules/controlcenter/{NavRail,WindowTitle}.qml
+modules/controlcenter/appearance/FontDropdown.qml
+modules/controlcenter/appearance/sections/{ColorScheme,ColorVariant}Section.qml
+modules/controlcenter/audio/AudioPane.qml
+modules/controlcenter/bluetooth/{Details,DeviceList,Settings}.qml
+modules/controlcenter/launcher/LauncherPane.qml
+modules/controlcenter/network/{Ethernet,Vpn,Wireless}List.qml
+modules/controlcenter/network/WirelessPasswordDialog.qml
+modules/dashboard/{Media,WindowTools}.qml
+modules/dashboard/dash/{Media,User}.qml
+modules/keybinds/Content.qml
+modules/launcher/items/{Action,App,Calc,Clip,Scheme,Variant,Wallpaper,Web}Item.qml
+modules/lock/{Center,Media,NotifGroup}.qml
+modules/notifications/Notification.qml
+modules/polkit/PolkitDialog.qml
+modules/session/Content.qml
+```
+
+**Intentionally excluded (correct as-is):**
+- `Actions.qml`, `Schemes.qml`, `M3Variants.qml` — `function onClicked(list: ...)` with parameter, called explicitly by parent code
+- Component-root-level `function onClicked()` — method definitions called by child StateLayer handlers via `root.onClicked()`
+
+### Visibilities.screens Map() — BROKEN launcher + session + all drawers ✅ Fixed
+
+**Root cause:** Phase 4 merged upstream's `Map()` for both `screens` and `bars`. `Drawers.qml:112` uses bracket notation: `Visibilities.screens[name] = this`. JavaScript `Map` objects don't support bracket assignment (entries must be set via `.set()`). All drawer visibility objects were silently not stored, so launcher, session, dashboard etc. could never open.
+
+**Fix:** Reverted `screens` to `{}` (plain object, bracket notation compatible). Kept `bars` as `Map()` — consumers correctly use `.set()`/`.get()`.
+
+### Remaining component-root-level onClicked (not yet broken — deferred)
+
+~30 instances of `function onClicked()` at component-root level exist on button instances (`WorkspaceButton`, `IconTextButton`, etc.) that extend `ButtonBase`. These define a JS method that shadows the component's `onClicked` signal handler. Likely also broken but no reports yet. To fix: change to `onClicked: {` on each instance. Files affected:
+```
+modules/dashboard/WindowTools.qml:63,100,109,119,129,140,164,209
+modules/dashboard/Media.qml (several)
+modules/dashboard/dash/Media.qml (several)
+modules/lock/Media.qml (several)
+modules/controlcenter/components/WallpaperGrid.qml
+modules/launcher/EmojiList.qml
+components/widgets/WindowDecorations.qml
 ```
