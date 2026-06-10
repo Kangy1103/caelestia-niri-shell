@@ -347,10 +347,13 @@ WlSessionLockSurface {
                     Layout.fillWidth: true
                 }
 
-                NotifDock {
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    lock: root
+                    NotifDock {
+                        anchors.fill: parent
+                        lock: root
+                    }
                 }
             }
         }
