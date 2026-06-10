@@ -30,14 +30,14 @@ ProgressBar {
     property int indeterminateAnimState: StyledProgressBar.Stopped
 
     function toBounds(startFrac: real, endFrac: real, gapSize: real): point {
-        startFrac = CUtils.clamp(startFrac, 0, 1);
-        endFrac = CUtils.clamp(endFrac, 0, 1);
+        startFrac = Math.max(0, Math.min(1, startFrac));
+        endFrac = Math.max(0, Math.min(1, endFrac));
 
         // Ramp down gap size
         const GAP_RAMP_DOWN_THRESHOLD = 0.01;
         gapSize += height / 2;
-        const startGapSize = (gapSize * CUtils.clamp(startFrac, 0, GAP_RAMP_DOWN_THRESHOLD) / GAP_RAMP_DOWN_THRESHOLD);
-        const endGapSize = (gapSize * (1 - CUtils.clamp(endFrac, 1 - GAP_RAMP_DOWN_THRESHOLD, 1)) / GAP_RAMP_DOWN_THRESHOLD);
+        const startGapSize = (gapSize * Math.max(0, Math.min(GAP_RAMP_DOWN_THRESHOLD, startFrac)) / GAP_RAMP_DOWN_THRESHOLD);
+        const endGapSize = (gapSize * (1 - Math.max(1 - GAP_RAMP_DOWN_THRESHOLD, Math.min(1, endFrac))) / GAP_RAMP_DOWN_THRESHOLD);
         const start = width * startFrac + startGapSize;
         const end = width * endFrac - endGapSize;
 

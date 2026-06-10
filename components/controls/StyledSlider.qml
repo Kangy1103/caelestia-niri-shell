@@ -74,7 +74,7 @@ Slider {
 
             implicitWidth: 4
             implicitHeight: {
-                const t = CUtils.clamp((parent.height - 12) / 16, 0, 1);
+                const t = Math.max(0, Math.min(1, (parent.height - 12) / 16));
                 const lerp = (a, b) => a + (b - a) * t;
                 return parent.height * (mouse.pressed ? lerp(3.5, 1.5) : lerp(3, 1.2));
             }
@@ -148,7 +148,7 @@ Slider {
 
         target: root
         property: "pos"
-        value: CUtils.clamp(mouse.pressStartPos + mouse.dragMovement, 0, 1)
+        value: Math.max(0, Math.min(1, mouse.pressStartPos + mouse.dragMovement))
         when: mouse.pressed
     }
 
