@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.2.0-20260610
+
 pragma ComponentBehavior: Bound
 
 import "lock"
@@ -22,7 +25,7 @@ Scope {
         else if (action === "unlock")
             lock.lock.locked = false;
         else if (typeof action === "string")
-            Hypr.dispatch(action);
+            Quickshell.execDetached(action.split(" "));
         else
             Quickshell.execDetached(action);
     }

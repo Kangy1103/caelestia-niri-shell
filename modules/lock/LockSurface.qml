@@ -153,13 +153,13 @@ WlSessionLockSurface {
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
-                    to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio
+                    to: root.centerWidth
                     type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
-                    to: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult
+                    to: root.centerHeight
                     type: Anim.DefaultSpatial
                 }
             }
@@ -274,10 +274,10 @@ WlSessionLockSurface {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.horizontalCenter
-            anchors.rightMargin: contentWidth / 2 + Tokens.spacing.extraExtraLarge * 2
+            anchors.rightMargin: centerWidth / 2 + Tokens.spacing.extraExtraLarge * 2
 
             width: Math.min(300, parent.width / 4)
-            height: contentHeight
+            height: centerHeight
 
             radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
@@ -320,10 +320,10 @@ WlSessionLockSurface {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.horizontalCenter
-            anchors.leftMargin: contentWidth / 2 + Tokens.spacing.extraExtraLarge * 2
+            anchors.leftMargin: centerWidth / 2 + Tokens.spacing.extraExtraLarge * 2
 
             width: Math.min(300, parent.width / 4)
-            height: contentHeight
+            height: centerHeight
 
             radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
@@ -361,8 +361,8 @@ WlSessionLockSurface {
 
     // ── Main floating panel ────────────────────────────────────────────────────
 
-    readonly property real contentWidth: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio
-    readonly property real contentHeight: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult
+    readonly property real centerWidth: Tokens.sizes.lock.centerWidth * Math.min(1, (root.screen?.height ?? 1440) / 1440)
+    readonly property real centerHeight: Math.round(centerWidth * 1.43)
 
     Item {
         id: lockContent
@@ -415,16 +415,19 @@ WlSessionLockSurface {
             rotation: 180
         }
 
-        Content {
+        RowLayout {
             id: content
 
             anchors.centerIn: parent
-            width: root.contentWidth - Tokens.padding.extraLargeIncreased
-            height: root.contentHeight - Tokens.padding.extraLargeIncreased
+            width: root.centerWidth - Tokens.padding.extraLargeIncreased
+            height: root.centerHeight - Tokens.padding.extraLargeIncreased
 
-            lock: root
             opacity: 0
             scale: 0
+
+            Center {
+                lock: root
+            }
         }
     }
 }
