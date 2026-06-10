@@ -233,7 +233,6 @@ WlSessionLockSurface {
         id: extrasLayer
         anchors.fill: parent
         z: 4
-        visible: Config.lock.showExtras
         opacity: 0
 
         ParallelAnimation {
