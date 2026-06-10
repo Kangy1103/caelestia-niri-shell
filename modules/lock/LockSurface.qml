@@ -310,7 +310,7 @@ WlSessionLockSurface {
                 Fetch {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    rootHeight: parent.height
+                    rootHeight: centerHeight
                 }
 
                 Media {

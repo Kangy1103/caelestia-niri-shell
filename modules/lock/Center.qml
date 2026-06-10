@@ -42,7 +42,7 @@ ColumnLayout {
     }
 
     PasswordInput {
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
         centerScale: Math.max(0.8, root.centerScale)
         centerWidth: root.centerWidth
         lock: root.lock
