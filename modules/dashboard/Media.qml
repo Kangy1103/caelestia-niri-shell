@@ -55,13 +55,9 @@ Item {
         onTriggered: Players.active?.positionChanged()
     }
 
-    ServiceRef {
-        service: Cava.provider
-    }
-
-    ServiceRef {
-        service: BeatTracker
-    }
+    // ServiceRef disabled: CavaProvider crashes in libcava/fftw3, BeatTracker not creatable (Qt 6.11)
+    // ServiceRef { service: Cava.provider }
+    // ServiceRef { service: BeatTracker }
 
     Shape {
         id: visualiser
