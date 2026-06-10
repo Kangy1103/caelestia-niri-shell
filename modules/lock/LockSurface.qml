@@ -24,7 +24,7 @@ WlSessionLockSurface {
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name
 
-    color: isTargetScreen ? "transparent" : "#000000"
+    color: "transparent"
 
     Connections {
         function onUnlock(): void {
@@ -178,7 +178,6 @@ WlSessionLockSurface {
 
     Rectangle {
         id: solidFallback
-        visible: root.isTargetScreen
         anchors.fill: parent
         color: Colours.palette.m3surface
         z: 0
@@ -186,7 +185,7 @@ WlSessionLockSurface {
 
     Image {
         id: wallpaperFallback
-        visible: root.isTargetScreen && (status === Image.Ready || status === Image.Loading)
+        visible: status === Image.Ready || status === Image.Loading
         anchors.fill: parent
         source: {
             const path = Wallpapers.current || Config.paths.wallpaper || "";
@@ -207,7 +206,6 @@ WlSessionLockSurface {
 
     ScreencopyView {
         id: background
-        visible: root.isTargetScreen
 
         anchors.fill: parent
         captureSource: root.screen
@@ -226,7 +224,6 @@ WlSessionLockSurface {
 
     Rectangle {
         id: dimScrim
-        visible: root.isTargetScreen
         anchors.fill: parent
         z: 3
         color: Qt.alpha("#000000", 0.2)
