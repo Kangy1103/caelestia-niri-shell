@@ -109,7 +109,7 @@ Item {
         id: details
 
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: visualiser.right
+        anchors.left: cover.right
         anchors.leftMargin: Config.appearance.spacing.large
 
         spacing: Config.appearance.spacing.small
@@ -493,20 +493,16 @@ text: modelData === Players.active ? "check" : ""
         anchors.left: details.right
         anchors.leftMargin: Config.appearance.spacing.large
 
-        implicitWidth: visualiser.width
-        implicitHeight: visualiser.height
+        implicitWidth: Math.max(cover.implicitWidth, 200)
+        implicitHeight: cover.implicitHeight
 
-        readonly property real bongoSpeed: {
-            var bpm = 0;
-            try { bpm = BeatTracker.bpm || 0; } catch(e) {}
-            return bpm > 0 ? bpm / Config.services.mediaGifSpeedAdjustment : 0.5;
-        }
+        readonly property real bongoSpeed: 0.5  // BeatTracker disabled (Qt 6.11 bug)
 
         AnimatedImage {
             anchors.centerIn: parent
 
-            width: visualiser.width * 0.75
-            height: visualiser.height * 0.75
+            width: parent.width * 0.75
+            height: parent.height * 0.75
 
             playing: Players.active?.isPlaying ?? false
             speed: parent.bongoSpeed
