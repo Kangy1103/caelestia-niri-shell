@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 0.8.0-20260610
+Version: 0.9.0-20260610
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -399,10 +399,10 @@ CPU/GPU/RAM/disk/network. Our custom panels still accessible.
 
 ---
 
-## Phase 7 — Nexus (settings app)
+## Phase 7 — Nexus (settings app) ✅
 
 **Depends on:** Phase 1, 2 (C++ Config)
-**Goal:** Nexus settings app available alongside our ControlCenter.
+**Goal:** Nexus settings app fully replaces ControlCenter.
 
 ### New upstream files (~55 total)
 
@@ -420,18 +420,43 @@ modules/nexus/common/*                    # ~15 reusable components
 modules/nexus/pages/*                      # ~25 settings pages
 ```
 
-### Integration
+### What was done (2026-06-10)
 
-- Nexus launched via `caelestia shell nexus open` or launcher
-- Our ControlCenter remains accessible for panes Nexus doesn't have yet
-- Phase out overlapping CC panes over time (Audio, Bluetooth, Network,
-  Appearance, Launcher, Lock, Notifs, OSD, Session)
-- Keep our unique CC panes: Dashboard, Taskbar, Extra
+**Nexus integration:**
+- 46 Nexus QML files already present (identical to upstream from Phase 3 copy)
+- Wired `import "modules/nexus"` into `shell.qml`
+- IPC handler: `caelestia shell nexus open` → `WindowFactory.create()` (FloatingWindow)
+- Bar Wrapper popout: replaced `ControlCenter {}` with `Nexus {}` inline
+
+**ControlCenter removal:**
+- Removed `modules/controlcenter/` entirely (66 files) — backed up to `/mnt/Gogeta/Personal Projects/controlcenter-backup/`
+- Removed `import qs.modules.controlcenter` from `shell.qml` and `Shortcuts.qml`
+- Fixed stale CC imports in `bar/popouts/Wrapper.qml` and `launcher/services/Actions.qml`
+- Launcher "Settings" action `WindowFactory.create()` now resolves to Nexus's WindowFactory automatically
+
+**CustomShortcut Niri-fication:**
+- `components/misc/CustomShortcut.qml`: replaced `Quickshell.Hyprland.GlobalShortcut` with compositor-agnostic `QtObject` + `name`/`description`/`pressed`/`released` signals
+- Each `CustomShortcut` gets an explicit `IpcHandler` in `Shortcuts.qml` routing IPC calls to signals
+- Merged upstream Shortcuts.qml structure: 8 CustomShortcut entries (nexus, showall, dashboard, session, launcher, launcherInterrupt, sidebar, utilities) + drawers/toaster IPC
+- Kept our clipboard IpcHandler
+- `hasFullscreen` hardcoded `false` with TODO (Niri lacks fullscreen tracking IPC)
+
+**Rule compliance:**
+- Rule #10 — diff audit passed: all differences are Niri adaptations, Hyprland removals, version headers, or custom features
+- Rule #11 — dependency verification passed: all Nexus imports resolve (Caelestia.Blobs, Caelestia.Config with NexusTokens, Quickshell.Bluetooth, Colours.tPalette, CUtils.version/qtVersion, Paths.wallsdir, TokenConfig.font)
+- Zero Hyprland leaks in Nexus module
+- Plugin rebuilt and installed — shell launches with zero warnings/errors
 
 ### Verify
 
-Nexus opens. Settings pages render with live config values. Changes persist
-to `~/.config/caelestia/shell.json`. Our ControlCenter still works.
+`qs -c caelestia-niri-shell` loads clean. `caelestia shell nexus open` launches Nexus FloatingWindow. All pages render. Config persists to `~/.config/caelestia-niri-shell/shell.json`.
+
+**Reversion:**
+```fish
+git reset --hard pre-phase-7
+mv /mnt/Gogeta/Personal\ Projects/controlcenter-backup/controlcenter/ modules/controlcenter/
+sudo cmake --install build
+```
 
 ---
 
