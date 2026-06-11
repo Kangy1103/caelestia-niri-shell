@@ -132,7 +132,7 @@ Item {
 
                     Behavior on color {
                         ColorAnimation {
-                            duration: Config.appearance.anim.durations.fast
+                            duration: Config.appearance.anim.durations.small
                             easing.type: Easing.InOutQuad
                         }
                     }
@@ -148,7 +148,7 @@ Item {
         }
         Behavior on color {
             ColorAnimation {
-                duration: Config.appearance.anim.durations.fast
+                duration: Config.appearance.anim.durations.small
                 easing.type: Easing.InOutQuad
             }
         }

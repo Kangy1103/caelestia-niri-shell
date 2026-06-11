@@ -630,6 +630,9 @@ Background rendering is handled by `BlobGroup` + `BlobInvertedRect` + per-panel 
 - **Root CMakeLists.txt** — created at repo root with INSTALL_QMLDIR / INSTALL_PYTHONDIR paths. Stripped duplicated project()/cmake_minimum_required from plugin/. extras/ now receives INSTALL_PYTHONDIR from root. Updated plugin/build.sh to reference root source dir.
 - **Dead file cleanup** — all 11 files deleted in Phase 9, confirmed gone.
 - **Build verification** — 190/190 targets, zero errors. `sudo cmake --install`, shell daemon loads (`Configuration Loaded`), Nexus IPC functional.
+- **Runtime warning fixes (2026-06-11, post-completion)** — two sets of scene warnings fixed:
+  - `WorkspacePill.qml`: `Config.appearance.anim.durations.fast` → `small` (`.fast` doesn't exist in C++ `AnimDurations` — valid props: `small`, `normal`, `large`, `extraLarge`, `expressiveFastSpatial`, etc.)
+  - `Notification.qml`: null `modelData` guarded with `?.` / `??` / ternary throughout (delegate creation before model binding on Qt 6.11). Upstream has identical raw accesses — CNS hardening layer.
 
 ---
 
