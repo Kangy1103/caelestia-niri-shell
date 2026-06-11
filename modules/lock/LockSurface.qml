@@ -103,6 +103,18 @@ WlSessionLockSurface {
 
         running: root.isTargetScreen
 
+        Anim {
+            target: background
+            property: "opacity"
+            to: 1
+            type: Anim.StandardLarge
+        }
+        Anim {
+            target: wallpaperFallback
+            property: "opacity"
+            to: 0
+            type: Anim.StandardLarge
+        }
         SequentialAnimation {
             ParallelAnimation {
                 Anim {
@@ -171,6 +183,33 @@ WlSessionLockSurface {
         z: 0
     }
 
+    Image {
+        id: wallpaperFallback
+        anchors.fill: parent
+        source: {
+            const path = Wallpapers.current || Config.paths.wallpaper || "";
+            if (!path) return "";
+            const source = Wallpapers.getColorSource(path);
+            return source.startsWith("/") ? "file://" + source : source;
+        }
+        fillMode: Image.PreserveAspectCrop
+        sourceSize.width: root.screen.width
+        sourceSize.height: root.screen.height
+        opacity: 1
+        z: 1
+
+        visible: status === Image.Ready || status === Image.Loading
+
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            autoPaddingEnabled: false
+            blurEnabled: true
+            blur: 1
+            blurMax: 64
+            blurMultiplier: 1
+        }
+    }
+
     ScreencopyView {
         id: background
 
@@ -178,12 +217,6 @@ WlSessionLockSurface {
         captureSource: root.screen
         opacity: 0
         z: 2
-
-        Component.onCompleted: opacity = 1
-
-        Behavior on opacity {
-            Anim { type: Anim.StandardLarge }
-        }
 
         layer.enabled: true
         layer.effect: MultiEffect {
