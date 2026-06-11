@@ -617,70 +617,19 @@ Background rendering is handled by `BlobGroup` + `BlobInvertedRect` + per-panel 
 
 ---
 
-## Phase 10 — Entry point, build & cleanup
+## Phase 10 — Entry point, build & cleanup ✅
 
 **Depends on:** All previous phases
 **Goal:** Everything wired. Build system polished. Dead files removed.
+**Audited:** 2026-06-11
+**Completed:** 2026-06-11
 
-### Update `shell.qml`
+### Completed
 
-Current our shell.qml (51 lines) → add upstream's entry-point modules:
-
-```
-GSFLoader {}              # Google Sans Flex loader
-ConfigToasts {}           # Config change toasts
-BatteryMonitor {}         # Battery monitoring
-IdleMonitors { lock: lock }  # Idle/DPMS/auto-lock
-```
-
-Keep our custom entries:
-
-```
-Backdrop {}
-KeybindsPanel {}
-CalendarPanel {}
-CalendarAppPanel {}
-PolkitDialog {}
-ReloadPopup {}
-```
-
-### Build system
-
-- Adopt upstream root `CMakeLists.txt` with our custom `INSTALL_*` paths
-- Keep our `plugin/build.sh` updated (or replace with cmake wrapper)
-- Update `plugin/src/Caelestia/CMakeLists.txt` with final module list
-
-### Cleanup
-
-#### Dead files to delete (found in Phase 9 audit)
-
-| File | Reason |
-|------|--------|
-| `modules/drawers/Backgrounds.qml` | Dead — all backgrounds handled by ContentWindow PanelBg |
-| `modules/drawers/Border.qml` | Dead — zero imports |
-| `modules/dashboard/Background.qml` | Dead — zero imports |
-| `modules/bar/popouts/Background.qml` | Dead — zero imports |
-| `modules/notifications/Background.qml` | Dead — zero imports |
-| `modules/osd/Background.qml` | Dead, duplicate of session/Background.qml |
-| `modules/osd/Interactions.qml` | Dead — duplicated in osd/Wrapper.qml |
-| `modules/session/Background.qml` | Dead, duplicate of osd/Background.qml |
-| `modules/launcher/Background.qml` | Dead — zero imports |
-| `modules/launcher/items/ClipItem.qml` | Dead — superseded by clipboard panel (Phase 7) |
-| `modules/launcher/items/ClipPreview.qml` | Dead — superseded by clipboard panel |
-
-- Old QML config files already removed in Phase 2
-- Remove any files superseded by C++ equivalents
-
-### Final verification
-
-```fish
-cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
-cmake --build build
-sudo cmake --install build
-pkill quickshell; qs -c caelestia-niri-shell
-```
-
-Shell launches without errors. All features functional.
+- **shell.qml** — all entry-point modules present (GSFLoader, ConfigToasts, BatteryMonitor, IdleMonitors) plus custom entries (Backdrop, KeybindsPanel, CalendarPanel, CalendarAppPanel, PolkitDialog, ReloadPopup). Scope-expansion: AudioPortSwitch, Cava, GameMode, GlobalConfig services wired.
+- **Root CMakeLists.txt** — created at repo root with INSTALL_QMLDIR / INSTALL_PYTHONDIR paths. Stripped duplicated project()/cmake_minimum_required from plugin/. extras/ now receives INSTALL_PYTHONDIR from root. Updated plugin/build.sh to reference root source dir.
+- **Dead file cleanup** — all 11 files deleted in Phase 9, confirmed gone.
+- **Build verification** — 190/190 targets, zero errors. `sudo cmake --install`, shell daemon loads (`Configuration Loaded`), Nexus IPC functional.
 
 ---
 
