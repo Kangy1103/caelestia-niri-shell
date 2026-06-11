@@ -12,33 +12,32 @@ class Command:
 
     def run(self) -> None:
         if self.args.show:
-            # Print the ipc
             self.print_ipc()
         elif self.args.log:
-            # Print the log
             self.print_log()
         elif self.args.kill:
-            # Kill the shell
             self.shell("kill")
         elif self.args.message:
-            # Send a message
-            self.message(*self.args.message)
-        else:
-            # Start the shell
-            args = ["qs", "-c", "caelestia-niri-shell", "-n"]
-            if self.args.log_rules:
-                args.extend(["--log-rules", self.args.log_rules])
-            if self.args.daemon:
-                args.append("-d")
-                subprocess.run(args)
+            if self.args.message == ["start"]:
+                self._start()
             else:
-                shell = subprocess.Popen(args, stdout=subprocess.PIPE, universal_newlines=True)
+                self.message(*self.args.message)
+        else:
+            self._start()
 
-                # Ensure stdout is not None for the type checker
-                if shell.stdout:
-                    for line in shell.stdout:
-                        if self.filter_log(line):
-                            print(line, end="")
+    def _start(self) -> None:
+        args = ["qs", "-c", "caelestia-niri-shell", "-n"]
+        if self.args.log_rules:
+            args.extend(["--log-rules", self.args.log_rules])
+        if self.args.daemon:
+            args.append("-d")
+            subprocess.run(args)
+        else:
+            shell = subprocess.Popen(args, stdout=subprocess.PIPE, universal_newlines=True)
+            if shell.stdout:
+                for line in shell.stdout:
+                    if self.filter_log(line):
+                        print(line, end="")
 
     def shell(self, *args: str) -> str:
         return subprocess.check_output(["qs", "-c", "caelestia-niri-shell", *args], text=True)
