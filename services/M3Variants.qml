@@ -13,7 +13,7 @@ Searcher {
     readonly property string schemeStatePath: `${Paths.state}/scheme.json`
 
     function transformSearch(search: string): string {
-        return search.slice(`${Config.launcher.actionPrefix}variant `.length);
+        return search.slice(`${GlobalConfig.launcher.actionPrefix}variant `.length);
     }
 
     // Set the variant and save to state file
@@ -127,7 +127,7 @@ Searcher {
             description: qsTr("All colours are grayscale, no chroma.")
         }
     ]
-    useFuzzy: Config.launcher.useFuzzy.variants
+    useFuzzy: GlobalConfig.launcher.useFuzzy.variants
 
     component Variant: QtObject {
         required property string variant

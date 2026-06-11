@@ -30,8 +30,8 @@ Singleton {
     readonly property string feelsLike: cc ? `${cc.FeelsLikeC ?? "--"}°C` : "--"
     readonly property int humidity: cc?.humidity ?? 0
     readonly property real windSpeed: cc?.windSpeed ?? 0.0
-    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
-    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), Config.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
+    readonly property string sunrise: cc ? Qt.formatDateTime(new Date(cc.sunrise), GlobalConfig.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
+    readonly property string sunset: cc ? Qt.formatDateTime(new Date(cc.sunset), GlobalConfig.services.useTwelveHourClock ? "h:mm A" : "h:mm") : "--:--"
 
     function formatTemp(temp: var): string {
         return GlobalConfig.services.useFahrenheit ? `${temp !== undefined ? Math.round(toFahrenheit(temp)) : "--"}°F` : `${temp !== undefined ? Math.round(temp) : "--"}°C`;
@@ -42,7 +42,7 @@ Singleton {
     }
 
     function reload(): void {
-        let configLocation = Config.services.weatherLocation;
+        let configLocation = GlobalConfig.services.weatherLocation;
 
         if (configLocation && configLocation !== "") {
             if (configLocation.indexOf(",") !== -1 && !isNaN(parseFloat(configLocation.split(",")[0]))) {
@@ -292,7 +292,7 @@ Singleton {
             root.reload();
         }
 
-        target: Config.services
+        target: GlobalConfig.services
     }
 
     Timer {

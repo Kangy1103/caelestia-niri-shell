@@ -11,7 +11,7 @@ Searcher {
     function launch(entry: DesktopEntry): void {
         if (entry.runInTerminal)
             Quickshell.execDetached({
-                command: [...Config.general.apps.terminal, `${Quickshell.shellDir}/assets/wrap_term_launch.sh`, ...entry.command],
+                command: [...GlobalConfig.general.apps.terminal, `${Quickshell.shellDir}/assets/wrap_term_launch.sh`, ...entry.command],
                 workingDirectory: entry.workingDirectory
             });
         else
@@ -22,7 +22,7 @@ Searcher {
     }
 
     function search(search: string): list<var> {
-        const prefix = Config.launcher.specialPrefix;
+        const prefix = GlobalConfig.launcher.specialPrefix;
 
         if (search.startsWith(`${prefix}i `)) {
             keys = ["id", "name"];
@@ -64,7 +64,7 @@ Searcher {
     }
 
     list: variants.instances
-    useFuzzy: Config.launcher.useFuzzy.apps
+    useFuzzy: GlobalConfig.launcher.useFuzzy.apps
 
     Variants {
         id: variants

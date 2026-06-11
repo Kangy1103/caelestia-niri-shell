@@ -10,17 +10,17 @@ import QtQuick
 Singleton {
     id: root
 
-    readonly property list<var> warnLevels: [...Config.general.battery.warnLevels].sort((a, b) => b.level - a.level)
+    readonly property list<var> warnLevels: [...GlobalConfig.general.battery.warnLevels].sort((a, b) => b.level - a.level)
 
     Connections {
         target: UPower
 
         function onOnBatteryChanged(): void {
             if (UPower.onBattery) {
-                if (Config.utilities.toasts.chargingChanged)
+                if (GlobalConfig.utilities.toasts.chargingChanged)
                     Toaster.toast(qsTr("Charger unplugged"), qsTr("Battery is discharging"), "power_off");
             } else {
-                if (Config.utilities.toasts.chargingChanged)
+                if (GlobalConfig.utilities.toasts.chargingChanged)
                     Toaster.toast(qsTr("Charger plugged in"), qsTr("Battery is charging"), "power");
                 for (const level of root.warnLevels)
                     level.warned = false;
@@ -43,7 +43,7 @@ Singleton {
                 }
             }
 
-            if (!hibernateTimer.running && p <= Config.general.battery.criticalLevel) {
+            if (!hibernateTimer.running && p <= GlobalConfig.general.battery.criticalLevel) {
                 Toaster.toast(qsTr("Hibernating in 5 seconds"), qsTr("Hibernating to prevent data loss"), "battery_android_alert", Toast.Error);
                 hibernateTimer.start();
             }

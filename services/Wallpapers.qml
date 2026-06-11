@@ -13,7 +13,7 @@ Searcher {
 
     readonly property string stateDir: `${Paths.state}/wallpaper`
     readonly property string currentNamePath: `${stateDir}/path.txt`
-    readonly property list<string> smartArg: Config.services.smartScheme ? [] : ["--no-smart"]
+    readonly property list<string> smartArg: GlobalConfig.services.smartScheme ? [] : ["--no-smart"]
     readonly property string fallback: Quickshell.shellPath("assets/wallpaper.webp")
 
     property bool showPreview: false
@@ -162,15 +162,15 @@ Searcher {
     }
 
     function loadFromConfig(): void {
-        if (!actualCurrent && Config.paths.wallpaper) {
-            const path = Paths.absolutePath(Config.paths.wallpaper);
+        if (!actualCurrent && GlobalConfig.paths.wallpaper) {
+            const path = Paths.absolutePath(GlobalConfig.paths.wallpaper);
             setWallpaper(path);
         }
     }
 
     list: wallpapers.entries
     key: "relativePath"
-    useFuzzy: Config.launcher.useFuzzy.wallpapers
+    useFuzzy: GlobalConfig.launcher.useFuzzy.wallpapers
     extraOpts: useFuzzy ? ({}) : ({
             forward: false
         })

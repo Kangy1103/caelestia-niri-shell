@@ -29,7 +29,7 @@ Singleton {
     property string wsContextType: "none"
     
     property Timer wsAnchorClearTimer: Timer {
-        interval: Config.appearance.anim.durations.normal
+        interval: GlobalConfig.appearance.anim.durations.normal
         repeat: false
         onTriggered: {
             if (root.wsContextAnchor === null) {
@@ -106,7 +106,7 @@ Singleton {
     Timer { interval: 1500; running: true; onTriggered: root._lockKeysInitialized = true }
 
     onCapsLockChanged: {
-        if (!_lockKeysInitialized || !Config.utilities.toasts.capsLockChanged)
+        if (!_lockKeysInitialized || !GlobalConfig.utilities.toasts.capsLockChanged)
             return;
         if (capsLock)
             Toaster.toast(qsTr("Caps lock enabled"), qsTr("Caps lock is currently enabled"), "keyboard_capslock_badge");
@@ -115,7 +115,7 @@ Singleton {
     }
 
     onNumLockChanged: {
-        if (!_lockKeysInitialized || !Config.utilities.toasts.numLockChanged)
+        if (!_lockKeysInitialized || !GlobalConfig.utilities.toasts.numLockChanged)
             return;
         if (numLock)
             Toaster.toast(qsTr("Num lock enabled"), qsTr("Num lock is currently enabled"), "looks_one");
@@ -124,7 +124,7 @@ Singleton {
     }
 
     onKbLayoutChanged: {
-        if (!_lockKeysInitialized || !Config.utilities.toasts.kbLayoutChanged)
+        if (!_lockKeysInitialized || !GlobalConfig.utilities.toasts.kbLayoutChanged)
             return;
         Toaster.toast(qsTr("Keyboard layout changed"), qsTr("Layout changed to: %1").arg(kbLayout), "keyboard");
     }
@@ -136,7 +136,7 @@ Singleton {
             root.windowOpenedOrChanged(windowData);
         }
         function onConfigLoaded(failed) {
-            if (!Config.utilities.toasts.niriConfigLoaded)
+            if (!GlobalConfig.utilities.toasts.niriConfigLoaded)
                 return;
 
             if (failed)
@@ -288,7 +288,7 @@ Singleton {
 
     function focusWindow(windowID) {
         if (!niriAvailable) return false;
-        if (Number(windowID) === Number(focusedWindowId) && Config.bar.workspaces.doubleClickToCenter) {
+        if (Number(windowID) === Number(focusedWindowId) && GlobalConfig.bar.workspaces.doubleClickToCenter) {
             return centerWindow();
         }
         return NiriIpc.action("focus-window", ["--id", windowID.toString()]);

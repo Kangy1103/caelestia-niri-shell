@@ -72,7 +72,7 @@ Searcher {
     }
 
     function transformSearch(search: string): string {
-        return search.slice(`${Config.launcher.actionPrefix}scheme `.length);
+        return search.slice(`${GlobalConfig.launcher.actionPrefix}scheme `.length);
     }
 
     function selector(item: var): string {
@@ -139,7 +139,7 @@ Searcher {
     }
 
     list: schemes.instances
-    useFuzzy: Config.launcher.useFuzzy.schemes
+    useFuzzy: GlobalConfig.launcher.useFuzzy.schemes
     keys: ["name", "flavour"]
     weights: [0.9, 0.1]
 

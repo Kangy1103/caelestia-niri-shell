@@ -19,7 +19,8 @@ Singleton {
     readonly property string notifimagecache: `${imagecache}/notifs`
     readonly property string notificationsData: `${data}/notifications.json`
     readonly property string eventsData: `${data}/events.json`
-    readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(Config.paths.wallpaperDir)
+    readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(GlobalConfig.paths.wallpaperDir)
+    readonly property string recsdir: Quickshell.env("CAELESTIA_RECORDINGS_DIR") || `${Quickshell.env("XDG_VIDEOS_DIR") || `${home}/Videos`}/Recordings`
     readonly property string libdir: Quickshell.env("CAELESTIA_LIB_DIR") || "/usr/lib/caelestia"
 
     function toLocalFile(path: url): string {

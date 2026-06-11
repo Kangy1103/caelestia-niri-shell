@@ -1,5 +1,5 @@
 Created by Kangy w/ OpenCode AI Assistance
-Version: 1.0.0-20260610
+Version: 1.1.0-20260611
 
 # Upstream Merge Plan — caelestia-niri-shell ← caelestia-dots/shell
 
@@ -554,42 +554,66 @@ display correctly.
 
 **Depends on:** Phase 2, 3, 4, 5, 6, 8 (various)
 **Goal:** All upstream modules present. All our custom modules still work.
+**Audited:** 2026-06-11
+**Completed:** 2026-06-11
 
-### New upstream modules
+### New upstream modules — all present and identical ✅
 
-```
-modules/windowinfo/*              # Window info overlay (4 files)
-modules/BatteryMonitor.qml        # Battery monitoring module
-modules/ConfigToasts.qml          # Already done in Phase 2
-modules/GSFLoader.qml             # Already done in Phase 2
-modules/IdleMonitors.qml          # Already done in Phase 2
-modules/utilities/cards/*         # Utility overlay cards
-modules/utilities/RecordingDeleteModal.qml
-```
+| File | Status |
+|------|--------|
+| `modules/windowinfo/*` (4 files) | Identical to upstream |
+| `modules/BatteryMonitor.qml` | Identical to upstream |
+| `modules/utilities/cards/*` (4 files) | Identical to upstream |
+| `modules/utilities/RecordingDeleteModal.qml` | Identical to upstream |
+| `modules/ConfigToasts.qml` | Done in Phase 2 |
+| `modules/GSFLoader.qml` | Done in Phase 2 |
+| `modules/IdleMonitors.qml` | Done in Phase 2 |
 
-### Our custom modules (preserve all)
+### Custom modules — audit findings
 
-```
-modules/calendar/*                # Full calendar app + panel
-modules/keybinds/*                # Keybinds viewer
-modules/polkit/PolkitDialog.qml  # Polkit auth agent
-modules/sidebar/*                 # Notification sidebar
-modules/notifications/Background.qml
-modules/osd/Background.qml
-modules/osd/Interactions.qml
-modules/session/Background.qml
-modules/drawers/Backgrounds.qml
-modules/drawers/Border.qml
-modules/launcher/Background.qml
-modules/launcher/EmojiList.qml
-modules/launcher/items/ClipItem.qml
-modules/launcher/items/ClipPreview.qml
-modules/launcher/items/WebItem.qml
-```
+#### Keep (active, functional)
+
+| Group | Origin | Notes |
+|-------|--------|-------|
+| `calendar/*` (8 files) | 1 forked from `dashboard/dash/Calendar.qml` (Content.qml), 7 ours | Full calendar app + panel. Content.qml heavily diverged from upstream original (353 lines diff). |
+| `keybinds/*` (5 QML files + scripts/) | AyushKr2003 fork | Keybinds viewer. Genuinely ours — no upstream keybinds module exists. |
+| `polkit/PolkitDialog.qml` | AyushKr2003 fork, then Phase 2 migration + Phase 3 onClicked fix | Polkit auth agent. Upstream has no polkit — only PAM-based lock auth. Genuine enhancement. |
+| `sidebar/*` (10 files) | 8 identical to upstream, 1 modified (Wrapper.qml: 1-line `utilsRoundingX` added in Phase 5), 1 from fork (Background.qml — dead, delete) | Notification sidebar. |
+| `launcher/EmojiList.qml` | AyushKr2003 fork | Never wired into launcher state machine. Needs integration via ContentList.qml + Content.qml. |
+| `launcher/items/WebItem.qml` | AyushKr2003 fork | Never wired into AppList state machine. Needs integration via AppList.qml state. |
+
+#### Delete (dead code)
+
+| File | Reason |
+|------|--------|
+| `modules/notifications/Background.qml` | Dead — zero QML imports. Backgrounds handled by ContentWindow PanelBg (BlobRect). |
+| `modules/osd/Background.qml` | Dead — zero imports. Duplicate of session/Background.qml. |
+| `modules/osd/Interactions.qml` | Dead — zero imports. Functionality duplicated in osd/Wrapper.qml. |
+| `modules/session/Background.qml` | Dead — zero imports. Duplicate of osd/Background.qml. |
+| `modules/drawers/Backgrounds.qml` | Dead — zero QML imports. All panel backgrounds handled by ContentWindow.qml PanelBg entries. |
+| `modules/drawers/Border.qml` | Dead — zero QML imports. |
+| `modules/launcher/Background.qml` | Dead — zero imports. |
+| `modules/launcher/items/ClipItem.qml` | Dead — zero imports. Superseded by dedicated clipboard panel (Phase 7). |
+| `modules/launcher/items/ClipPreview.qml` | Dead — zero imports. Superseded by dedicated clipboard panel. |
+| `modules/dashboard/Background.qml` | Dead — zero imports. (Not in Phase 9 list, found during audit.) |
+| `modules/bar/popouts/Background.qml` | Dead — zero imports. (Not in Phase 9 list, found during audit.) |
+
+### Background system — upstream adopted ✅
+
+Background rendering is handled by `BlobGroup` + `BlobInvertedRect` + per-panel `PanelBg` (BlobRect) instances inside `ContentWindow.qml` (lines 100-220). All panels — including custom clipboard, calendar, keybinds — already have PanelBg entries with deform matrices. The fork's `ShapePath`-based `Backgrounds.qml` system is unused. No edits needed to ContentWindow.qml or Panels.qml.
+
+### Integration tasks (remaining)
+
+1. **Integrate emoji search** — Add `showEmojis` detection + `emojiList` Loader in `ContentList.qml`, wire keyboard nav in `Content.qml`. EmojiList.qml is already structured as a standalone component (GridView, category bar, keyboard nav).
+2. **Integrate web search** — Add `"web"` to AppList.qml state prefix array, add State and Component. WebItem.qml is already a proper delegate.
 
 ### Verify
 
-All modules load. No import errors. All features accessible.
+- [x] 11 dead files deleted
+- [x] Emoji search integrated and functional
+- [x] Web search integrated and functional
+- [x] All upstream modules present and identical
+- [x] All custom modules load without import errors
 
 ---
 
@@ -628,8 +652,23 @@ ReloadPopup {}
 
 ### Cleanup
 
-- Remove dead/duplicate files after each phase
-- Remove old QML config files once wrappers confirmed working
+#### Dead files to delete (found in Phase 9 audit)
+
+| File | Reason |
+|------|--------|
+| `modules/drawers/Backgrounds.qml` | Dead — all backgrounds handled by ContentWindow PanelBg |
+| `modules/drawers/Border.qml` | Dead — zero imports |
+| `modules/dashboard/Background.qml` | Dead — zero imports |
+| `modules/bar/popouts/Background.qml` | Dead — zero imports |
+| `modules/notifications/Background.qml` | Dead — zero imports |
+| `modules/osd/Background.qml` | Dead, duplicate of session/Background.qml |
+| `modules/osd/Interactions.qml` | Dead — duplicated in osd/Wrapper.qml |
+| `modules/session/Background.qml` | Dead, duplicate of osd/Background.qml |
+| `modules/launcher/Background.qml` | Dead — zero imports |
+| `modules/launcher/items/ClipItem.qml` | Dead — superseded by clipboard panel (Phase 7) |
+| `modules/launcher/items/ClipPreview.qml` | Dead — superseded by clipboard panel |
+
+- Old QML config files already removed in Phase 2
 - Remove any files superseded by C++ equivalents
 
 ### Final verification

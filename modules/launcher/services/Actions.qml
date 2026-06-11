@@ -162,7 +162,7 @@ Searcher {
             name: qsTr("Shutdown")
             desc: qsTr("Shutdown the system")
             icon: "power_settings_new"
-            disabled: !Config.launcher.enableDangerousActions
+            disabled: !GlobalConfig.launcher.enableDangerousActions
 
             function onClicked(list: AppList): void {
                 list.visibilities.launcher = false;
@@ -173,7 +173,7 @@ Searcher {
             name: qsTr("Reboot")
             desc: qsTr("Reboot the system")
             icon: "cached"
-            disabled: !Config.launcher.enableDangerousActions
+            disabled: !GlobalConfig.launcher.enableDangerousActions
 
             function onClicked(list: AppList): void {
                 list.visibilities.launcher = false;
@@ -184,7 +184,7 @@ Searcher {
             name: qsTr("Logout")
             desc: qsTr("Log out of the current session")
             icon: "exit_to_app"
-            disabled: !Config.launcher.enableDangerousActions
+            disabled: !GlobalConfig.launcher.enableDangerousActions
 
             function onClicked(list: AppList): void {
                 list.visibilities.launcher = false;
@@ -205,15 +205,15 @@ Searcher {
     ]
 
     function transformSearch(search: string): string {
-        return search.slice(Config.launcher.actionPrefix.length);
+        return search.slice(GlobalConfig.launcher.actionPrefix.length);
     }
 
     function autocomplete(list: AppList, text: string): void {
-        list.search.text = `${Config.launcher.actionPrefix}${text} `;
+        list.search.text = `${GlobalConfig.launcher.actionPrefix}${text} `;
     }
 
     list: actions.filter(a => !a.disabled)
-    useFuzzy: Config.launcher.useFuzzy.actions
+    useFuzzy: GlobalConfig.launcher.useFuzzy.actions
 
     component Action: QtObject {
         required property string name

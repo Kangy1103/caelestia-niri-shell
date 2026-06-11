@@ -21,11 +21,11 @@ Singleton {
     onEnabledChanged: {
         if (enabled) {
             writeRunner.running = true;
-            if (Config.utilities.toasts.gameModeChanged)
+            if (GlobalConfig.utilities.toasts.gameModeChanged)
                 Toaster.toast(qsTr("Gaming mode enabled"), qsTr("Niri animations + blur disabled, shell effects reduced"), "sports_esports");
         } else {
             cleanupRunner.running = true;
-            if (Config.utilities.toasts.gameModeChanged)
+            if (GlobalConfig.utilities.toasts.gameModeChanged)
                 Toaster.toast(qsTr("Gaming mode disabled"), qsTr("Niri settings and shell effects restored"), "sports_esports");
         }
     }

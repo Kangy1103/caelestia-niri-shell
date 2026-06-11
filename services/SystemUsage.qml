@@ -15,7 +15,7 @@ Singleton {
     property real cpuTemp: SysMonitor.cpu.temperature || 0
 
     // GPU properties
-    readonly property string gpuType: Config.services.gpuType.toUpperCase() || SysMonitor.gpu.type || "NONE"
+    readonly property string gpuType: GlobalConfig.services.gpuType.toUpperCase() || SysMonitor.gpu.type || "NONE"
     property string gpuName: cleanGpuName(SysMonitor.gpu.name || "")
     property real gpuPerc: SysMonitor.gpu.utilization || 0
     property real gpuTemp: SysMonitor.gpu.temperature || 0
@@ -105,7 +105,7 @@ Singleton {
 
     Timer {
         running: root.refCount > 0
-        interval: Config.dashboard.resourceUpdateInterval
+        interval: GlobalConfig.dashboard.resourceUpdateInterval
         repeat: true
         triggeredOnStart: true
         onTriggered: {

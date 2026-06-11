@@ -46,7 +46,7 @@ Singleton {
             startTime: data.startTime || "",
             endTime: data.endTime || "",
             allDay: data.allDay || false,
-            color: data.color || Config.dashboard.calendarColors.blue,
+            color: data.color || GlobalConfig.dashboard.calendarColors.blue,
             source: "local",
         });
         root.list.push(event);
@@ -142,7 +142,7 @@ Singleton {
                 startTime: data.startTime || "",
                 endTime: data.endTime || "",
                 allDay: data.allDay || false,
-                color: data.color || Config.dashboard.calendarColors.blue,
+                color: data.color || GlobalConfig.dashboard.calendarColors.blue,
                 source: data.source || "local",
             }));
 

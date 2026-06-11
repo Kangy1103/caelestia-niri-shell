@@ -13,13 +13,13 @@ Singleton {
     id: root
 
     readonly property list<MprisPlayer> list: Mpris.players.values
-    readonly property MprisPlayer active: props.manualActive ?? list.find(p => getIdentity(p) === Config.services.defaultPlayer) ?? list[0] ?? null
+    readonly property MprisPlayer active: props.manualActive ?? list.find(p => getIdentity(p) === GlobalConfig.services.defaultPlayer) ?? list[0] ?? null
     property alias manualActive: props.manualActive
 
     function getIdentity(player: MprisPlayer): string {
         if (!player)
             return "";
-        const alias = Config.services.playerAliases.find(a => a.from === player.identity);
+        const alias = GlobalConfig.services.playerAliases.find(a => a.from === player.identity);
         return alias?.to ?? player.identity;
     }
 
@@ -41,7 +41,7 @@ Singleton {
         target: root.active
 
         function onPostTrackChanged() {
-            if (!Config.utilities.toasts.nowPlaying)
+            if (!GlobalConfig.utilities.toasts.nowPlaying)
                 return;
             if (root.active.trackArtist != "" && root.active.trackTitle != "")
                 Toaster.toast(qsTr("Now Playing"), qsTr("%1 - %2").arg(root.active.trackArtist).arg(root.active.trackTitle), "music_note");

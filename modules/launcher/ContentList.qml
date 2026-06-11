@@ -18,14 +18,15 @@ Item {
     required property int padding
     required property int rounding
 
+    readonly property bool showEmojis: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}emoji `)
     readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
-    readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
+    readonly property var currentList: showEmojis ? emojiList.item : showWallpapers ? wallpaperList.item : appList.item
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
 
     clip: true
-    state: showWallpapers ? "wallpapers" : "apps"
+    state: showEmojis ? "emojis" : showWallpapers ? "wallpapers" : "apps"
 
     states: [
         State {
@@ -35,6 +36,20 @@ Item {
                 root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
                 root.implicitHeight: Math.min(root.maxHeight, appList.implicitHeight > 0 ? appList.implicitHeight : empty.implicitHeight)
                 appList.active: true
+            }
+
+            AnchorChanges {
+                anchors.left: root.parent.left
+                anchors.right: root.parent.right
+            }
+        },
+        State {
+            name: "emojis"
+
+            PropertyChanges {
+                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
+                root.implicitHeight: Math.min(root.maxHeight, emojiList.implicitHeight > 0 ? emojiList.implicitHeight : empty.implicitHeight)
+                emojiList.active: true
             }
 
             AnchorChanges {
@@ -104,6 +119,20 @@ Item {
         }
     }
 
+    Loader {
+        id: emojiList
+
+        asynchronous: true
+        active: false
+
+        anchors.fill: parent
+
+        sourceComponent: EmojiList {
+            search: root.search
+            visibilities: root.visibilities
+        }
+    }
+
     Row {
         id: empty
 
@@ -116,29 +145,29 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
-        MaterialIcon {
-            text: root.state === "wallpapers" ? "wallpaper_slideshow" : "manage_search"
-            color: Colours.palette.m3onSurfaceVariant
-            fontStyle: Tokens.font.icon.extraLarge
-
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-
-            StyledText {
-                text: root.state === "wallpapers" ? qsTr("No wallpapers found") : qsTr("No results")
+            MaterialIcon {
+                text: root.state === "wallpapers" ? "wallpaper_slideshow" : root.state === "emojis" ? "sentiment_dissatisfied" : "manage_search"
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+                fontStyle: Tokens.font.icon.extraLarge
+
+                anchors.verticalCenter: parent.verticalCenter
             }
 
-            StyledText {
-                text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(Paths.wallsdir)) : qsTr("Try searching for something else")
-                color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.medium
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+
+                StyledText {
+                    text: root.state === "wallpapers" ? qsTr("No wallpapers found") : root.state === "emojis" ? qsTr("No emojis found") : qsTr("No results")
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.body.builders.large.weight(Font.Medium).build()
+                }
+
+                StyledText {
+                    text: root.state === "wallpapers" && Wallpapers.list.length === 0 ? qsTr("Try putting some wallpapers in %1").arg(Paths.shortenHome(Paths.wallsdir)) : qsTr("Try searching for something else")
+                    color: Colours.palette.m3onSurfaceVariant
+                    font: Tokens.font.body.medium
+                }
             }
-        }
 
         Behavior on opacity {
             Anim {

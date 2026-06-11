@@ -16,7 +16,7 @@ Item {
     id: root
 
     required property TextField search
-    required property PersistentProperties visibilities
+    required property var visibilities
 
     readonly property var categoryData: [
         { id: "recent", name: qsTr("Recent"), icon: "history" },

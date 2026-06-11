@@ -85,13 +85,17 @@ Item {
             onAccepted: {
                 const currentItem = list.currentList?.currentItem;
                 if (currentItem) {
-                    if (list.showWallpapers) {
+                    if (list.showEmojis) {
+                        currentItem.onClicked();
+                    } else if (list.showWallpapers) {
                         if (Colours.scheme === "dynamic" && currentItem.modelData.path !== Wallpapers.actualCurrent)
                             Wallpapers.previewColourLock = true;
                         Wallpapers.setWallpaper(currentItem.modelData.path);
                         root.visibilities.launcher = false;
                     } else if (text.startsWith(GlobalConfig.launcher.actionPrefix)) {
                         if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}calc `))
+                            currentItem.onClicked();
+                        else if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}web `))
                             currentItem.onClicked();
                         else
                             currentItem.modelData.onClicked(list.currentList);
@@ -102,8 +106,20 @@ Item {
                 }
             }
 
-            Keys.onUpPressed: list.currentList?.decrementCurrentIndex()
-            Keys.onDownPressed: list.currentList?.incrementCurrentIndex()
+            Keys.onUpPressed: {
+                if (list.showEmojis) list.currentList?.moveUp();
+                else list.currentList?.decrementCurrentIndex();
+            }
+            Keys.onDownPressed: {
+                if (list.showEmojis) list.currentList?.moveDown();
+                else list.currentList?.incrementCurrentIndex();
+            }
+            Keys.onLeftPressed: {
+                if (list.showEmojis) list.currentList?.moveLeft();
+            }
+            Keys.onRightPressed: {
+                if (list.showEmojis) list.currentList?.moveRight();
+            }
 
             Keys.onEscapePressed: root.visibilities.launcher = false
 

@@ -13,6 +13,6 @@ Singleton {
     CavaProvider {
         id: provider
 
-        bars: Config.services.visualiserBars
+        bars: GlobalConfig.services.visualiserBars
     }
 }
