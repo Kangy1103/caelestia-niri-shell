@@ -25,7 +25,7 @@ RowLayout {
         implicitSize: root.implicitSize
 
         icon: root.client.is_floating ? "grid_view" : "picture_in_picture"
-        function onClicked(): void {
+        onClicked: {
             Niri.toggleWindowFloating(root.client?.id);
         }
     }
@@ -43,7 +43,7 @@ RowLayout {
             implicitSize: root.implicitSize
 
             icon: "fullscreen"
-            function onClicked(): void {
+            onClicked: {
                 Niri.toggleMaximize();
             }
         }
@@ -57,7 +57,7 @@ RowLayout {
 
         implicitSize: root.implicitSize
 
-        function onClicked(): void {
+        onClicked: {
             Niri.closeWindow(root.client?.id);
         }
     }
