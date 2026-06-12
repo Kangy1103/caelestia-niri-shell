@@ -4,8 +4,7 @@
 import QtQuick
 import QtQuick.Shapes
 import Quickshell
-
-import "root:/"
+import qs.services
 
 Rectangle {
     id: ropeRect
@@ -42,7 +41,7 @@ Rectangle {
 
         ShapePath {
             id: pathCurves
-            strokeColor: Colors.primary
+            strokeColor: Colours.m3primary
             fillColor: "transparent"
             strokeWidth: 6
             startX: ropeRect.anchorX; startY: ropeRect.anchorY

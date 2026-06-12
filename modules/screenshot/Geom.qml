@@ -6,8 +6,7 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-
-import "root:/"
+import qs.services
 
 PanelWindow {
     id: geom
@@ -96,11 +95,11 @@ PanelWindow {
             onPaint: {
                 var ctx = getContext("2d")
                 ctx.reset()
-                ctx.fillStyle = Colors.surface
+                ctx.fillStyle = Colours.m3surface
                 ctx.globalAlpha = 0.8
                 ctx.fillRect(0, 0, parent.width, parent.height)
                 ctx.globalAlpha = 1
-                ctx.fillStyle = Colors.primary
+                ctx.fillStyle = Colours.m3primary
                 ctx.fillRect(geomRect.anchor1X-geomRect.borderWidth, geomRect.anchor1Y-geomRect.borderWidth, geomRect.anchorDx+geomRect.borderWidth*2, geomRect.anchorDy+geomRect.borderWidth*2)
 
                 ctx.beginPath()
