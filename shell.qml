@@ -25,6 +25,8 @@ import Quickshell
 import Quickshell.Io
 
 ShellRoot {
+    id: root
+
     // Font loader — GSFLoader doesn't block on missing fonts, safe to keep always
     GSFLoader {}
 
