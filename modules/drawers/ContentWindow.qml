@@ -98,6 +98,22 @@ StyledWindow {
         }
     }
 
+    DropletMask {
+        id: launcherDropletMask
+        anchors.fill: parent
+        progress: panels.launcher.offsetScale
+        dropletRadius: 48
+        finalRadius: Tokens.rounding.extraLarge
+        visible: false
+        layer.enabled: true
+    }
+
+    Binding {
+        target: panels.launcher
+        property: "dropletMask"
+        value: launcherDropletMask
+    }
+
     Item {
         anchors.fill: parent
         opacity: root.surfaceColour.a
@@ -298,21 +314,6 @@ StyledWindow {
 
             Component.onCompleted: Visibilities.bars.set(root.screen, this)
         }
-    }
-
-    DropletMask {
-        id: launcherDropletMask
-        anchors.fill: parent
-        progress: panels.launcher.offsetScale
-        dropletRadius: 48
-        finalRadius: Tokens.rounding.extraLarge
-        visible: false
-    }
-
-    Binding {
-        target: panels.launcher
-        property: "dropletMask"
-        value: launcherDropletMask
     }
 
     component PanelBg: BlobRect {
