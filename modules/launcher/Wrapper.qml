@@ -2,11 +2,11 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.modules.launcher.services
+import qs.services
 
 Item {
     id: root
@@ -28,20 +28,32 @@ Item {
 
     onShouldBeActiveChanged: {
         if (shouldBeActive)
-            implicitHeight = Qt.binding(() => reveal.implicitHeight);
+            implicitHeight = Qt.binding(() => content.implicitHeight);
         else
             implicitHeight = implicitHeight;
     }
 
     visible: offsetScale < 1
-    implicitHeight: reveal.implicitHeight
-    implicitWidth: reveal.implicitWidth || 630
+    implicitHeight: content.implicitHeight
+    implicitWidth: content.implicitWidth || 630
 
     Component.onCompleted: Qt.callLater(() => Apps)
 
     Behavior on offsetScale {
         Anim {
             type: Anim.SlowEffects
+        }
+    }
+
+    Loader {
+        id: content
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        active: root.shouldBeActive || root.visible
+        sourceComponent: Content {
+            visibilities: root.visibilities
+            panels: root.panels
+            maxHeight: root.maxHeight
         }
     }
 
@@ -57,20 +69,9 @@ Item {
     DropletReveal {
         id: reveal
         anchors.fill: parent
+        source: content
         progress: root.offsetScale
         dropletRadius: 48
         finalRadius: Tokens.rounding.extraLarge
-
-        Loader {
-            id: content
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            active: root.shouldBeActive || root.visible
-            sourceComponent: Content {
-                visibilities: root.visibilities
-                panels: root.panels
-                maxHeight: root.maxHeight
-            }
-        }
     }
 }

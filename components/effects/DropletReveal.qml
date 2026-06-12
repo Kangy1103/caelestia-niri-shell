@@ -15,8 +15,7 @@ Item {
     readonly property alias contentItem: content
     default property alias contentData: content.data
 
-    implicitWidth: content.childrenRect.width
-    implicitHeight: content.childrenRect.height
+    property var source: null
 
     visible: progress < 1
 
@@ -28,9 +27,9 @@ Item {
     ShaderEffect {
         id: shader
         anchors.fill: parent
-        source: content
         mesh: Qt.size(1, 1)
 
+        property var source: root.source || content
         property real progress: root.progress
         property real dropletRadius: root.dropletRadius
         property real finalRadius: root.finalRadius
