@@ -35,8 +35,6 @@ ShellRoot {
     Drawers {}
     AreaPicker {}
     Lock { id: lockModule }
-    IdleMonitors { lock: lockModule }
-
     Shortcuts {}
     ClipboardPanel {}
     KeybindsPanel {}
