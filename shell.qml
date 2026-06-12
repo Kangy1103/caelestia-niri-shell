@@ -86,4 +86,11 @@ ShellRoot {
             }
         }
     }
+
+    IpcHandler {
+        target: "screenshot"
+        function region(): void {
+            geomComponent.createObject(root)
+        }
+    }
 }
