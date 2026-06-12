@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Caelestia.Config
 import qs.components
-import qs.components.effects
 import qs.modules.launcher.services
 
 Item {
@@ -13,6 +13,8 @@ Item {
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
     required property var panels
+
+    property Item dropletMask: null
 
     readonly property bool shouldBeActive: visibilities.launcher && Config.launcher.enabled
 
@@ -36,6 +38,14 @@ Item {
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth || 630
 
+    layer.enabled: true
+    layer.effect: MultiEffect {
+        maskSource: root.dropletMask
+        maskEnabled: true
+        maskSpreadAtMin: 1
+        maskThresholdMin: 0.5
+    }
+
     Component.onCompleted: Qt.callLater(() => Apps)
 
     Behavior on offsetScale {
@@ -54,13 +64,5 @@ Item {
             panels: root.panels
             maxHeight: root.maxHeight
         }
-    }
-
-    DropletReveal {
-        id: reveal
-        anchors.fill: parent
-        progress: root.offsetScale
-        dropletRadius: 48
-        finalRadius: Tokens.rounding.extraLarge
     }
 }

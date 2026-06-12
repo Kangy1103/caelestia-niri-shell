@@ -9,6 +9,7 @@ import Caelestia.Blobs
 import Caelestia.Config
 import qs.components
 import qs.components.containers
+import qs.components.effects
 import qs.services
 import qs.modules.bar
 
@@ -297,6 +298,21 @@ StyledWindow {
 
             Component.onCompleted: Visibilities.bars.set(root.screen, this)
         }
+    }
+
+    DropletMask {
+        id: launcherDropletMask
+        anchors.fill: parent
+        progress: panels.launcher.offsetScale
+        dropletRadius: 48
+        finalRadius: Tokens.rounding.extraLarge
+        visible: false
+    }
+
+    Binding {
+        target: panels.launcher
+        property: "dropletMask"
+        value: launcherDropletMask
     }
 
     component PanelBg: BlobRect {
