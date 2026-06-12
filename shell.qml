@@ -2,13 +2,14 @@
 // Version: 0.4.0-20260608
 
 //@ pragma Env QS_NO_RELOAD_POPUP=1
-//@ pragma Env QSG_RENDER_LOOP=basic
+//@ pragma Env QSG_RENDER_LOOP=threaded
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 
 import "modules"
 import "components"
 import "modules/drawers"
 import "modules/areapicker"
+import "modules/screenshot"
 import "modules/lock"
 import "modules/keybinds"
 import "modules/calendar"
@@ -21,6 +22,7 @@ import qs.services
 import Caelestia.Config
 import QtQuick
 import Quickshell
+import Quickshell.Io
 
 ShellRoot {
     // Font loader — GSFLoader doesn't block on missing fonts, safe to keep always
@@ -61,4 +63,27 @@ ShellRoot {
 
     // Initialize C++ Config singleton (populates Caelestia.Config.GlobalConfig)
     property var _cppConfig: GlobalConfig
+
+    Component {
+        id: geomComponent
+        Geom {}
+    }
+
+    SocketServer {
+        id: screenshotSocket
+
+        active: true
+        path: "/tmp/quickshell_screenshot.sock"
+
+        handler: Socket {
+            id: handler
+            parser: SplitParser {
+                onRead: msg => {
+                    if (msg === "geom") {
+                        geomComponent.createObject(root)
+                    }
+                }
+            }
+        }
+    }
 }

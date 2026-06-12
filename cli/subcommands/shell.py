@@ -1,4 +1,5 @@
 import subprocess
+import os
 from argparse import Namespace
 
 from cns.utils.paths import c_cache_dir
@@ -16,7 +17,7 @@ class Command:
         elif self.args.log:
             self.print_log()
         elif self.args.kill or (self.args.message and self.args.message == ["kill"]):
-            self.shell("kill")
+            self._kill()
         elif self.args.message:
             if self.args.message == ["start"]:
                 self._start()
@@ -25,7 +26,11 @@ class Command:
         else:
             self._start()
 
+    def _kill(self) -> None:
+        subprocess.run(["/usr/bin/pkill", "-f", "qs -c"], check=False)
+
     def _start(self) -> None:
+        os.remove("/tmp/quickshell_screenshot.sock") if os.path.exists("/tmp/quickshell_screenshot.sock") else None
         args = ["qs", "-c", "caelestia-niri-shell"]
         if self.args.log_rules:
             args.extend(["--log-rules", self.args.log_rules])
