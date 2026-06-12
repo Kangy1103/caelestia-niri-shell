@@ -6,7 +6,6 @@ import Caelestia.Config
 import qs.components
 import qs.components.effects
 import qs.modules.launcher.services
-import qs.services
 
 Item {
     id: root
@@ -57,19 +56,9 @@ Item {
         }
     }
 
-    DropletBg {
-        id: dropletBg
-        anchors.fill: parent
-        progress: root.offsetScale
-        dropletRadius: 48
-        finalRadius: Tokens.rounding.extraLarge
-        dropletColor: Colours.tPalette.m3surface
-    }
-
     DropletReveal {
         id: reveal
         anchors.fill: parent
-        source: content
         progress: root.offsetScale
         dropletRadius: 48
         finalRadius: Tokens.rounding.extraLarge
