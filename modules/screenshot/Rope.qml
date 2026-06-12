@@ -49,6 +49,8 @@ Rectangle {
 
         ShapePath {
             id: dotPath
+            strokeColor: Colours.palette.m3primary
+            fillColor: Colours.palette.m3primary
 
             PathAngleArc {
                 id: startPoint
