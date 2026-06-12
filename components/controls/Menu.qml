@@ -35,9 +35,11 @@ MouseArea {
 
     parent: {
         const win = QsWindow.window;
-        if (win && win.interactionWrapper)
+        if (!win)
+            return null;
+        if (win.interactionWrapper)
             return win.interactionWrapper;
-        return (win as QsWindow).contentItem;
+        return win.contentItem;
     }
     anchors.fill: parent
 
