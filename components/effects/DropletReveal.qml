@@ -18,6 +18,15 @@ Item {
 
     visible: progress < 1
 
+    DropletMask {
+        id: dropletMask
+        anchors.fill: parent
+        visible: false
+        progress: root.progress
+        dropletRadius: root.dropletRadius
+        finalRadius: root.finalRadius
+    }
+
     Item {
         id: content
         anchors.fill: parent
@@ -28,13 +37,5 @@ Item {
             maskSpreadAtMin: 1
             maskThresholdMin: 0.5
         }
-    }
-
-    DropletMask {
-        id: dropletMask
-        anchors.fill: parent
-        progress: root.progress
-        dropletRadius: root.dropletRadius
-        finalRadius: root.finalRadius
     }
 }
