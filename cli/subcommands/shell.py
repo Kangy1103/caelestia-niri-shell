@@ -15,7 +15,7 @@ class Command:
             self.print_ipc()
         elif self.args.log:
             self.print_log()
-        elif self.args.kill:
+        elif self.args.kill or (self.args.message and self.args.message == ["kill"]):
             self.shell("kill")
         elif self.args.message:
             if self.args.message == ["start"]:
@@ -26,13 +26,14 @@ class Command:
             self._start()
 
     def _start(self) -> None:
-        args = ["qs", "-c", "caelestia-niri-shell", "-n"]
+        args = ["qs", "-c", "caelestia-niri-shell"]
         if self.args.log_rules:
             args.extend(["--log-rules", self.args.log_rules])
         if self.args.daemon:
             args.append("-d")
             subprocess.run(args)
         else:
+            args.append("-n")
             shell = subprocess.Popen(args, stdout=subprocess.PIPE, universal_newlines=True)
             if shell.stdout:
                 for line in shell.stdout:
