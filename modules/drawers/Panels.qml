@@ -109,7 +109,8 @@ Item {
         visibilities: root.visibilities
         panels: root
 
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
     }
 
     Dashboard.Wrapper {

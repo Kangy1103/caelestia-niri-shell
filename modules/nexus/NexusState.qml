@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260612
+
 import QtQuick
 import Quickshell
 import Quickshell.Bluetooth
@@ -8,6 +11,7 @@ QtObject {
     property int currentPageIdx
     property list<int> subPageIdxStack
     property bool searchOpen
+    property string searchText
 
     property string selectedWallpaperCategory
     property BluetoothDevice selectedBtDevice

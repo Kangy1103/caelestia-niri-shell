@@ -29,6 +29,7 @@ Region {
 
     R {
         panel: root.panels.launcher
+        y: root.win.height - height
         height: panel.height * (1 - root.panels.launcher.offsetScale) + root.borderThickness
     }
 

@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260612
+
 import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
@@ -58,6 +61,12 @@ StyledRect {
                 target: root.nState
                 property: "searchOpen"
                 value: searchField.text.length > 0
+            }
+
+            Binding {
+                target: root.nState
+                property: "searchText"
+                value: searchField.text
             }
         }
 
