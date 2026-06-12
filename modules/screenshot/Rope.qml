@@ -41,7 +41,7 @@ Rectangle {
 
         ShapePath {
             id: pathCurves
-            strokeColor: Colours.m3primary
+            strokeColor: Colours.palette.m3primary
             fillColor: "transparent"
             strokeWidth: 6
             startX: ropeRect.anchorX; startY: ropeRect.anchorY
