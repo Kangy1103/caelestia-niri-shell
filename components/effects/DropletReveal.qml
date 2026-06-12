@@ -15,6 +15,9 @@ Item {
     readonly property alias contentItem: content
     default property alias contentData: content.data
 
+    implicitWidth: content.childrenRect.width
+    implicitHeight: content.childrenRect.height
+
     visible: progress < 1
 
     Item {

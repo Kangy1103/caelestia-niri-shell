@@ -2,8 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Caelestia
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.modules.launcher.services
 
 Item {
@@ -26,35 +28,49 @@ Item {
 
     onShouldBeActiveChanged: {
         if (shouldBeActive)
-            implicitHeight = Qt.binding(() => content.implicitHeight);
+            implicitHeight = Qt.binding(() => reveal.implicitHeight);
         else
-            implicitHeight = implicitHeight; // Break binding during close anim
+            implicitHeight = implicitHeight;
     }
 
     visible: offsetScale < 1
-    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
-    implicitHeight: content.implicitHeight
-    implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
+    implicitHeight: reveal.implicitHeight
+    implicitWidth: reveal.implicitWidth || 630
 
-    Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
+    Component.onCompleted: Qt.callLater(() => Apps)
 
     Behavior on offsetScale {
-        Anim {}
+        Anim {
+            type: Anim.SlowEffects
+        }
     }
 
-    Loader {
-        id: content
+    DropletBg {
+        id: dropletBg
+        anchors.fill: parent
+        progress: root.offsetScale
+        dropletRadius: 48
+        finalRadius: Tokens.rounding.extraLarge
+        dropletColor: Colours.tPalette.m3surface
+    }
 
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
+    DropletReveal {
+        id: reveal
+        anchors.fill: parent
+        progress: root.offsetScale
+        dropletRadius: 48
+        finalRadius: Tokens.rounding.extraLarge
 
-        active: root.shouldBeActive || root.visible
-
-        sourceComponent: Content {
-            visibilities: root.visibilities
-            panels: root.panels
-            maxHeight: root.maxHeight
+        Loader {
+            id: content
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            active: root.shouldBeActive || root.visible
+            sourceComponent: Content {
+                visibilities: root.visibilities
+                panels: root.panels
+                maxHeight: root.maxHeight
+            }
         }
     }
 }

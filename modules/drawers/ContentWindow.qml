@@ -137,6 +137,7 @@ StyledWindow {
 
             panel: panels.launcher
             deformAmount: 0.1
+            opacity: 1.0 - panels.launcher.offsetScale
         }
 
         PanelBg {
