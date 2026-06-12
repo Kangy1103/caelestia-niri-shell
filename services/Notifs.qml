@@ -22,7 +22,7 @@ Singleton {
     property bool loaded
 
     function hasFullscreen(): bool {
-        return false; // Niri doesn't expose per-window fullscreen state in IPC
+        return Niri.hasFullscreen;
     }
 
     function shouldShowPopup(): bool {

@@ -103,6 +103,8 @@ bool NiriIpc::inOverview() const { return m_inOverview; }
 
 QVariantMap NiriIpc::outputs() const { return m_outputs; }
 
+bool NiriIpc::hasFullscreen() const { return m_hasFullscreen; }
+
 QVariantList NiriIpc::kbLayoutsArray() const { return m_kbLayoutsArray; }
 int NiriIpc::kbLayoutIndex() const { return m_kbLayoutIndex; }
 QString NiriIpc::kbLayouts() const { return m_kbLayouts; }
@@ -466,6 +468,8 @@ void NiriIpc::handleWindowsChanged(const QJsonObject& data) {
     updateFocusedWindowFields();
     updateWorkspaceHasWindows();
     emit windowsChanged();
+
+    checkFullscreen();
 }
 
 void NiriIpc::handleWindowOpenedOrChanged(const QJsonObject& data) {
@@ -530,6 +534,8 @@ void NiriIpc::handleWindowFocusChanged(const QJsonObject& data) {
 
     updateFocusedWindowFields();
     emit focusedWindowChanged();
+
+    checkFullscreen();
 }
 
 void NiriIpc::handleWindowLayoutsChanged(const QJsonObject& data) {
@@ -562,6 +568,70 @@ void NiriIpc::handleWindowLayoutsChanged(const QJsonObject& data) {
 
     updateFocusedWindowFields();
     emit windowsChanged();
+
+    checkFullscreen();
+}
+
+void NiriIpc::checkFullscreen() {
+    // Heuristic: focused window fills its output at native resolution.
+    // Niri does not expose is_fullscreen in the IPC, so we compare window_size
+    // against the output's preferred mode. This matches the community detection
+    // pattern from niri#426.
+    if (m_focusedWindowIndex < 0 || m_outputs.isEmpty()) {
+        if (m_hasFullscreen) {
+            m_hasFullscreen = false;
+            emit hasFullscreenChanged();
+        }
+        return;
+    }
+
+    const auto& winList = m_windowsModel->items();
+    if (m_focusedWindowIndex >= winList.size()) {
+        if (m_hasFullscreen) {
+            m_hasFullscreen = false;
+            emit hasFullscreenChanged();
+        }
+        return;
+    }
+
+    const auto focused = winList.at(m_focusedWindowIndex).toMap();
+    const auto layout = focused.value(QStringLiteral("layout")).toMap();
+    const auto windowSize = layout.value(QStringLiteral("window_size")).toList();
+    if (windowSize.size() < 2) return;
+
+    const int winW = windowSize.at(0).toInt();
+    const int winH = windowSize.at(1).toInt();
+
+    // Find the focused workspace and its output name
+    const auto& wsList = m_workspacesModel->items();
+    if (m_focusedWorkspaceIndex < 0 || m_focusedWorkspaceIndex >= wsList.size()) return;
+
+    const auto ws = wsList.at(m_focusedWorkspaceIndex).toMap();
+    const QString outputName = ws.value(QStringLiteral("output")).toString();
+    if (outputName.isEmpty()) return;
+
+    const auto output = m_outputs.value(outputName).toMap();
+    const auto modes = output.value(QStringLiteral("modes")).toList();
+    if (modes.isEmpty()) return;
+
+    // Use preferred mode (is_preferred = true)
+    int outW = 0, outH = 0;
+    for (const auto& m : modes) {
+        const auto mode = m.toMap();
+        if (mode.value(QStringLiteral("is_preferred")).toBool()) {
+            outW = mode.value(QStringLiteral("width")).toInt();
+            outH = mode.value(QStringLiteral("height")).toInt();
+            break;
+        }
+    }
+
+    if (outW == 0 && outH == 0) return;
+
+    const bool fullscreen = (winW == outW && winH == outH);
+    if (m_hasFullscreen != fullscreen) {
+        m_hasFullscreen = fullscreen;
+        emit hasFullscreenChanged();
+    }
 }
 
 void NiriIpc::handleOutputsChanged(const QJsonObject& data) {

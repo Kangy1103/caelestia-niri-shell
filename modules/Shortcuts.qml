@@ -16,7 +16,7 @@ Scope {
     property bool launcherInterrupted
     // Niri doesn't expose per-window fullscreen state via IPC.
     // TODO: add when Niri IPC gains fullscreen tracking.
-    readonly property bool hasFullscreen: false
+    readonly property bool hasFullscreen: Niri.hasFullscreen
 
     // ── CustomShortcut: nexus ──
     CustomShortcut {

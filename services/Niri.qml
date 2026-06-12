@@ -88,6 +88,7 @@ Singleton {
     readonly property var lastFocusedWindow: NiriIpc.lastFocusedWindow
     readonly property string scrollDirection: NiriIpc.scrollDirection
     readonly property bool inOverview: NiriIpc.inOverview
+    readonly property bool hasFullscreen: NiriIpc.hasFullscreen
     signal windowOpenedOrChanged(var windowData)
 
     // --- Outputs ---

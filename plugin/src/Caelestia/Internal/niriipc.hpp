@@ -72,6 +72,9 @@ class NiriIpc : public QObject {
     // ── Outputs ──
     Q_PROPERTY(QVariantMap outputs READ outputs NOTIFY outputsChanged)
 
+    // ── Fullscreen ──
+    Q_PROPERTY(bool hasFullscreen READ hasFullscreen NOTIFY hasFullscreenChanged)
+
     // ── Keyboard ──
     Q_PROPERTY(QVariantList kbLayoutsArray READ kbLayoutsArray NOTIFY keyboardChanged)
     Q_PROPERTY(int kbLayoutIndex READ kbLayoutIndex NOTIFY keyboardChanged)
@@ -108,6 +111,8 @@ public:
 
     [[nodiscard]] QVariantMap outputs() const;
 
+    [[nodiscard]] bool hasFullscreen() const;
+
     [[nodiscard]] QVariantList kbLayoutsArray() const;
     [[nodiscard]] int kbLayoutIndex() const;
     [[nodiscard]] QString kbLayouts() const;
@@ -136,6 +141,7 @@ signals:
     void scrollDirectionChanged();
     void inOverviewChanged();
     void outputsChanged();
+    void hasFullscreenChanged();
     void keyboardChanged();
     void capsLockChanged();
     void numLockChanged();
@@ -163,6 +169,7 @@ private:
     void updateCurrentOutputWorkspaces();
     void updateWorkspaceHasWindows();
     void updateFocusedWindowFields();
+    void checkFullscreen();
     void sortWindowsList();
     void sortWindowsIfDirty();
     void rebuildWindowIndex();
@@ -199,6 +206,9 @@ private:
 
     // Output state
     QVariantMap m_outputs;
+
+    // Fullscreen state
+    bool m_hasFullscreen = false;
 
     // Keyboard state
     QVariantList m_kbLayoutsArray;

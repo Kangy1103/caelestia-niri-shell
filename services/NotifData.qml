@@ -39,7 +39,7 @@ QtObject {
     property bool hasActionIcons
     property list<var> actions
 
-    readonly property bool hasFullscreen: false  // Niri: no Hypr IPC; use false
+    readonly property bool hasFullscreen: Niri.hasFullscreen
 
     readonly property Timer timer: Timer {
         running: true

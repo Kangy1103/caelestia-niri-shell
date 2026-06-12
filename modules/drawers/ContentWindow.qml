@@ -19,7 +19,7 @@ StyledWindow {
     readonly property alias interactionWrapper: interactions
 
     readonly property bool hasSpecialWorkspace: false  // Niri: no special workspaces
-    readonly property bool hasFullscreen: false        // Niri: no fullscreen detection in IPC
+    readonly property bool hasFullscreen: Niri.hasFullscreen
 
     property real fsTransitionProg: hasFullscreen ? 1 : 0
     readonly property real sdfBorderOffset: 2 * fsTransitionProg
