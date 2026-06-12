@@ -38,10 +38,10 @@ Item {
         onTriggered: Players.active?.positionChanged()
     }
 
-    // BeatTracker not creatable under Qt 6.11 — disabled (Phase 6)
-    // ServiceRef {
-    //     service: Audio.beatTracker
-    // }
+    // BeatTracker — re-enabled with NO_PLUGIN_OPTIONAL (2026-06-12)
+    ServiceRef {
+        service: Audio.beatTracker
+    }
 
     CircularProgress {
         id: prog
@@ -173,7 +173,7 @@ Item {
         anchors.margins: Tokens.padding.extraLargeIncreased
 
         playing: Players.active?.isPlaying ?? false
-        speed: 0.5 // Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment — BeatTracker not creatable (Qt 6.11)
+        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit

@@ -13,6 +13,7 @@ function(qml_module arg_TARGET)
         IMPORTS ${arg_IMPORTS}
         OPTIONAL_IMPORTS ${arg_OPTIONAL_IMPORTS}
         DEFAULT_IMPORTS ${arg_DEFAULT_IMPORTS}
+        NO_PLUGIN_OPTIONAL
     )
 
     qt_query_qml_module(${arg_TARGET}

@@ -28,8 +28,8 @@ Singleton {
     readonly property bool sourceMuted: !!source?.audio?.muted
     readonly property real sourceVolume: source?.audio?.volume ?? 0
 
-    // readonly property alias cava: cava (disabled)
-    // readonly property alias beatTracker: beatTracker (disabled)
+    // readonly property alias cava: cava (disabled — see Cava.qml)
+    readonly property alias beatTracker: beatTracker
 
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {
@@ -138,20 +138,16 @@ Singleton {
         objects: [...root.sinks, ...root.sources, ...root.streams]
     }
 
-    // CavaProvider and BeatTracker from Caelestia.Services are disabled:
-    // - CavaProvider: crashes in libcava/fftw3 during PipeWire init
-    // - BeatTracker: "Element is not creatable" under Qt 6.11
-    //   (smpl_t typedef + abstract Service base + optional plugin qmldir)
-    //   Works upstream with older Qt. Re-enable after Qt upgrade.
-    //   Fixes applied: QML_ELEMENT on Service+AudioProvider, smpl_t→float,
-    //   qmldir plugin (not optional), prefer line removed.
+    // CavaProvider disabled — see Cava.qml for single-instance workaround.
+    // BeatTracker re-enabled (2026-06-12): NO_PLUGIN_OPTIONAL added to cmake;
+    // smpl_t→float, Service/AudioProvider QML_ELEMENT fixes already applied.
     // CavaProvider {
     //     id: cava
     //     bars: GlobalConfig.services.visualiserBars
     // }
-    // BeatTracker {
-    //     id: beatTracker
-    // }
+    BeatTracker {
+        id: beatTracker
+    }
 
     IpcHandler {
         function cycleOutput(): void {
