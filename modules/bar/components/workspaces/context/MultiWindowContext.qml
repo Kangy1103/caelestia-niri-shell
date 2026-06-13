@@ -34,7 +34,7 @@ Rectangle {
 
     Behavior on border.color {
         CAnim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 
@@ -46,17 +46,17 @@ Rectangle {
 
     Behavior on implicitWidth {
         Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
     Behavior on implicitHeight {
         Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
     Behavior on anchors.leftMargin {
         Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 
@@ -86,7 +86,7 @@ Rectangle {
 
         Behavior on color {
             CAnim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
 
@@ -100,12 +100,12 @@ Rectangle {
 
         Behavior on implicitHeight {
             Anim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
         Behavior on implicitWidth {
             Anim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
 
@@ -140,7 +140,7 @@ Rectangle {
 
                 Behavior on color {
                     CAnim {
-                        easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
                 radius: root.baseRadius
@@ -183,7 +183,7 @@ Rectangle {
 
                     Behavior on color {
                         CAnim {
-                            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                            easing: Tokens.anim.emphasized
                         }
                     }
 
@@ -219,13 +219,13 @@ Rectangle {
 
         Behavior on color {
             CAnim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
 
         Behavior on font.pointSize {
             Anim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
     }

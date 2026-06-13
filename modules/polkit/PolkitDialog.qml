@@ -50,7 +50,7 @@ Variants {
             opacity: win.visible ? 1 : 0
 
             Behavior on opacity {
-                Anim { duration: Config.appearance.anim.durations.normal }
+                Anim { duration: Tokens.anim.durations.normal }
             }
         }
 
@@ -67,12 +67,12 @@ Variants {
             scale: win.visible ? 1 : 0.92
 
             Behavior on opacity {
-                Anim { duration: Config.appearance.anim.durations.normal }
+                Anim { duration: Tokens.anim.durations.normal }
             }
             Behavior on scale {
                 Anim {
-                    duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                    easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                    duration: Tokens.anim.durations.expressiveDefaultSpatial
+                    easing: Tokens.anim.expressiveDefaultSpatial
                 }
             }
 

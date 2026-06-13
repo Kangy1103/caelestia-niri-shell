@@ -129,7 +129,7 @@ Item {
 
             Behavior on value {
                 Anim {
-                    duration: Config.appearance.anim.durations.small
+                    duration: Tokens.anim.durations.small
                 }
             }
         }

@@ -18,15 +18,15 @@ Item {
     signal cancelled()
 
     readonly property var colors: [
-        Config.dashboard.calendarColors.blue,
-        Config.dashboard.calendarColors.red,
-        Config.dashboard.calendarColors.yellow,
-        Config.dashboard.calendarColors.green,
-        Config.dashboard.calendarColors.purple,
-        Config.dashboard.calendarColors.teal,
-        Config.dashboard.calendarColors.pink,
-        Config.dashboard.calendarColors.orange,
-        Config.dashboard.calendarColors.brown,
+        Colours.palette.m3primary,
+        Colours.palette.m3secondary,
+        Colours.palette.m3tertiary,
+        Colours.palette.m3error,
+        Colours.palette.m3primaryContainer,
+        Colours.palette.m3secondaryContainer,
+        Colours.palette.m3tertiaryContainer,
+        Colours.palette.m3errorContainer,
+        Colours.palette.m3primaryFixed,
     ]
 
     property string title: ""
@@ -35,7 +35,7 @@ Item {
     property string lastValidStartTime: "09:00"
     property string lastValidEndTime: "10:00"
     property bool allDay: false
-    property string selectedColor: Config.dashboard.calendarColors.blue
+    property string selectedColor: Colours.palette.m3primary
 
     visible: active
     implicitHeight: active ? formLayout.implicitHeight + Config.appearance.padding.medium * 2 : 0
@@ -60,8 +60,8 @@ Item {
 
     Behavior on implicitHeight {
         Anim {
-            duration: Config.appearance.anim.durations.normal
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            duration: Tokens.anim.durations.normal
+            easing: Tokens.anim.emphasized
         }
     }
 

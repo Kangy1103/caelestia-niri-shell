@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -16,8 +17,15 @@ ConnectedRect {
     property alias fallbackText: splitButton.fallbackText
     property alias fallbackIcon: splitButton.fallbackIcon
     property alias menuOnTop: splitButton.menuOnTop
+    property bool toastOnChange: true
 
     signal selected(item: MenuItem)
+
+    onSelected: item => {
+        if (toastOnChange) {
+            Toaster.toast(label.text, item.text || "", "tune");
+        }
+    }
 
     implicitHeight: rowLayout.implicitHeight + rowLayout.anchors.margins * 2
     clip: false

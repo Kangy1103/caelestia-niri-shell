@@ -1,4 +1,5 @@
 import QtQuick
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -11,6 +12,16 @@ StyledSwitch {
     property alias first: bg.first
     property alias last: bg.last
     readonly property alias bg: bg
+    property bool toastOnChange: true
+
+    property bool _ready: false
+    Component.onCompleted: _ready = true
+
+    onCheckedChanged: {
+        if (_ready && toastOnChange) {
+            Toaster.toast(root.text, checked ? qsTr("On") : qsTr("Off"), "tune");
+        }
+    }
 
     horizontalPadding: Tokens.padding.largeIncreased
     verticalPadding: Tokens.padding.medium

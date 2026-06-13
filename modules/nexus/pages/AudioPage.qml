@@ -76,10 +76,21 @@ PageBase {
             onSelected: node => Audio.setAudioSource(node)
         }
 
+        // Output device switcher
+        NavRow {
+            Layout.fillWidth: true
+            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            first: true
+            icon: "swap_horiz"
+            label: qsTr("Output switcher")
+            status: qsTr("Speakers / Scarlett sink toggle")
+            onClicked: root.nState.openSubPage(2)
+        }
+
         // Per-app volumes
         ConnectedRect {
             Layout.fillWidth: true
-            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            Layout.topMargin: 0
             implicitHeight: appLayout.implicitHeight + appLayout.anchors.margins * 2
             first: true
             last: true

@@ -40,7 +40,7 @@ Item {
 
     Behavior on width {
         Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 

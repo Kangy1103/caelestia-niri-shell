@@ -170,10 +170,20 @@ PageBase {
             }
         }
 
+        // Sub-pages
+        NavRow {
+            Layout.fillWidth: true
+            first: true
+            icon: "crop_square"
+            label: qsTr("Border")
+            status: qsTr("Thickness, rounding, smoothing")
+            onClicked: root.nState.openSubPage(4)
+        }
+
         ToggleRow {
             Layout.fillWidth: true
-
-            first: true
+            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            first: false
             text: qsTr("Display wallpaper")
             checked: Config.background.wallpaperEnabled
             onToggled: GlobalConfig.background.wallpaperEnabled = checked

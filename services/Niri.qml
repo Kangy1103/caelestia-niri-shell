@@ -29,7 +29,7 @@ Singleton {
     property string wsContextType: "none"
     
     property Timer wsAnchorClearTimer: Timer {
-        interval: GlobalConfig.appearance.anim.durations.normal
+        interval: Tokens.anim.durations.normal
         repeat: false
         onTriggered: {
             if (root.wsContextAnchor === null) {

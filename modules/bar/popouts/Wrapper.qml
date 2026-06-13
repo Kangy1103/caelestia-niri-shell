@@ -26,8 +26,9 @@ Item {
     property string queuedMode
     readonly property bool isDetached: detachedMode.length > 0
 
-    property int animLength: Config.appearance.anim.durations.normal
-    property list<real> animCurve: TokenConfig.appearance.curves.emphasized
+    readonly property QtObject dummy: QtObject {}
+    property int animLength: dummy.Tokens.anim.durations.expressiveDefaultSpatial
+    property var animCurve: dummy.Tokens.anim.expressiveDefaultSpatial
 
     PopoutState {
         id: popoutState
@@ -35,22 +36,27 @@ Item {
         onDetachRequested: mode => root.detach(mode)
     }
 
+    function setAnims(detach: bool): void {
+        const type = `expressive${detach ? "Slow" : "Default"}Spatial`;
+        animLength = dummy.Tokens.anim.durations[type];
+        animCurve = dummy.Tokens.anim[type];
+    }
+
     function detach(mode: string): void {
-        animLength = Config.appearance.anim.durations.large;
-        if (mode != "winfo") {
-            detachedMode = "any";
+        setAnims(true);
+        if (mode === "winfo") {
+            detachedMode = mode;
+        } else {
             queuedMode = mode;
+            detachedMode = "any";
         }
-        
+        setAnims(false);
         focus = true;
     }
 
     function close(): void {
         hasCurrent = false;
-        animCurve = TokenConfig.appearance.curves.emphasizedAccel;
-        animLength = Config.appearance.anim.durations.normal;
         detachedMode = "";
-        animCurve = TokenConfig.appearance.curves.emphasized;
     }
 
     visible: width > 0 && height > 0
@@ -120,7 +126,7 @@ Item {
     Behavior on animX {
         Anim {
             duration: root.animLength
-            easing.bezierCurve: root.animCurve
+            easing: root.animCurve
         }
     }
 
@@ -129,7 +135,7 @@ Item {
 
         Anim {
             duration: root.animLength
-            easing.bezierCurve: root.animCurve
+            easing: root.animCurve
         }
     }
 
@@ -141,7 +147,7 @@ Item {
     Behavior on implicitWidth {
         Anim {
             duration: root.animLength
-            easing.bezierCurve: root.animCurve
+            easing: root.animCurve
         }
     }
 
@@ -150,7 +156,7 @@ Item {
 
         Anim {
             duration: root.animLength
-            easing.bezierCurve: root.animCurve
+            easing: root.animCurve
         }
     }
 
@@ -183,6 +189,7 @@ Item {
                         property: "active"
                     }
                     Anim {
+                        type: Anim.DefaultEffects
                         property: "opacity"
                     }
                 }
@@ -193,6 +200,7 @@ Item {
 
                 SequentialAnimation {
                     Anim {
+                        type: Anim.DefaultEffects
                         property: "opacity"
                     }
                     PropertyAction {

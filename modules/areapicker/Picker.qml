@@ -207,7 +207,7 @@ MouseArea {
                 target: root
                 property: "opacity"
                 to: 0
-                duration: Config.appearance.anim.durations.large
+                duration: Tokens.anim.durations.large
             }
             ExAnim {
                 target: root
@@ -401,7 +401,7 @@ MouseArea {
 
     Behavior on opacity {
         Anim {
-            duration: Config.appearance.anim.durations.large
+            duration: Tokens.anim.durations.large
         }
     }
 
@@ -430,7 +430,7 @@ MouseArea {
     }
 
     component ExAnim: Anim {
-        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+        duration: Tokens.anim.durations.expressiveDefaultSpatial
+        easing: Tokens.anim.expressiveDefaultSpatial
     }
 }

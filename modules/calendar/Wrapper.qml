@@ -28,8 +28,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitHeight"
-                duration: Config.appearance.anim.durations.normal
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
+                duration: Tokens.anim.durations.normal
+                easing: Tokens.anim.emphasizedDecel
             }
         },
         Transition {
@@ -38,8 +38,8 @@ Item {
             Anim {
                 target: root
                 property: "implicitHeight"
-                duration: Config.appearance.anim.durations.small
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedAccel
+                duration: Tokens.anim.durations.small
+                easing: Tokens.anim.emphasizedAccel
             }
         }
     ]

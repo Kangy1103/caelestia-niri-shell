@@ -201,8 +201,8 @@ Item {
 
         Behavior on implicitHeight {
             Anim {
-                duration: Config.appearance.anim.durations.small
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasizedDecel
+                duration: Tokens.anim.durations.small
+                easing: Tokens.anim.emphasizedDecel
             }
         }
 

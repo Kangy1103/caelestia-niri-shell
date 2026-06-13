@@ -11,7 +11,7 @@ BusyIndicator {
     property real strokeWidth: Config.appearance.padding.extraSmall
     property color fgColour: Colours.palette.m3primary
     property color bgColour: Colours.palette.m3secondaryContainer
-    readonly property real animDurationScale: Config.appearance.anim.durations.scale
+    readonly property real animDurationScale: Tokens.anim.durations.scale
 
     property real internalStrokeWidth: strokeWidth
     property string animState

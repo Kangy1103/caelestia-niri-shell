@@ -115,7 +115,7 @@ Layout.alignment: Qt.AlignVCenter
 
             Behavior on implicitWidth {
                 Anim {
-                    easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }

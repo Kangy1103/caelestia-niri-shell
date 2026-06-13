@@ -47,7 +47,7 @@ Item {
 
     Behavior on implicitWidth {
         Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 
@@ -93,7 +93,7 @@ Item {
                 source: Icons.getAppIcon(windowData.app_id ?? "", "image-missing")
                 Behavior on implicitSize {
                     Anim {
-                        easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
 
@@ -120,7 +120,7 @@ grade: 0
                 color: (iconItem.isWsFocused ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant)
                 Behavior on fontStyle.pointSize {
                     Anim {
-                        easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                        easing: Tokens.anim.emphasized
                     }
                 }
 
@@ -168,7 +168,7 @@ grade: 0
         anchors.fill: iconItem
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         cursorShape: (iconItem.dragActive ? Qt.ClosedHandCursor : (Qt.PointingHandCursor))
-        pressAndHoldInterval: Config.appearance.anim.durations.small
+        pressAndHoldInterval: Tokens.anim.durations.small
 
         radius: Config.appearance.rounding.small
 
@@ -270,12 +270,12 @@ grade: 0
 
             Behavior on rightMargin {
                 Anim {
-                    easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
             Behavior on bottomMargin {
                 Anim {
-                    easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                    easing: Tokens.anim.emphasized
                 }
             }
         }

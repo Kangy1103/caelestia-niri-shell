@@ -465,7 +465,7 @@ StyledRect {
 
         Behavior on visible {
             NumberAnimation {
-                duration: Config.appearance.anim.durations.normal
+                duration: Tokens.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }

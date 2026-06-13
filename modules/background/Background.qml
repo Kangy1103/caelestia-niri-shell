@@ -144,8 +144,8 @@ Loader {
 
                 transitions: Transition {
                     AnchorAnimation {
-                        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                        duration: Tokens.anim.durations.expressiveDefaultSpatial
+                        easing: Tokens.anim.expressiveDefaultSpatial
                     }
                 }
 

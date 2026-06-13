@@ -60,7 +60,7 @@ Item {
             to: "active"
             NumberAnimation {
                 properties: isVertical ? "height,pillHeight" : "width,pillWidth"
-                duration: Config.appearance.anim.durations.normal
+                duration: Tokens.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         },
@@ -69,7 +69,7 @@ Item {
             to: "inactive"
             NumberAnimation {
                 properties: isVertical ? "height,pillHeight" : "width,pillWidth"
-                duration: Config.appearance.anim.durations.normal
+                duration: Tokens.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }
@@ -132,7 +132,7 @@ Item {
 
                     Behavior on color {
                         ColorAnimation {
-                            duration: Config.appearance.anim.durations.small
+                            duration: Tokens.anim.durations.small
                             easing.type: Easing.InOutQuad
                         }
                     }
@@ -142,25 +142,25 @@ Item {
 
         Behavior on scale {
             NumberAnimation {
-                duration: Config.appearance.anim.durations.normal
+                duration: Tokens.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }
         Behavior on color {
             ColorAnimation {
-                duration: Config.appearance.anim.durations.small
+                duration: Tokens.anim.durations.small
                 easing.type: Easing.InOutQuad
             }
         }
         Behavior on opacity {
             NumberAnimation {
-                duration: Config.appearance.anim.durations.fast
+                duration: Tokens.anim.durations.expressiveFastEffects
                 easing.type: Easing.InOutCubic
             }
         }
         Behavior on radius {
             NumberAnimation {
-                duration: Config.appearance.anim.durations.normal
+                duration: Tokens.anim.durations.normal
                 easing.type: Easing.OutBack
             }
         }
@@ -168,25 +168,25 @@ Item {
 
     Behavior on width {
         NumberAnimation {
-            duration: Config.appearance.anim.durations.normal
+            duration: Tokens.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }
     Behavior on height {
         NumberAnimation {
-            duration: Config.appearance.anim.durations.normal
+            duration: Tokens.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }
     Behavior on pillWidth {
         NumberAnimation {
-            duration: Config.appearance.anim.durations.normal
+            duration: Tokens.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }
     Behavior on pillHeight {
         NumberAnimation {
-            duration: Config.appearance.anim.durations.normal
+            duration: Tokens.anim.durations.normal
             easing.type: Easing.OutBack
         }
     }

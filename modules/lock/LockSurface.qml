@@ -42,19 +42,16 @@ WlSessionLockSurface {
                 target: lockContent
                 properties: "implicitWidth,implicitHeight"
                 to: lockContent.iconSize
-                type: Anim.DefaultSpatial
             }
             Anim {
                 target: lockBg
                 property: "radius"
                 to: lockContent.iconSize / 4 * Tokens.rounding.scale
-                type: Anim.DefaultSpatial
             }
             Anim {
                 target: content
                 property: "scale"
                 to: 0
-                type: Anim.DefaultSpatial
             }
             Anim {
                 target: content
@@ -85,6 +82,7 @@ WlSessionLockSurface {
                     duration: Tokens.anim.durations.small
                 }
                 Anim {
+                    type: Anim.Standard
                     target: lockContent
                     property: "opacity"
                     to: 0
@@ -109,12 +107,6 @@ WlSessionLockSurface {
             to: 1
             type: Anim.StandardLarge
         }
-        Anim {
-            target: wallpaperFallback
-            property: "opacity"
-            to: 0
-            type: Anim.StandardLarge
-        }
         SequentialAnimation {
             ParallelAnimation {
                 Anim {
@@ -127,7 +119,8 @@ WlSessionLockSurface {
                     target: lockContent
                     property: "rotation"
                     to: 360
-                    type: Anim.FastSpatial
+                    duration: Tokens.anim.durations.expressiveFastSpatial
+                    easing: Tokens.anim.standardAccel
                 }
             }
             ParallelAnimation {
@@ -135,14 +128,16 @@ WlSessionLockSurface {
                     target: lockIcon
                     property: "rotation"
                     to: 360
-                    easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
+                    easing: Tokens.anim.standardDecel
                 }
                 Anim {
+                    type: Anim.DefaultEffects
                     target: lockIcon
                     property: "opacity"
                     to: 0
                 }
                 Anim {
+                    type: Anim.DefaultEffects
                     target: content
                     property: "opacity"
                     to: 1
@@ -151,7 +146,6 @@ WlSessionLockSurface {
                     target: content
                     property: "scale"
                     to: 1
-                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockBg
@@ -162,13 +156,11 @@ WlSessionLockSurface {
                     target: lockContent
                     property: "implicitWidth"
                     to: root.centerWidth
-                    type: Anim.DefaultSpatial
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
                     to: root.centerHeight
-                    type: Anim.DefaultSpatial
                 }
             }
         }
@@ -181,33 +173,7 @@ WlSessionLockSurface {
         anchors.fill: parent
         color: Colours.palette.m3surface
         z: 0
-    }
-
-    Image {
-        id: wallpaperFallback
-        anchors.fill: parent
-        source: {
-            const path = Wallpapers.current || Config.paths.wallpaper || "";
-            if (!path) return "";
-            const source = Wallpapers.getColorSource(path);
-            return source.startsWith("/") ? "file://" + source : source;
-        }
-        fillMode: Image.PreserveAspectCrop
-        sourceSize.width: root.screen.width
-        sourceSize.height: root.screen.height
-        opacity: 1
-        z: 1
-
-        visible: status === Image.Ready || status === Image.Loading
-
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            autoPaddingEnabled: false
-            blurEnabled: true
-            blur: 1
-            blurMax: 64
-            blurMultiplier: 1
-        }
+        visible: root.isTargetScreen
     }
 
     ScreencopyView {
@@ -217,6 +183,7 @@ WlSessionLockSurface {
         captureSource: root.screen
         opacity: 0
         z: 2
+        visible: root.isTargetScreen
 
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -233,6 +200,7 @@ WlSessionLockSurface {
         anchors.fill: parent
         z: 3
         color: Qt.alpha("#000000", 0.2)
+        visible: root.isTargetScreen
     }
 
     // ── Optional flanking side panels ──────────────────────────────────────────
@@ -294,8 +262,8 @@ WlSessionLockSurface {
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
-                blurMax: 16
-                shadowVerticalOffset: 4
+                    blurMax: 12
+                    shadowVerticalOffset: 4
                 shadowHorizontalOffset: 0
                 shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.4)
             }
@@ -340,8 +308,8 @@ WlSessionLockSurface {
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
-                blurMax: 16
-                shadowVerticalOffset: 4
+                    blurMax: 12
+                    shadowVerticalOffset: 4
                 shadowHorizontalOffset: 0
                 shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.4)
             }
@@ -398,7 +366,7 @@ WlSessionLockSurface {
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
-                blurMax: 36
+                blurMax: 15
                 shadowVerticalOffset: 8
                 shadowHorizontalOffset: 0
                 shadowBlur: 0.7

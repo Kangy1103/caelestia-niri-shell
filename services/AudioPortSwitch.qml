@@ -1,68 +1,61 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.3.0-20260604
+// Version: 0.4.0-20260612
 
 pragma Singleton
 
 import Quickshell
 import Quickshell.Io
-import Caelestia
+import Quickshell.Services.Pipewire
 import QtQuick
 
 Singleton {
     id: root
 
-    property string sinkName: ""
-    property string activePort: ""
+    readonly property string speakersMatch: "Main Audio"
+    readonly property string scarlettMatch: "Scarlett Solo 4th Gen"
+
+    property PwNode speakersSink: null
+    property PwNode scarlettSink: null
     property bool ready: false
 
-    readonly property var ports: [
-        { id: "analog-output-lineout", name: "Line Out" },
-        { id: "analog-output-headphones", name: "Headphones" }
-    ]
+    function _findSinks(): void {
+        const sinks = Pipewire.nodes.values.filter(n => !n.isStream && n.isSink);
+        root.speakersSink = sinks.find(n => (n.description || "").indexOf(root.speakersMatch) >= 0) || null;
+        root.scarlettSink = sinks.find(n => (n.description || "").indexOf(root.scarlettMatch) >= 0) || null;
+        root.ready = root.speakersSink !== null && root.scarlettSink !== null;
+    }
+
+    function _currentIsSpeakers(): bool {
+        const def = Pipewire.defaultAudioSink;
+        if (!def) return false;
+        return (def.description || "").indexOf(root.speakersMatch) >= 0;
+    }
 
     function toggle(): void {
+        _findSinks();
         if (!root.ready) return;
-        const next = root.activePort === ports[0].id ? ports[1].id : ports[0].id;
-        setPort(next);
+        const target = _currentIsSpeakers() ? root.scarlettSink : root.speakersSink;
+        _switchTo(target);
     }
 
-    function lineout(): void {
-        if (!root.ready) return;
-        setPort("analog-output-lineout");
+    function speakers(): void {
+        _findSinks();
+        if (!root.speakersSink) return;
+        _switchTo(root.speakersSink);
     }
 
-    function headphones(): void {
-        if (!root.ready) return;
-        setPort("analog-output-headphones");
+    function scarlett(): void {
+        _findSinks();
+        if (!root.scarlettSink) return;
+        _switchTo(root.scarlettSink);
     }
 
-    function setPort(port: string): void {
-        root.activePort = port;
-        toggleProc.command = ["pactl", "set-sink-port", root.sinkName, port];
-        toggleProc.running = true;
-
-        const portName = ports.find(p => p.id === port)?.name ?? port;
-        Toaster.toast(qsTr("Audio port switched"), qsTr("Now using: %1").arg(portName), "headphones");
+    function _switchTo(sink: PwNode): void {
+        Pipewire.preferredDefaultAudioSink = sink;
     }
 
-    Process {
-        id: initProc
-        running: true
-        command: ["sh", "-c", "SINK=$(pactl get-default-sink); PORT=$(pactl list sinks | awk -v s=\"$SINK\" 'index($0, \"Name: \" s) > 0 {f=1} f && /Active Port:/ {gsub(/[ \\t]/, \"\", $NF); print $NF; exit}'); echo \"$SINK|$PORT\""]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const parts = text.trim().split("|");
-                if (parts.length >= 2) {
-                    root.sinkName = parts[0];
-                    root.activePort = parts[1];
-                    root.ready = true;
-                }
-            }
-        }
-    }
-
-    Process {
-        id: toggleProc
+    Component.onCompleted: {
+        _findSinks();
     }
 
     IpcHandler {
@@ -72,12 +65,12 @@ Singleton {
             root.toggle();
         }
 
-        function lineout(): void {
-            root.lineout();
+        function speakers(): void {
+            root.speakers();
         }
 
-        function headphones(): void {
-            root.headphones();
+        function scarlett(): void {
+            root.scarlett();
         }
     }
 }

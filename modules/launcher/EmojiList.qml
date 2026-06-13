@@ -151,7 +151,7 @@ Item {
                             radius: Config.appearance.rounding.small
                             color: Colours.palette.m3onSurface
                             opacity: catBtn.hovered ? 0.08 : 0
-                            Behavior on opacity { Anim { duration: Config.appearance.anim.durations.small } }
+                            Behavior on opacity { Anim { duration: Tokens.anim.durations.small } }
                         }
 
                         StateLayer {
@@ -169,7 +169,7 @@ Item {
                             color: catBtn.active ? Colours.palette.m3primary : (catBtn.hovered ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant)
                             fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
 Behavior on color { CAnim {} }
-                            Behavior on anchors.verticalCenterOffset { Anim { duration: Config.appearance.anim.durations.small } }
+                            Behavior on anchors.verticalCenterOffset { Anim { duration: Tokens.anim.durations.small } }
                         }
 
                         // Selection Indicator (Tab look)
@@ -181,8 +181,8 @@ Behavior on color { CAnim {} }
                             color: Colours.palette.m3primary
                             opacity: catBtn.active ? 1 : 0
 
-                            Behavior on width { Anim { duration: Config.appearance.anim.durations.normal; easing.bezierCurve: TokenConfig.appearance.curves.emphasized } }
-                            Behavior on opacity { Anim { duration: Config.appearance.anim.durations.normal } }
+                            Behavior on width { Anim { duration: Tokens.anim.durations.normal; easing: Tokens.anim.emphasized } }
+                            Behavior on opacity { Anim { duration: Tokens.anim.durations.normal } }
                         }
 
 
@@ -232,7 +232,7 @@ Behavior on color { CAnim {} }
                 
                 currentIndex: -1
                 
-                highlightMoveDuration: Config.appearance.anim.durations.normal
+                highlightMoveDuration: Tokens.anim.durations.normal
 
                 highlight: Rectangle {
                     radius: Config.appearance.rounding.small
@@ -333,7 +333,7 @@ color: Colours.palette.m3onSurfaceVariant
                     color: Colours.palette.m3onSurface
                     opacity: footer.activeEmoji ? 1 : 0.3
                     renderType: Text.QtRendering
-                    Behavior on opacity { Anim { duration: Config.appearance.anim.durations.small } }
+                    Behavior on opacity { Anim { duration: Tokens.anim.durations.small } }
                 }
 
                 ColumnLayout {

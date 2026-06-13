@@ -46,7 +46,7 @@ StyledWindow {
     WlrLayershell.layer: fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen ? WlrLayer.Overlay : WlrLayer.Top
     WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.calendar || visibilities.clipboard || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    mask: hasFullscreen ? emptyRegion : regions
+    mask: hasFullscreen ? emptyRegion : (visibilities.launcher || visibilities.calendar || visibilities.keybinds || visibilities.sidebar ? fullScreenRegion : regions)
 
     anchors.top: true
     anchors.bottom: true
@@ -75,6 +75,14 @@ StyledWindow {
             width: panels.osdWrapper.width * (1 - panels.osd.offsetScale) + root.borderThickness
             height: panels.osd.height
         }
+    }
+
+    Region {
+        id: fullScreenRegion
+        x: bar.implicitWidth
+        y: root.borderThickness
+        width: root.width - bar.implicitWidth - root.borderThickness
+        height: root.height - root.borderThickness * 2
     }
 
     Regions {

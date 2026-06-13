@@ -214,14 +214,14 @@ StyledRect {
                             Anim {
                                 from: 1
                                 to: 0
-                                duration: Config.appearance.anim.durations.large
-                                easing.bezierCurve: TokenConfig.appearance.curves.standardAccel
+                                duration: Tokens.anim.durations.large
+                                easing: Tokens.anim.standardAccel
                             }
                             Anim {
                                 from: 0
                                 to: 1
-                                duration: Config.appearance.anim.durations.large
-                                easing.bezierCurve: TokenConfig.appearance.curves.standardDecel
+                                duration: Tokens.anim.durations.large
+                                easing: Tokens.anim.standardDecel
                             }
                         }
                     }

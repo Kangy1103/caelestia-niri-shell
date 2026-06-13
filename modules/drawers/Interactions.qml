@@ -63,7 +63,22 @@ CustomMouseArea {
     acceptedButtons: fullscreen ? Qt.NoButton : Qt.AllButtons
     hoverEnabled: true
 
-    onPressed: event => dragStart = Qt.point(event.x, event.y)
+    onPressed: event => {
+        dragStart = Qt.point(event.x, event.y);
+        if (visibilities.launcher
+            && !inBottomPanel(panels.launcher, event.x, event.y)
+            && !withinPanelWidth(panels.launcher, event.x, event.y))
+            visibilities.launcher = false;
+        if (visibilities.calendar
+            && !inBottomPanel(panels.calendar, event.x, event.y))
+            visibilities.calendar = false;
+        if (visibilities.keybinds
+            && !inBottomPanel(panels.keybinds, event.x, event.y))
+            visibilities.keybinds = false;
+        if (visibilities.sidebar
+            && !inRightPanel(panels.sidebar, event.x, event.y))
+            visibilities.sidebar = false;
+    }
     onContainsMouseChanged: {
         if (!containsMouse) {
             // Only hide if not activated by shortcut

@@ -57,13 +57,6 @@ PageBase {
             onToggled: GlobalConfig.bar.workspaces.showWindows = checked
         }
 
-        ToggleRow {
-            Layout.fillWidth: true
-            text: qsTr("Windows on special workspaces")
-            checked: Config.bar.workspaces.showWindowsOnSpecialWorkspaces
-            onToggled: GlobalConfig.bar.workspaces.showWindowsOnSpecialWorkspaces = checked
-        }
-
         StepperRow {
             Layout.fillWidth: true
             label: qsTr("Max window icons")

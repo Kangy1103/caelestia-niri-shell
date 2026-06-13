@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.controls
@@ -17,8 +18,15 @@ ConnectedRect {
     property real from: 0
     property real to: 99
     property real stepSize: 1
+    property bool toastOnChange: true
 
     signal moved(value: real)
+
+    onMoved: v => {
+        if (toastOnChange) {
+            Toaster.toast(label.text, String(v), "tune");
+        }
+    }
 
     implicitHeight: rowLayout.implicitHeight + rowLayout.anchors.margins * 2
 

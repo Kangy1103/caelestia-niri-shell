@@ -114,7 +114,7 @@ Item {
 
     Behavior on implicitHeight {
         Anim {
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            easing: Tokens.anim.emphasized
         }
     }
 

@@ -41,8 +41,8 @@ Rectangle {
 
     Behavior on implicitWidth {
         Anim {
-            duration: Config.appearance.anim.durations.large
-            easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+            duration: Tokens.anim.durations.large
+            easing: Tokens.anim.emphasized
         }
     }
 
@@ -103,7 +103,7 @@ Rectangle {
                 implicitSize: Config.appearance.font.label.large.size
                 Behavior on opacity {
                     Anim {
-                        duration: Config.appearance.anim.durations.normal
+                        duration: Tokens.anim.durations.normal
                     }
                 }
             }
@@ -132,19 +132,19 @@ Rectangle {
 
         Behavior on Layout.preferredWidth {
             Anim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
 
         Behavior on color {
             CAnim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
 
         Behavior on font.pointSize {
             Anim {
-                easing.bezierCurve: TokenConfig.appearance.curves.emphasized
+                easing: Tokens.anim.emphasized
             }
         }
     }

@@ -15,9 +15,9 @@ RectangularShadow {
 
     Behavior on dp {
         NumberAnimation {
-            duration: Config.appearance.anim.durations.normal
+            duration: Tokens.anim.durations.normal
             easing.type: Easing.BezierSpline
-            easing.bezierCurve: TokenConfig.appearance.curves.standard
+            easing: Tokens.anim.standard
         }
     }
 }

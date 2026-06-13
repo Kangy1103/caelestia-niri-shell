@@ -260,15 +260,15 @@ Item {
 
                 Behavior on x {
                     Anim {
-                        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                        duration: Tokens.anim.durations.expressiveDefaultSpatial
+                        easing: Tokens.anim.expressiveDefaultSpatial
                     }
                 }
 
                 Behavior on y {
                     Anim {
-                        duration: Config.appearance.anim.durations.expressiveDefaultSpatial
-                        easing.bezierCurve: TokenConfig.appearance.curves.expressiveDefaultSpatial
+                        duration: Tokens.anim.durations.expressiveDefaultSpatial
+                        easing: Tokens.anim.expressiveDefaultSpatial
                     }
                 }
             }

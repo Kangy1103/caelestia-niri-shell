@@ -175,8 +175,8 @@ color: Colours.palette.m3onSurfaceVariant
                     cursorShape: searchInput.text ? Qt.PointingHandCursor : undefined
                     onClicked: searchInput.text = ""
                 }
-                Behavior on width { Anim { duration: Config.appearance.anim.durations.small } }
-                Behavior on opacity { Anim { duration: Config.appearance.anim.durations.small } }
+                Behavior on width { Anim { duration: Tokens.anim.durations.small } }
+                Behavior on opacity { Anim { duration: Tokens.anim.durations.small } }
             }
         }
 
@@ -195,7 +195,7 @@ color: Colours.palette.m3onSurfaceVariant
                 currentIndex: 0
                 highlightFollowsCurrentItem: true
                 clip: true
-                highlightMoveDuration: Config.appearance.anim.durations.normal
+                highlightMoveDuration: Tokens.anim.durations.normal
                 highlightResizeDuration: 0
                 highlight: StyledRect {
                     radius: Config.appearance.rounding.small

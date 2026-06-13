@@ -44,15 +44,15 @@ QtObject {
 
         // System
         {
-            label: qsTr("Updates"),
-            icon: "update",
-            description: qsTr("System updates"),
-            category: "system"
-        },
-        {
             label: qsTr("Plugins"),
             icon: "extension",
             description: qsTr("Manage plugins"),
+            category: "system"
+        },
+        {
+            label: qsTr("Lock screen"),
+            icon: "lock",
+            description: qsTr("Fingerprint, privacy, appearance"),
             category: "system"
         },
 
@@ -67,6 +67,18 @@ QtObject {
             label: qsTr("Services"),
             icon: "build",
             description: qsTr("Poll intervals, lyrics backend"),
+            category: "shell"
+        },
+        {
+            label: qsTr("Session"),
+            icon: "power_settings_new",
+            description: qsTr("Logout, shutdown, reboot actions"),
+            category: "shell"
+        },
+        {
+            label: qsTr("Notifications & popups"),
+            icon: "notifications",
+            description: qsTr("Notifications, OSD, utility toasts"),
             category: "shell"
         },
         {

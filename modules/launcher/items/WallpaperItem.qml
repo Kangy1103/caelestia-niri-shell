@@ -83,14 +83,7 @@ Item {
             text: "play_arrow"
             color: "white"
             fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
-visible: root.isVideo
-
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: Qt.alpha("black", 0.5)
-                blurMax: 12
-            }
+            visible: root.isVideo
         }
     }
 

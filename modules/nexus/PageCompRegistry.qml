@@ -33,6 +33,9 @@ QtObject {
                 Component {
                     ColourSelect {}
                 }
+                Component {
+                    BorderPage {}
+                }
             }
         },
 
@@ -68,6 +71,9 @@ QtObject {
                 Component {
                     AppVolumes {}
                 }
+                Component {
+                    AudioSinkSwitch {}
+                }
             }
         },
 
@@ -76,7 +82,12 @@ QtObject {
             PlaceholderComp {}
         },
         Component {
-            PlaceholderComp {}
+            // Lock screen
+            StackPage {
+                Component {
+                    LockPage {}
+                }
+            }
         },
 
         // Shell
@@ -122,6 +133,22 @@ QtObject {
             StackPage {
                 Component {
                     ServicesPage {}
+                }
+            }
+        },
+        Component {
+            // Session
+            StackPage {
+                Component {
+                    SessionPage {}
+                }
+            }
+        },
+        Component {
+            // Notifications & popups
+            StackPage {
+                Component {
+                    NotificationsPopupsPage {}
                 }
             }
         },
