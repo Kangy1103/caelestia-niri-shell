@@ -21,9 +21,12 @@ ConnectedRect {
 
     signal selected(item: MenuItem)
 
-    onSelected: item => {
-        if (toastOnChange) {
-            Toaster.toast(label.text, item.text || "", "tune");
+    Connections {
+        target: root
+        onSelected: item => {
+            if (toastOnChange) {
+                Toaster.toast(label.text, item.text || "", "tune");
+            }
         }
     }
 

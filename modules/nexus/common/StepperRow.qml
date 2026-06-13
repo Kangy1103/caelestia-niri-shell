@@ -22,9 +22,12 @@ ConnectedRect {
 
     signal moved(value: real)
 
-    onMoved: v => {
-        if (toastOnChange) {
-            Toaster.toast(label.text, String(v), "tune");
+    Connections {
+        target: root
+        onMoved: v => {
+            if (toastOnChange) {
+                Toaster.toast(label.text, String(v), "tune");
+            }
         }
     }
 

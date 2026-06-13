@@ -16,6 +16,11 @@ PageBase {
 
     property string quickshellVersion
     property string cliVersion
+    property string sysHostname
+    property string sysDevice
+    property string sysKernel
+    property string sysFirmware
+    property string sysShell
 
     title: qsTr("About")
 
@@ -47,6 +52,36 @@ PageBase {
             }
         }
 
+        Process {
+            running: true
+            command: ["sh", "-c", "hostname 2>/dev/null"]
+            stdout: StdioCollector { onStreamFinished: root.sysHostname = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["sh", "-c", "cat /sys/devices/virtual/dmi/id/product_name 2>/dev/null || uname -n 2>/dev/null"]
+            stdout: StdioCollector { onStreamFinished: root.sysDevice = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["uname", "-r"]
+            stdout: StdioCollector { onStreamFinished: root.sysKernel = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["sh", "-c", "cat /sys/devices/virtual/dmi/id/bios_version 2>/dev/null"]
+            stdout: StdioCollector { onStreamFinished: root.sysFirmware = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["sh", "-c", "basename \"${SHELL:-}\" 2>/dev/null || echo ''"]
+            stdout: StdioCollector { onStreamFinished: root.sysShell = text.trim() }
+        }
+
         // Hero
         ConnectedRect {
             Layout.fillWidth: true
@@ -73,13 +108,6 @@ PageBase {
                     text: "Caelestia"
                     font: Tokens.font.headline.builders.large.width(110).build()
                 }
-
-                StyledText {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: CUtils.version ? `v${CUtils.version}` : "…"
-                    color: Colours.palette.m3onSurfaceVariant
-                    font: Tokens.font.body.medium
-                }
             }
         }
 
@@ -91,28 +119,28 @@ PageBase {
         InfoRow {
             first: true
             label: qsTr("Hostname")
-            value: SysInfo.hostname
+            value: root.sysHostname || SysInfo.hostname || "…"
         }
 
         InfoRow {
             label: qsTr("Device")
-            value: SysInfo.device
+            value: root.sysDevice || SysInfo.device || "…"
         }
 
         InfoRow {
             label: qsTr("Distro")
-            value: SysInfo.osPrettyName || SysInfo.osName
+            value: SysInfo.osPrettyName || SysInfo.osName || "…"
         }
 
         InfoRow {
             label: qsTr("Kernel")
-            value: SysInfo.kernel
+            value: root.sysKernel || SysInfo.kernel || "…"
         }
 
         InfoRow {
             last: true
             label: qsTr("Firmware")
-            value: SysInfo.firmware
+            value: root.sysFirmware || SysInfo.firmware || "…"
         }
 
         // Software
@@ -123,7 +151,7 @@ PageBase {
         InfoRow {
             first: true
             label: qsTr("Shell")
-            value: CUtils.version || "…"
+            value: root.sysShell || "…"
         }
 
         InfoRow {
