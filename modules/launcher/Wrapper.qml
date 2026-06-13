@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Caelestia.Config
 import qs.components
@@ -12,6 +13,8 @@ Item {
     required property ShellScreen screen
     required property DrawerVisibilities visibilities
     required property var panels
+
+    property Item dropletMask: null
 
     readonly property bool shouldBeActive: visibilities.launcher && Config.launcher.enabled
 
@@ -28,29 +31,34 @@ Item {
         if (shouldBeActive)
             implicitHeight = Qt.binding(() => content.implicitHeight);
         else
-            implicitHeight = implicitHeight; // Break binding during close anim
+            implicitHeight = implicitHeight;
     }
 
     visible: offsetScale < 1
-    anchors.bottomMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight
-    implicitWidth: content.implicitWidth || 630 // Hard coded fallback for first open
-    opacity: 1 - offsetScale
+    implicitWidth: content.implicitWidth || 630
 
-    Component.onCompleted: Qt.callLater(() => Apps) // Load apps on init
+    layer.enabled: true
+    layer.effect: MultiEffect {
+        maskSource: root.dropletMask
+        maskEnabled: true
+        maskSpreadAtMin: 1
+        maskThresholdMin: 0.5
+    }
+
+    Component.onCompleted: Qt.callLater(() => Apps)
 
     Behavior on offsetScale {
-        Anim {}
+        Anim {
+            type: Anim.SlowEffects
+        }
     }
 
     Loader {
         id: content
-
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-
         active: root.shouldBeActive || root.visible
-
         sourceComponent: Content {
             visibilities: root.visibilities
             panels: root.panels
