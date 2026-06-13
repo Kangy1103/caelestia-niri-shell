@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import CNS
 import CNS.Config
+import CNS.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -20,6 +21,30 @@ PageBase {
         anchors.top: parent.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
+
+        Component {
+            id: sepComp
+
+            SectionHeader {
+                Layout.fillWidth: true
+                text: qsTr("Global presets")
+                Layout.topMargin: Tokens.spacing.largeIncreased
+            }
+        }
+
+        Component {
+            id: navRowComp
+
+            NavRow {
+                Layout.fillWidth: true
+                first: true
+                last: true
+                icon: "tune"
+                label: qsTr("Visualiser presets")
+                status: VisualiserPresets.currentLabel
+                onClicked: root.nState.openSubPage(1)
+            }
+        }
 
         Component {
             id: sectionComp
@@ -97,6 +122,8 @@ PageBase {
                     isFirst: i === 0
                 });
             }
+            sepComp.createObject(layout);
+            navRowComp.createObject(layout);
         })
     }
 }

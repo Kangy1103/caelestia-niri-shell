@@ -16,12 +16,6 @@ QtObject {
 
         // Connectivity
         {
-            label: qsTr("Display"),
-            icon: "monitor",
-            description: qsTr("Output configuration"),
-            category: "connectivity"
-        },
-        {
             label: qsTr("Network"),
             icon: "wifi",
             description: qsTr("Wi-Fi, ethernet"),

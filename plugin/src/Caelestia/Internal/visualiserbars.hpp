@@ -71,7 +71,8 @@ signals:
 
 private:
     void drawSide(QPainter* painter, bool rightSide);
-    void drawWaveformSide(QPainter* painter, bool rightSide);
+    void drawFullBars(QPainter* painter);
+    void drawFullWaveform(QPainter* painter);
 
     QVector<double> m_targetValues;
     QVector<double> m_displayValues;

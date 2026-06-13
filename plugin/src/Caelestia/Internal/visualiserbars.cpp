@@ -49,7 +49,6 @@ void VisualiserBars::paint(QPainter* painter) {
         return;
 
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setPen(Qt::NoPen);
 
     const qreal h = height();
     const qreal maxBarHeight = h * 0.4;
@@ -57,20 +56,24 @@ void VisualiserBars::paint(QPainter* painter) {
     QLinearGradient gradient(0, h - maxBarHeight, 0, h);
     gradient.setColorAt(0, m_primaryColor);
     gradient.setColorAt(1, m_secondaryColor);
-    painter->setBrush(gradient);
+
+    if (m_mode == Waveform) {
+        painter->setPen(QPen(m_primaryColor, 1.5));
+        QColor waveFill = m_primaryColor;
+        waveFill.setAlphaF(0.15);
+        painter->setBrush(waveFill);
+    } else if (m_mode == FilledWaveform) {
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(gradient);
+    } else {
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(gradient);
+    }
 
     if (m_mode == Waveform || m_mode == FilledWaveform) {
-        QPen pen(m_primaryColor, 2.0);
-        if (m_mode == FilledWaveform)
-            painter->setPen(Qt::NoPen);
-        else
-            painter->setPen(pen);
-
-        drawWaveformSide(painter, false);
-        drawWaveformSide(painter, true);
-    } else {
-        drawSide(painter, false);
-        drawSide(painter, true);
+        drawFullWaveform(painter);
+    } else if (m_mode == Bars) {
+        drawFullBars(painter);
     }
 }
 
@@ -121,7 +124,50 @@ void VisualiserBars::drawSide(QPainter* painter, bool rightSide) {
     }
 }
 
-void VisualiserBars::drawWaveformSide(QPainter* painter, bool rightSide) {
+void VisualiserBars::drawFullBars(QPainter* painter) {
+    const qreal w = width();
+    const qreal h = height();
+    const auto count = m_displayValues.size();
+
+    if (count == 0)
+        return;
+
+    const qreal slotWidth = w / static_cast<qreal>(count);
+    const qreal barWidth = std::max(1.0, slotWidth - m_spacing);
+    const qreal maxBarHeight = h * 0.4;
+
+    for (qsizetype i = 0; i < count; ++i) {
+        const qreal value = std::clamp(m_displayValues[i] * m_sensitivity, 0.0, 1.0);
+        const qreal barHeight = value * maxBarHeight;
+
+        if (barHeight <= 0)
+            continue;
+
+        const qreal x = static_cast<qreal>(i) * slotWidth + (slotWidth - barWidth) / 2.0;
+        const qreal y = h - barHeight;
+        const qreal r = std::min({ m_rounding, barWidth / 2.0, barHeight });
+
+        QPainterPath path;
+        path.moveTo(x, h);
+        path.lineTo(x, y + r);
+
+        if (r > 0) {
+            path.arcTo(x, y, r * 2, r * 2, 180, -90);
+            path.lineTo(x + barWidth - r, y);
+            path.arcTo(x + barWidth - r * 2, y, r * 2, r * 2, 90, -90);
+        } else {
+            path.lineTo(x, y);
+            path.lineTo(x + barWidth, y);
+        }
+
+        path.lineTo(x + barWidth, h);
+        path.closeSubpath();
+
+        painter->drawPath(path);
+    }
+}
+
+void VisualiserBars::drawFullWaveform(QPainter* painter) {
     const qreal w = width();
     const qreal h = height();
     const auto count = m_displayValues.size();
@@ -129,48 +175,28 @@ void VisualiserBars::drawWaveformSide(QPainter* painter, bool rightSide) {
     if (count < 2)
         return;
 
-    const qreal sideWidth = w * 0.4;
-    const qreal slotWidth = sideWidth / static_cast<qreal>(count);
-    const qreal sideOffset = rightSide ? w * 0.6 : 0;
+    const qreal slotWidth = w / static_cast<qreal>(count);
     const qreal maxBarHeight = h * 0.4;
 
     QPainterPath path;
 
     for (qsizetype i = 0; i < count; ++i) {
-        const qsizetype valueIndex = rightSide ? i : (count - i - 1);
-        const qreal value = std::clamp(m_displayValues[valueIndex] * m_sensitivity, 0.0, 1.0);
+        const qreal value = std::clamp(m_displayValues[i] * m_sensitivity, 0.0, 1.0);
         const qreal barHeight = value * maxBarHeight;
-        const qreal x = static_cast<qreal>(i) * slotWidth + sideOffset + slotWidth / 2.0;
+        const qreal x = static_cast<qreal>(i) * slotWidth + slotWidth / 2.0;
         const qreal y = h - barHeight;
 
-        if (i == 0) {
+        if (i == 0)
             path.moveTo(x, y);
-        } else {
-            const auto prev = rightSide ? i - 1 : (count - i);
-            const qreal prevValue = std::clamp(m_displayValues[prev] * m_sensitivity, 0.0, 1.0);
-            const qreal prevBarHeight = prevValue * maxBarHeight;
-            const qreal prevX = static_cast<qreal>(i - 1) * slotWidth + sideOffset + slotWidth / 2.0;
-            const qreal prevY = h - prevBarHeight;
-            const qreal ctrlX = (prevX + x) / 2.0;
-
-            path.cubicTo(ctrlX, prevY, ctrlX, y, x, y);
-        }
+        else
+            path.lineTo(x, y);
     }
 
-    if (m_mode == FilledWaveform) {
-        const qreal lastX = rightSide
-            ? static_cast<qreal>(count - 1) * slotWidth + sideOffset + slotWidth / 2.0
-            : sideOffset + slotWidth / 2.0;
-        const qreal firstX = rightSide
-            ? sideOffset + slotWidth / 2.0
-            : static_cast<qreal>(count - 1) * slotWidth + sideOffset + slotWidth / 2.0;
-        path.lineTo(lastX, h);
-        path.lineTo(firstX, h);
-        path.closeSubpath();
-        painter->drawPath(path);
-    } else {
-        painter->drawPath(path);
-    }
+    path.lineTo(w, h);
+    path.lineTo(0.0, h);
+    path.closeSubpath();
+
+    painter->drawPath(path);
 }
 
 QVector<double> VisualiserBars::values() const {

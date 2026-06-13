@@ -18,6 +18,14 @@ Item {
 
     readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0) && !GameMode.enabled
 
+    readonly property color resolvedPrimary: Config.background.visualiser.primaryColor
+        ? Qt.alpha(Config.background.visualiser.primaryColor, 0.7)
+        : Qt.alpha(Colours.palette.m3primary, 0.7)
+
+    readonly property color resolvedSecondary: Config.background.visualiser.secondaryColor
+        ? Qt.alpha(Config.background.visualiser.secondaryColor, 0.7)
+        : Qt.alpha(Colours.palette.m3inversePrimary, 0.7)
+
     opacity: shouldBeActive ? 1 : 0
 
     Loader {
@@ -50,11 +58,15 @@ Item {
             anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Config.appearance.spacing.small * Config.background.visualiser.spacing
 
             values: Cava.values
-            primaryColor: Qt.alpha(Colours.palette.m3primary, 0.7)
-            secondaryColor: Qt.alpha(Colours.palette.m3inversePrimary, 0.7)
+            mode: Config.background.visualiser.style === "waveform" ? VisualiserBars.Waveform
+                : Config.background.visualiser.style === "filled" ? VisualiserBars.FilledWaveform
+                : VisualiserBars.Bars
+            primaryColor: root.resolvedPrimary
+            secondaryColor: root.resolvedSecondary
             rounding: Config.appearance.rounding.small * Config.background.visualiser.rounding
             spacing: Config.appearance.spacing.small * Config.background.visualiser.spacing
-            animationDuration: Tokens.anim.durations.small
+            animationDuration: Config.background.visualiser.animationDuration
+            sensitivity: Config.background.visualiser.sensitivity
 
             Timer {
                 running: true

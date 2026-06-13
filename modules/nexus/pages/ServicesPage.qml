@@ -191,16 +191,13 @@ PageBase {
             text: qsTr("Service tuning")
         }
 
-        StepperRow {
+        NavRow {
             Layout.fillWidth: true
             first: true
-            label: qsTr("Visualiser bars")
-            subtext: qsTr("Number of bars in the audio visualisers")
-            value: GlobalConfig.services.visualiserBars
-            from: 10
-            to: 120
-            stepSize: 2
-            onMoved: v => GlobalConfig.services.visualiserBars = v
+            icon: "graphic_eq"
+            label: qsTr("Cava Visualiser")
+            status: VisualiserPresets.currentLabel
+            onClicked: root.nState.openSubPage(1)
         }
 
         ToggleRow {
