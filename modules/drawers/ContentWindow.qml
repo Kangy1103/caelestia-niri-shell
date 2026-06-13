@@ -9,7 +9,6 @@ import Caelestia.Blobs
 import Caelestia.Config
 import qs.components
 import qs.components.containers
-import qs.components.effects
 import qs.services
 import qs.modules.bar
 
@@ -98,22 +97,6 @@ StyledWindow {
         }
     }
 
-    DropletMask {
-        id: launcherDropletMask
-        anchors.fill: parent
-        progress: panels.launcher.offsetScale
-        dropletRadius: 48
-        finalRadius: Tokens.rounding.extraLarge
-        visible: false
-        layer.enabled: true
-    }
-
-    Binding {
-        target: panels.launcher
-        property: "dropletMask"
-        value: launcherDropletMask
-    }
-
     Item {
         anchors.fill: parent
         opacity: root.surfaceColour.a
@@ -154,7 +137,6 @@ StyledWindow {
 
             panel: panels.launcher
             deformAmount: 0.1
-            opacity: 1.0 - panels.launcher.offsetScale
         }
 
         PanelBg {
