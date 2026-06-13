@@ -1,0 +1,6 @@
+# Created by Kangy w/ OpenCode AI Assistance
+# Version: 0.1.0-20260613
+
+#%PAM-1.0
+
+auth    required    pam_fprintd.so  max-tries=1

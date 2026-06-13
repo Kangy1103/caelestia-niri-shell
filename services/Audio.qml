@@ -28,7 +28,6 @@ Singleton {
     readonly property bool sourceMuted: !!source?.audio?.muted
     readonly property real sourceVolume: source?.audio?.volume ?? 0
 
-    // readonly property alias cava: cava (disabled — see Cava.qml)
     readonly property alias beatTracker: beatTracker
 
     function setVolume(newVolume: real): void {
@@ -138,13 +137,6 @@ Singleton {
         objects: [...root.sinks, ...root.sources, ...root.streams]
     }
 
-    // CavaProvider disabled — see Cava.qml for single-instance workaround.
-    // BeatTracker re-enabled (2026-06-12): NO_PLUGIN_OPTIONAL added to cmake;
-    // smpl_t→float, Service/AudioProvider QML_ELEMENT fixes already applied.
-    // CavaProvider {
-    //     id: cava
-    //     bars: GlobalConfig.services.visualiserBars
-    // }
     BeatTracker {
         id: beatTracker
     }

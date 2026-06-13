@@ -19,7 +19,7 @@ Item {
     readonly property real maxMagnitude: (implicitWidth - cover.implicitWidth) / 2 - spacing
 
     ServiceRef {
-        service: Audio.cava
+        service: Cava.provider
     }
 
     Shape {
@@ -40,7 +40,7 @@ Item {
             id: bar
 
             required property int modelData
-            readonly property real value: Math.max(1e-2, Math.min(1, Audio.cava.values[modelData]))
+            readonly property real value: Math.max(1e-2, Math.min(1, Cava.values[modelData]))
 
             readonly property real angle: modelData * 2 * Math.PI / GlobalConfig.services.visualiserBars
             readonly property real dist: shapeEdgeDist + value * root.maxMagnitude

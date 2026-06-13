@@ -59,8 +59,19 @@ void VisualiserBars::paint(QPainter* painter) {
     gradient.setColorAt(1, m_secondaryColor);
     painter->setBrush(gradient);
 
-    drawSide(painter, false);
-    drawSide(painter, true);
+    if (m_mode == Waveform || m_mode == FilledWaveform) {
+        QPen pen(m_primaryColor, 2.0);
+        if (m_mode == FilledWaveform)
+            painter->setPen(Qt::NoPen);
+        else
+            painter->setPen(pen);
+
+        drawWaveformSide(painter, false);
+        drawWaveformSide(painter, true);
+    } else {
+        drawSide(painter, false);
+        drawSide(painter, true);
+    }
 }
 
 void VisualiserBars::drawSide(QPainter* painter, bool rightSide) {
@@ -73,17 +84,14 @@ void VisualiserBars::drawSide(QPainter* painter, bool rightSide) {
 
     const qreal sideWidth = w * 0.4;
     const qreal slotWidth = sideWidth / static_cast<qreal>(count);
-    const qreal barWidth = slotWidth - m_spacing;
-
-    if (barWidth <= 0)
-        return;
+    const qreal barWidth = std::max(1.0, slotWidth - m_spacing);
 
     const qreal sideOffset = rightSide ? w * 0.6 : 0;
     const qreal maxBarHeight = h * 0.4;
 
     for (qsizetype i = 0; i < count; ++i) {
         const qsizetype valueIndex = rightSide ? i : (count - i - 1);
-        const qreal value = std::clamp(m_displayValues[valueIndex], 0.0, 1.0);
+        const qreal value = std::clamp(m_displayValues[valueIndex] * m_sensitivity, 0.0, 1.0);
         const qreal barHeight = value * maxBarHeight;
 
         if (barHeight <= 0)
@@ -109,6 +117,58 @@ void VisualiserBars::drawSide(QPainter* painter, bool rightSide) {
         path.lineTo(x + barWidth, h);
         path.closeSubpath();
 
+        painter->drawPath(path);
+    }
+}
+
+void VisualiserBars::drawWaveformSide(QPainter* painter, bool rightSide) {
+    const qreal w = width();
+    const qreal h = height();
+    const auto count = m_displayValues.size();
+
+    if (count < 2)
+        return;
+
+    const qreal sideWidth = w * 0.4;
+    const qreal slotWidth = sideWidth / static_cast<qreal>(count);
+    const qreal sideOffset = rightSide ? w * 0.6 : 0;
+    const qreal maxBarHeight = h * 0.4;
+
+    QPainterPath path;
+
+    for (qsizetype i = 0; i < count; ++i) {
+        const qsizetype valueIndex = rightSide ? i : (count - i - 1);
+        const qreal value = std::clamp(m_displayValues[valueIndex] * m_sensitivity, 0.0, 1.0);
+        const qreal barHeight = value * maxBarHeight;
+        const qreal x = static_cast<qreal>(i) * slotWidth + sideOffset + slotWidth / 2.0;
+        const qreal y = h - barHeight;
+
+        if (i == 0) {
+            path.moveTo(x, y);
+        } else {
+            const auto prev = rightSide ? i - 1 : (count - i);
+            const qreal prevValue = std::clamp(m_displayValues[prev] * m_sensitivity, 0.0, 1.0);
+            const qreal prevBarHeight = prevValue * maxBarHeight;
+            const qreal prevX = static_cast<qreal>(i - 1) * slotWidth + sideOffset + slotWidth / 2.0;
+            const qreal prevY = h - prevBarHeight;
+            const qreal ctrlX = (prevX + x) / 2.0;
+
+            path.cubicTo(ctrlX, prevY, ctrlX, y, x, y);
+        }
+    }
+
+    if (m_mode == FilledWaveform) {
+        const qreal lastX = rightSide
+            ? static_cast<qreal>(count - 1) * slotWidth + sideOffset + slotWidth / 2.0
+            : sideOffset + slotWidth / 2.0;
+        const qreal firstX = rightSide
+            ? sideOffset + slotWidth / 2.0
+            : static_cast<qreal>(count - 1) * slotWidth + sideOffset + slotWidth / 2.0;
+        path.lineTo(lastX, h);
+        path.lineTo(firstX, h);
+        path.closeSubpath();
+        painter->drawPath(path);
+    } else {
         painter->drawPath(path);
     }
 }
@@ -193,6 +253,31 @@ void VisualiserBars::setAnimationDuration(int duration) {
         return;
     m_animationDuration = duration;
     emit animationDurationChanged();
+}
+
+VisualiserBars::Mode VisualiserBars::mode() const {
+    return m_mode;
+}
+
+void VisualiserBars::setMode(Mode mode) {
+    if (m_mode == mode)
+        return;
+    m_mode = mode;
+    emit modeChanged();
+    update();
+}
+
+qreal VisualiserBars::sensitivity() const {
+    return m_sensitivity;
+}
+
+void VisualiserBars::setSensitivity(qreal sensitivity) {
+    sensitivity = std::clamp(sensitivity, 0.1, 5.0);
+    if (qFuzzyCompare(m_sensitivity, sensitivity))
+        return;
+    m_sensitivity = sensitivity;
+    emit sensitivityChanged();
+    update();
 }
 
 } // namespace caelestia::internal

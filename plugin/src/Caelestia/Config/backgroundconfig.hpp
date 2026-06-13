@@ -59,6 +59,15 @@ class BackgroundVisualiser : public ConfigObject {
     CONFIG_PROPERTY(bool, blur, false)
     CONFIG_PROPERTY(qreal, rounding, 1)
     CONFIG_PROPERTY(qreal, spacing, 1)
+    CONFIG_PROPERTY(QString, style, QStringLiteral("bars"))
+    CONFIG_PROPERTY(int, barCount, 60)
+    CONFIG_PROPERTY(int, animationDuration, 200)
+    CONFIG_PROPERTY(qreal, sensitivity, 1.0)
+    CONFIG_PROPERTY(bool, beatReactive, false)
+    CONFIG_PROPERTY(QString, beatColor, QStringLiteral("#ffffff"))
+    CONFIG_PROPERTY(QString, primaryColor, QString{})
+    CONFIG_PROPERTY(QString, secondaryColor, QString{})
+    CONFIG_PROPERTY(QString, activePreset, QStringLiteral("classic-mirror"))
 
 public:
     explicit BackgroundVisualiser(QObject* parent = nullptr)

@@ -175,7 +175,32 @@ WlSessionLockSurface {
         anchors.fill: parent
         color: Colours.palette.m3surface
         z: 0
-        visible: root.isTargetScreen
+    }
+
+    Image {
+        id: wallpaperFallback
+        anchors.fill: parent
+        source: {
+            const path = Wallpapers.current || Config.paths.wallpaper || "";
+            if (!path) return "";
+            const source = Wallpapers.getColorSource(path);
+            return source.startsWith("/") ? "file://" + source : source;
+        }
+        fillMode: Image.PreserveAspectCrop
+        sourceSize.width: root.screen.width
+        sourceSize.height: root.screen.height
+        opacity: 1
+        z: 1
+        visible: !root.isTargetScreen && (status === Image.Ready || status === Image.Loading)
+
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            autoPaddingEnabled: false
+            blurEnabled: true
+            blur: 1
+            blurMax: 64
+            blurMultiplier: 1
+        }
     }
 
     ScreencopyView {
@@ -202,7 +227,6 @@ WlSessionLockSurface {
         anchors.fill: parent
         z: 3
         color: Qt.alpha("#000000", 0.2)
-        visible: root.isTargetScreen
     }
 
     // ── Optional flanking side panels ──────────────────────────────────────────

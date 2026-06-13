@@ -1,5 +1,5 @@
 // Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.0-20260610
+// Version: 0.1.1-20260613
 
 import QtQuick
 import Quickshell
@@ -96,7 +96,7 @@ Scope {
         }
 
         config: "fprint"
-        configDirectory: "/etc/pam.d"
+        configDirectory: Quickshell.shellDir + "/assets/pam.d"
 
         onCompleted: res => {
             if (!available)

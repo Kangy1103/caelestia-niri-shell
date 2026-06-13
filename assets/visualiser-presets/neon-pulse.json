@@ -1,0 +1,18 @@
+{
+    "name": "Neon Pulse",
+    "description": "Thin bars with a beat-reactive white flash",
+    "style": "bars",
+    "settings": {
+        "primaryColor": null,
+        "secondaryColor": null,
+        "beatColor": "#ffffff",
+        "beatReactive": true,
+        "sensitivity": 1.2,
+        "animationDuration": 150,
+        "barCount": 60,
+        "rounding": 0.3,
+        "spacing": 2.0,
+        "blur": false,
+        "autoHide": true
+    }
+}

@@ -19,8 +19,13 @@ class VisualiserBars : public QQuickPaintedItem {
     Q_PROPERTY(qreal spacing READ spacing WRITE setSpacing NOTIFY spacingChanged)
     Q_PROPERTY(int animationDuration READ animationDuration WRITE setAnimationDuration NOTIFY animationDurationChanged)
     Q_PROPERTY(bool settled READ settled NOTIFY settledChanged)
+    Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
+    Q_PROPERTY(qreal sensitivity READ sensitivity WRITE setSensitivity NOTIFY sensitivityChanged)
 
 public:
+    enum Mode { Bars = 0, Waveform = 1, FilledWaveform = 2 };
+    Q_ENUM(Mode);
+
     explicit VisualiserBars(QQuickItem* parent = nullptr);
 
     void paint(QPainter* painter) override;
@@ -47,6 +52,12 @@ public:
 
     [[nodiscard]] bool settled() const;
 
+    [[nodiscard]] Mode mode() const;
+    void setMode(Mode mode);
+
+    [[nodiscard]] qreal sensitivity() const;
+    void setSensitivity(qreal sensitivity);
+
 signals:
     void valuesChanged();
     void primaryColorChanged();
@@ -55,9 +66,12 @@ signals:
     void spacingChanged();
     void animationDurationChanged();
     void settledChanged();
+    void modeChanged();
+    void sensitivityChanged();
 
 private:
     void drawSide(QPainter* painter, bool rightSide);
+    void drawWaveformSide(QPainter* painter, bool rightSide);
 
     QVector<double> m_targetValues;
     QVector<double> m_displayValues;
@@ -67,6 +81,8 @@ private:
     qreal m_spacing = 0.0;
     int m_animationDuration = 200;
     bool m_settled = true;
+    Mode m_mode = Bars;
+    qreal m_sensitivity = 1.0;
 };
 
 } // namespace caelestia::internal
