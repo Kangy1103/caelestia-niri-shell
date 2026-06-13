@@ -65,8 +65,6 @@ class GlobalConfig : public RootConfig {
     CONFIG_SUBOBJECT(WInfoConfig, winfo)
     CONFIG_SUBOBJECT(UserPaths, paths)
 
-    Q_PROPERTY(NexusConfig* controlCenter READ nexus CONSTANT)
-
 public:
     static GlobalConfig* instance();
     [[nodiscard]] Q_INVOKABLE GlobalConfig* defaults();

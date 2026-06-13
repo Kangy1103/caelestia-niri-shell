@@ -9,18 +9,6 @@ namespace caelestia::config {
 
 using Qt::StringLiterals::operator""_s;
 
-class ServiceToasts : public ConfigObject {
-    Q_OBJECT
-    QML_ANONYMOUS
-
-    CONFIG_GLOBAL_PROPERTY(bool, configLoaded, true)
-    CONFIG_GLOBAL_PROPERTY(bool, configError, true)
-
-public:
-    explicit ServiceToasts(QObject* parent = nullptr)
-        : ConfigObject(parent) {}
-};
-
 class ServiceConfig : public ConfigObject {
     Q_OBJECT
     QML_ANONYMOUS
@@ -45,12 +33,10 @@ class ServiceConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(QVariantList, playerAliases,
         { vmap({ { u"from"_s, u"com.github.th_ch.youtube_music"_s }, { u"to"_s, u"YT Music"_s } }) })
     CONFIG_GLOBAL_PROPERTY(QString, lyricsBackend, u"Auto"_s)
-    CONFIG_SUBOBJECT(ServiceToasts, toasts)
 
 public:
     explicit ServiceConfig(QObject* parent = nullptr)
-        : ConfigObject(parent)
-        , m_toasts(new ServiceToasts(this)) {}
+        : ConfigObject(parent) {}
 };
 
 } // namespace caelestia::config

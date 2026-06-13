@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Mpris
-import Caelestia.Components
-import Caelestia.Config
+import CNS.Components
+import CNS.Config
 import qs.components
 import qs.components.controls
 import qs.services

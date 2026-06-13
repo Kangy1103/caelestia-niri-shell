@@ -4,8 +4,8 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia
-import Caelestia.Config
+import CNS
+import CNS.Config
 import qs.components.misc
 import qs.services
 import qs.modules.nexus

@@ -2,7 +2,7 @@
 // Version: 0.2.0-20260610
 
 import QtQuick
-import Caelestia.Config
+import CNS.Config
 import qs.components
 import qs.components.effects
 import qs.services
@@ -26,7 +26,7 @@ Item {
     Loader {
         asynchronous: true
         anchors.centerIn: parent
-        sourceComponent: Config.general.isDistLogo ? distroIcon : caelestiaLogo
+        sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : distroIcon
     }
 
     Component {

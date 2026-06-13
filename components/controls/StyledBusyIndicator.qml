@@ -1,6 +1,6 @@
 import ".."
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import QtQuick
 import QtQuick.Controls
 

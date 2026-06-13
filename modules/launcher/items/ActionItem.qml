@@ -1,6 +1,6 @@
 import qs.components
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import qs.modules.launcher.services
 import QtQuick
 

@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.components
 import qs.services
-import Caelestia.Config
+import CNS.Config
 
 Item {
     id: root

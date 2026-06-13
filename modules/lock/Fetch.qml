@@ -6,8 +6,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
-import Caelestia
-import Caelestia.Config
+import CNS
+import CNS.Config
 import qs.components
 import qs.components.effects
 import qs.services

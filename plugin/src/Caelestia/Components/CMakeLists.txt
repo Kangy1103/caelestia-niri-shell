@@ -1,5 +1,5 @@
 qml_module(caelestia-components
-    URI Caelestia.Components
+    URI CNS.Components
     SOURCES
         lazylistview.cpp
         wavyline.cpp

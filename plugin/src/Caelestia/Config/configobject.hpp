@@ -58,14 +58,11 @@ private:                                                                        
                                                                                                                        \
 public:                                                                                                                \
     [[nodiscard]] Type name() const {                                                                                  \
-        if (isOverlay())                                                                                               \
-            qCDebug(caelestia::config::lcConfig, "Reading global-only option '%s' on per-monitor overlay",            \
-                qUtf8Printable(propertyPath(QStringLiteral(#name))));                                                  \
         return m_##name;                                                                                               \
     }                                                                                                                  \
     void set_##name(const Type& val) {                                                                                 \
         if (isOverlay())                                                                                               \
-            qCDebug(caelestia::config::lcConfig, "Writing global-only option '%s' on per-monitor overlay",            \
+            qCWarning(caelestia::config::lcConfig, "Writing global-only option '%s' on per-monitor overlay",           \
                 qUtf8Printable(propertyPath(QStringLiteral(#name))));                                                  \
         if (caelestia::config::ConfigObject::updateMember(m_##name, val)) {                                            \
             markPropertyLoaded(QStringLiteral(#name));                                                                 \

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "configobject.hpp"
-#include "tokens.hpp"
 
 namespace caelestia::config {
 
@@ -13,12 +12,6 @@ class OsdConfig : public ConfigObject {
     CONFIG_PROPERTY(int, hideDelay, 2000)
     CONFIG_PROPERTY(bool, enableBrightness, true)
     CONFIG_PROPERTY(bool, enableMicrophone, false)
-
-    Q_PROPERTY(QObject* sizes READ osdSizes CONSTANT)
-
-    [[nodiscard]] QObject* osdSizes() const {
-        return TokenConfig::instance()->sizes()->osd();
-    }
 
 public:
     explicit OsdConfig(QObject* parent = nullptr)

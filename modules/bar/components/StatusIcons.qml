@@ -6,7 +6,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.services
 import qs.utils
-import Caelestia.Config
+import CNS.Config
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower

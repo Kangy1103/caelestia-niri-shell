@@ -1,7 +1,6 @@
 #pragma once
 
 #include "configobject.hpp"
-#include "tokens.hpp"
 
 #include <qstring.h>
 #include <qstringlist.h>
@@ -47,12 +46,6 @@ class SessionConfig : public ConfigObject {
     CONFIG_PROPERTY(bool, vimKeybinds, false)
     CONFIG_SUBOBJECT(SessionIcons, icons)
     CONFIG_SUBOBJECT(SessionCommands, commands)
-
-    Q_PROPERTY(QObject* sizes READ sessSizes CONSTANT)
-
-    [[nodiscard]] QObject* sessSizes() const {
-        return TokenConfig::instance()->sizes()->session();
-    }
 
 public:
     explicit SessionConfig(QObject* parent = nullptr)

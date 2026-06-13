@@ -8,9 +8,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Caelestia.Internal
+import CNS.Internal
 import qs.components
-import Caelestia.Config
+import CNS.Config
 import qs.services
 import qs.utils
 

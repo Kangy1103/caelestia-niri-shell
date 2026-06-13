@@ -5,8 +5,8 @@ import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
-import Caelestia.Blobs
-import Caelestia.Config
+import CNS.Blobs
+import CNS.Config
 import qs.components
 import qs.components.containers
 import qs.services

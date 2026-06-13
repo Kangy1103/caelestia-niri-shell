@@ -6,8 +6,8 @@ pragma ComponentBehavior: Bound
 import "lock"
 import Quickshell
 import Quickshell.Wayland
-import Caelestia.Config
-import Caelestia.Internal
+import CNS.Config
+import CNS.Internal
 import qs.services
 
 Scope {

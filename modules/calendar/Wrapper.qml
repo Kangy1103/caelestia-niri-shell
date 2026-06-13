@@ -1,5 +1,5 @@
 import qs.components
-import Caelestia.Config
+import CNS.Config
 import Quickshell
 import QtQuick
 

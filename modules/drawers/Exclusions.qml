@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.components.containers
-import Caelestia.Config
+import CNS.Config
 import Quickshell
 import QtQuick
 

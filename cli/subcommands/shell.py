@@ -34,9 +34,13 @@ class Command:
         args = ["qs", "-c", "caelestia-niri-shell"]
         if self.args.log_rules:
             args.extend(["--log-rules", self.args.log_rules])
+        env = os.environ.copy()
+        env["SPA_LOG_LEVEL"] = "2"
+        if not self.args.log_rules:
+            args.extend(["--log-rules", "quickshell.dbus.properties=false"])
         if self.args.daemon:
             args.append("-d")
-            subprocess.run(args)
+            subprocess.run(args, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
             args.append("-n")
             shell = subprocess.Popen(args, stdout=subprocess.PIPE, universal_newlines=True)

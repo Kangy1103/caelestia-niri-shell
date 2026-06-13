@@ -5,7 +5,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Effects
@@ -21,6 +21,8 @@ WlSessionLockSurface {
 
     readonly property bool isTargetScreen: screen && screen.name === "DP-3"
 
+    Config.screen: screen.name
+    Tokens.screen: screen.name
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name
 

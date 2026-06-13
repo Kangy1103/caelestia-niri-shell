@@ -1,9 +1,9 @@
 pragma Singleton
 
-import Caelestia.Config
+import CNS.Config
 import qs.services
-import Caelestia
-import Caelestia.Services
+import CNS
+import CNS.Services
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire

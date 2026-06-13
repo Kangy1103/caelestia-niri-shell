@@ -79,7 +79,6 @@ class GeneralBattery : public ConfigObject {
             }),
         })
     CONFIG_GLOBAL_PROPERTY(int, criticalLevel, 3)
-    CONFIG_GLOBAL_PROPERTY(bool, enableWarnings, true)
 
 public:
     explicit GeneralBattery(QObject* parent = nullptr)
@@ -91,7 +90,6 @@ class GeneralConfig : public ConfigObject {
     QML_ANONYMOUS
 
     CONFIG_GLOBAL_PROPERTY(QString, logo)
-    CONFIG_PROPERTY(bool, isDistLogo, true)
     CONFIG_PROPERTY(bool, showOverFullscreen, false)
     CONFIG_PROPERTY(qreal, mediaGifSpeedAdjustment, 300)
     CONFIG_PROPERTY(qreal, sessionGifSpeed, 0.7)

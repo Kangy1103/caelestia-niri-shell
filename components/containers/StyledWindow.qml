@@ -1,6 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
-import Caelestia.Config
+import CNS.Config
 
 // qmllint disable uncreatable-type
 PanelWindow {
@@ -9,6 +9,8 @@ PanelWindow {
 
     WlrLayershell.namespace: `caelestia-${name}`
     color: "transparent"
+    Config.screen: screen.name
+    Tokens.screen: screen.name
 
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name

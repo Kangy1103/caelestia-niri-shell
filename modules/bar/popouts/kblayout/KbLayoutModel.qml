@@ -6,7 +6,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell.Io
-import Caelestia.Config
+import CNS.Config
 import qs.services
 
 Item {

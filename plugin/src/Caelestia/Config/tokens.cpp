@@ -1,5 +1,4 @@
 #include "tokens.hpp"
-#include "config.hpp"
 #include "monitorconfigmanager.hpp"
 
 #include <qqmlengine.h>
@@ -10,7 +9,9 @@ namespace caelestia::config {
 namespace {
 
 QString configDir() {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia-niri-shell/");
+    if (auto env = qEnvironmentVariable("CAELESTIA_CONFIG_DIR"); !env.isEmpty())
+        return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/") + env + QStringLiteral("/");
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia/");
 }
 
 } // namespace
@@ -18,18 +19,14 @@ QString configDir() {
 TokenConfig::TokenConfig(QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
-    , m_sizes(new SizeTokens(this))
-    , m_font(new FontTokens(this))
-    , m_anim(new AnimTokens(this)) {
+    , m_sizes(new SizeTokens(this)) {
     setupFileBackend(configDir() + QStringLiteral("shell-tokens.json"));
 }
 
 TokenConfig::TokenConfig(TokenConfig* fallback, const QString& filePath, const QString& screen, QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceTokens(this))
-    , m_sizes(new SizeTokens(this))
-    , m_font(new FontTokens(this))
-    , m_anim(new AnimTokens(this)) {
+    , m_sizes(new SizeTokens(this)) {
     if (!filePath.isEmpty())
         setupFileBackend(filePath, screen);
     if (fallback)
@@ -54,21 +51,7 @@ TokenConfig* TokenConfig::forScreen(const QString& screen) {
 TokenConfig* TokenConfig::create(QQmlEngine* engine, QJSEngine*) {
     auto* inst = instance();
     QQmlEngine::setObjectOwnership(inst, QQmlEngine::CppOwnership);
-
-    auto* appearance = GlobalConfig::instance()->appearance();
-    inst->m_font->bindFont(appearance->font());
-    inst->m_anim->bindDurations(appearance->anim()->durations());
-    inst->m_anim->bindCurves(inst->appearance()->curves());
-
     return inst;
-}
-
-FontTokens* TokenConfig::font() const {
-    return m_font;
-}
-
-AnimTokens* TokenConfig::anim() const {
-    return m_anim;
 }
 
 } // namespace caelestia::config

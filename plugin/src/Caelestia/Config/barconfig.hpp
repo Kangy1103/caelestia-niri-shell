@@ -1,7 +1,6 @@
 #pragma once
 
 #include "configobject.hpp"
-#include "tokens.hpp"
 
 #include <qstring.h>
 #include <qstringlist.h>
@@ -56,13 +55,9 @@ class BarWorkspaces : public ConfigObject {
     CONFIG_PROPERTY(int, windowIconGap, 5)
     CONFIG_PROPERTY(int, windowIconSize, 30)
     CONFIG_PROPERTY(bool, groupIconsByApp, false)
-    CONFIG_PROPERTY(bool, groupingRespectsLayout, true)
-    CONFIG_PROPERTY(bool, focusedWindowBlob, false)
     CONFIG_PROPERTY(bool, windowRighClickContext, true)
-    CONFIG_PROPERTY(bool, windowContextDefaultExpand, true)
     CONFIG_PROPERTY(bool, doubleClickToCenter, true)
     CONFIG_PROPERTY(int, windowContextWidth, 250)
-    CONFIG_PROPERTY(bool, pagerActive, true)
     CONFIG_PROPERTY(QString, capitalisation, u"preserve"_s)
     CONFIG_GLOBAL_PROPERTY(QVariantList, specialWorkspaceIcons)
     CONFIG_GLOBAL_PROPERTY(QVariantList, windowIcons,
@@ -162,12 +157,6 @@ class BarConfig : public ConfigObject {
             vmap({ { u"id"_s, u"power"_s }, { u"enabled"_s, true } }),
         })
     CONFIG_PROPERTY(QStringList, excludedScreens)
-
-    Q_PROPERTY(QObject* sizes READ barSizes CONSTANT)
-
-    [[nodiscard]] QObject* barSizes() const {
-        return TokenConfig::instance()->sizes()->bar();
-    }
 
 public:
     explicit BarConfig(QObject* parent = nullptr)

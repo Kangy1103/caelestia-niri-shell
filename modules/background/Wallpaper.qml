@@ -4,9 +4,9 @@ import qs.components
 import qs.components.images
 import qs.components.filedialog
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import qs.utils
-import Caelestia
+import CNS
 import QtQuick
 import QtMultimedia
 

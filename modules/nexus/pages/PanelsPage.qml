@@ -1,5 +1,5 @@
 import QtQuick.Layouts
-import Caelestia.Config
+import CNS.Config
 import qs.modules.nexus.common
 
 PageBase {

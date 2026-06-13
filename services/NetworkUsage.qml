@@ -1,7 +1,7 @@
 pragma Singleton
 
-import Caelestia.Config
-import Caelestia.Internal
+import CNS.Config
+import CNS.Internal
 
 import Quickshell
 import Quickshell.Io

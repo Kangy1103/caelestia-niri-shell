@@ -1,7 +1,6 @@
 #pragma once
 
 #include "configobject.hpp"
-#include "tokens.hpp"
 
 #include <qstring.h>
 #include <qvariant.h>
@@ -54,12 +53,6 @@ class UtilitiesConfig : public ConfigObject {
     CONFIG_PROPERTY(int, maxToasts, 4)
     CONFIG_SUBOBJECT(UtilitiesToasts, toasts)
     CONFIG_SUBOBJECT(UtilitiesVpn, vpn)
-
-    Q_PROPERTY(QObject* sizes READ utilSizes CONSTANT)
-
-    [[nodiscard]] QObject* utilSizes() const {
-        return TokenConfig::instance()->sizes()->utilities();
-    }
 
     CONFIG_PROPERTY(QVariantList, quickToggles,
         {

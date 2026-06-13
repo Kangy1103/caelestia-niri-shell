@@ -3,8 +3,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.Config
-import Caelestia.Models
+import CNS.Config
+import CNS.Models
 import qs.components
 import qs.components.controls
 import qs.components.effects

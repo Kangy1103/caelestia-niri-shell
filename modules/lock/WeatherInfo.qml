@@ -3,7 +3,7 @@
 
 import "weather"
 import QtQuick
-import Caelestia.Config
+import CNS.Config
 import qs.components
 import qs.services
 

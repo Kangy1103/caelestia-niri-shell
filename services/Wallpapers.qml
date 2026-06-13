@@ -1,9 +1,9 @@
 pragma Singleton
 
-import Caelestia.Config
+import CNS.Config
 import qs.utils
-import Caelestia
-import Caelestia.Models
+import CNS
+import CNS.Models
 import Quickshell
 import Quickshell.Io
 import QtQuick

@@ -2,8 +2,8 @@ import qs.components
 import qs.components.effects
 import qs.components.images
 import qs.services
-import Caelestia.Config
-import Caelestia.Models
+import CNS.Config
+import CNS.Models
 import Quickshell
 import Quickshell.Widgets
 import QtQuick

@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.containers
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
@@ -49,7 +49,7 @@ Loader {
 
                 Loader {
                     anchors.fill: parent
-                    active: Config.background.visualiser.enabled && (!Config.background.visualiser.output || Config.background.visualiser.output === win.modelData.name)
+                    active: Config.background.visualiser.enabled
 
                     sourceComponent: Visualiser {
                         anchors.fill: parent

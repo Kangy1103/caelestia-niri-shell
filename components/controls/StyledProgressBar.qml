@@ -2,10 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Templates
-import Caelestia
-import Caelestia.Components
-import Caelestia.Config
-import Caelestia.Internal
+import CNS
+import CNS.Components
+import CNS.Config
+import CNS.Internal
 import qs.components
 import qs.services
 

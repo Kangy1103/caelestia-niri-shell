@@ -1,7 +1,6 @@
 #pragma once
 
 #include "configobject.hpp"
-#include "tokens.hpp"
 
 #include <qstring.h>
 #include <qstringlist.h>
@@ -126,12 +125,6 @@ class LauncherConfig : public ConfigObject {
                 { u"command"_s, QStringList{ u"caelestia"_s, u"shell"_s, u"nexus"_s, u"open"_s } },
             }),
         })
-
-    Q_PROPERTY(QObject* sizes READ lnchSizes CONSTANT)
-
-    [[nodiscard]] QObject* lnchSizes() const {
-        return TokenConfig::instance()->sizes()->launcher();
-    }
 
 public:
     explicit LauncherConfig(QObject* parent = nullptr)

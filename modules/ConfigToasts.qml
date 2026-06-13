@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
-import Caelestia
-import Caelestia.Config
+import CNS
+import CNS.Config
 
 Scope {
     Connections {

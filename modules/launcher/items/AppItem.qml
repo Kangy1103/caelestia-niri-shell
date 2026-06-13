@@ -1,7 +1,7 @@
 import "../services"
 import qs.components
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import Quickshell
 import Quickshell.Widgets
 import QtQuick

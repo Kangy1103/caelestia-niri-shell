@@ -1,7 +1,7 @@
 import "navpane"
 import QtQuick
 import QtQuick.Layouts
-import Caelestia.Config
+import CNS.Config
 import qs.modules.nexus
 
 ColumnLayout {

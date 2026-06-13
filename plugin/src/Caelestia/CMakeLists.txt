@@ -1,5 +1,5 @@
 qml_module(caelestia
-    URI Caelestia
+    URI CNS
     SOURCES
         cutils.hpp cutils.cpp
         qalculator.hpp qalculator.cpp

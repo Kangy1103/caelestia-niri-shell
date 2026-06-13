@@ -1,7 +1,6 @@
 #pragma once
 
 #include "configobject.hpp"
-#include "tokens.hpp"
 
 #include <qstring.h>
 
@@ -20,12 +19,6 @@ class NotifsConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(bool, actionOnClick, false)
     CONFIG_PROPERTY(int, groupPreviewNum, 3)
     CONFIG_PROPERTY(bool, openExpanded, false)
-
-    Q_PROPERTY(QObject* sizes READ notifSizes CONSTANT)
-
-    [[nodiscard]] QObject* notifSizes() const {
-        return TokenConfig::instance()->sizes()->notifs();
-    }
 
 public:
     explicit NotifsConfig(QObject* parent = nullptr)

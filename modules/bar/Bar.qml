@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.services
 import qs.components
-import Caelestia.Config
+import CNS.Config
 import "popouts" as BarPopouts
 import "components"
 import "components/workspaces"

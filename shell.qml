@@ -1,6 +1,7 @@
 // Created by Kangy w/ OpenCode AI Assistance
 // Version: 0.4.0-20260608
 
+//@ pragma Env CAELESTIA_CONFIG_DIR=caelestia-niri-shell
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QS_DROP_EXPENSIVE_FONTS=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
@@ -20,7 +21,7 @@ import "modules/clipboard"
 import "modules/nexus"
 import qs.services
 
-import Caelestia.Config
+import CNS.Config
 import QtQuick
 import Quickshell
 import Quickshell.Io

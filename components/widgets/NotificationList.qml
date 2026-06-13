@@ -5,7 +5,7 @@ import qs.components.containers
 import qs.components.controls
 import qs.components.effects
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import qs.utils
 import Quickshell
 import Quickshell.Widgets

@@ -27,7 +27,9 @@ namespace caelestia::config {
 namespace {
 
 QString configDir() {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia-niri-shell/");
+    if (auto env = qEnvironmentVariable("CAELESTIA_CONFIG_DIR"); !env.isEmpty())
+        return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/") + env + QStringLiteral("/");
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia/");
 }
 
 } // namespace

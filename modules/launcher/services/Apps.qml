@@ -1,6 +1,6 @@
 pragma Singleton
 
-import Caelestia.Config
+import CNS.Config
 import qs.utils
 import Quickshell
 import QtQuick

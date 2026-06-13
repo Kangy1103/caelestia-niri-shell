@@ -4,7 +4,7 @@
 
 import QtQuick
 import Quickshell
-import Caelestia.Config
+import CNS.Config
 import qs.components
 import qs.services
 

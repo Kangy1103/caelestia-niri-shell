@@ -1,5 +1,5 @@
 qml_module(caelestia-blobs
-    URI Caelestia.Blobs
+    URI CNS.Blobs
     SOURCES
         blobgroup.cpp
         blobshape.cpp

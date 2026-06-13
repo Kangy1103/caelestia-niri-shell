@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.components.controls
 import qs.services
-import Caelestia.Config
+import CNS.Config
 import Quickshell
 import Quickshell.Io
 import QtQuick
