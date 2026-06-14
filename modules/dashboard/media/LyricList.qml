@@ -271,7 +271,7 @@ Item {
             font: Tokens.font.body.medium
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
-            layer.enabled: effectScale > 0
+            layer.enabled: effectScale > 0.3
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 shadowColor: Colours.palette.m3primary

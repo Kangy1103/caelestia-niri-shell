@@ -26,6 +26,14 @@ StyledWindow {
     readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
     readonly property real borderRounding: contentItem.Config.border.rounding * (1 - fsTransitionProg)
     readonly property real shadowOpacity: 0.7 * (1 - fsTransitionProg)
+    readonly property bool _panelsAnimating: {
+        const d = panels.dashboard;
+        const l = panels.launcher;
+        const s = panels.sidebar;
+        return (d.offsetScale > 0 && d.offsetScale < 1) ||
+               (l.offsetScale > 0 && l.offsetScale < 1) ||
+               (s.offsetScale > 0 && s.offsetScale < 1);
+    }
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
 
     property color surfaceColour: Colours.tPalette.m3surface
@@ -110,7 +118,7 @@ StyledWindow {
         opacity: root.surfaceColour.a
         layer.enabled: true
         layer.effect: MultiEffect {
-            shadowEnabled: true
+            shadowEnabled: root.shadowOpacity > 0 && !root._panelsAnimating
             blurMax: 15
             shadowColor: Qt.alpha(Colours.palette.m3shadow, Math.max(0, root.shadowOpacity))
         }

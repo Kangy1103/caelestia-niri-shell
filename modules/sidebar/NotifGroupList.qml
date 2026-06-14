@@ -141,13 +141,6 @@ LazyListView {
                 }
             }
 
-            Behavior on scale {
-                Anim {}
-            }
-
-            Behavior on x {
-                Anim {}
-            }
         }
     }
 

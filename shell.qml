@@ -52,8 +52,7 @@ ShellRoot {
     // Config toast notifications (C++ GlobalConfig signals)
     ConfigToasts {}
 
-    // FPS monitor — logs frame timing to stderr every 2s
-    // Uses FrameAnimation to count vsync ticks + QSG_RENDER_TIMING for per-frame breakdown
+    // FPS monitor — logs frame timing every 2s (remove after profiling)
     property var _fpsMonitor: FpsMonitor {}
 
     component FpsMonitor: FrameAnimation {
