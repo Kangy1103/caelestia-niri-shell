@@ -5,6 +5,7 @@
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QS_DROP_EXPENSIVE_FONTS=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
+//@ pragma Env QSG_RENDER_TIMING=1
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 
 import "modules"
@@ -50,6 +51,33 @@ ShellRoot {
 
     // Config toast notifications (C++ GlobalConfig signals)
     ConfigToasts {}
+
+    // FPS monitor — logs frame timing to stderr every 2s
+    // Uses FrameAnimation to count vsync ticks + QSG_RENDER_TIMING for per-frame breakdown
+    property var _fpsMonitor: FpsMonitor {}
+
+    component FpsMonitor: FrameAnimation {
+        readonly property int maxFrameBudget: Math.round(1000 / (Quickshell.screens?.[0]?.refreshRate ?? 60))
+        property int frameCount: 0
+        property int droppedCount: 0
+        property real elapsed: 0
+
+        onTriggered: {
+            frameCount++;
+            elapsed += frameTime;
+            if (frameTime > maxFrameBudget / 1000 * 1.5)
+                droppedCount++;
+
+            if (elapsed >= 2.0) {
+                const fps = Math.round(frameCount / elapsed);
+                const drops = droppedCount;
+                print(`[FPS] ${fps} fps  |  ${drops} frames over budget  |  budget: ${maxFrameBudget}ms  |  anim scale: ${Tokens.anim.durations.scale}`);
+                frameCount = 0;
+                droppedCount = 0;
+                elapsed = 0;
+            }
+        }
+    }
 
     // Initialize BatteryMonitor service
     property var _batteryMonitor: BatteryMonitor
