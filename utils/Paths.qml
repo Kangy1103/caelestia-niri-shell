@@ -19,7 +19,29 @@ Singleton {
     readonly property string notifimagecache: `${imagecache}/notifs`
     readonly property string notificationsData: `${data}/notifications.json`
     readonly property string eventsData: `${data}/events.json`
-    readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(GlobalConfig.paths.wallpaperDir)
+    readonly property string wallsdir: {
+        const env = Quickshell.env("CAELESTIA_WALLPAPERS_DIR");
+        if (env) return env;
+        const configured = absolutePath(GlobalConfig.paths.wallpaperDir);
+        if (CUtils.exists(configured)) return configured;
+        const mediaWallpapers = "/mnt/Media/Images/Wallpapers";
+        if (CUtils.exists(mediaWallpapers)) return mediaWallpapers;
+        return configured;
+    }
+
+    readonly property var wallpaperSourceDirs: {
+        const env = Quickshell.env("CAELESTIA_WALLPAPERS_SOURCE_DIRS");
+        const dirs = [];
+        if (env) {
+            const parts = env.split(":");
+            for (const p of parts) {
+                const trimmed = p.trim();
+                if (trimmed && CUtils.exists(trimmed) && trimmed !== wallsdir)
+                    dirs.push(trimmed);
+            }
+        }
+        return dirs;
+    }
     readonly property string recsdir: Quickshell.env("CAELESTIA_RECORDINGS_DIR") || `${Quickshell.env("XDG_VIDEOS_DIR") || `${home}/Videos`}/Recordings`
     readonly property string libdir: Quickshell.env("CAELESTIA_LIB_DIR") || "/usr/lib/caelestia"
 

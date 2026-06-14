@@ -67,13 +67,25 @@ PageBase {
                     root.nState.closeSubPage();
                 }
             }
+
+            IconTextButton {
+                icon: "language"
+                text: qsTr("Web")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                type: IconTextButton.Tonal
+                onClicked: root.nState.openSubPage(5)
+            }
         }
 
         WallItem {
             imgHeight: Math.round(width * 0.3)
             radius: Tokens.rounding.extraLarge
             source: Quickshell.shellPath("assets/wallpaper.webp")
-            text: qsTr("Featured wallpaper")
+            text: qsTr("Default wallpaper")
             fillLabel: false
             onClicked: {
                 Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));

@@ -36,6 +36,9 @@ QtObject {
                 Component {
                     BorderPage {}
                 }
+                Component {
+                    WebWallpaperPage {}
+                }
             }
         },
 

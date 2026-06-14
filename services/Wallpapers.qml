@@ -35,6 +35,23 @@ Searcher {
         return category;
     }
 
+    function setupSourceDirs(): void {
+        const links = [];
+        for (const dir of Paths.wallpaperSourceDirs) {
+            const name = dir.split("/").filter(s => s).pop() || "source";
+            const linkPath = `${Paths.wallsdir}/${name}`;
+            if (CUtils.exists(dir) && !CUtils.exists(linkPath)) {
+                links.push(["ln", "-s", dir, linkPath]);
+            }
+        }
+        if (links.length === 0) return;
+        symlinkProcess.command = [
+            "bash", "-c",
+            links.map(l => l.join(" ")).join(" && ")
+        ];
+        symlinkProcess.running = true;
+    }
+
     function setRandom(): void {
         const entries = wallpapers.entries;
         if (entries.length === 0) return;
@@ -248,6 +265,17 @@ Searcher {
         }
     }
 
+    Process {
+        id: symlinkProcess
+
+        stderr: SplitParser {
+            onRead: data => {
+                if (data)
+                    console.warn("Symlink setup error:", data);
+            }
+        }
+    }
+
     FileView {
         id: stateFile
         path: root.currentNamePath
@@ -278,4 +306,6 @@ Searcher {
         filter: FileSystemModel.Images
         nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.webp", "*.mp4", "*.webm", "*.mkv"]
     }
+
+    Component.onCompleted: root.setupSourceDirs()
 }
