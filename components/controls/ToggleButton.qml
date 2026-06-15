@@ -95,28 +95,8 @@ StyledRect {
     }
 
     // Tooltip - positioned absolutely, doesn't affect layout
-    Loader {
-        id: tooltipLoader
-
-        asynchronous: true
-        active: root.tooltip !== ""
-        z: 10000
-        width: 0
-        height: 0
-        sourceComponent: Component {
-            Tooltip {
-                target: root
-                text: root.tooltip
-            }
-        }
-        // Completely remove from layout
-        Layout.fillWidth: false
-        Layout.fillHeight: false
-        Layout.preferredWidth: 0
-        Layout.preferredHeight: 0
-        Layout.maximumWidth: 0
-        Layout.maximumHeight: 0
-        Layout.minimumWidth: 0
-        Layout.minimumHeight: 0
+    Tooltip {
+        target: root
+        text: root.tooltip
     }
 }

@@ -4,6 +4,7 @@ import Quickshell
 import CNS.Config
 import qs.components
 import qs.components.controls
+import qs.services
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
 
@@ -104,6 +105,8 @@ CustomMouseArea {
     }
 
     onPositionChanged: event => {
+        Niri.mousePos = Qt.point(event.x, event.y)
+
         if (popouts.isDetached)
             return;
 

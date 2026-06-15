@@ -27,6 +27,12 @@ Singleton {
     property bool wsContextExpanded: false
     property var wsContextAnchor: null
     property string wsContextType: "none"
+
+    // Workspace tooltip state
+    property Item tooltipTarget: null
+    property string tooltipText: ""
+    property point tooltipPos: Qt.point(0, 0)
+    property point mousePos: Qt.point(0, 0)
     
     property Timer wsAnchorClearTimer: Timer {
         interval: Tokens.anim.durations.normal

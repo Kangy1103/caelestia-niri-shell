@@ -314,6 +314,48 @@ StyledWindow {
         }
     }
 
+    // Tooltip overlay — renders above all content, escapes clipping
+    Rectangle {
+        id: workspaceTooltip
+
+        visible: Niri.tooltipTarget !== null
+        z: 10000
+
+        x: {
+            if (Niri.tooltipTarget === null) return 0
+            var cx = Niri.mousePos.x + 16
+            if (cx + width > parent.width)
+                cx = parent.width - width - 4
+            return cx
+        }
+        y: {
+            if (Niri.tooltipTarget === null) return 0
+            var cy = Niri.mousePos.y - height / 2
+            if (cy < 4) cy = 4
+            if (cy + height > parent.height) cy = parent.height - height - 4
+            return cy
+        }
+
+        width: Math.min(tooltipLabel.implicitWidth + 16, 350)
+        height: tooltipLabel.implicitHeight + 10
+        color: Colours.palette.m3surfaceContainerHighest
+        radius: 8
+        border.color: Colours.palette.m3outlineVariant
+        border.width: 1
+        clip: true
+
+        StyledText {
+            id: tooltipLabel
+            anchors.centerIn: parent
+            text: Niri.tooltipText
+            width: parent.width - 16
+            color: Colours.palette.m3onSurface
+            font.pointSize: 10
+            elide: Text.ElideRight
+            maximumLineCount: 1
+        }
+    }
+
     component PanelBg: BlobRect {
         required property Item panel
         property real deformAmount: 0.15

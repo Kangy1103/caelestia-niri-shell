@@ -189,7 +189,7 @@ Behavior on color { CAnim {} }
                         Tooltip {
                             target: catBtn
                             text: modelData.name ?? ""
-                            visible: catBtn.hovered
+                            delay: 0
                         }
                     }
                 }
@@ -278,7 +278,7 @@ Behavior on color { CAnim {} }
                     Tooltip {
                         target: emojiItem
                         text: modelData?.name ?? ""
-                        visible: emojiItem.hovered
+                        delay: 0
                     }
                 }
 

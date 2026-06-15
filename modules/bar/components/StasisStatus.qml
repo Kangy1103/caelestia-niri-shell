@@ -30,14 +30,13 @@ Item {
 
     Process {
         id: pollRunner
-        command: ["stasis", "info", "--json"]
+        command: ["/usr/bin/stasis", "info", "--json"]
         running: false
 
-        stdout: SplitParser {
-            splitMarker: "\n"
-            onRead: data => {
+        stdout: StdioCollector {
+            onStreamFinished: {
                 try {
-                    var info = JSON.parse(data.trim());
+                    var info = JSON.parse(this.text.trim());
                     if (!info) return;
                     root.stasisState = info.alt ?? "idle_waiting";
                     root.stasisProfile = info.profile ?? "default";
@@ -53,7 +52,7 @@ Item {
         id: bg
         anchors.fill: parent
         radius: Config.appearance.rounding.full
-        color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle"
+        color: root.stasisState !== "idle_waiting"
             ? Qt.alpha(Colours.palette.m3primaryContainer, 1)
             : "transparent"
 
@@ -62,7 +61,7 @@ Item {
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: -1
             text: "coffee"
-            color: root.stasisState !== "idle_waiting" && root.stasisState !== "idle_idle"
+            color: root.stasisState !== "idle_waiting"
                 ? Colours.palette.m3onSurfaceVariant
                 : Colours.palette.m3primary
             fontStyle: Tokens.font.icon.size(16).weight(Font.Bold).build()
@@ -78,6 +77,7 @@ Item {
             if (mouse.button === Qt.RightButton) {
                 contextMenu.expanded = !contextMenu.expanded;
             } else {
+                root.stasisState = root.stasisState === "manually_inhibited" ? "idle_waiting" : "manually_inhibited";
                 Quickshell.execDetached(["stasis", "toggle-inhibit"]);
             }
         }
@@ -97,6 +97,7 @@ Item {
                 text: "Default"
                 activeIcon: root.stasisProfile === "none" || root.stasisProfile === "default" ? "check" : ""
                 onClicked: {
+                    root.stasisProfile = "default";
                     Quickshell.execDetached(["stasis", "profile", "default"]);
                     contextMenu.expanded = false;
                 }
@@ -106,6 +107,7 @@ Item {
                 icon: "sports_esports"
                 activeIcon: root.stasisProfile === "gaming" ? "check" : ""
                 onClicked: {
+                    root.stasisProfile = "gaming";
                     Quickshell.execDetached(["stasis", "profile", "gaming"]);
                     contextMenu.expanded = false;
                 }
@@ -115,6 +117,7 @@ Item {
                 icon: "movie"
                 activeIcon: root.stasisProfile === "video" ? "check" : ""
                 onClicked: {
+                    root.stasisProfile = "video";
                     Quickshell.execDetached(["stasis", "profile", "video"]);
                     contextMenu.expanded = false;
                 }

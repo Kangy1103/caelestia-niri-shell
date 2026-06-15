@@ -453,11 +453,25 @@ StyledRect {
                 }
 
                 MouseArea {
+                    id: groupedMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
                         Niri.switchToWorkspace(modelData.id);
+                    }
+                    onEntered: showTimer.start()
+                    onExited: { showTimer.stop(); Niri.tooltipTarget = null }
+                }
+
+                Timer {
+                    id: showTimer
+                    interval: 300
+                    onTriggered: {
+                        if (groupedContainer.liveWindows.length > 0) {
+                            Niri.tooltipText = groupedContainer.liveWindows[0]?.title ?? ""
+                            Niri.tooltipTarget = groupedContainer
+                        }
                     }
                 }
             }
