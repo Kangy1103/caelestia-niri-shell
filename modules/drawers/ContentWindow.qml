@@ -52,9 +52,9 @@ StyledWindow {
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.calendar || visibilities.clipboard || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.calendar || visibilities.clipboard || visibilities.notepad || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    mask: hasFullscreen ? emptyRegion : (visibilities.launcher || visibilities.calendar || visibilities.keybinds || visibilities.sidebar ? fullScreenRegion : regions)
+    mask: hasFullscreen ? emptyRegion : (visibilities.launcher || visibilities.calendar || visibilities.keybinds || visibilities.sidebar || visibilities.notepad || visibilities.clipboard ? fullScreenRegion : regions)
 
     anchors.top: true
     anchors.bottom: true
@@ -221,6 +221,13 @@ StyledWindow {
         }
 
         PanelBg {
+            id: notepadBg
+
+            panel: panels.notepad
+            deformAmount: 0.1
+        }
+
+        PanelBg {
             id: calendarBg
 
             panel: panels.calendar
@@ -289,6 +296,9 @@ StyledWindow {
             }
             clipboard.transform: Matrix4x4 {
                 matrix: clipboardBg.deformMatrix
+            }
+            notepad.transform: Matrix4x4 {
+                matrix: notepadBg.deformMatrix
             }
             calendar.transform: Matrix4x4 {
                 matrix: calendarBg.deformMatrix

@@ -18,6 +18,7 @@ import "modules/calendar"
 import "modules/background"
 import "modules/polkit"
 import "modules/clipboard"
+import "modules/notepad"
 import "modules/nexus"
 import qs.services
 
@@ -39,6 +40,7 @@ ShellRoot {
     Lock { id: lockModule }
     Shortcuts {}
     ClipboardPanel {}
+    NotepadPanel {}
     KeybindsPanel {}
     CalendarPanel {}
     CalendarAppPanel {}

@@ -23,6 +23,8 @@ CustomMouseArea {
     property bool dashboardShortcutActive
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
+    property bool notepadShortcutActive
+    property bool wasInWorkspacePopout: false
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
@@ -76,6 +78,13 @@ CustomMouseArea {
         if (visibilities.keybinds
             && !inBottomPanel(panels.keybinds, event.x, event.y))
             visibilities.keybinds = false;
+        if (visibilities.clipboard
+            && !inBottomPanel(panels.clipboard, event.x, event.y)
+            && !withinPanelWidth(panels.clipboard, event.x, event.y))
+            visibilities.clipboard = false;
+        if (visibilities.notepad
+            && !inTopPanel(panels.notepad, event.x, event.y))
+            visibilities.notepad = false;
         if (visibilities.sidebar
             && !inRightPanel(panels.sidebar, event.x, event.y))
             visibilities.sidebar = false;
@@ -90,6 +99,9 @@ CustomMouseArea {
 
             if (!dashboardShortcutActive)
                 visibilities.dashboard = false;
+
+            if (!notepadShortcutActive)
+                visibilities.notepad = false;
 
             if (!utilitiesShortcutActive)
                 visibilities.utilities = false;
@@ -220,6 +232,14 @@ CustomMouseArea {
                 visibilities.dashboard = false;
         }
 
+        // Show/hide notepad on drag (for touchscreen devices)
+        if (pressed && inTopPanel(panels.notepad, dragStart.x, dragStart.y) && withinPanelWidth(panels.notepad, x, y)) {
+            if (dragY > Config.dashboard.dragThreshold)
+                visibilities.notepad = true;
+            else if (dragY < -Config.dashboard.dragThreshold)
+                visibilities.notepad = false;
+        }
+
         // Show utilities on hover
         const showUtilities = inBottomPanel(panels.utilities, x, y, true);
 
@@ -232,11 +252,27 @@ CustomMouseArea {
         }
 
         // Show popouts on hover
+        const inPopout = inLeftPanel(panels.popoutsWrapper, x, y);
+
         if (x < bar.implicitWidth) {
             bar.checkPopout(y);
-        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inLeftPanel(panels.popoutsWrapper, x, y)) {
+        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inPopout) {
             popouts.hasCurrent = false;
             bar.closeTray();
+        }
+
+        // Workspace popout dismissal — close when mouse leaves popout area
+        if (popouts.currentName === "workspaces") {
+            if (inPopout) {
+                wasInWorkspacePopout = true;
+                popouts.blockWorkspacePopout = false;
+            } else if (wasInWorkspacePopout) {
+                popouts.hasCurrent = false;
+                wasInWorkspacePopout = false;
+                popouts.blockWorkspacePopout();
+            }
+        } else {
+            wasInWorkspacePopout = false;
         }
     }
 
@@ -248,6 +284,7 @@ CustomMouseArea {
                 root.dashboardShortcutActive = false;
                 root.osdShortcutActive = false;
                 root.utilitiesShortcutActive = false;
+                root.notepadShortcutActive = false;
 
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
@@ -259,6 +296,9 @@ CustomMouseArea {
                 if (!inOsdArea) {
                     root.visibilities.osd = false;
                     root.panels.osd.hovered = false;
+                }
+                if (!root.inTopPanel(root.panels.notepad, root.mouseX, root.mouseY)) {
+                    root.visibilities.notepad = false;
                 }
             }
         }
@@ -273,6 +313,19 @@ CustomMouseArea {
             } else {
                 // Dashboard hidden, clear shortcut flag
                 root.dashboardShortcutActive = false;
+            }
+        }
+
+        function onNotepadChanged() {
+            if (root.visibilities.notepad) {
+                // Notepad became visible, immediately check if this should be shortcut mode
+                const inNotepadArea = root.inTopPanel(root.panels.notepad, root.mouseX, root.mouseY);
+                if (!inNotepadArea) {
+                    root.notepadShortcutActive = true;
+                }
+            } else {
+                // Notepad hidden, clear shortcut flag
+                root.notepadShortcutActive = false;
             }
         }
 

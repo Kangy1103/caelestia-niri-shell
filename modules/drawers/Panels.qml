@@ -13,6 +13,7 @@ import qs.modules.utilities as Utilities
 import qs.modules.keybinds as Keybinds
 import qs.modules.calendar as Calendar
 import qs.modules.clipboard as Clipboard
+import qs.modules.notepad as Notepad
 import qs.modules.bar.popouts as BarPopouts
 import qs.modules.utilities.toasts as Toasts
 
@@ -39,6 +40,7 @@ Item {
     readonly property alias keybinds: keybinds
     readonly property alias calendar: calendar
     readonly property alias clipboard: clipboard
+    readonly property alias notepad: notepad
 
     anchors.fill: parent
     anchors.margins: borderThickness
@@ -115,6 +117,15 @@ Item {
 
     Dashboard.Wrapper {
         id: dashboard
+
+        visibilities: root.visibilities
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+    }
+
+    Notepad.Wrapper {
+        id: notepad
 
         visibilities: root.visibilities
 

@@ -86,6 +86,7 @@ Searcher {
 
         Qt.callLater(() => {
             runColorGeneration(path);
+            Schemes.regenerateDynamic();
         });
     }
 
