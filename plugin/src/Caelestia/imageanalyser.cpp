@@ -149,7 +149,7 @@ void ImageAnalyser::update() {
             const QByteArray hash = QCryptographicHash::hash(m_source.toUtf8(), QCryptographicHash::Md5).toHex();
             const QString home = QDir::homePath();
             const QString cacheBase = qEnvironmentVariable("XDG_STATE_HOME", home + "/.local/state");
-            actualSource = cacheBase + "/caelestia/generated/video_frames/" + hash + ".png";
+            actualSource = cacheBase + "/caelestia-niri-shell/generated/video_frames/" + hash + ".png";
         }
 
         m_futureWatcher->setFuture(QtConcurrent::run([=, this](QPromise<AnalyseResult>& promise) {

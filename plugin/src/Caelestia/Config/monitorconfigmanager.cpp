@@ -10,7 +10,7 @@ namespace {
 
 QString monitorConfigDir(const QString& screen) {
     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) +
-           QStringLiteral("/caelestia/monitors/") + screen + QStringLiteral("/");
+           QStringLiteral("/caelestia-niri-shell/monitors/") + screen + QStringLiteral("/");
 }
 
 } // namespace

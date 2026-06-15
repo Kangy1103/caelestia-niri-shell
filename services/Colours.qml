@@ -79,14 +79,20 @@ Singleton {
     }
 
     function setMode(mode: string): void {
-        Quickshell.execDetached(["caelestia", "scheme", "set", "--notify", "-m", mode]);
+        Quickshell.execDetached(["cns", "scheme", "set", "--notify", "-m", mode]);
     }
 
     FileView {
+        id: schemeFile
         path: `${Paths.state}/scheme.json`
         watchChanges: true
         onFileChanged: reload()
         onLoaded: root.load(text(), false)
+    }
+
+    IpcHandler {
+        target: "colours"
+        function reload(): void { schemeFile.reload() }
     }
 
     ImageAnalyser {

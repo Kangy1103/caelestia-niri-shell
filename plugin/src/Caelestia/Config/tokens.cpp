@@ -11,7 +11,7 @@ namespace {
 QString configDir() {
     if (auto env = qEnvironmentVariable("CAELESTIA_CONFIG_DIR"); !env.isEmpty())
         return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/") + env + QStringLiteral("/");
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia/");
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/caelestia-niri-shell/");
 }
 
 } // namespace

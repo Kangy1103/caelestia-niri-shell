@@ -911,7 +911,7 @@ const QString& Lyrics::cacheDir() {
         if (cache.isEmpty()) {
             cache = QDir::homePath() + u"/.cache"_s;
         }
-        return cache + u"/caelestia/lyrics"_s;
+        return cache + u"/caelestia-niri-shell/lyrics"_s;
     }();
     return s_dir;
 }
