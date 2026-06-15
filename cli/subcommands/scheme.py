@@ -1,3 +1,4 @@
+import subprocess
 from argparse import Namespace
 
 from cns.utils.scheme import (
@@ -23,19 +24,26 @@ class Set:
         if self.args.notify:
             scheme.notify = True
 
+        name = self.args.name or getattr(self.args, 'name_pos', None)
+        flavour = self.args.flavour or getattr(self.args, 'flavour_pos', None)
+        mode = self.args.mode or getattr(self.args, 'mode_pos', None)
+        variant = self.args.variant
+
         if self.args.random:
             scheme.set_random()
             apply_colours(scheme.colours, scheme.mode)
-        elif self.args.name or self.args.flavour or self.args.mode or self.args.variant:
-            if self.args.name:
-                scheme.name = self.args.name
-            if self.args.flavour:
-                scheme.flavour = self.args.flavour
-            if self.args.mode:
-                scheme.mode = self.args.mode
-            if self.args.variant:
-                scheme.variant = self.args.variant
+            subprocess.run(["qs", "-c", "caelestia-niri-shell", "ipc", "call", "colours", "reload"])
+        elif name or flavour or mode or variant:
+            if name:
+                scheme.name = name
+            if flavour:
+                scheme.flavour = flavour
+            if mode:
+                scheme.mode = mode
+            if variant:
+                scheme.variant = variant
             apply_colours(scheme.colours, scheme.mode)
+            subprocess.run(["qs", "-c", "caelestia-niri-shell", "ipc", "call", "colours", "reload"])
         else:
             print("No args given. Use --name, --flavour, --mode, --variant or --random to set a scheme")
 

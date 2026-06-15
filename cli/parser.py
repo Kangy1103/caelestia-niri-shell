@@ -50,6 +50,9 @@ def parse_args() -> tuple[argparse.ArgumentParser, argparse.Namespace]:
     set_parser.add_argument("-f", "--flavour", help="the flavour to switch to")
     set_parser.add_argument("-m", "--mode", choices=["dark", "light"], help="the mode to switch to")
     set_parser.add_argument("-v", "--variant", choices=scheme_variants, help="the variant to switch to")
+    set_parser.add_argument("name_pos", nargs="?", default=None, metavar="NAME", help=argparse.SUPPRESS)
+    set_parser.add_argument("flavour_pos", nargs="?", default=None, metavar="FLAVOUR", help=argparse.SUPPRESS)
+    set_parser.add_argument("mode_pos", nargs="?", default=None, choices=["dark", "light"], metavar="MODE", help=argparse.SUPPRESS)
 
     # screenshot
     screenshot_parser = command_parser.add_parser("screenshot", help="take a screenshot")

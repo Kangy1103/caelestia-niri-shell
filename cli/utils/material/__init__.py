@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from cns.utils.paths import compute_hash, scheme_cache_dir, wallpaper_thumbnail_path
+from cns.utils.paths import compute_hash, scheme_cache_dir, wallpaper_thumbnail_path, wallpaper_path_path
 
 
 def get_score_for_image(image: Path | str, cache_base: Path):
@@ -24,7 +24,14 @@ def get_score_for_image(image: Path | str, cache_base: Path):
     return s
 
 
-def get_colours_for_image(image: Path | str = wallpaper_thumbnail_path, scheme=None) -> dict[str, str]:
+def get_colours_for_image(image: Path | str | None = None, scheme=None) -> dict[str, str]:
+    if image is None:
+        image = wallpaper_thumbnail_path
+        if not Path(image).exists():
+            try:
+                image = Path(wallpaper_path_path.read_text().strip())
+            except (IOError, OSError):
+                raise FileNotFoundError(wallpaper_thumbnail_path)
     if scheme is None:
         from cns.utils.scheme import get_scheme
 
