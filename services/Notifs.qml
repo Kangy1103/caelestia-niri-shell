@@ -86,6 +86,13 @@ Singleton {
         persistenceSupported: true
 
         onNotification: notif => {
+            // Suppress internal screenshot notifications from workspace preview captures
+            if (notif.appName === "niri" && notif.summary === "Screenshot captured") {
+                notif.tracked = false;
+                notif.close();
+                return;
+            }
+
             notif.tracked = true;
 
             const comp = notifComp.createObject(root, {

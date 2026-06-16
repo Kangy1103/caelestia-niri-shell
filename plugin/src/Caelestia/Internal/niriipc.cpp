@@ -152,11 +152,20 @@ bool NiriIpc::action(const QString& actionName, const QVariantList& args) {
     QJsonValue innerValue;
 
     if (args.size() >= 2 && args.at(0).toString() == QStringLiteral("--id")) {
-        // Actions with --id: FocusWindow, CloseWindow, ToggleWindowFloating
-        // Format: {"ActionName": {"id": N}}
-        QJsonObject inner;
-        inner[QStringLiteral("id")] = args.at(1).toLongLong();
-        innerValue = inner;
+        if (pascalName == QStringLiteral("ScreenshotWindow") && args.size() >= 3) {
+            // ScreenshotWindow with --id <id> <path>
+            QJsonObject inner;
+            inner[QStringLiteral("id")] = args.at(1).toLongLong();
+            inner[QStringLiteral("path")] = args.at(2).toString();
+            inner[QStringLiteral("write_to_disk")] = true;
+            inner[QStringLiteral("show_pointer")] = false;
+            innerValue = inner;
+        } else {
+            // General --id actions: FocusWindow, CloseWindow, etc.
+            QJsonObject inner;
+            inner[QStringLiteral("id")] = args.at(1).toLongLong();
+            innerValue = inner;
+        }
     } else if (args.size() == 2 && args.at(0).toString() == QStringLiteral("-d")) {
         // DoScreenTransition with delay: {"DoScreenTransition": {"delay_ms": N}}
         QJsonObject inner;
@@ -169,6 +178,7 @@ bool NiriIpc::action(const QString& actionName, const QVariantList& args) {
             QJsonObject inner;
             inner[QStringLiteral("id")] = QJsonValue::Null;
             inner[QStringLiteral("write_to_disk")] = true;
+            inner[QStringLiteral("show_pointer")] = false;
             inner[QStringLiteral("path")] = QJsonValue::Null;
             innerValue = inner;
         } else if (pascalName == QStringLiteral("CloseWindow") ||

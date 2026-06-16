@@ -61,7 +61,7 @@ Item {
     }
 
     function deleteEntry(entryId: string): void {
-        Quickshell.execDetached(["cliphist", "delete", entryId]);
+        Quickshell.execDetached(["sh", "-c", "printf '%s' '" + entryId + "' | cliphist delete"]);
         for (let i = 0; i < clipboardModel.count; i++) {
             if (clipboardModel.get(i).id === entryId) {
                 clipboardModel.remove(i);
@@ -214,7 +214,7 @@ Item {
                     }
 
                     onDeleteRequested: {
-                        Quickshell.execDetached(["cliphist", "delete", id]);
+                        Quickshell.execDetached(["sh", "-c", "printf '%s' '" + id + "' | cliphist delete"]);
                         for (let i = 0; i < clipboardModel.count; i++) {
                             if (clipboardModel.get(i).id === id) {
                                 clipboardModel.remove(i);

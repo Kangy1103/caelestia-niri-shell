@@ -97,6 +97,13 @@ Item {
             sourceComponent: Stasis {}
         }
 
+        Popout {
+            name: "workspaces"
+            sourceComponent: WorkspaceOverview {
+                screen: root.wrapper.screen
+            }
+        }
+
         Repeater {
             model: ScriptModel {
                 values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))

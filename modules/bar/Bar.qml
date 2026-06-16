@@ -34,7 +34,6 @@ ColumnLayout {
 
     function checkPopout(y: real): void {
         if (Niri.wsContextType === "workspaces") {
-            // Workspace context menu
             const anchor = Niri.wsContextAnchor;
             if (!anchor) {
                 popouts.hasCurrent = false;
@@ -44,7 +43,7 @@ ColumnLayout {
             return;
         }
 
-        const ch = childAt(width / 2, y) as WrappedLoader;
+        const ch = childAt(width / 2, y);
         if (!ch?.item) {
             popouts.hasCurrent = false;
             return;
@@ -75,6 +74,15 @@ ColumnLayout {
                 popouts.currentCenter = Qt.binding(() => trayItem.mapToItem(root, 0, trayItem.implicitHeight / 2).y);
                 popouts.hasCurrent = true;
             }
+        } else if (id === "workspaces") {
+            if (popouts.blockWorkspacePopout)
+                return;
+            popouts.currentName = "workspaces";
+            popouts.currentCenter = Qt.binding(() => {
+                const centerY = ch.mapToItem(root, 0, ch.implicitHeight / 2).y;
+                return Math.round(Math.max(centerY + Config.border.thickness, 350));
+            });
+            popouts.hasCurrent = true;
         }
     }
 

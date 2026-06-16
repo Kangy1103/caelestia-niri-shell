@@ -20,6 +20,7 @@ Item {
     readonly property alias popoutState: popoutState
     property alias currentName: popoutState.currentName
     property alias hasCurrent: popoutState.hasCurrent
+    property alias blockWorkspacePopout: popoutState.blockWorkspacePopout
     property real currentCenter
 
     property string detachedMode
@@ -34,6 +35,18 @@ Item {
         id: popoutState
 
         onDetachRequested: mode => root.detach(mode)
+    }
+
+    Timer {
+        id: workspaceBlockTimer
+        interval: 200
+        repeat: false
+        onTriggered: popoutState.blockWorkspacePopout = false
+    }
+
+    function blockWorkspacePopout() {
+        popoutState.blockWorkspacePopout = true;
+        workspaceBlockTimer.restart();
     }
 
     function setAnims(detach: bool): void {

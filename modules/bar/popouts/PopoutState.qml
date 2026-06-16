@@ -7,6 +7,7 @@ import QtQuick
 QtObject {
     property string currentName
     property bool hasCurrent
+    property bool blockWorkspacePopout: false
 
     signal detachRequested(mode: string)
 }
