@@ -62,6 +62,147 @@ Item {
     property string previewDir: "/tmp"
     property var cellMap: ({})
 
+    // ── Drag-and-Drop ────────────────────────────────────────────────
+    property var dragData: null
+    property point dragPos
+    property int dropWsIndex: -1
+
+    function findWsAndCell(mx, my) {
+        var children = contentColumn.children
+        if (!children || !children.length) return null
+        var dIdx = 0
+        for (var i = 0; i < children.length; i++) {
+            var sec = children[i]
+            if (!sec || sec.modelData === undefined) continue
+            var pt = sec.mapFromItem(root, mx, my)
+            var localX = pt.x; var localY = pt.y
+            var secH = sec.implicitHeight
+            if (localX < 0 || localY < 0 || localX > sec.width || localY > secH) { dIdx++; continue }
+            if (localY <= headerHeight)
+                return { type: "workspace", wsIndex: dIdx, wsId: sec.modelData.id, wsName: sec.modelData.name || "" }
+            var wsWindows = Niri.getWindowsByWorkspaceId(sec.modelData.id) || []
+            if (wsWindows.length === 0) { dIdx++; continue }
+            var gridTop = headerHeight + Config.appearance.padding.medium
+            var cellY = localY - gridTop
+            if (cellY < 0) cellY = 0
+            var cellX = localX
+            var rowIdx = Math.floor(cellY / (cellMinHeight + cellGap))
+            var colIdx = Math.floor(cellX / (cellMinWidth + cellGap))
+            var minR = 999, minC = 999
+            for (var w = 0; w < wsWindows.length; w++) {
+                var p = wsWindows[w].layout?.pos_in_scrolling_layout || [0, 0]
+                if (typeof p[1] === "number" && p[1] < minR) minR = p[1]
+                if (typeof p[0] === "number" && p[0] < minC) minC = p[0]
+            }
+            if (minR === 999) minR = 0
+            if (minC === 999) minC = 0
+            var tR = rowIdx + minR, tC = colIdx + minC
+            for (var w = 0; w < wsWindows.length; w++) {
+                var pos = wsWindows[w].layout?.pos_in_scrolling_layout || [0, 0]
+                if (pos[0] === tC && pos[1] === tR)
+                    return { type: "window", wsIndex: dIdx, wsId: sec.modelData.id, windowId: wsWindows[w].id }
+            }
+            dIdx++
+        }
+        return null
+    }
+
+    function recomputeDropTarget() {
+        if (!dragData) return
+        var children = contentColumn.children
+        if (!children || !children.length) return
+        dropWsIndex = -1
+        if (dragData.type === "window") {
+            var dIdx = 0
+            for (var i = 0; i < children.length; i++) {
+                var sec = children[i]
+                if (!sec || sec.modelData === undefined) continue
+                var pt = sec.mapFromItem(root, dragPos.x, dragPos.y)
+                if (pt.x >= 0 && pt.y >= 0 && pt.x <= sec.width && pt.y <= sec.implicitHeight) { dropWsIndex = dIdx; return }
+                dIdx++
+            }
+        } else {
+            var target = -1, dIdx2 = 0
+            var cy = dragPos.y - Config.appearance.padding.large
+            for (var j = 0; j < children.length; j++) {
+                var sec2 = children[j]
+                if (!sec2 || sec2.modelData === undefined) continue
+                var midY = sec2.y + sec2.implicitHeight / 2
+                if (cy < midY) { target = dIdx2; break }
+                dIdx2++
+            }
+            if (target === -1) target = dIdx2
+            dropWsIndex = target + 1
+        }
+    }
+
+    function beginDrag() { recomputeDropTarget(); dragPreview.visible = true }
+    function endDrag(doDrop) {
+        if (doDrop && dragData) {
+            var d = dragData
+            if (d.type === "window" && dropWsIndex >= 0) {
+                var wsList = workspaces
+                var sameWs = d.wsId && dropWsIndex < wsList.length && wsList[dropWsIndex].id === d.wsId
+                if (!sameWs && dropWsIndex < wsList.length) {
+                    var ref = wsList[dropWsIndex].name || wsList[dropWsIndex].id.toString()
+                    moveWinProc.exec({ command: ["/usr/bin/niri", "msg", "action", "move-window-to-workspace", "--window-id", d.windowId.toString(), "--focus", "false", ref] })
+                }
+            } else if (d.type === "workspace" && dropWsIndex >= 1) {
+                var wref = d.wsName || d.wsId.toString()
+                moveWsProc.exec({ command: ["/usr/bin/niri", "msg", "action", "move-workspace-to-index", "--reference", wref, dropWsIndex.toString()] })
+            }
+        }
+        dragData = null; dragPreview.visible = false; dropWsIndex = -1
+    }
+
+    Process { id: moveWinProc }
+    Process { id: moveWsProc }
+
+    MouseArea {
+        id: dragHandler
+        anchors.fill: parent; z: 1
+        pressAndHoldInterval: 250
+        property var clickTarget: null
+        onPressed: function(mouse) {
+            clickTarget = findWsAndCell(mouse.x, mouse.y)
+            mouse.accepted = clickTarget !== null
+        }
+        onPressAndHold: function(mouse) {
+            if (!clickTarget || dragData) return
+            dragData = { type: clickTarget.type, wsIndex: clickTarget.wsIndex, wsId: clickTarget.wsId, wsName: clickTarget.wsName, windowId: clickTarget.windowId }
+            dragPos = Qt.point(mouse.x, mouse.y); beginDrag()
+        }
+        onPositionChanged: function(mouse) {
+            if (!dragData) return
+            dragPos = Qt.point(mouse.x, mouse.y); recomputeDropTarget()
+        }
+        onReleased: function(mouse) {
+            if (dragData) { endDrag(true); clickTarget = null }
+            else if (clickTarget) {
+                if (clickTarget.type === "workspace") { var wsList = workspaces; if (clickTarget.wsIndex < wsList.length) Niri.switchToWorkspace(wsList[clickTarget.wsIndex].id) }
+                else if (clickTarget.type === "window") Niri.focusWindow(clickTarget.windowId)
+                clickTarget = null
+            }
+        }
+    }
+
+    Rectangle {
+        id: dragPreview; visible: false; z: 100
+        x: dragPos.x - width / 2; y: dragPos.y - height / 2
+        width: dragData?.type === "workspace" ? Math.min(root.width - Config.appearance.padding.medium * 2, root.contentWidth - Config.appearance.padding.medium) : cellMinWidth
+        height: dragData?.type === "workspace" ? headerHeight : cellMinHeight
+        radius: Config.appearance.rounding.small
+        color: Colours.palette.m3primaryContainer; opacity: 0.8
+        border.width: 1; border.color: Colours.palette.m3primary
+        StyledText {
+            anchors.centerIn: parent
+            text: dragData?.type === "workspace" ? (dragData.wsName || (dragData.wsIndex + 1).toString()) : (dragData?.windowTitle || "Window")
+            font.pointSize: Config.appearance.font.label.small.size
+            font.bold: dragData?.type === "workspace"; color: Colours.palette.m3onPrimaryContainer
+            elide: Text.ElideRight; width: parent.width - 8; horizontalAlignment: Text.AlignHCenter
+        }
+    }
+
     implicitWidth: contentWidth
     implicitHeight: {
         Niri.windows;
@@ -155,6 +296,15 @@ Item {
                     implicitHeight: headerHeight + gridH + (gridH > 0 ? Config.appearance.padding.small : cellMinHeight)
                     color: "transparent"
 
+                    // Drop indicator bar (workspace reorder)
+                    Rectangle {
+                        anchors.left: parent.left; anchors.right: parent.right
+                        y: -3; height: 4; radius: 2; color: Colours.palette.m3primary
+                        opacity: root.dragData?.type === "workspace" && root.dropWsIndex === wsSection.index + 1 ? 0.9 : 0
+                        visible: opacity > 0
+                        Behavior on opacity { NumberAnimation { duration: 120 } }
+                    }
+
                     Rectangle {
                         id: sectionHeader
                         anchors.top: parent.top
@@ -188,10 +338,20 @@ Item {
                     Item {
                         id: gridContainer
                         anchors.top: sectionHeader.bottom
-                        anchors.topMargin: Config.appearance.padding.small
+                        anchors.topMargin: Config.appearance.padding.medium
                         anchors.left: parent.left
                         width: wsSection.gridW
                         height: wsSection.gridH
+
+                        // Blue drop indicator at end of row
+                        Rectangle {
+                            visible: root.dragData?.type === "window" && root.dropWsIndex === wsSection.index
+                            x: wsSection.gridW > 0 ? wsSection.gridW + 2 : 0
+                            y: 0
+                            width: 3; height: wsSection.gridH > 0 ? wsSection.gridH : cellMinHeight
+                            radius: 2; color: Colours.palette.m3primary
+                            Behavior on opacity { NumberAnimation { duration: 120 } }
+                        }
 
                         Repeater {
                             model: wsSection.windows
@@ -267,7 +427,7 @@ Item {
                     StyledText {
                         visible: wsSection.windows.length === 0
                         anchors.top: sectionHeader.bottom
-                        anchors.topMargin: Config.appearance.padding.small
+                        anchors.topMargin: Config.appearance.padding.medium
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: "empty"
                         font.pointSize: Config.appearance.font.label.small.size * 0.8
@@ -350,4 +510,7 @@ Item {
     Component.onCompleted: {
         startCaptureChain()
     }
+
+    Timer { id: recaptureTimer; interval: 300; onTriggered: startCaptureChain() }
+    Connections { target: Niri; function onWindowsChanged() { recaptureTimer.restart() } }
 }
