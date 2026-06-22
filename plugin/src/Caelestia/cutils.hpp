@@ -31,6 +31,8 @@ public:
 
     Q_INVOKABLE static qreal clamp(qreal value, qreal min, qreal max);
 
+    Q_INVOKABLE static QStringList listDir(const QString& path, const QStringList& nameFilters = {});
+
     [[nodiscard]] QString version() const;
     [[nodiscard]] QString qtVersion() const;
 };

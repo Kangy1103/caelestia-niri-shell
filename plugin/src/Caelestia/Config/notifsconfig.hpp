@@ -22,6 +22,8 @@ class NotifsConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(bool, soundEnabled, true)
     CONFIG_GLOBAL_PROPERTY(QString, soundNormal, u"root:/assets/sounds/normal/notification.wav"_s)
     CONFIG_GLOBAL_PROPERTY(QString, soundCritical, u"root:/assets/sounds/critical/critical.wav"_s)
+    CONFIG_GLOBAL_PROPERTY(QString, soundUnlock, u"root:/assets/sounds/unlock/unlock.wav"_s)
+    CONFIG_GLOBAL_PROPERTY(QString, soundLogin, u"root:/assets/sounds/login/login.wav"_s)
 
 public:
     explicit NotifsConfig(QObject* parent = nullptr)

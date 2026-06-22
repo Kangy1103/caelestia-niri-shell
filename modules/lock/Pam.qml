@@ -7,6 +7,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
 import CNS.Config
+import QtMultimedia
 
 Scope {
     id: root
@@ -21,6 +22,23 @@ Scope {
     property string buffer
 
     signal flashMsg
+
+    function resolveSoundUrl(configPath: string): string {
+        if (!configPath) return "";
+        if (configPath.startsWith("root:"))
+            return "file://" + Quickshell.shellPath(configPath.substring(5));
+        if (configPath.startsWith("/"))
+            return "file://" + configPath;
+        return configPath;
+    }
+
+    function playUnlockSound(): void {
+        if (!GlobalConfig.notifs.soundEnabled) return;
+        const url = root.resolveSoundUrl(GlobalConfig.notifs.soundUnlock);
+        if (!url) return;
+        unlockSound.source = url;
+        unlockSound.play();
+    }
 
     function handleKey(event: KeyEvent): void {
         if (passwd.active || state === "max")
@@ -62,8 +80,10 @@ Scope {
         }
 
         onCompleted: res => {
-            if (res === PamResult.Success)
+            if (res === PamResult.Success) {
+                root.playUnlockSound();
                 return root.lock.unlock();
+            }
 
             if (res === PamResult.Error)
                 root.state = "error";
@@ -102,8 +122,10 @@ Scope {
             if (!available)
                 return;
 
-            if (res === PamResult.Success)
+            if (res === PamResult.Success) {
+                root.playUnlockSound();
                 return root.lock.unlock();
+            }
 
             if (res === PamResult.Error) {
                 root.fprintState = "error";
@@ -192,5 +214,10 @@ Scope {
         }
 
         target: GlobalConfig.lock
+    }
+
+    SoundEffect {
+        id: unlockSound
+        volume: 0.5
     }
 }

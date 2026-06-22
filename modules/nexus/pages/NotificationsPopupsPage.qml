@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import CNS
 import CNS.Config
 import qs.components
@@ -23,6 +24,34 @@ PageBase {
     }
 
     title: qsTr("Notifications & popups")
+
+    resources: [
+        Component {
+            id: menuItemComp
+            MenuItem {}
+        }
+    ]
+
+    Component.onCompleted: {
+        function buildItems(subdir) {
+            const path = Quickshell.shellPath("assets/sounds/" + subdir);
+            const files = CUtils.listDir(path, ["*.wav", "*.oga", "*.ogg", "*.flac"]);
+            files.sort();
+            var items = [menuItemComp.createObject(null, { text: qsTr("None") })];
+            for (var i = 0; i < files.length; i++)
+                items.push(menuItemComp.createObject(null, { text: files[i] }));
+            items.push(menuItemComp.createObject(null, { text: qsTr("Browse...") }));
+            return items;
+        }
+        normalSound.items = buildItems("normal");
+        normalSound.menuItems = normalSound.items;
+        criticalSound.items = buildItems("critical");
+        criticalSound.menuItems = criticalSound.items;
+        unlockSound.items = buildItems("unlock");
+        unlockSound.menuItems = unlockSound.items;
+        loginSound.items = buildItems("login");
+        loginSound.menuItems = loginSound.items;
+    }
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -144,14 +173,8 @@ PageBase {
             id: normalSound
             Layout.fillWidth: true
 
-            readonly property list<MenuItem> items: [
+            property list<MenuItem> items: [
                 MenuItem { text: qsTr("None") },
-                MenuItem { text: "dragon-studio-new-notification-3-398649.wav" },
-                MenuItem { text: "dragon-studio-notification-click-sound-455421.wav" },
-                MenuItem { text: "mixkit-retro-confirmation-tone-2860.wav" },
-                MenuItem { text: "mixkit-sci-fi-confirmation-914.wav" },
-                MenuItem { text: "notification.wav" },
-                MenuItem { text: "universfield-new-notification-036-485897.wav" },
                 MenuItem { text: qsTr("Browse...") }
             ]
 
@@ -165,7 +188,13 @@ PageBase {
                     if (path.endsWith("/" + items[i].text))
                         return items[i];
                 }
-                return items[0];
+                return null;
+            }
+            fallbackText: {
+                const path = GlobalConfig.notifs.soundNormal;
+                if (!path) return "";
+                const parts = path.split("/");
+                return parts[parts.length - 1] || path;
             }
             onSelected: item => {
                 const idx = items.indexOf(item);
@@ -190,11 +219,9 @@ PageBase {
         SelectRow {
             id: criticalSound
             Layout.fillWidth: true
-            last: true
 
-            readonly property list<MenuItem> items: [
+            property list<MenuItem> items: [
                 MenuItem { text: qsTr("None") },
-                MenuItem { text: "critical.wav" },
                 MenuItem { text: qsTr("Browse...") }
             ]
 
@@ -208,7 +235,13 @@ PageBase {
                     if (path.endsWith("/" + items[i].text))
                         return items[i];
                 }
-                return items[0];
+                return null;
+            }
+            fallbackText: {
+                const path = GlobalConfig.notifs.soundCritical;
+                if (!path) return "";
+                const parts = path.split("/");
+                return parts[parts.length - 1] || path;
             }
             onSelected: item => {
                 const idx = items.indexOf(item);
@@ -227,6 +260,101 @@ PageBase {
                 filters: ["wav", "oga", "mp3", "flac"]
                 showHidden: true
                 onAccepted: path => GlobalConfig.notifs.soundCritical = path
+            }
+        }
+
+        SelectRow {
+            id: unlockSound
+            Layout.fillWidth: true
+
+            property list<MenuItem> items: [
+                MenuItem { text: qsTr("None") },
+                MenuItem { text: qsTr("Browse...") }
+            ]
+
+            label: qsTr("Unlock sound")
+            subtext: qsTr("Played when the session is unlocked")
+            menuItems: items
+            active: {
+                const path = GlobalConfig.notifs.soundUnlock;
+                if (!path) return items[0];
+                for (let i = 1; i < items.length - 1; i++) {
+                    if (path.endsWith("/" + items[i].text))
+                        return items[i];
+                }
+                return null;
+            }
+            fallbackText: {
+                const path = GlobalConfig.notifs.soundUnlock;
+                if (!path) return "";
+                const parts = path.split("/");
+                return parts[parts.length - 1] || path;
+            }
+            onSelected: item => {
+                const idx = items.indexOf(item);
+                if (idx === 0)
+                    GlobalConfig.notifs.soundUnlock = "";
+                else if (idx === items.length - 1)
+                    browseUnlock.open();
+                else
+                    GlobalConfig.notifs.soundUnlock = "root:/assets/sounds/unlock/" + item.text;
+            }
+
+            FileDialog {
+                id: browseUnlock
+                title: qsTr("Select unlock sound")
+                filterLabel: qsTr("Audio files")
+                filters: ["wav", "oga", "mp3", "flac"]
+                showHidden: true
+                onAccepted: path => GlobalConfig.notifs.soundUnlock = path
+            }
+        }
+
+        SelectRow {
+            id: loginSound
+            Layout.fillWidth: true
+            last: true
+
+            property list<MenuItem> items: [
+                MenuItem { text: qsTr("None") },
+                MenuItem { text: qsTr("Browse...") }
+            ]
+
+            label: qsTr("Login sound")
+            subtext: qsTr("Played when logging in (greeter only)")
+            menuItems: items
+            active: {
+                const path = GlobalConfig.notifs.soundLogin;
+                if (!path) return items[0];
+                for (let i = 1; i < items.length - 1; i++) {
+                    if (path.endsWith("/" + items[i].text))
+                        return items[i];
+                }
+                return null;
+            }
+            fallbackText: {
+                const path = GlobalConfig.notifs.soundLogin;
+                if (!path) return "";
+                const parts = path.split("/");
+                return parts[parts.length - 1] || path;
+            }
+            onSelected: item => {
+                const idx = items.indexOf(item);
+                if (idx === 0)
+                    GlobalConfig.notifs.soundLogin = "";
+                else if (idx === items.length - 1)
+                    browseLogin.open();
+                else
+                    GlobalConfig.notifs.soundLogin = "root:/assets/sounds/login/" + item.text;
+            }
+
+            FileDialog {
+                id: browseLogin
+                title: qsTr("Select login sound")
+                filterLabel: qsTr("Audio files")
+                filters: ["wav", "oga", "mp3", "flac"]
+                showHidden: true
+                onAccepted: path => GlobalConfig.notifs.soundLogin = path
             }
         }
 
