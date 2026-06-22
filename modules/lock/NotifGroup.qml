@@ -334,6 +334,12 @@ StyledRect {
         Component.onCompleted: modelData.lock(this)
         Component.onDestruction: modelData.unlock(this)
 
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton
+            onClicked: modelData?.close()
+        }
+
         TextMetrics {
             id: metrics
 

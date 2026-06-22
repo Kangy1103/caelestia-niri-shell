@@ -13,6 +13,7 @@ LazyLoader {
     property string filterLabel: "All files"
     property list<string> filters: ["*"]
     property string title: qsTr("Select a file")
+    property bool showHidden: false
 
     signal accepted(path: string)
     signal rejected

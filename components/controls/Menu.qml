@@ -40,6 +40,7 @@ MouseArea {
     }
     anchors.fill: parent
 
+    visible: expanded
     enabled: expanded
     onClicked: expanded = false
 

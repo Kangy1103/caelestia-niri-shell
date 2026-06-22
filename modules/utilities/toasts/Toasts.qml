@@ -6,12 +6,42 @@ import CNS
 import CNS.Config
 import qs.components
 import qs.services
+import QtMultimedia
 
 Item {
     id: root
 
     readonly property int spacing: Tokens.spacing.small
     property bool flag
+
+    function resolveSoundUrl(configPath: string): string {
+        if (configPath.startsWith("root:"))
+            return "file://" + Quickshell.shellPath(configPath.substring(5));
+        if (configPath.startsWith("/"))
+            return "file://" + configPath;
+        return configPath;
+    }
+
+    function playToastSound(toast: Toast): void {
+        if (!GlobalConfig.notifs.soundEnabled)
+            return;
+
+        const isCritical = toast.type === Toast.Warning || toast.type === Toast.Error;
+        const soundPath = isCritical
+            ? GlobalConfig.notifs.soundCritical
+            : GlobalConfig.notifs.soundNormal;
+
+        if (!soundPath)
+            return;
+
+        toastSound.source = root.resolveSoundUrl(soundPath);
+        toastSound.play();
+    }
+
+    SoundEffect {
+        id: toastSound
+        volume: 0.5
+    }
 
     function shouldShowToast(toast: Toast): bool {
         if (!Notifs.hasFullscreen())
@@ -100,7 +130,10 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
         onClicked: modelData.close()
 
-        Component.onCompleted: modelData.lock(this)
+        Component.onCompleted: {
+            modelData.lock(this);
+            root.playToastSound(modelData);
+        }
 
         Anim {
             id: initAnim

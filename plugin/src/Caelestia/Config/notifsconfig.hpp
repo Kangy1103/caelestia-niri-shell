@@ -16,9 +16,12 @@ class NotifsConfig : public ConfigObject {
     CONFIG_GLOBAL_PROPERTY(int, fullscreenExpireTimeout, 2000)
     CONFIG_PROPERTY(qreal, clearThreshold, 0.3)
     CONFIG_PROPERTY(int, expandThreshold, 20)
-    CONFIG_GLOBAL_PROPERTY(bool, actionOnClick, false)
+    CONFIG_GLOBAL_PROPERTY(bool, actionOnClick, true)
     CONFIG_PROPERTY(int, groupPreviewNum, 3)
     CONFIG_PROPERTY(bool, openExpanded, false)
+    CONFIG_GLOBAL_PROPERTY(bool, soundEnabled, true)
+    CONFIG_GLOBAL_PROPERTY(QString, soundNormal, u"root:/assets/sounds/normal/notification.wav"_s)
+    CONFIG_GLOBAL_PROPERTY(QString, soundCritical, u"root:/assets/sounds/critical/critical.wav"_s)
 
 public:
     explicit NotifsConfig(QObject* parent = nullptr)

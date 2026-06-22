@@ -1,8 +1,12 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import QtQuick.Layouts
+import CNS
 import CNS.Config
+import qs.components
 import qs.components.controls
+import qs.components.filedialog
 import qs.modules.nexus.common
 
 PageBase {
@@ -120,6 +124,110 @@ PageBase {
             subtext: qsTr("Show notification groups already expanded")
             checked: Config.notifs.openExpanded
             onToggled: GlobalConfig.notifs.openExpanded = checked
+        }
+
+        // ── Sounds ──
+        SectionHeader {
+            text: qsTr("Sounds")
+        }
+
+        ToggleRow {
+            Layout.fillWidth: true
+            first: true
+            text: qsTr("Notification sounds")
+            subtext: qsTr("Play a sound when a notification arrives")
+            checked: GlobalConfig.notifs.soundEnabled
+            onToggled: GlobalConfig.notifs.soundEnabled = checked
+        }
+
+        SelectRow {
+            id: normalSound
+            Layout.fillWidth: true
+
+            readonly property list<MenuItem> items: [
+                MenuItem { text: qsTr("None") },
+                MenuItem { text: "dragon-studio-new-notification-3-398649.wav" },
+                MenuItem { text: "dragon-studio-notification-click-sound-455421.wav" },
+                MenuItem { text: "mixkit-retro-confirmation-tone-2860.wav" },
+                MenuItem { text: "mixkit-sci-fi-confirmation-914.wav" },
+                MenuItem { text: "notification.wav" },
+                MenuItem { text: "universfield-new-notification-036-485897.wav" },
+                MenuItem { text: qsTr("Browse...") }
+            ]
+
+            label: qsTr("Normal sound")
+            subtext: qsTr("Played for normal and low urgency notifications")
+            menuItems: items
+            active: {
+                const path = GlobalConfig.notifs.soundNormal;
+                if (!path) return items[0];
+                for (let i = 1; i < items.length - 1; i++) {
+                    if (path.endsWith("/" + items[i].text))
+                        return items[i];
+                }
+                return items[0];
+            }
+            onSelected: item => {
+                const idx = items.indexOf(item);
+                if (idx === 0)
+                    GlobalConfig.notifs.soundNormal = "";
+                else if (idx === items.length - 1)
+                    browseNormal.open();
+                else
+                    GlobalConfig.notifs.soundNormal = "root:/assets/sounds/normal/" + item.text;
+            }
+
+            FileDialog {
+                id: browseNormal
+                title: qsTr("Select normal notification sound")
+                filterLabel: qsTr("Audio files")
+                filters: ["wav", "oga", "mp3", "flac"]
+                showHidden: true
+                onAccepted: path => GlobalConfig.notifs.soundNormal = path
+            }
+        }
+
+        SelectRow {
+            id: criticalSound
+            Layout.fillWidth: true
+            last: true
+
+            readonly property list<MenuItem> items: [
+                MenuItem { text: qsTr("None") },
+                MenuItem { text: "critical.wav" },
+                MenuItem { text: qsTr("Browse...") }
+            ]
+
+            label: qsTr("Critical sound")
+            subtext: qsTr("Played for critical urgency notifications")
+            menuItems: items
+            active: {
+                const path = GlobalConfig.notifs.soundCritical;
+                if (!path) return items[0];
+                for (let i = 1; i < items.length - 1; i++) {
+                    if (path.endsWith("/" + items[i].text))
+                        return items[i];
+                }
+                return items[0];
+            }
+            onSelected: item => {
+                const idx = items.indexOf(item);
+                if (idx === 0)
+                    GlobalConfig.notifs.soundCritical = "";
+                else if (idx === items.length - 1)
+                    browseCritical.open();
+                else
+                    GlobalConfig.notifs.soundCritical = "root:/assets/sounds/critical/" + item.text;
+            }
+
+            FileDialog {
+                id: browseCritical
+                title: qsTr("Select critical notification sound")
+                filterLabel: qsTr("Audio files")
+                filters: ["wav", "oga", "mp3", "flac"]
+                showHidden: true
+                onAccepted: path => GlobalConfig.notifs.soundCritical = path
+            }
         }
 
         // ── On-Screen Display (OSD) ──

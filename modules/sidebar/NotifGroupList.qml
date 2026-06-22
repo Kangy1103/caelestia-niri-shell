@@ -96,6 +96,19 @@ LazyListView {
                 }
             }
             onReleased: event => {
+                if (Math.abs(x) < 2 && event.button === Qt.LeftButton) {
+                    const actions = modelData?.actions;
+                    if (actions && actions.length > 0) {
+                        const defaultAction = actions.find(a => a.identifier === "default")
+                            ?? (actions.length === 1 ? actions[0] : null);
+                        if (defaultAction) {
+                            x = 0;
+                            defaultAction.invoke();
+                            return;
+                        }
+                    }
+                }
+
                 if (Math.abs(x) < width * Config.notifs.clearThreshold)
                     x = 0;
                 else
