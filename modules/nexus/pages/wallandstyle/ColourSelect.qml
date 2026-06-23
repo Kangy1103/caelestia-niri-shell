@@ -223,10 +223,10 @@ PageBase {
 
                         color: isActive ? Colours.palette.m3secondaryContainer : Colours.layer(Colours.palette.m3surfaceContainer, 0)
 
-                        topLeftRadius: isActive ? Tokens.rounding.extraLargeIncreased : (index === 0 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall)
-                        topRightRadius: isActive ? Tokens.rounding.extraLargeIncreased : (index === 0 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall)
-                        bottomLeftRadius: isActive ? Tokens.rounding.extraLargeIncreased : (index === variantList.model.count - 1 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall)
-                        bottomRightRadius: isActive ? Tokens.rounding.extraLargeIncreased : (index === variantList.model.count - 1 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall)
+                        topLeftRadius: isActive ? Tokens.rounding.extraLargeIncreased : Tokens.rounding.extraSmall
+                        topRightRadius: isActive ? Tokens.rounding.extraLargeIncreased : Tokens.rounding.extraSmall
+                        bottomLeftRadius: isActive ? Tokens.rounding.extraLargeIncreased : (index === root.variantItems.length - 1 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall)
+                        bottomRightRadius: isActive ? Tokens.rounding.extraLargeIncreased : (index === root.variantItems.length - 1 ? Tokens.rounding.extraLarge : Tokens.rounding.extraSmall)
 
                         Behavior on topLeftRadius { Anim { type: Anim.DefaultEffects } }
                         Behavior on topRightRadius { Anim { type: Anim.DefaultEffects } }
