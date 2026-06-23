@@ -29,30 +29,23 @@ Searcher {
 
         // Helper to update the variant while preserving other state
         function setVariant(variantName: string): void {
-            try {
-                const currentState = JSON.parse(text());
-                const isDynamic = currentState.name === "dynamic";
-                currentState.variant = variantName;
+            // Update in-memory variant for immediate UI feedback.
+            Schemes.currentVariant = variantName;
 
-                // Save updated state via FileView
-                const jsonContent = JSON.stringify(currentState, null, 2);
-                ensureStateDirProcess._pendingContent = jsonContent;
-                ensureStateDirProcess.running = true;
+            // Pass current scheme name and flavour explicitly.
+            // The QML's async state writer may not have flushed to disk yet,
+            // so the CLI cannot rely on reading the state file for the scheme identity.
+            const parts = Schemes.currentScheme.split(" ");
+            const schemeName = parts[0];
+            const schemeFlavour = parts.slice(1).join(" ");
 
-                // Update the Schemes service current variant
-                Schemes.currentVariant = variantName;
-
-                // If using dynamic scheme, regenerate colors with new variant
-                if (isDynamic) {
-                    Schemes.regenerateDynamic();
-                    // Also regenerate terminal/GTK colors with new variant
-                    if (Wallpapers.current) {
-                        Wallpapers.runColorGeneration(Wallpapers.current, variantName);
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to set variant:", e);
-            }
+            // Delegate to the CLI — single source of truth for persistence.
+            Quickshell.execDetached([
+                "cns", "scheme", "set", "--notify",
+                "-n", schemeName,
+                "-f", schemeFlavour,
+                "-v", variantName
+            ]);
         }
     }
 

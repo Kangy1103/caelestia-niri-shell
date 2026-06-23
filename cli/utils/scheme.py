@@ -158,7 +158,7 @@ class Scheme:
             from cns.utils.material import get_colours_for_image
 
             try:
-                self._colours = get_colours_for_image()
+                self._colours = get_colours_for_image(scheme=self)
             except FileNotFoundError:
                 if self.notify:
                     notify(
@@ -171,7 +171,15 @@ class Scheme:
                     "No wallpaper set. Please set a wallpaper via `cns wallpaper` before setting a dynamic scheme."
                 )
         else:
-            self._colours = read_colours_from_file(self.get_colours_path())
+            from cns.utils.material.generator import gen_scheme, hex_to_hct
+
+            base_colours = read_colours_from_file(self.get_colours_path())
+            primary_hex = base_colours.get("primary_paletteKeyColor")
+            if primary_hex:
+                primary_hct = hex_to_hct(primary_hex)
+                self._colours = gen_scheme(self, primary_hct)
+            else:
+                self._colours = base_colours
 
     def __str__(self) -> str:
         return (

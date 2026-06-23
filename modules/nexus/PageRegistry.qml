@@ -8,7 +8,7 @@ QtObject {
     readonly property list<var> pages: [
         // Appearance
         {
-            label: qsTr("Wallpaper & style"),
+            label: qsTr("Wallpaper & Style"),
             icon: "palette",
             description: qsTr("Wallpaper, fonts, colours"),
             category: "appearance"
@@ -22,7 +22,7 @@ QtObject {
             category: "connectivity"
         },
         {
-            label: qsTr("Connected devices"),
+            label: qsTr("Connected Devices"),
             icon: "devices_other",
             description: qsTr("Bluetooth, pairing"),
             category: "connectivity",
@@ -43,7 +43,7 @@ QtObject {
             category: "system"
         },
         {
-            label: qsTr("Lock screen"),
+            label: qsTr("Lock Screen"),
             icon: "lock",
             description: qsTr("Fingerprint, privacy, appearance"),
             category: "system"
@@ -69,13 +69,13 @@ QtObject {
             category: "shell"
         },
         {
-            label: qsTr("Notifications & popups"),
+            label: qsTr("Notifications & Popups"),
             icon: "notifications",
             description: qsTr("Notifications, OSD, utility toasts"),
             category: "shell"
         },
         {
-            label: qsTr("Language & region"),
+            label: qsTr("Language & Region"),
             icon: "globe",
             description: qsTr("UI language, weather location, display units"),
             category: "shell"

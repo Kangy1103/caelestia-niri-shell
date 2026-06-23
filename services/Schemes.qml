@@ -11,6 +11,36 @@ Searcher {
 
     property string currentScheme
     property string currentVariant
+    property string currentSchemeName: currentScheme.split(" ")[0] || ""
+    property var schemeItems: []
+    property string lastNonDynamicScheme: "catppuccin mocha"
+
+    readonly property var schemeModeMap: ({
+        "caelestia default": "both",
+        "catppuccin frappe": "dark",
+        "catppuccin latte": "light",
+        "catppuccin macchiato": "dark",
+        "catppuccin mocha": "dark",
+        "darkgreen hard": "dark",
+        "darkgreen medium": "dark",
+        "dracula medium": "dark",
+        "dynamic default": "both",
+        "everblush medium": "dark",
+        "everforest hard": "dark",
+        "everforest medium": "both",
+        "everforest soft": "dark",
+        "gruvbox hard": "both",
+        "gruvbox medium": "both",
+        "gruvbox soft": "both",
+        "nord medium": "dark",
+        "onedark default": "dark",
+        "rosepine dawn": "light",
+        "rosepine main": "dark",
+        "rosepine moon": "dark",
+        "shadotheme default": "dark",
+        "solarized medium": "dark",
+        "tokyonight medium": "dark"
+    })
 
     // Path to the schemes data JSON file (bundled with the shell)
     readonly property string schemesDataPath: Qt.resolvedUrl("scheme.json")
@@ -90,8 +120,8 @@ Searcher {
         }
     }
 
-    // Set a scheme by name and flavour
-    function setScheme(name: string, flavour: string): void {
+    // Set a scheme by name and flavour, with optional mode override
+    function setScheme(name: string, flavour: string, forceMode: string): void {
         // Handle dynamic scheme generation
         if (name === "dynamic") {
             const wallpaper = Wallpapers.current;
@@ -99,8 +129,29 @@ Searcher {
                 console.warn("Cannot set dynamic scheme: no wallpaper set");
                 return;
             }
-            const mode = Colours.light ? "light" : "dark";
+            const mode = forceMode || (Colours.light ? "light" : "dark");
             const variant = root.currentVariant || "tonalspot";
+
+            // Persist current colours through the transition so variant changes
+            // via CLI see name=dynamic, not the old scheme name.
+            let currentColours = {};
+            try {
+                const oldState = JSON.parse(schemeStateFile.text());
+                currentColours = oldState.colours || {};
+            } catch (e) {}
+
+            const stateData = {
+                name: "dynamic",
+                flavour: "default",
+                mode: mode,
+                variant: variant,
+                colours: currentColours,
+                lastNonDynamicScheme: root.lastNonDynamicScheme
+            };
+            schemeStateFile.watchChanges = false;
+            schemeStateFile.setText(JSON.stringify(stateData, null, 2));
+            schemeStateFile.watchChanges = true;
+            root.currentScheme = "dynamic default";
 
             // Use matugen for color generation from wallpaper (Quickshell UI)
             dynamicSchemeGenerator.wallpaper = wallpaper;
@@ -120,7 +171,10 @@ Searcher {
         }
 
         const colours = schemeData[name][flavour];
-        const mode = Colours.light ? "light" : "dark";
+        const mode = forceMode || (Colours.light ? "light" : "dark");
+
+        // Track last non-dynamic scheme for restore
+        root.lastNonDynamicScheme = `${name} ${flavour}`;
 
         // Save to state file
         const stateData = {
@@ -128,10 +182,13 @@ Searcher {
             flavour: flavour,
             mode: mode,
             variant: root.currentVariant || "tonalspot",
-            colours: colours
+            colours: colours,
+            lastNonDynamicScheme: root.lastNonDynamicScheme
         };
 
-        schemeStateWriter.write(JSON.stringify(stateData, null, 2));
+        schemeStateFile.watchChanges = false;
+        schemeStateFile.setText(JSON.stringify(stateData, null, 2));
+        schemeStateFile.watchChanges = true;
         root.currentScheme = `${name} ${flavour}`;
 
         // Load the colours immediately
@@ -180,6 +237,14 @@ Searcher {
                 });
 
                 schemes.model = flat.sort((a, b) => (a.name + a.flavour).localeCompare((b.name + b.flavour)));
+
+                // Build UI list: dynamic first, then alphabetical
+                const sorted = flat.sort((a, b) => {
+                    if (a.name === "dynamic" && b.name !== "dynamic") return -1;
+                    if (b.name === "dynamic" && a.name !== "dynamic") return 1;
+                    return (a.name + a.flavour).localeCompare(b.name + b.flavour);
+                });
+                root.schemeItems = sorted;
             } catch (e) {
                 console.error("Failed to parse schemes data:", e);
             }
@@ -198,14 +263,23 @@ Searcher {
                 const state = JSON.parse(text());
                 root.currentScheme = `${state.name} ${state.flavour}`;
                 root.currentVariant = state.variant || "tonalspot";
+                root.lastNonDynamicScheme = state.lastNonDynamicScheme || "catppuccin mocha";
             } catch (e) {
                 // State file doesn't exist or is invalid, use defaults
                 root.currentScheme = "catppuccin mocha";
                 root.currentVariant = "tonalspot";
+                root.lastNonDynamicScheme = "catppuccin mocha";
             }
         }
 
         onFileChanged: reload()
+    }
+
+    // IPC handler — receive the same `colours reload` call that Colours.qml handles.
+    // Ensures Schemes.currentScheme / currentVariant update when the CLI writes state.
+    IpcHandler {
+        target: "colours"
+        function reload(): void { schemeStateFile.reload() }
     }
 
     // Process for ensuring state directory exists before writing
@@ -292,7 +366,8 @@ Searcher {
                     flavour: "default",
                     mode: mode,
                     variant: variant,
-                    colours: colours
+                    colours: colours,
+                    lastNonDynamicScheme: root.lastNonDynamicScheme
                 };
 
                 schemeStateWriter.write(JSON.stringify(stateData, null, 2));
