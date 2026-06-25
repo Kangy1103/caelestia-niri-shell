@@ -248,7 +248,7 @@ Item {
 
                             ColouredIcon {
                                 implicitSize: 18
-                                source: Quickshell.iconPath(notifItem.notif?.appIcon ?? "")
+                                source: Icons.getAppIcon(notifItem.notif?.appIcon ?? "", "")
                                 colour: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3onError : Colours.palette.m3onSecondaryContainer
                                 layer.enabled: (notifItem.notif?.appIcon ?? "").endsWith("symbolic")
                             }
