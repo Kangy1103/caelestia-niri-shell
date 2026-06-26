@@ -44,6 +44,8 @@ Item {
     }
 
     function shouldShowToast(toast: Toast): bool {
+        if (!Config.notifs.enabled)
+            return false;
         if (!Notifs.hasFullscreen())
             return true;
         if (Config.utilities.toasts.fullscreen === "all")

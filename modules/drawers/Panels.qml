@@ -72,6 +72,7 @@ Item {
     Notifications.Wrapper {
         id: notifications
 
+        screen: root.screen
         visibilities: root.visibilities
         sidebarPanel: sidebar
         osdPanel: osdWrapper

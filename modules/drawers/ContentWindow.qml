@@ -187,6 +187,7 @@ StyledWindow {
             id: notifsBg
 
             panel: panels.notifications
+            visible: panels.notifications.visible
         }
 
         PanelBg {

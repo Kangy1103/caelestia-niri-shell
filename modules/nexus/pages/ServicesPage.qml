@@ -58,6 +58,8 @@ PageBase {
     title: qsTr("Services")
 
     ColumnLayout {
+        id: layout
+
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
@@ -78,9 +80,30 @@ PageBase {
             }
         }
 
-        // Polling
+        // Notifications on Displays
         SectionHeader {
             first: true
+            text: qsTr("Notifications on Displays")
+        }
+
+        Repeater {
+            model: Quickshell.screens
+            delegate: ToggleRow {
+                required property ShellScreen modelData
+                required property int index
+
+                Layout.fillWidth: true
+                first: index === 0
+                last: index === Quickshell.screens.length - 1
+                text: modelData.name
+                subtext: qsTr("Show notifications on this display")
+                checked: MonitorConfigManager.configForScreen(modelData.name).notifs.enabled
+                onToggled: MonitorConfigManager.configForScreen(modelData.name).notifs.enabled = checked
+            }
+        }
+
+        // Polling
+        SectionHeader {
             text: qsTr("Polling")
         }
 
