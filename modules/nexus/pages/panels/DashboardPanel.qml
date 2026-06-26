@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import CNS.Config
-import qs.components
 import qs.modules.nexus.common
 
 PageBase {

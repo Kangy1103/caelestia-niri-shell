@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import Quickshell
 import CNS.Config
 import CNS.Services
-import qs.components
 import qs.components.controls
 import qs.services
 import qs.modules.nexus.common
