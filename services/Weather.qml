@@ -41,13 +41,18 @@ Singleton {
                 fetchCoordsFromCity(configLocation);
             }
         } else if (!loc || timer.elapsed() > 900) {
-            Requests.get("https://ipinfo.io/json", text => {
+            const token = GlobalConfig.services.ipinfoToken;
+            const url = token ? `https://ipinfo.io/json?token=${token}` : "https://ipinfo.io/json";
+            Requests.get(url, text => {
                 const response = JSON.parse(text);
                 if (response.loc) {
                     loc = response.loc;
                     city = response.city ?? "";
                     timer.restart();
                 }
+            }, err => {
+                console.warn("Weather: Location fetch failed:", err);
+                timer.restart();
             });
         }
     }

@@ -53,7 +53,7 @@ Scope {
 			Rectangle {
 				id: rect
 				anchors.centerIn: parent
-				color: failed ? Colours.palette.error : Colours.palette.successContainer
+				color: failed ? Colours.tPalette.m3error : Colours.tPalette.m3successContainer
 
 				implicitHeight: layout.implicitHeight + 30
 				implicitWidth: layout.implicitWidth + 30
@@ -84,18 +84,18 @@ Scope {
 
 					Text {
 						renderType: Text.NativeRendering
-						font.family: Config.appearance.font.body.family
+						font.family: Tokens.font.body.medium.family
 						font.pointSize: 14
 						text: root.failed ? "Quickshell: Reload failed" : "Quickshell reloaded"
-						color: failed ? Colours.palette.onError : Colours.palette.onSuccessContainer
+						color: failed ? Colours.tPalette.m3onError : Colours.tPalette.m3onSuccessContainer
 					}
 
 					Text {
 						renderType: Text.NativeRendering
-						font.family: Config.appearance.font.mono.family
+						font.family: Tokens.font.mono.medium.family
 						font.pointSize: 11
 						text: root.errorString
-						color: failed ? Colours.palette.onError : Colours.palette.onSuccessContainer
+						color: failed ? Colours.tPalette.m3onError : Colours.tPalette.m3onSuccessContainer
 						// When visible is false, it also takes up no space.
 						visible: root.errorString != ""
 					}
@@ -106,7 +106,7 @@ Scope {
 				Rectangle {
 					z: 2
 					id: bar
-					color: failed ? Colours.palette.onError : Colours.palette.onSuccessContainer
+					color: failed ? Colours.tPalette.m3onError : Colours.tPalette.m3onSuccessContainer
 					anchors.bottom: parent.bottom
 					anchors.left: parent.left
 					anchors.margins: 10

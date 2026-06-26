@@ -40,7 +40,7 @@ Item {
 
         MaterialIcon {
             text: "function"
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize).build()
 Layout.alignment: Qt.AlignVCenter
         }
 
@@ -92,7 +92,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 text: qsTr("Open in calculator")
                 color: Colours.palette.m3onTertiary
-                font.pointSize: Config.appearance.font.body.medium.size
+                font.pointSize: Tokens.font.body.medium.pointSize
 
                 opacity: stateLayer.containsMouse ? 1 : 0
 
@@ -110,7 +110,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 text: "open_in_new"
                 color: Colours.palette.m3onTertiary
-                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+                fontStyle: Tokens.font.icon.size(Tokens.font.title.medium.pointSize).build()
 }
 
             Behavior on implicitWidth {

@@ -53,14 +53,14 @@ Item {
                 id: name
 
                 text: root.modelData?.name ?? ""
-                font.pointSize: Config.appearance.font.body.medium.size
+                font.pointSize: Tokens.font.body.medium.pointSize
             }
 
             StyledText {
                 id: comment
 
                 text: (root.modelData?.comment || root.modelData?.genericName || root.modelData?.name) ?? ""
-                font.pointSize: Config.appearance.font.label.large.size
+                font.pointSize: Tokens.font.label.large.pointSize
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight

@@ -137,7 +137,7 @@ Item {
             StyledText {
                 text: "All day"
                 color: Colours.palette.m3onSurface
-                font.pointSize: Config.appearance.font.body.small.size
+                font.pointSize: Tokens.font.body.small.pointSize
             }
 
             Item { Layout.fillWidth: true }

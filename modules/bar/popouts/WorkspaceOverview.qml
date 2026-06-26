@@ -197,7 +197,7 @@ Item {
         StyledText {
             anchors.centerIn: parent
             text: dragData?.type === "workspace" ? (dragData.wsName || (dragData.wsIndex + 1).toString()) : (dragData?.windowTitle || "Window")
-            font.pointSize: Config.appearance.font.label.small.size
+            font.pointSize: Tokens.font.label.small.pointSize
             font.bold: dragData?.type === "workspace"; color: Colours.palette.m3onPrimaryContainer
             elide: Text.ElideRight; width: parent.width - 8; horizontalAlignment: Text.AlignHCenter
         }
@@ -321,7 +321,7 @@ Item {
                         StyledText {
                             anchors.centerIn: parent
                             text: wsSection.wsLabel
-                            font.pointSize: Config.appearance.font.label.small.size
+                            font.pointSize: Tokens.font.label.small.pointSize
                             font.bold: wsSection.isFocused
                             color: wsSection.isFocused ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
                         }
@@ -415,7 +415,7 @@ Item {
                                     width: parent.width - 4
                                     text: cell.displayTitle
                                     elide: Text.ElideRight
-                                    font.pointSize: Math.max(Config.appearance.font.label.small.size * 0.7, 6)
+                                    font.pointSize: Math.max(Tokens.font.label.small.pointSize * 0.7, 6)
                                     color: previewImage.status === Image.Ready ? Colours.palette.m3onSurface
                                         : (cell.isFocused ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant)
                                     horizontalAlignment: Text.AlignHCenter
@@ -430,7 +430,7 @@ Item {
                         anchors.topMargin: Tokens.padding.medium
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: "empty"
-                        font.pointSize: Config.appearance.font.label.small.size * 0.8
+                        font.pointSize: Tokens.font.label.small.pointSize * 0.8
                         color: emptyMouse.containsMouse ? Colours.palette.m3primary : Colours.palette.m3onSurfaceVariant
 
                         Behavior on color { ColorAnimation { duration: 150 } }
@@ -459,7 +459,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Tokens.padding.large
                 text: "No workspaces on this monitor"
-                font.pointSize: Config.appearance.font.label.small.size
+                font.pointSize: Tokens.font.label.small.pointSize
                 color: Colours.palette.m3onSurfaceVariant
             }
         }

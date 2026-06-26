@@ -292,7 +292,7 @@ grade: 0
                 animate: true
                 anchors.centerIn: parent
                 text: iconItem.windowCount
-                font.family: Config.appearance.font.mono.family
+                font.family: Tokens.font.mono.medium.family
                 color: iconItem.isWsFocused ? Colours.palette.m3onTertiary : Colours.palette.m3onTertiaryContainer
                 font.pointSize: badgeLoader.calculateMargins().size - 3
             }

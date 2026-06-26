@@ -118,7 +118,7 @@ Variants {
                                 anchors.centerIn: parent
                                 text: "admin_panel_settings"
                                 color: Colours.palette.m3onSecondaryContainer
-                                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+                                fontStyle: Tokens.font.icon.size(Tokens.font.title.medium.pointSize).build()
 }
                         }
 
@@ -127,7 +127,7 @@ Variants {
 
                             StyledText {
                                 text: qsTr("Authentication Required")
-                                font.pointSize: Config.appearance.font.title.medium.size
+                                font.pointSize: Tokens.font.title.medium.pointSize
                                 font.weight: Font.DemiBold
                                 color: Colours.palette.m3onSurface
                             }
@@ -135,7 +135,7 @@ Variants {
                             StyledText {
                                 visible: PolkitService.subjectName.length > 0
                                 text: PolkitService.subjectName
-                                font.pointSize: Config.appearance.font.label.large.size
+                                font.pointSize: Tokens.font.label.large.pointSize
                                 color: Colours.palette.m3onSurfaceVariant
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -162,7 +162,7 @@ Variants {
                                 anchors.margins: Tokens.padding.small
 
                                 text: PolkitService.cleanMessage
-                                font.pointSize: Config.appearance.font.body.small.size
+                                font.pointSize: Tokens.font.body.small.pointSize
                                 color: Colours.palette.m3onSurfaceVariant
                                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             }
@@ -217,7 +217,7 @@ Variants {
                                         color: PolkitService.submitting
                                             ? Colours.palette.m3secondary
                                             : Colours.palette.m3onSurfaceVariant
-                                        fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).build()
+                                        fontStyle: Tokens.font.icon.size(Tokens.font.body.medium.pointSize).build()
 opacity: PolkitService.submitting ? 0 : 1
                                         Behavior on opacity { Anim {} }
                                     }
@@ -240,7 +240,7 @@ opacity: PolkitService.submitting ? 0 : 1
                                         ? TextInput.Normal
                                         : TextInput.Password
                                     enabled: PolkitService.interactionAvailable && !PolkitService.submitting
-                                    font.pointSize: Config.appearance.font.body.small.size
+                                    font.pointSize: Tokens.font.body.small.pointSize
 
                                     Keys.onReturnPressed: dialogContent.trySubmit()
                                     Keys.onEnterPressed:  dialogContent.trySubmit()
@@ -293,7 +293,7 @@ opacity: PolkitService.submitting ? 0 : 1
                                         color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                             ? Colours.palette.m3onPrimary
                                             : Colours.palette.m3onSurface
-                                        fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).weight(500).build()
+                                        fontStyle: Tokens.font.icon.size(Tokens.font.body.medium.pointSize).weight(500).build()
 CAnim { properties: "color" }
                                     }
                                 }
@@ -315,7 +315,7 @@ CAnim { properties: "color" }
                             opacity: PolkitService.failedAttempts > 0 && PolkitService.active ? 1 : 0
                             text: qsTr("Incorrect password. Please try again.")
                             color: Colours.palette.m3error
-                            font.pointSize: Config.appearance.font.label.large.size
+                            font.pointSize: Tokens.font.label.large.pointSize
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -350,7 +350,7 @@ CAnim { properties: "color" }
                                 anchors.centerIn: parent
                                 text: qsTr("Cancel")
                                 color: Colours.palette.m3onSurfaceVariant
-                                font.pointSize: Config.appearance.font.label.large.size
+                                font.pointSize: Tokens.font.label.large.pointSize
                                 font.weight: Font.Medium
                             }
                         }
@@ -382,7 +382,7 @@ CAnim { properties: "color" }
                                 anchors.centerIn: parent
                                 text: qsTr("Authenticate")
                                 color: Colours.palette.m3onPrimary
-                                font.pointSize: Config.appearance.font.label.large.size
+                                font.pointSize: Tokens.font.label.large.pointSize
                                 font.weight: Font.Medium
                             }
                         }

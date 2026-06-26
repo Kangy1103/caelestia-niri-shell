@@ -35,7 +35,7 @@ Item {
             Layout.fillWidth: true
             text: "Events for " + root.selectedDate.toLocaleDateString(Qt.locale(), "MMM d")
             color: Colours.palette.m3onSurface
-            font.pointSize: Config.appearance.font.body.small.size
+            font.pointSize: Tokens.font.body.small.pointSize
             font.weight: 500
             horizontalAlignment: Text.AlignLeft
         }
@@ -80,7 +80,7 @@ Item {
                             Layout.fillWidth: true
                             text: modelData.title
                             color: Colours.palette.m3onSurface
-                            font.pointSize: Config.appearance.font.body.small.size
+                            font.pointSize: Tokens.font.body.small.pointSize
                             font.weight: 500
                             elide: Text.ElideRight
                             maximumLineCount: eventCard.expanded ? 0 : 1
@@ -96,7 +96,7 @@ Item {
                                 return times;
                             }
                             color: Colours.palette.m3onSurfaceVariant
-                            font.pointSize: Config.appearance.font.body.small.size
+                            font.pointSize: Tokens.font.body.small.pointSize
                             font.weight: 400
                             visible: modelData.allDay || modelData.startTime
                         }
@@ -126,7 +126,7 @@ Item {
             Layout.fillWidth: true
             text: "No events"
             color: Colours.palette.m3onSurfaceVariant
-            font.pointSize: Config.appearance.font.body.small.size
+            font.pointSize: Tokens.font.body.small.pointSize
             font.weight: 400
             horizontalAlignment: Text.AlignHCenter
             visible: root.events.length === 0

@@ -220,7 +220,13 @@ Singleton {
             const [name, path] = icon.split("?path=");
             icon = `file://${path}/${name.slice(name.lastIndexOf("/") + 1)}`;
         } else if (icon !== "" && !icon.startsWith("/") && !icon.startsWith("file://") && !icon.startsWith("image://")) {
-            icon = Quickshell.iconPath(icon);
+            if ((icon.startsWith("steam_") || id.includes("steam")) && icon !== "") {
+                const steamPublic = "/home/kangy/.local/share/Steam/public";
+                const name = icon === "steam_app_default" ? "steam_tray_mono" : icon;
+                icon = `file://${steamPublic}/${name}.png`;
+            } else {
+                icon = Quickshell.iconPath(icon);
+            }
         }
         return icon;
     }

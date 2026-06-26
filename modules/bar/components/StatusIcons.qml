@@ -139,7 +139,7 @@ StyledRect {
                 animate: true
                 text: Niri.kbLayout
                 color: root.colour
-                font.family: Config.appearance.font.mono.family
+                font.family: Tokens.font.mono.medium.family
             }
         }
 

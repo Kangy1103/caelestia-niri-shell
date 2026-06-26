@@ -32,7 +32,7 @@ Item {
             id: icon
 
             text: root.modelData?.icon ?? ""
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize).build()
 anchors.verticalCenter: parent.verticalCenter
         }
 
@@ -46,12 +46,12 @@ anchors.verticalCenter: parent.verticalCenter
 
             StyledText {
                 text: root.modelData?.name ?? ""
-                font.pointSize: Config.appearance.font.body.medium.size
+                font.pointSize: Tokens.font.body.medium.pointSize
             }
 
             StyledText {
                 text: root.modelData?.description ?? ""
-                font.pointSize: Config.appearance.font.label.large.size
+                font.pointSize: Tokens.font.label.large.pointSize
                 color: Colours.palette.m3outline
 
                 elide: Text.ElideRight
@@ -72,7 +72,7 @@ anchors.verticalCenter: parent.verticalCenter
             sourceComponent: MaterialIcon {
                 text: "check"
                 color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+                fontStyle: Tokens.font.icon.size(Tokens.font.title.medium.pointSize).build()
 }
         }
     }

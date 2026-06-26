@@ -324,7 +324,7 @@ MouseArea {
                         default: return Colours.palette.m3onPrimaryContainer;
                         }
                     }
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.label.large.size).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.label.large.pointSize).build()
 }
 
                 StyledText {
@@ -343,7 +343,7 @@ MouseArea {
                         default: return Colours.palette.m3onPrimaryContainer;
                         }
                     }
-                    font.pointSize: Config.appearance.font.label.medium.size
+                    font.pointSize: Tokens.font.label.medium.pointSize
                     font.bold: true
                 }
             }

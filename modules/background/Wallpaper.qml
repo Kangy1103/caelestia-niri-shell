@@ -73,7 +73,7 @@ Item {
                 MaterialIcon {
                     text: "sentiment_stressed"
                     color: Colours.palette.m3onSurfaceVariant
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 5).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize * 5).build()
 }
 
                 Column {
@@ -83,7 +83,7 @@ Item {
                     StyledText {
                         text: qsTr("Wallpaper missing?")
                         color: Colours.palette.m3onSurfaceVariant
-                        font.pointSize: Config.appearance.font.headline.large.size * 2
+                        font.pointSize: Tokens.font.headline.large.pointSize * 2
                         font.bold: true
                     }
 
@@ -119,7 +119,7 @@ Item {
 
                             text: qsTr("Set it now!")
                             color: Colours.palette.m3onPrimary
-                            font.pointSize: Config.appearance.font.title.medium.size
+                            font.pointSize: Tokens.font.title.medium.pointSize
                         }
                     }
                 }

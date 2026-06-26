@@ -20,7 +20,7 @@ StyledRect {
     readonly property bool isVertical: true
     readonly property real barHeight: TokenConfig.sizes.bar.innerWidth
     readonly property real capsuleHeight: TokenConfig.sizes.bar.innerWidth * 0.85
-    readonly property real barFontSize: Config.appearance.font.label.large.size
+    readonly property real barFontSize: Tokens.font.label.large.pointSize
 
     required property ShellScreen screen
 
@@ -181,7 +181,7 @@ StyledRect {
     }
 
     function refreshWorkspaces() {
-        root.updateFocusedWorkspaceId();
+        updateFocusedWorkspaceId();
 
         var allWs = Niri.allWorkspaces;
         if (!allWs) allWs = [];

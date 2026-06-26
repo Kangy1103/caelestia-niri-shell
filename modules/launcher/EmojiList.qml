@@ -167,7 +167,7 @@ Item {
                             anchors.verticalCenterOffset: catBtn.active ? -2 : 0
                             text: modelData.icon ?? ""
                             color: catBtn.active ? Colours.palette.m3primary : (catBtn.hovered ? Colours.palette.m3onSurface : Colours.palette.m3onSurfaceVariant)
-                            fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+                            fontStyle: Tokens.font.icon.size(Tokens.font.title.medium.pointSize).build()
 Behavior on color { CAnim {} }
                             Behavior on anchors.verticalCenterOffset { Anim { duration: Tokens.anim.durations.small } }
                         }
@@ -208,7 +208,7 @@ Behavior on color { CAnim {} }
                 anchors.leftMargin: Tokens.padding.medium
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Search Results")
-                font.pointSize: Config.appearance.font.label.large.size
+                font.pointSize: Tokens.font.label.large.pointSize
                 font.weight: 600
                 color: Colours.palette.m3primary
             }
@@ -270,7 +270,7 @@ Behavior on color { CAnim {} }
                     Text {
                         anchors.centerIn: parent
                         text: modelData?.emoji ?? ""
-                        font.pointSize: Config.appearance.font.headline.large.size
+                        font.pointSize: Tokens.font.headline.large.pointSize
                         color: Colours.palette.m3onSurface
                         renderType: Text.QtRendering
                     }
@@ -302,7 +302,7 @@ color: Colours.palette.m3onSurfaceVariant
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("No emojis found")
                         color: Colours.palette.m3onSurfaceVariant
-                        font.pointSize: Config.appearance.font.body.medium.size
+                        font.pointSize: Tokens.font.body.medium.pointSize
                     }
                 }
             }
@@ -343,7 +343,7 @@ color: Colours.palette.m3onSurfaceVariant
                     StyledText {
                         Layout.fillWidth: true
                         text: footer.activeEmoji?.name ?? qsTr("Select an emoji")
-                        font.pointSize: Config.appearance.font.label.large.size
+                        font.pointSize: Tokens.font.label.large.pointSize
                         font.weight: 600
                         color: Colours.palette.m3onSurface
                         elide: Text.ElideRight
@@ -353,7 +353,7 @@ color: Colours.palette.m3onSurfaceVariant
                     StyledText {
                         Layout.fillWidth: true
                         text: (footer.activeEmoji?.keywords ?? []).join(", ")
-                        font.pointSize: Config.appearance.font.label.small.size
+                        font.pointSize: Tokens.font.label.small.pointSize
                         color: Colours.palette.m3onSurfaceVariant
                         elide: Text.ElideRight
                         visible: text !== ""

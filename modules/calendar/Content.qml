@@ -69,7 +69,7 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_left"
                     color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).weight(Font.Bold).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.body.medium.pointSize).weight(Font.Bold).build()
 }
             }
 
@@ -99,7 +99,7 @@ Item {
                     anchors.centerIn: parent
                     text: grid.title
                     color: Colours.palette.m3primary
-                    font.pointSize: Config.appearance.font.body.medium.size
+                    font.pointSize: Tokens.font.body.medium.pointSize
                     font.weight: 500
                     font.capitalization: Font.Capitalize
                 }
@@ -122,7 +122,7 @@ Item {
                     anchors.centerIn: parent
                     text: "chevron_right"
                     color: Colours.palette.m3tertiary
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.medium.size).weight(Font.Bold).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.body.medium.pointSize).weight(Font.Bold).build()
 }
             }
 
@@ -148,7 +148,7 @@ Item {
                 required property var model
                 horizontalAlignment: Text.AlignHCenter
                 text: model.shortName
-                font.pointSize: Config.appearance.font.body.small.size
+                font.pointSize: Tokens.font.body.small.pointSize
                 font.weight: 500
                 color: (model.day === 0 || model.day === 6) ? Colours.palette.m3secondary : Colours.palette.m3onSurfaceVariant
             }
@@ -198,7 +198,7 @@ Item {
                             return Colours.palette.m3onSurfaceVariant;
                         }
                         opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
-                        font.pointSize: Config.appearance.font.body.medium.size
+                        font.pointSize: Tokens.font.body.medium.pointSize
                         font.weight: 500
                     }
 

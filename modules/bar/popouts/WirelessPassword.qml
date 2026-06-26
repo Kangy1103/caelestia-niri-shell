@@ -397,7 +397,7 @@ ColumnLayout {
 
                     anchors.centerIn: parent
                     implicitWidth: fullWidth
-                    implicitHeight: Config.appearance.font.body.medium.size
+                    implicitHeight: Tokens.font.body.medium.pointSize
 
                     orientation: Qt.Horizontal
                     spacing: Tokens.spacing.extraSmall
@@ -480,7 +480,7 @@ ColumnLayout {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Tokens.padding.medium * 2
+                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3secondaryContainer
                     inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -495,7 +495,7 @@ ColumnLayout {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Tokens.padding.medium * 2
+                    Layout.minimumHeight: Tokens.font.body.medium.pointSize + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

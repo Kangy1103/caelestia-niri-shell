@@ -78,12 +78,12 @@ Item {
             spacing: Tokens.spacing.medium
             MaterialIcon {
                 text: "keyboard"
-                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+                fontStyle: Tokens.font.icon.size(Tokens.font.title.medium.pointSize).build()
 color: Colours.palette.m3primary
             }
             StyledText {
                 text: qsTr("Keybinds")
-                font.pointSize: Config.appearance.font.body.large.size
+                font.pointSize: Tokens.font.body.large.pointSize
                 font.weight: Font.Bold
                 Layout.fillWidth: true
             }
@@ -100,7 +100,7 @@ color: Colours.palette.m3primary
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "refresh"
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.body.large.pointSize).build()
 color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -117,7 +117,7 @@ color: Colours.palette.m3onSurfaceVariant
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "close"
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.body.large.size).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.body.large.pointSize).build()
 color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -235,14 +235,14 @@ color: Colours.palette.m3onSurfaceVariant
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: keybindItem.action
-                    font.pointSize: Config.appearance.font.label.medium.size
+                    font.pointSize: Tokens.font.label.medium.pointSize
                                     font.weight: Font.Medium
                                     color: Colours.palette.m3onSurface
                                     elide: Text.ElideRight
                                 }
                                 StyledText {
                                     text: keybindItem.key
-                    font.pointSize: Config.appearance.font.label.small.size
+                    font.pointSize: Tokens.font.label.small.pointSize
                                     font.family: "monospace"
                                     color: Colours.palette.m3onSurfaceVariant
                                 }
@@ -278,13 +278,13 @@ color: Colours.palette.m3onSurfaceVariant
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? "keyboard_hide" : "search_off"
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize).build()
 color: Colours.palette.m3outline
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? qsTr("No keybinds found") : qsTr("No results found")
-                    font.pointSize: Config.appearance.font.body.small.size
+                    font.pointSize: Tokens.font.body.small.pointSize
                     color: Colours.palette.m3outline
                 }
             }
@@ -296,13 +296,13 @@ color: Colours.palette.m3outline
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "error_outline"
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize).build()
 color: Colours.palette.m3error
                 }
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: Keybinds.error
-                    font.pointSize: Config.appearance.font.body.small.size
+                    font.pointSize: Tokens.font.body.small.pointSize
                     color: Colours.palette.m3error
                 }
             }
@@ -318,7 +318,7 @@ color: Colours.palette.m3error
                 StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: qsTr("Loading keybinds...")
-                    font.pointSize: Config.appearance.font.body.small.size
+                    font.pointSize: Tokens.font.body.small.pointSize
                     color: Colours.palette.m3onSurfaceVariant
                 }
             }
@@ -329,7 +329,7 @@ color: Colours.palette.m3error
             spacing: Tokens.spacing.medium
             StyledText {
                 text: filteredModel.count + " " + qsTr("keybinds")
-                font.pointSize: Config.appearance.font.label.medium.size
+                font.pointSize: Tokens.font.label.medium.pointSize
                 color: Colours.palette.m3outline
             }
             Item { Layout.fillWidth: true }
@@ -337,12 +337,12 @@ color: Colours.palette.m3error
                 spacing: Tokens.spacing.small
                 MaterialIcon {
                     text: "info"
-                    fontStyle: Tokens.font.icon.size(Config.appearance.font.label.medium.size).build()
+                    fontStyle: Tokens.font.icon.size(Tokens.font.label.medium.pointSize).build()
 color: Colours.palette.m3outline
                 }
                 StyledText {
                     text: qsTr("Arrow keys to navigate")
-                    font.pointSize: Config.appearance.font.label.medium.size
+                    font.pointSize: Tokens.font.label.medium.pointSize
                     color: Colours.palette.m3outline
                 }
             }

@@ -415,7 +415,7 @@ WlSessionLockSurface {
             anchors.centerIn: parent
             text: "lock"
             color: Colours.palette.m3primary
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 4).weight(Font.Bold).build()
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize * 4).weight(Font.Bold).build()
             rotation: 180
         }
 

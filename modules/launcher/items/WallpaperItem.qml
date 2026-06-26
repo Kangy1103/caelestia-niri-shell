@@ -64,7 +64,7 @@ Item {
             anchors.centerIn: parent
             text: root.isVideo ? "movie" : "image"
             color: Colours.tPalette.m3outline
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).weight(600).build()
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize * 2).weight(600).build()
 }
 
         CachingImage {
@@ -82,7 +82,7 @@ Item {
             anchors.horizontalCenterOffset: fontStyle.pointSize * 0.1 // Adjust for play icon visual centering
             text: "play_arrow"
             color: "white"
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size * 2).build()
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize * 2).build()
             visible: root.isVideo
         }
     }
@@ -99,7 +99,7 @@ Item {
         elide: Text.ElideRight
         renderType: Text.QtRendering
         text: root.modelData.relativePath
-        font.pointSize: Config.appearance.font.body.medium.size
+        font.pointSize: Tokens.font.body.medium.pointSize
     }
 
     Behavior on scale {

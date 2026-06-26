@@ -56,7 +56,7 @@ Rectangle {
             AnimatedText {
                 Layout.leftMargin: 0
                 text: root.displayTitle
-                font.pointSize: Config.appearance.font.label.medium.size
+                font.pointSize: Tokens.font.label.medium.pointSize
                 font.italic: root.isFocused
                 color: root.onPrimary ? Colours.palette.m3onPrimary : Colours.palette.m3onSurfaceVariant
             }
@@ -78,8 +78,8 @@ Rectangle {
                     anchors.centerIn: parent
 
                     text: root.displaySubtitle
-                    font.pointSize: Config.appearance.font.label.small.size
-                    font.family: Config.appearance.font.mono.family
+                    font.pointSize: Tokens.font.label.small.pointSize
+                    font.family: Tokens.font.mono.medium.family
                     font.bold: root.isFocused
                     color: root.onPrimary ? Colours.palette.m3onTertiary : Colours.palette.m3tertiaryContainer
                 }
@@ -100,7 +100,7 @@ Rectangle {
                 anchors.centerIn: parent
                 client: root.mainWindow
                 opacity: mouseArea.containsMouse ? 1 : 0
-                implicitSize: Config.appearance.font.label.large.size
+                implicitSize: Tokens.font.label.large.pointSize
                 Behavior on opacity {
                     Anim {
                         duration: Tokens.anim.durations.normal

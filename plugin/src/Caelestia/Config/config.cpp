@@ -5,6 +5,7 @@
 #include "borderconfig.hpp"
 #include "dashboardconfig.hpp"
 #include "generalconfig.hpp"
+#include "greeterconfig.hpp"
 #include "launcherconfig.hpp"
 #include "lockconfig.hpp"
 #include "monitorconfigmanager.hpp"
@@ -38,6 +39,7 @@ GlobalConfig::GlobalConfig(QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
+    , m_greeter(new GreeterConfig(this))
     , m_background(new BackgroundConfig(this))
     , m_bar(new BarConfig(this))
     , m_border(new BorderConfig(this))
@@ -60,6 +62,7 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, cons
     : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
+    , m_greeter(new GreeterConfig(this))
     , m_background(new BackgroundConfig(this))
     , m_bar(new BarConfig(this))
     , m_border(new BorderConfig(this))

@@ -83,8 +83,8 @@ Item {
         visible: root.columnCount > 1
         text: `${root.focusedColumn}/${root.columnCount}`
         color: Colours.palette.m3onSurfaceVariant
-        font.pointSize: Config.appearance.font.label.small.size
-        font.family: Config.appearance.font.mono.family
+        font.pointSize: Tokens.font.label.small.pointSize
+        font.family: Tokens.font.mono.medium.family
     }
 
     Title {
@@ -99,8 +99,8 @@ Item {
         id: metrics
 
         text: Config.bar.activeWindow.compact ? root.getCompactName() : root.windowTitle //Niri.focusedWindowTitle ?? qsTr("Desktop")
-        font.pointSize: Config.appearance.font.body.small.size
-        font.family: Config.appearance.font.mono.family
+        font.pointSize: Tokens.font.body.small.pointSize
+        font.family: Tokens.font.mono.medium.family
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 

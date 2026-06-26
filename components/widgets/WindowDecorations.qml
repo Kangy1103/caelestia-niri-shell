@@ -10,7 +10,7 @@ import CNS.Config
 RowLayout {
     id: root
     property var client: Niri.focusedWindow
-    property int implicitSize: Config.appearance.font.body.medium.size
+    property int implicitSize: Tokens.font.body.medium.pointSize
 
     spacing: Tokens.padding.extraSmall / 2
 

@@ -53,7 +53,7 @@ Item {
 
         MaterialIcon {
             text: root.isUrl ? "open_in_browser" : "search"
-            fontStyle: Tokens.font.icon.size(Config.appearance.font.headline.large.size).build()
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize).build()
 Layout.alignment: Qt.AlignVCenter
         }
 
@@ -106,7 +106,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 text: root.isUrl ? "open_in_new" : "search"
                 color: Colours.palette.m3onTertiary
-                fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
+                fontStyle: Tokens.font.icon.size(Tokens.font.title.medium.pointSize).build()
 }
         }
     }

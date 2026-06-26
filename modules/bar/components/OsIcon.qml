@@ -11,8 +11,8 @@ import qs.utils
 Item {
     id: root
 
-    implicitWidth: Math.round(Config.appearance.font.title.medium.size * 1.2)
-    implicitHeight: Math.round(Config.appearance.font.title.medium.size * 1.2)
+    implicitWidth: Math.round(Tokens.font.title.medium.pointSize * 1.2)
+    implicitHeight: Math.round(Tokens.font.title.medium.pointSize * 1.2)
 
     MouseArea {
         anchors.fill: parent
@@ -33,8 +33,8 @@ Item {
         id: caelestiaLogo
 
         Logo {
-            implicitWidth: Math.round(Config.appearance.font.title.medium.size * 1.6)
-            implicitHeight: Math.round(Config.appearance.font.title.medium.size * 1.6)
+            implicitWidth: Math.round(Tokens.font.title.medium.pointSize * 1.6)
+            implicitHeight: Math.round(Tokens.font.title.medium.pointSize * 1.6)
         }
     }
 
@@ -43,7 +43,7 @@ Item {
 
         ColouredIcon {
             source: SysInfo.osLogo
-            implicitSize: Math.round(Config.appearance.font.title.medium.size * 1.2)
+            implicitSize: Math.round(Tokens.font.title.medium.pointSize * 1.2)
             width: implicitWidth
             height: implicitHeight
             colour: Colours.palette.m3tertiary

@@ -153,8 +153,8 @@ Rectangle {
 
                     anchors.centerIn: parent
                     text: multiWindowContent.index + 1
-                    font.pointSize: Config.appearance.font.label.small.size
-                    font.family: Config.appearance.font.mono.family
+                    font.pointSize: Tokens.font.label.small.pointSize
+                    font.family: Tokens.font.mono.medium.family
                     font.bold: true
                     color: multiWindowContent.itemIsFocused ? Colours.palette.m3onTertiary : Colours.palette.m3onTertiary
                 }
@@ -169,7 +169,7 @@ Rectangle {
                     Layout.alignment: Qt.AlignVCenter
 
                     text: multiWindowContent.displayTitle
-                    font.pointSize: Config.appearance.font.label.medium.size
+                    font.pointSize: Tokens.font.label.medium.pointSize
                     font.italic: multiWindowContent.itemIsFocused
                     color: multiWindowContent.itemIsFocused ? Colours.palette.m3onPrimary : (multiWindowContent.onPrimary ? Colours.palette.m3onSurfaceVariant : Colours.palette.m3onSurfaceVariant)
                 }
@@ -193,8 +193,8 @@ Rectangle {
                         anchors.centerIn: parent
 
                         text: multiWindowContent.displaySubtitle
-                        font.pointSize: Config.appearance.font.label.small.size
-                        font.family: Config.appearance.font.mono.family
+                        font.pointSize: Tokens.font.label.small.pointSize
+                        font.family: Tokens.font.mono.medium.family
                         font.bold: multiWindowContent.itemIsFocused
                         color: multiWindowContent.itemIsFocused ? Colours.palette.m3onTertiary : Colours.palette.m3tertiaryContainer
                     }
@@ -202,8 +202,8 @@ Rectangle {
 
                 // AnimatedText {
                 //     text: multiWindowContent.displaySubtitle
-                //     font.pointSize: Config.appearance.font.label.small.size
-                //     font.family: Config.appearance.font.mono.family
+                //     font.pointSize: Tokens.font.label.small.pointSize
+                //     font.family: Tokens.font.mono.medium.family
                 //     font.bold: multiWindowContent.itemIsFocused
                 //     color: multiWindowContent.itemIsFocused ? Colours.palette.m3onPrimary : Colours.palette.m3tertiaryContainer
                 // }

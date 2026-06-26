@@ -43,20 +43,20 @@ StyledRect {
         MaterialIcon {
             visible: root.icon.length > 0
             text: root.icon
-            font.pointSize: Config.appearance.font.label.large.size
+            font.pointSize: Tokens.font.label.large.pointSize
             color: selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
         }
 
         StyledText {
             text: root.text
-            font.pointSize: Config.appearance.font.label.large.size
+            font.pointSize: Tokens.font.label.large.pointSize
             color: selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
         }
 
         MaterialIcon {
             visible: root.closable
             text: "close"
-            font.pointSize: Config.appearance.font.label.large.size
+            font.pointSize: Tokens.font.label.large.pointSize
             color: selected ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurfaceVariant
 
             MouseArea {
