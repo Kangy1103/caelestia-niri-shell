@@ -14,6 +14,7 @@ QtObject {
     property string searchText
 
     property string selectedWallpaperCategory
+    property string selectedEthernetInterface
     property BluetoothDevice selectedBtDevice
 
     signal close

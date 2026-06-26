@@ -28,5 +28,10 @@ if(NOT DEFINED DISTRIBUTOR)
     set(DISTRIBUTOR "" CACHE STRING "Distribution vendor")
 endif()
 
+if(NOT INSTALL_QSCONFDIR)
+    set(INSTALL_QSCONFDIR "/etc/xdg/quickshell/caelestia-niri-shell" CACHE STRING "Quickshell config install dir")
+endif()
+install(PROGRAMS assets/wrap_term_launch.sh DESTINATION "${INSTALL_QSCONFDIR}/assets")
+
 add_subdirectory(plugin)
 add_subdirectory(extras)
