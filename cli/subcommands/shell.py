@@ -1,5 +1,5 @@
-import subprocess
 import os
+import subprocess
 from argparse import Namespace
 
 from cns.utils.paths import c_cache_dir
@@ -29,31 +29,47 @@ class Command:
     def _kill(self) -> None:
         subprocess.run(["/usr/bin/pkill", "-f", "qs -c"], check=False)
 
+    @staticmethod
+    def _start_env() -> dict:
+        env = os.environ.copy()
+        env["PIPEWIRE_DEBUG"] = "0"
+        return env
+
     def _start(self) -> None:
-        os.remove("/tmp/quickshell_screenshot.sock") if os.path.exists("/tmp/quickshell_screenshot.sock") else None
+        (
+            os.remove("/tmp/quickshell_screenshot.sock")
+            if os.path.exists("/tmp/quickshell_screenshot.sock")
+            else None
+        )
         args = ["qs", "-c", "caelestia-niri-shell"]
         if self.args.log_rules:
             args.extend(["--log-rules", self.args.log_rules])
-        env = os.environ.copy()
-        env["SPA_LOG_LEVEL"] = "2"
+        env = self._start_env()
         if not self.args.log_rules:
             args.extend(["--log-rules", "quickshell.dbus.properties=false"])
         if self.args.daemon:
             args.append("-d")
-            subprocess.run(args, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(
+                args, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
         else:
             args.append("-n")
-            shell = subprocess.Popen(args, stdout=subprocess.PIPE, universal_newlines=True)
+            shell = subprocess.Popen(
+                args, env=env, stdout=subprocess.PIPE, text=True
+            )
             if shell.stdout:
                 for line in shell.stdout:
                     if self.filter_log(line):
                         print(line, end="")
 
     def shell(self, *args: str) -> str:
-        return subprocess.check_output(["qs", "-c", "caelestia-niri-shell", *args], text=True)
+        return subprocess.check_output(
+            ["qs", "-c", "caelestia-niri-shell", *args], text=True, env=self._start_env()
+        )
 
     def filter_log(self, line: str) -> bool:
-        return f"Cannot open: file://{c_cache_dir}/imagecache/" not in line
+        return (f"Cannot open: file://{c_cache_dir}/imagecache/" not in line
+                and "spaVisitChoice: parse error" not in line)
 
     def print_ipc(self) -> None:
         print(self.shell("ipc", "show"), end="")

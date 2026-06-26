@@ -209,7 +209,7 @@ scheme: Scheme | None = None
 
 
 def read_colours_from_file(path: Path) -> dict[str, str]:
-    return {k.strip(): v.strip() for k, v in (line.split(" ") for line in path.read_text().splitlines() if line)}
+    return {k.strip(): v.strip() for k, v in (line.split(None, 1) for line in path.read_text().splitlines() if line)}
 
 
 def get_scheme_path() -> Path:

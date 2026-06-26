@@ -42,7 +42,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
     pw_loop_update_timer(pw_main_loop_get_loop(m_loop), m_timer, &timeout, &timeout, false);
 
     auto props = pw_properties_new(
-        PW_KEY_MEDIA_TYPE, "Audio", PW_KEY_MEDIA_CATEGORY, "Capture", PW_KEY_MEDIA_ROLE, "Music", nullptr);
+        PW_KEY_MEDIA_TYPE, "Audio", PW_KEY_MEDIA_CATEGORY, "Capture", PW_KEY_MEDIA_ROLE, "System", nullptr);
     pw_properties_set(props, PW_KEY_STREAM_CAPTURE_SINK, "true");
     pw_properties_setf(
         props, PW_KEY_NODE_LATENCY, "%u/%u", nextPowerOf2(512 * ac::SAMPLE_RATE / 48000), ac::SAMPLE_RATE);
@@ -74,7 +74,7 @@ PipeWireWorker::PipeWireWorker(std::stop_token token, AudioCollector* collector)
         self->processStream();
     };
 
-    m_stream = pw_stream_new_simple(pw_main_loop_get_loop(m_loop), "caelestia-shell", props, &events, this);
+    m_stream = pw_stream_new_simple(pw_main_loop_get_loop(m_loop), "caelestia-niri-shell", props, &events, this);
     if (!m_stream) {
         qCWarning(lcAcWorker) << "init: failed to create stream";
         pw_main_loop_destroy(m_loop);

@@ -334,6 +334,14 @@ def apply_qt(colours: dict[str, str], mode: str, icon_theme: str | None = None) 
 
 
 @log_exception
+def apply_dolphin(colours: dict[str, str], mode: str) -> None:
+    rendered = gen_replace(colours, templates_dir / f"dolphin{mode}.colors", hash=True)
+    schemes_dir = Path.home() / ".local/share/color-schemes"
+    schemes_dir.mkdir(parents=True, exist_ok=True)
+    write_file(schemes_dir / "cns.colors", rendered)
+
+
+@log_exception
 def apply_warp(colours: dict[str, str], mode: str) -> None:
     warp_mode = "darker" if mode == "dark" else "lighter"
 
@@ -376,6 +384,7 @@ def apply_chromium(colours: dict[str, str]) -> None:
         )
 
 
+@log_exception
 def apply_zed(colours: dict[str, str], mode: str) -> None:
     theme_path = config_dir / "zed/themes/cns.json"
     # Zed's file watcher does not detect changes through symlinks,
@@ -406,76 +415,70 @@ def apply_user_templates(colours: dict[str, str], mode: str) -> None:
 
 
 def apply_colours(colours: dict[str, str], mode: str) -> None:
-    # Use file-based lock to prevent concurrent theme changes
     lock_file = c_state_dir / "theme.lock"
     c_state_dir.mkdir(parents=True, exist_ok=True)
 
-    try:
-        with open(lock_file, "w") as lock_fd:
-            try:
-                fcntl.flock(lock_fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
-                return
-
-            try:
-                cfg = json.loads(user_config_path.read_text())["theme"]
-            except (FileNotFoundError, json.JSONDecodeError, KeyError):
-                cfg = {}
-
-            def check(key: str) -> bool:
-                return cfg[key] if key in cfg else True
-
-            if check("enableTerm"):
-                apply_terms(gen_sequences(colours))
-            if check("enableHypr"):
-                apply_hypr(gen_conf(colours))
-            if check("enableDiscord"):
-                apply_discord(gen_scss(colours))
-            if check("enableSpicetify"):
-                apply_spicetify(colours, mode)
-            if check("enablePandora"):
-                apply_pandora(colours, mode)
-            if check("enableFuzzel"):
-                apply_fuzzel(colours)
-            if check("enableBtop"):
-                apply_btop(colours)
-            if check("enableNvtop"):
-                apply_nvtop(colours)
-            if check("enableHtop"):
-                apply_htop(colours)
-            icon_theme = cfg.get(f"iconTheme{mode.capitalize()}") or cfg.get("iconTheme")
-            if check("enableGtk"):
-                apply_gtk(colours, mode, icon_theme)
-            if check("enableQt"):
-                apply_qt(colours, mode, icon_theme)
-            if check("enableWarp"):
-                apply_warp(colours, mode)
-            if check("enableChromium"):
-                apply_chromium(colours)
-            if check("enableZed"):
-                apply_zed(colours, mode)
-            if check("enableCava"):
-                apply_cava(colours)
-            apply_user_templates(colours, mode)
-
-            if post_hook := cfg.get("postHook"):
-                scheme = get_scheme()
-                subprocess.run(
-                    post_hook,
-                    shell=True,
-                    env={
-                        **os.environ,
-                        "SCHEME_NAME": scheme.name,
-                        "SCHEME_FLAVOUR": scheme.flavour,
-                        "SCHEME_MODE": scheme.mode,
-                        "SCHEME_VARIANT": scheme.variant,
-                        "SCHEME_COLOURS": json.dumps(scheme.colours),
-                    },
-                    stderr=subprocess.DEVNULL,
-                )
-
-    finally:
+    with open(lock_file, "w") as lock_fd:
         try:
-            lock_file.unlink()
-        except FileNotFoundError:
-            pass
+            fcntl.flock(lock_fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return
+
+        try:
+            cfg = json.loads(user_config_path.read_text())["theme"]
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            cfg = {}
+
+        def check(key: str) -> bool:
+            return cfg[key] if key in cfg else True
+
+        if check("enableTerm"):
+            apply_terms(gen_sequences(colours))
+        if check("enableHypr"):
+            apply_hypr(gen_conf(colours))
+        if check("enableDiscord"):
+            apply_discord(gen_scss(colours))
+        if check("enableSpicetify"):
+            apply_spicetify(colours, mode)
+        if check("enablePandora"):
+            apply_pandora(colours, mode)
+        if check("enableFuzzel"):
+            apply_fuzzel(colours)
+        if check("enableBtop"):
+            apply_btop(colours)
+        if check("enableNvtop"):
+            apply_nvtop(colours)
+        if check("enableHtop"):
+            apply_htop(colours)
+        icon_theme = cfg.get(f"iconTheme{mode.capitalize()}") or cfg.get("iconTheme")
+        if check("enableGtk"):
+            apply_gtk(colours, mode, icon_theme)
+        if check("enableQt"):
+            apply_qt(colours, mode, icon_theme)
+        if check("enableDolphin"):
+            apply_dolphin(colours, mode)
+        if check("enableWarp"):
+            apply_warp(colours, mode)
+        if check("enableChromium"):
+            apply_chromium(colours)
+        if check("enableZed"):
+            apply_zed(colours, mode)
+        if check("enableCava"):
+            apply_cava(colours)
+        apply_user_templates(colours, mode)
+
+        if post_hook := cfg.get("postHook"):
+            scheme = get_scheme()
+            subprocess.run(
+                post_hook,
+                shell=True,
+                env={
+                    **os.environ,
+                    "SCHEME_NAME": scheme.name,
+                    "SCHEME_FLAVOUR": scheme.flavour,
+                    "SCHEME_MODE": scheme.mode,
+                    "SCHEME_VARIANT": scheme.variant,
+                    "SCHEME_COLOURS": json.dumps(scheme.colours),
+                },
+                stderr=subprocess.DEVNULL,
+            )
