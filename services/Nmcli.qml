@@ -27,8 +27,11 @@ Singleton {
     property var pendingConnection: null
     property var wirelessDeviceDetails: null
     property var ethernetDeviceDetails: null
-    property list<var> ethernetDevices: []
-    readonly property var activeEthernet: ethernetDevices.find(d => d.connected) ?? null
+    property string ethernetDataUsage: ""
+    property string ethernetSpeed: ""
+    readonly property list<EthernetDevice> ethernetDevices: []
+    readonly property EthernetDevice activeEthernet: ethernetDevices.find(d => d.connected) ?? null
+    readonly property bool hasAvailableEthernet: ethernetDevices.some(d => d.state !== "unavailable")
     property list<var> activeProcesses: []
 
     readonly property alias connectionCheckTimer: connectionCheckTimer
@@ -214,31 +217,54 @@ Singleton {
     function getEthernetInterfaces(callback: var): void {
         executeCommand(["-t", "-f", root.deviceStatusFields, root.nmcliCommandDevice, "status"], result => {
             const interfaces = parseDeviceStatusOutput(result.output, root.deviceTypeEthernet);
-            const devices = [];
-
-            for (const iface of interfaces) {
-                const connected = isConnectedState(iface.state);
-
-                devices.push({
-                    iface: iface.device,
-                    type: iface.type,
-                    state: iface.state,
-                    connection: iface.connection,
-                    connected: connected,
-                    ipAddress: "",
-                    gateway: "",
-                    dns: [],
-                    subnet: "",
-                    macAddress: "",
-                    speed: ""
-                });
-            }
+            const devices = interfaces.map(iface => ({
+                        interface: iface.device,
+                        type: iface.type,
+                        state: iface.state,
+                        connection: iface.connection,
+                        connected: isConnectedState(iface.state),
+                        ipAddress: "",
+                        gateway: "",
+                        dns: [],
+                        subnet: "",
+                        macAddress: "",
+                        speed: ""
+                    }));
 
             root.ethernetInterfaces = interfaces;
-            root.ethernetDevices = devices;
+            syncEthernetDevices(devices);
             if (callback)
                 callback(interfaces);
         });
+    }
+
+    function syncEthernetDevices(devices: list<var>): void {
+        const rDevices = root.ethernetDevices;
+
+        const newMap = new Map();
+        for (const d of devices)
+            newMap.set(d.interface, d);
+
+        for (let i = rDevices.length - 1; i >= 0; i--) {
+            if (!newMap.has(rDevices[i].iface)) {
+                const removed = rDevices.splice(i, 1)[0];
+                removed.destroy();
+            }
+        }
+
+        const existingMap = new Map();
+        for (const rd of rDevices)
+            existingMap.set(rd.iface, rd);
+
+        for (const [iface, data] of newMap) {
+            const match = existingMap.get(iface);
+            if (match)
+                match.lastIpcObject = data;
+            else
+                rDevices.push(ethComp.createObject(root, {
+                    lastIpcObject: data
+                }));
+        }
     }
 
     function connectEthernet(connectionName: string, interfaceName: string, callback: var): void {
@@ -992,6 +1018,148 @@ Singleton {
         });
     }
 
+    function getIpv4Config(connectionName: string, callback: var): void {
+        if (!connectionName || connectionName.length === 0) {
+            if (callback)
+                callback(null);
+            return;
+        }
+
+        executeCommand(["-t", "-f", "ipv4.method,ipv4.addresses,ipv4.gateway,ipv4.dns,ipv4.ignore-auto-dns,connection.autoconnect", root.nmcliCommandConnection, "show", connectionName], result => {
+            if (!result.success) {
+                if (callback)
+                    callback(null);
+                return;
+            }
+
+            const cfg = {
+                method: "auto",
+                address: "",
+                gateway: "",
+                dns: "",
+                ignoreAutoDns: false,
+                autoconnect: true
+            };
+
+            const lines = result.output.trim().split("\n");
+            for (const line of lines) {
+                const idx = line.indexOf(":");
+                if (idx < 0)
+                    continue;
+                const key = line.slice(0, idx).trim();
+                const value = line.slice(idx + 1).trim();
+
+                if (key === "ipv4.ignore-auto-dns")
+                    cfg.ignoreAutoDns = value === "yes";
+                else if (key === "connection.autoconnect")
+                    cfg.autoconnect = value !== "no";
+
+                if (value === "" || value === "--")
+                    continue;
+
+                if (key === "ipv4.method")
+                    cfg.method = value;
+                else if (key === "ipv4.addresses")
+                    cfg.address = value.split(",")[0].trim();
+                else if (key === "ipv4.gateway")
+                    cfg.gateway = value;
+                else if (key === "ipv4.dns")
+                    cfg.dns = value.replace(/;\s*$/, "").split(/[;,]/).map(d => d.trim()).filter(d => d.length > 0).join(", ");
+            }
+
+            if (cfg.method === "auto" && cfg.ignoreAutoDns)
+                cfg.method = "auto-dns";
+
+            if (callback)
+                callback(cfg);
+        });
+    }
+
+    function setIpv4Config(connectionName: string, config: var, callback: var): void {
+        if (!connectionName || connectionName.length === 0) {
+            if (callback)
+                callback({
+                    success: false,
+                    output: "",
+                    error: "No connection specified",
+                    exitCode: -1
+                });
+            return;
+        }
+
+        const dnsList = (config.dns ?? "").split(",").map(d => d.trim()).filter(d => d.length > 0).join(" ");
+        let cmd = [root.nmcliCommandConnection, "modify", connectionName];
+
+        if (config.method === "manual") {
+            cmd.push("ipv4.method", "manual");
+            cmd.push("ipv4.addresses", config.address ?? "");
+            cmd.push("ipv4.gateway", config.gateway ?? "");
+            cmd.push("ipv4.dns", dnsList);
+            cmd.push("ipv4.ignore-auto-dns", "yes");
+        } else if (config.method === "auto-dns") {
+            cmd.push("ipv4.method", "auto");
+            cmd.push("ipv4.addresses", "");
+            cmd.push("ipv4.gateway", "");
+            cmd.push("ipv4.dns", dnsList);
+            cmd.push("ipv4.ignore-auto-dns", "yes");
+        } else {
+            cmd.push("ipv4.method", "auto");
+            cmd.push("ipv4.addresses", "");
+            cmd.push("ipv4.gateway", "");
+            cmd.push("ipv4.dns", "");
+            cmd.push("ipv4.ignore-auto-dns", "no");
+        }
+
+        executeCommand(cmd, result => {
+            if (!result.success) {
+                if (callback)
+                    callback(result);
+                return;
+            }
+            executeCommand([root.nmcliCommandConnection, "up", connectionName], upResult => {
+                Qt.callLater(() => {
+                    refreshOnConnectionChange();
+                });
+                if (callback)
+                    callback(upResult);
+            });
+        });
+    }
+
+    function getEthernetSpeed(interfaceName: string): void {
+        if (!interfaceName || interfaceName.length === 0) {
+            root.ethernetSpeed = "";
+            return;
+        }
+        speedProc.command = ["sh", "-c", `cat /sys/class/net/${interfaceName}/speed 2>/dev/null`];
+        speedProc.running = true;
+    }
+
+    function getEthernetDataUsage(interfaceName: string, callback: var): void {
+        if (!interfaceName || interfaceName.length === 0) {
+            if (callback)
+                callback("");
+            return;
+        }
+        dataUsageProc.iface = interfaceName;
+        dataUsageProc.cb = callback;
+        dataUsageProc.command = ["sh", "-c", `cat /sys/class/net/${interfaceName}/statistics/rx_bytes /sys/class/net/${interfaceName}/statistics/tx_bytes 2>/dev/null`];
+        dataUsageProc.running = true;
+    }
+
+    function formatBytes(bytes: var): string {
+        if (!bytes || bytes <= 0)
+            return "0 B";
+        const units = ["B", "KB", "MB", "GB", "TB"];
+        let i = 0;
+        let v = bytes;
+        while (v >= 1024 && i < units.length - 1) {
+            v /= 1024;
+            i++;
+        }
+        return `${v.toFixed(v < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
+    }
+
     function parseDeviceDetails(output: string, isEthernet: bool): var {
         const details = {
             ipAddress: "",
@@ -1121,6 +1289,12 @@ Singleton {
         id: apComp
 
         AccessPoint {}
+    }
+
+    Component {
+        id: ethComp
+
+        EthernetDevice {}
     }
 
     Timer {
@@ -1268,6 +1442,46 @@ Singleton {
     }
 
     Process {
+        id: dataUsageProc
+
+        property string iface
+        property var cb
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const nums = text.trim().split("\n").map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+                if (nums.length < 2) {
+                    if (dataUsageProc.cb)
+                        dataUsageProc.cb("");
+                    return;
+                }
+                const human = root.formatBytes(nums[0] + nums[1]);
+                root.ethernetDataUsage = human;
+                if (dataUsageProc.cb)
+                    dataUsageProc.cb(human);
+            }
+        }
+    }
+
+    Process {
+        id: speedProc
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const mbit = parseInt(text.trim(), 10);
+                if (isNaN(mbit) || mbit <= 0) {
+                    root.ethernetSpeed = "";
+                } else if (mbit >= 1000) {
+                    const gbps = mbit / 1000;
+                    root.ethernetSpeed = `${Number.isInteger(gbps) ? gbps : gbps.toFixed(1)} Gbps`;
+                } else {
+                    root.ethernetSpeed = `${mbit} Mbps`;
+                }
+            }
+        }
+    }
+
+    Process {
         id: rescanProc
 
         command: ["nmcli", "dev", root.nmcliCommandWifi, "list", "--rescan", "yes"]
@@ -1383,5 +1597,20 @@ Singleton {
         readonly property bool active: lastIpcObject.active
         readonly property string security: lastIpcObject.security
         readonly property bool isSecure: security.length > 0
+    }
+
+    component EthernetDevice: QtObject {
+        required property var lastIpcObject
+        readonly property string iface: lastIpcObject.interface
+        readonly property string type: lastIpcObject.type
+        readonly property string state: lastIpcObject.state
+        readonly property string connection: lastIpcObject.connection
+        readonly property bool connected: lastIpcObject.connected
+        readonly property string ipAddress: lastIpcObject.ipAddress ?? ""
+        readonly property string gateway: lastIpcObject.gateway ?? ""
+        readonly property var dns: lastIpcObject.dns ?? []
+        readonly property string subnet: lastIpcObject.subnet ?? ""
+        readonly property string macAddress: lastIpcObject.macAddress ?? ""
+        readonly property string speed: lastIpcObject.speed ?? ""
     }
 }
