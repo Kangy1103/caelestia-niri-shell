@@ -19,7 +19,7 @@ Item {
 
     required property ShellScreen screen
 
-    readonly property int sectionSpacing: Config.appearance.padding.medium
+    readonly property int sectionSpacing: Tokens.padding.medium
     readonly property int cellGap: 3
     readonly property int cellMinWidth: 210
     readonly property int cellMinHeight: 190
@@ -82,7 +82,7 @@ Item {
                 return { type: "workspace", wsIndex: dIdx, wsId: sec.modelData.id, wsName: sec.modelData.name || "" }
             var wsWindows = Niri.getWindowsByWorkspaceId(sec.modelData.id) || []
             if (wsWindows.length === 0) { dIdx++; continue }
-            var gridTop = headerHeight + Config.appearance.padding.medium
+            var gridTop = headerHeight + Tokens.padding.medium
             var cellY = localY - gridTop
             if (cellY < 0) cellY = 0
             var cellX = localX
@@ -123,7 +123,7 @@ Item {
             }
         } else {
             var target = -1, dIdx2 = 0
-            var cy = dragPos.y - Config.appearance.padding.large
+            var cy = dragPos.y - Tokens.padding.large
             for (var j = 0; j < children.length; j++) {
                 var sec2 = children[j]
                 if (!sec2 || sec2.modelData === undefined) continue
@@ -189,9 +189,9 @@ Item {
     Rectangle {
         id: dragPreview; visible: false; z: 100
         x: dragPos.x - width / 2; y: dragPos.y - height / 2
-        width: dragData?.type === "workspace" ? Math.min(root.width - Config.appearance.padding.medium * 2, root.contentWidth - Config.appearance.padding.medium) : cellMinWidth
+        width: dragData?.type === "workspace" ? Math.min(root.width - Tokens.padding.medium * 2, root.contentWidth - Tokens.padding.medium) : cellMinWidth
         height: dragData?.type === "workspace" ? headerHeight : cellMinHeight
-        radius: Config.appearance.rounding.small
+        radius: Tokens.rounding.small
         color: Colours.palette.m3primaryContainer; opacity: 0.8
         border.width: 1; border.color: Colours.palette.m3primary
         StyledText {
@@ -221,26 +221,26 @@ Item {
             const cols = mc - (isFinite(minC) ? minC : 0) + 1;
             const rows = mr - (isFinite(minR) ? minR : 0) + 1;
             const gridH = rows > 0 ? (rows * (cellMinHeight + cellGap)) - cellGap : 0;
-            const secH = headerHeight + gridH + (gridH > 0 ? Config.appearance.padding.small : cellMinHeight);
+            const secH = headerHeight + gridH + (gridH > 0 ? Tokens.padding.small : cellMinHeight);
             total += secH;
             if (i < ws.length - 1) total += sectionSpacing;
         }
-        return Math.max(total + Config.appearance.padding.large, 60);
+        return Math.max(total + Tokens.padding.large, 60);
     }
 
     clip: true
 
     StyledRect {
         anchors.fill: parent
-        radius: Config.appearance.rounding.large
+        radius: Tokens.rounding.large
         color: Colours.palette.m3surfaceContainerLow
     }
 
     Flickable {
         id: flickable
         anchors.fill: parent
-        anchors.topMargin: Config.appearance.padding.large
-        anchors.leftMargin: Config.appearance.padding.medium
+        anchors.topMargin: Tokens.padding.large
+        anchors.leftMargin: Tokens.padding.medium
         contentHeight: contentColumn.implicitHeight
         clip: true
 
@@ -291,9 +291,9 @@ Item {
                     readonly property string wsLabel: modelData.name || (index + 1).toString()
 
                     Layout.fillWidth: true
-                    Layout.topMargin: index === 0 ? Config.appearance.padding.extraSmall : 0
+                    Layout.topMargin: index === 0 ? Tokens.padding.extraSmall : 0
                     implicitWidth: parent.width
-                    implicitHeight: headerHeight + gridH + (gridH > 0 ? Config.appearance.padding.small : cellMinHeight)
+                    implicitHeight: headerHeight + gridH + (gridH > 0 ? Tokens.padding.small : cellMinHeight)
                     color: "transparent"
 
                     // Drop indicator bar (workspace reorder)
@@ -311,7 +311,7 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         height: wsSection.headerHeight
-                        radius: Config.appearance.rounding.small
+                        radius: Tokens.rounding.small
                         color: wsSection.isFocused ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHighest
                         border.width: headerMouse.containsMouse ? 1 : 0
                         border.color: wsSection.isFocused ? Colours.palette.m3primary : Colours.palette.m3outline
@@ -338,7 +338,7 @@ Item {
                     Item {
                         id: gridContainer
                         anchors.top: sectionHeader.bottom
-                        anchors.topMargin: Config.appearance.padding.medium
+                        anchors.topMargin: Tokens.padding.medium
                         anchors.left: parent.left
                         width: wsSection.gridW
                         height: wsSection.gridH
@@ -374,7 +374,7 @@ Item {
                                 y: (row - wsSection.gridMetrics.minRow) * (wsSection.cellH + cellGap)
                                 width: wsSection.cellW
                                 height: wsSection.cellH
-                                radius: Config.appearance.rounding.small
+                                radius: Tokens.rounding.small
                                 color: isFocused ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHighest
                                 border.width: isFocused ? 2 : 0
                                 border.color: Colours.palette.m3primary
@@ -427,7 +427,7 @@ Item {
                     StyledText {
                         visible: wsSection.windows.length === 0
                         anchors.top: sectionHeader.bottom
-                        anchors.topMargin: Config.appearance.padding.medium
+                        anchors.topMargin: Tokens.padding.medium
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: "empty"
                         font.pointSize: Config.appearance.font.label.small.size * 0.8
@@ -457,7 +457,7 @@ Item {
             StyledText {
                 visible: root.workspaces.length === 0
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Config.appearance.padding.large
+                Layout.topMargin: Tokens.padding.large
                 text: "No workspaces on this monitor"
                 font.pointSize: Config.appearance.font.label.small.size
                 color: Colours.palette.m3onSurfaceVariant

@@ -63,8 +63,8 @@ Loader {
                 id: clockLoader
                 active: Config.background.desktopClock.enabled && behindClock.isFocusedScreen
 
-                anchors.margins: Config.appearance.padding.largeIncreased * 2
-                anchors.leftMargin: Config.appearance.padding.largeIncreased * 2 + TokenConfig.sizes.bar.innerWidth + Math.max(Config.appearance.padding.small, Config.border.thickness)
+                anchors.margins: Tokens.padding.largeIncreased * 2
+                anchors.leftMargin: Tokens.padding.largeIncreased * 2 + TokenConfig.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness)
 
                 state: Config.background.desktopClock.position
                 states: [

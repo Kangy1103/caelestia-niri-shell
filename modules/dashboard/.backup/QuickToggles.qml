@@ -14,15 +14,15 @@ StyledRect {
 
     readonly property real iconFontSize: 32
 
-    implicitHeight: togglesRow.implicitHeight + Config.appearance.padding.medium * 2
-    implicitWidth: togglesRow.implicitWidth + Config.appearance.padding.medium * 2
-    radius: Config.appearance.rounding.large
+    implicitHeight: togglesRow.implicitHeight + Tokens.padding.medium * 2
+    implicitWidth: togglesRow.implicitWidth + Tokens.padding.medium * 2
+    radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
 
     RowLayout {
         id: togglesRow
         anchors.centerIn: parent
-        spacing: Config.appearance.spacing.largeIncreased
+        spacing: Tokens.spacing.largeIncreased
 
         Toggle {
             icon: "wifi"

@@ -68,7 +68,7 @@ Item {
 
             Row {
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.extraExtraLarge
+                spacing: Tokens.spacing.extraExtraLarge
 
                 MaterialIcon {
                     text: "sentiment_stressed"
@@ -78,7 +78,7 @@ Item {
 
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: Config.appearance.spacing.small
+                    spacing: Tokens.spacing.small
 
                     StyledText {
                         text: qsTr("Wallpaper missing?")
@@ -88,10 +88,10 @@ Item {
                     }
 
                     StyledRect {
-                        implicitWidth: selectWallText.implicitWidth + Config.appearance.padding.largeIncreased * 2
-                        implicitHeight: selectWallText.implicitHeight + Config.appearance.padding.extraSmall * 2
+                        implicitWidth: selectWallText.implicitWidth + Tokens.padding.largeIncreased * 2
+                        implicitHeight: selectWallText.implicitHeight + Tokens.padding.extraSmall * 2
 
-                        radius: Config.appearance.rounding.full
+                        radius: Tokens.rounding.full
                         color: Colours.palette.m3primary
 
                         FileDialog {

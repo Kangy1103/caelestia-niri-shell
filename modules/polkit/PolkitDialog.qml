@@ -81,9 +81,9 @@ Variants {
 
                 // Width governed by notification panel width × 1.6 for readability
                 implicitWidth: Math.min(480, win.screen?.width ?? 480)
-                implicitHeight: cardLayout.implicitHeight + Config.appearance.padding.largeIncreased * 2
+                implicitHeight: cardLayout.implicitHeight + Tokens.padding.largeIncreased * 2
 
-                radius: Config.appearance.rounding.large
+                radius: Tokens.rounding.large
                 color: Colours.tPalette.m3surfaceContainer
 
                 // ── Keyboard handling ──────────────────────────────────────
@@ -99,18 +99,18 @@ Variants {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    anchors.margins: Config.appearance.padding.largeIncreased
+                    anchors.margins: Tokens.padding.largeIncreased
 
-                    spacing: Config.appearance.spacing.medium
+                    spacing: Tokens.spacing.medium
 
                     // Header — icon + title
                     RowLayout {
-                        spacing: Config.appearance.spacing.medium
+                        spacing: Tokens.spacing.medium
 
                         StyledRect {
-                            implicitWidth: headerIcon.font.pointSize + Config.appearance.padding.medium * 2
+                            implicitWidth: headerIcon.font.pointSize + Tokens.padding.medium * 2
                             implicitHeight: implicitWidth
-                            radius: Config.appearance.rounding.full
+                            radius: Tokens.rounding.full
                             color: Colours.palette.m3secondaryContainer
 
                             MaterialIcon {
@@ -150,8 +150,8 @@ Variants {
                         Layout.fillWidth: true
 
                         sourceComponent: StyledRect {
-                            implicitHeight: msgText.implicitHeight + Config.appearance.padding.small * 2
-                            radius: Config.appearance.rounding.small
+                            implicitHeight: msgText.implicitHeight + Tokens.padding.small * 2
+                            radius: Tokens.rounding.small
                             color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
 
                             StyledText {
@@ -159,7 +159,7 @@ Variants {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.right: parent.right
-                                anchors.margins: Config.appearance.padding.small
+                                anchors.margins: Tokens.padding.small
 
                                 text: PolkitService.cleanMessage
                                 font.pointSize: Config.appearance.font.body.small.size
@@ -186,10 +186,10 @@ Variants {
                             id: inputBar
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            implicitHeight: inputRow.implicitHeight + Config.appearance.padding.small * 2
+                            implicitHeight: inputRow.implicitHeight + Tokens.padding.small * 2
 
                             color: Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.75)
-                            radius: Config.appearance.rounding.full
+                            radius: Tokens.rounding.full
                             border.width: inputField.hasFocus ? 2 : 0
                             border.color: PolkitService.submitting
                                 ? Colours.palette.m3secondary
@@ -201,13 +201,13 @@ Variants {
                                 id: inputRow
 
                                 anchors.fill: parent
-                                anchors.margins: Config.appearance.padding.small
-                                spacing: Config.appearance.spacing.medium
+                                anchors.margins: Tokens.padding.small
+                                spacing: Tokens.spacing.medium
 
                                 // State icon / busy indicator
                                 Item {
                                     implicitWidth: implicitHeight
-                                    implicitHeight: stateIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
+                                    implicitHeight: stateIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
                                     MaterialIcon {
                                         id: stateIcon
@@ -266,12 +266,12 @@ opacity: PolkitService.submitting ? 0 : 1
                                 // Submit arrow button
                                 StyledRect {
                                     implicitWidth: implicitHeight
-                                    implicitHeight: submitIcon.implicitHeight + Config.appearance.padding.small * 2
+                                    implicitHeight: submitIcon.implicitHeight + Tokens.padding.small * 2
 
                                     color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                         ? Colours.palette.m3primary
                                         : Qt.alpha(Colours.palette.m3surfaceContainerHigh, 0.8)
-                                    radius: Config.appearance.rounding.full
+                                    radius: Tokens.rounding.full
 
                                     CAnim { properties: "color" }
 
@@ -279,7 +279,7 @@ opacity: PolkitService.submitting ? 0 : 1
                                         color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                             ? Colours.palette.m3onPrimary
                                             : Colours.palette.m3onSurface
-                                        radius: Config.appearance.rounding.full
+                                        radius: Tokens.rounding.full
 
                                         onClicked: {
                                             dialogContent.trySubmit();
@@ -326,18 +326,18 @@ CAnim { properties: "color" }
                     // ── Action buttons ─────────────────────────────────────
                     RowLayout {
                         Layout.alignment: Qt.AlignRight
-                        spacing: Config.appearance.spacing.medium
+                        spacing: Tokens.spacing.medium
 
                         // Cancel button
                         StyledRect {
-                            implicitWidth: cancelText.implicitWidth + Config.appearance.padding.large * 2
-                            implicitHeight: cancelText.implicitHeight + Config.appearance.padding.small * 2
+                            implicitWidth: cancelText.implicitWidth + Tokens.padding.large * 2
+                            implicitHeight: cancelText.implicitHeight + Tokens.padding.small * 2
 
-                            radius: Config.appearance.rounding.full
+                            radius: Tokens.rounding.full
                             color: Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
 
                             StateLayer {
-                                radius: Config.appearance.rounding.full
+                                radius: Tokens.rounding.full
                                 color: Colours.palette.m3onSurface
 
                                 onClicked: {
@@ -357,10 +357,10 @@ CAnim { properties: "color" }
 
                         // Authenticate button
                         StyledRect {
-                            implicitWidth: authenticateText.implicitWidth + Config.appearance.padding.large * 2
-                            implicitHeight: authenticateText.implicitHeight + Config.appearance.padding.small * 2
+                            implicitWidth: authenticateText.implicitWidth + Tokens.padding.large * 2
+                            implicitHeight: authenticateText.implicitHeight + Tokens.padding.small * 2
 
-                            radius: Config.appearance.rounding.full
+                            radius: Tokens.rounding.full
                             color: inputField.text.length > 0 && PolkitService.interactionAvailable
                                 ? Colours.palette.m3primary
                                 : Qt.alpha(Colours.palette.m3primary, 0.4)
@@ -368,7 +368,7 @@ CAnim { properties: "color" }
                             CAnim { properties: "color" }
 
                             StateLayer {
-                                radius: Config.appearance.rounding.full
+                                radius: Tokens.rounding.full
                                 color: Colours.palette.m3onPrimary
                                 enabled: inputField.text.length > 0 && PolkitService.interactionAvailable
 

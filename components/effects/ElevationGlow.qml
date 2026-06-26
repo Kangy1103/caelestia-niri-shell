@@ -11,7 +11,7 @@ RectangularShadow {
     blur: (dp * 5) ** 0.7
     spread: -dp * 0.3 + (dp * 0.1) ** 2
     // offset.y: dp / 2
-    radius: Config.appearance.rounding.small
+    radius: Tokens.rounding.small
 
     Behavior on dp {
         NumberAnimation {

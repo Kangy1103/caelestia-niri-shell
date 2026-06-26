@@ -16,7 +16,7 @@ StyledRect {
     function onClicked(): void {
     }
 
-    radius: Config.appearance.rounding.large
+    radius: Tokens.rounding.large
     implicitWidth: root.implicitSize
     implicitHeight: root.implicitSize
 

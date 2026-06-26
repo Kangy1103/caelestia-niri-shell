@@ -18,7 +18,7 @@ ColumnLayout {
         kb.refresh();
     }
 
-    spacing: Config.appearance.spacing.small
+    spacing: Tokens.spacing.small
     width: TokenConfig.sizes.bar.kbLayoutWidth
 
     Component.onCompleted: kb.start()
@@ -28,8 +28,8 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Config.appearance.padding.medium
-        Layout.rightMargin: Config.appearance.padding.extraSmall
+        Layout.topMargin: Tokens.padding.medium
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Keyboard Layouts")
     }
 
@@ -39,14 +39,14 @@ ColumnLayout {
         model: kb.visibleModel
 
         Layout.fillWidth: true
-        Layout.rightMargin: Config.appearance.padding.extraSmall
-        Layout.topMargin: Config.appearance.spacing.small
+        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: Tokens.spacing.small
 
         clip: true
         interactive: true
         implicitHeight: Math.min(contentHeight, 320)
         visible: kb.visibleModel.count > 0
-        spacing: Config.appearance.spacing.small
+        spacing: Tokens.spacing.small
 
         add: Transition {
             NumberAnimation {
@@ -91,7 +91,7 @@ ColumnLayout {
             readonly property bool isDisabled: layoutIndex > 3
 
             width: list.width
-            height: Math.max(36, rowText.implicitHeight + Config.appearance.padding.small)
+            height: Math.max(36, rowText.implicitHeight + Tokens.padding.small)
 
             StyledText {
                 id: rowText
@@ -99,8 +99,8 @@ ColumnLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Config.appearance.padding.extraSmall
-                anchors.rightMargin: Config.appearance.padding.extraSmall
+                anchors.leftMargin: Tokens.padding.extraSmall
+                anchors.rightMargin: Tokens.padding.extraSmall
                 text: kbDelegate.label
                 elide: Text.ElideRight
                 opacity: kbDelegate.isDisabled ? 0.4 : 1.0
@@ -111,8 +111,8 @@ ColumnLayout {
     Rectangle {
         visible: kb.activeLabel.length > 0
         Layout.fillWidth: true
-        Layout.rightMargin: Config.appearance.padding.extraSmall
-        Layout.topMargin: Config.appearance.spacing.small
+        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: Tokens.spacing.small
 
         implicitHeight: 1
         color: Colours.palette.m3onSurfaceVariant
@@ -124,9 +124,9 @@ ColumnLayout {
 
         visible: kb.activeLabel.length > 0
         Layout.fillWidth: true
-        Layout.rightMargin: Config.appearance.padding.extraSmall
-        Layout.topMargin: Config.appearance.spacing.small
-        spacing: Config.appearance.spacing.small
+        Layout.rightMargin: Tokens.padding.extraSmall
+        Layout.topMargin: Tokens.spacing.small
+        spacing: Tokens.spacing.small
 
         opacity: 1
         scale: 1
@@ -194,10 +194,10 @@ ColumnLayout {
 
     IconTextButton {
         Layout.fillWidth: true
-        Layout.topMargin: Config.appearance.spacing.medium
+        Layout.topMargin: Tokens.spacing.medium
         inactiveColour: Colours.palette.m3primaryContainer
         inactiveOnColour: Colours.palette.m3onPrimaryContainer
-        verticalPadding: Config.appearance.padding.extraSmall
+        verticalPadding: Tokens.padding.extraSmall
         text: qsTr("Next Layout")
         icon: "arrow_forward"
 

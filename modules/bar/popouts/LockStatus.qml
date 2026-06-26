@@ -8,7 +8,7 @@ import qs.components
 import qs.services
 
 ColumnLayout {
-    spacing: Config.appearance.spacing.small
+    spacing: Tokens.spacing.small
 
     StyledText {
         text: qsTr("Capslock: %1").arg(Niri.capsLock ? "Enabled" : "Disabled")

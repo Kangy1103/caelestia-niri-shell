@@ -11,8 +11,8 @@ import QtQuick
 Item {
     id: root
 
-    implicitWidth: icon.implicitHeight + Config.appearance.padding.extraSmall * 2 + 8
-    implicitHeight: icon.implicitHeight + Config.appearance.padding.extraSmall * 2
+    implicitWidth: icon.implicitHeight + Tokens.padding.extraSmall * 2 + 8
+    implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
 
     property string stasisState: "idle_waiting"
     property string stasisTooltip: "Stasis: waiting"
@@ -51,7 +51,7 @@ Item {
     StyledRect {
         id: bg
         anchors.fill: parent
-        radius: Config.appearance.rounding.full
+        radius: Tokens.rounding.full
         color: root.stasisState !== "idle_waiting"
             ? Qt.alpha(Colours.palette.m3primaryContainer, 1)
             : "transparent"

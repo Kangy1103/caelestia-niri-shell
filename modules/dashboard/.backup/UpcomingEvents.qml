@@ -11,19 +11,19 @@ StyledRect {
 
     readonly property var upcomingEvents: CalEvents.upcoming(3)
 
-    implicitHeight: eventsLayout.implicitHeight + Config.appearance.padding.medium * 2
-    implicitWidth: eventsLayout.implicitWidth + Config.appearance.padding.medium * 2
-    radius: Config.appearance.rounding.large
+    implicitHeight: eventsLayout.implicitHeight + Tokens.padding.medium * 2
+    implicitWidth: eventsLayout.implicitWidth + Tokens.padding.medium * 2
+    radius: Tokens.rounding.large
     color: Colours.tPalette.m3surfaceContainer
 
     ColumnLayout {
         id: eventsLayout
         anchors.fill: parent
-        anchors.margins: Config.appearance.padding.medium
-        spacing: Config.appearance.spacing.extraSmall
+        anchors.margins: Tokens.padding.medium
+        spacing: Tokens.spacing.extraSmall
 
         StyledText {
-            Layout.leftMargin: Config.appearance.padding.extraSmall
+            Layout.leftMargin: Tokens.padding.extraSmall
             text: "Upcoming"
             color: Colours.palette.m3onSurfaceVariant
             font.pointSize: Config.appearance.font.body.small.size
@@ -36,7 +36,7 @@ StyledRect {
             delegate: RowLayout {
                 required property var modelData
                 Layout.fillWidth: true
-                spacing: Config.appearance.spacing.small
+                spacing: Tokens.spacing.small
 
                 Rectangle {
                     Layout.preferredWidth: 3

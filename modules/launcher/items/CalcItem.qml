@@ -23,7 +23,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Config.appearance.rounding.full
+        radius: Tokens.rounding.full
 
         onClicked: {
             root.onClicked();
@@ -34,9 +34,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Config.appearance.padding.large
+        anchors.margins: Tokens.padding.large
 
-        spacing: Config.appearance.spacing.large
+        spacing: Tokens.spacing.large
 
         MaterialIcon {
             text: "function"
@@ -64,11 +64,11 @@ Layout.alignment: Qt.AlignVCenter
 
         StyledRect {
             color: Colours.palette.m3tertiary
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
             clip: true
 
-            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Config.appearance.padding.medium * 2
-            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Config.appearance.padding.extraSmall * 2
+            implicitWidth: (stateLayer.containsMouse ? label.implicitWidth + label.anchors.rightMargin : 0) + icon.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: Math.max(label.implicitHeight, icon.implicitHeight) + Tokens.padding.extraSmall * 2
 
             Layout.alignment: Qt.AlignVCenter
 
@@ -88,7 +88,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: icon.left
-                anchors.rightMargin: Config.appearance.spacing.small
+                anchors.rightMargin: Tokens.spacing.small
 
                 text: qsTr("Open in calculator")
                 color: Colours.palette.m3onTertiary
@@ -106,7 +106,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Config.appearance.padding.medium
+                anchors.rightMargin: Tokens.padding.medium
 
                 text: "open_in_new"
                 color: Colours.palette.m3onTertiary

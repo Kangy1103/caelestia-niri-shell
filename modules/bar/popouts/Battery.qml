@@ -13,7 +13,7 @@ import qs.services
 Column {
     id: root
 
-    spacing: Config.appearance.spacing.medium
+    spacing: Tokens.spacing.medium
     width: TokenConfig.sizes.bar.batteryWidth
 
     StyledText {
@@ -49,11 +49,11 @@ Column {
         height: active ? ((item as Item)?.implicitHeight ?? 0) : 0
 
         sourceComponent: StyledRect {
-            implicitWidth: child.implicitWidth + Config.appearance.padding.medium * 2
-            implicitHeight: child.implicitHeight + Config.appearance.padding.large
+            implicitWidth: child.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: child.implicitHeight + Tokens.padding.large
 
             color: Colours.palette.m3error
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
 
             Column {
                 id: child
@@ -62,7 +62,7 @@ Column {
 
                 Row {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: Config.appearance.spacing.small
+                    spacing: Tokens.spacing.small
 
                     MaterialIcon {
                         anchors.verticalCenter: parent.verticalCenter
@@ -112,17 +112,17 @@ Column {
 
         anchors.horizontalCenter: parent.horizontalCenter
 
-        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Config.appearance.padding.medium * 2 + Config.appearance.spacing.largeIncreased * 2
-        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Config.appearance.padding.small
+        implicitWidth: saver.implicitHeight + balance.implicitHeight + perf.implicitHeight + Tokens.padding.medium * 2 + Tokens.spacing.largeIncreased * 2
+        implicitHeight: Math.max(saver.implicitHeight, balance.implicitHeight, perf.implicitHeight) + Tokens.padding.small
 
         color: Colours.tPalette.m3surfaceContainer
-        radius: Config.appearance.rounding.full
+        radius: Tokens.rounding.full
 
         StyledRect {
             id: indicator
 
             color: Colours.palette.m3primary
-            radius: Config.appearance.rounding.full
+            radius: Tokens.rounding.full
             state: profiles.current
 
             states: [
@@ -159,7 +159,7 @@ Column {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: Config.appearance.padding.extraSmall
+            anchors.leftMargin: Tokens.padding.extraSmall
 
             profile: PowerProfile.PowerSaver
             icon: "energy_savings_leaf"
@@ -179,7 +179,7 @@ Column {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: Config.appearance.padding.extraSmall
+            anchors.rightMargin: Tokens.padding.extraSmall
 
             profile: PowerProfile.Performance
             icon: "rocket_launch"
@@ -200,11 +200,11 @@ Column {
         required property string icon
         required property int profile
 
-        implicitWidth: icon.implicitHeight + Config.appearance.padding.small
-        implicitHeight: icon.implicitHeight + Config.appearance.padding.small
+        implicitWidth: icon.implicitHeight + Tokens.padding.small
+        implicitHeight: icon.implicitHeight + Tokens.padding.small
 
         StateLayer {
-            radius: Config.appearance.rounding.full
+            radius: Tokens.rounding.full
             color: profiles.current === parent.icon ? Colours.palette.m3onPrimary : Colours.palette.m3onSurface
             onClicked: PowerProfiles.profile = parent.profile
         }

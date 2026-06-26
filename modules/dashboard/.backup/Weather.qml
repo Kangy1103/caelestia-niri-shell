@@ -9,8 +9,8 @@ Item {
 
     anchors.centerIn: parent
 
-    implicitWidth: content.implicitWidth + Config.appearance.padding.large * 2
-    implicitHeight: content.implicitHeight + Config.appearance.padding.medium * 2
+    implicitWidth: content.implicitWidth + Tokens.padding.large * 2
+    implicitHeight: content.implicitHeight + Tokens.padding.medium * 2
 
     Component.onCompleted: Weather.reload()
 
@@ -27,11 +27,11 @@ Item {
     Row {
         id: content
         anchors.centerIn: parent
-        spacing: Config.appearance.spacing.extraExtraLarge
+        spacing: Tokens.spacing.extraExtraLarge
 
         Column {
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Config.appearance.spacing.extraSmall
+            spacing: Tokens.spacing.extraSmall
 
             MaterialIcon {
                 id: icon
@@ -58,7 +58,7 @@ Item {
             id: info
 
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Config.appearance.spacing.extraSmall
+            spacing: Tokens.spacing.extraSmall
 
             // Temperature
             StyledText {
@@ -91,7 +91,7 @@ Item {
                 font.weight: 400
                 opacity: 0.7
                 elide: Text.ElideRight
-                width: Math.min(implicitWidth, root.parent ? root.parent.width - icon.implicitWidth - content.spacing - Config.appearance.padding.largeIncreased * 2 : implicitWidth)
+                width: Math.min(implicitWidth, root.parent ? root.parent.width - icon.implicitWidth - content.spacing - Tokens.padding.largeIncreased * 2 : implicitWidth)
             }
         }
     }

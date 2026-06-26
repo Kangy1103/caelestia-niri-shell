@@ -10,9 +10,9 @@ Rectangle {
     id: root
 
     readonly property int contextWidth: Config.bar.workspaces.windowContextWidth
-    readonly property int baseRadius: Config.appearance.rounding.large
-    readonly property int hPadding: Config.appearance.padding.extraSmall
-    readonly property int sideMargin: Config.appearance.padding.largeIncreased
+    readonly property int baseRadius: Tokens.rounding.large
+    readonly property int hPadding: Tokens.padding.extraSmall
+    readonly property int sideMargin: Tokens.padding.largeIncreased
     readonly property int textWidth: contextWidth - hPadding * 2
 
     required property var windows
@@ -109,7 +109,7 @@ Rectangle {
             }
         }
 
-        radius: Config.appearance.rounding.small / 2
+        radius: Tokens.rounding.small / 2
 
         // anchors.left: parent.left
         Layout.leftMargin: root.hPadding * 2
@@ -131,7 +131,7 @@ Rectangle {
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: Config.appearance.padding.extraSmall
+            anchors.leftMargin: Tokens.padding.extraSmall
             Layout.alignment: Qt.AlignVCenter
 
             Rectangle {
@@ -175,7 +175,7 @@ Rectangle {
                 }
 
                 Rectangle {
-                    implicitWidth: classText.width + Config.appearance.padding.extraSmall * 2
+                    implicitWidth: classText.width + Tokens.padding.extraSmall * 2
                     implicitHeight: classText.height
                     color: multiWindowContent.itemIsFocused ? Colours.palette.m3tertiary : "transparent"
 

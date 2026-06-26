@@ -291,7 +291,7 @@ MouseArea {
         StyledRect {
             x: crosshair.width / 2 + 8
             y: crosshair.height / 2 + 8
-            radius: Config.appearance.rounding.full
+            radius: Tokens.rounding.full
             color: {
                 switch (root.loader.mode) {
                 case "ocr": return Colours.palette.m3tertiaryContainer;
@@ -300,13 +300,13 @@ MouseArea {
                 }
             }
 
-            implicitWidth: badgeRow.implicitWidth + Config.appearance.padding.medium * 2
-            implicitHeight: badgeRow.implicitHeight + Config.appearance.padding.extraSmall * 2
+            implicitWidth: badgeRow.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: badgeRow.implicitHeight + Tokens.padding.extraSmall * 2
 
             Row {
                 id: badgeRow
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.extraSmall
+                spacing: Tokens.spacing.extraSmall
 
                 MaterialIcon {
                     anchors.verticalCenter: parent.verticalCenter

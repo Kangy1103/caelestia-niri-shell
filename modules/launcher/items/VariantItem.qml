@@ -15,7 +15,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Config.appearance.rounding.small
+        radius: Tokens.rounding.small
 
         onClicked: {
             root.modelData?.onClicked(root.list);
@@ -24,9 +24,9 @@ Item {
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Config.appearance.padding.large
-        anchors.rightMargin: Config.appearance.padding.large
-        anchors.margins: Config.appearance.padding.small
+        anchors.leftMargin: Tokens.padding.large
+        anchors.rightMargin: Tokens.padding.large
+        anchors.margins: Tokens.padding.small
 
         MaterialIcon {
             id: icon
@@ -38,10 +38,10 @@ anchors.verticalCenter: parent.verticalCenter
 
         Column {
             anchors.left: icon.right
-            anchors.leftMargin: Config.appearance.spacing.largeIncreased
+            anchors.leftMargin: Tokens.spacing.largeIncreased
             anchors.verticalCenter: icon.verticalCenter
 
-            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Config.appearance.spacing.large : 0)
+            width: parent.width - icon.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.large : 0)
             spacing: 0
 
             StyledText {

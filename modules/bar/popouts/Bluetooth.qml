@@ -20,11 +20,11 @@ ColumnLayout {
     required property PopoutState popouts
 
     width: 300
-    spacing: Config.appearance.spacing.small
+    spacing: Tokens.spacing.small
 
     StyledText {
-        Layout.topMargin: Config.appearance.padding.medium
-        Layout.rightMargin: Config.appearance.padding.extraSmall
+        Layout.topMargin: Tokens.padding.medium
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: qsTr("Bluetooth")
         font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
     }
@@ -50,8 +50,8 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.topMargin: Config.appearance.spacing.small
-        Layout.rightMargin: Config.appearance.padding.extraSmall
+        Layout.topMargin: Tokens.spacing.small
+        Layout.rightMargin: Tokens.padding.extraSmall
         text: {
             const devices = Bluetooth.devices.values; // qmllint disable unresolved-type
             let available = qsTr("%1 device%2 available").arg(devices.length).arg(devices.length === 1 ? "" : "s");
@@ -76,8 +76,8 @@ ColumnLayout {
             readonly property bool loading: modelData.state === BluetoothDeviceState.Connecting || modelData.state === BluetoothDeviceState.Disconnecting // qmllint disable unresolved-type
 
             Layout.fillWidth: true
-            Layout.rightMargin: Config.appearance.padding.extraSmall
-            spacing: Config.appearance.spacing.small
+            Layout.rightMargin: Tokens.padding.extraSmall
+            spacing: Tokens.spacing.small
 
             opacity: 0
             scale: 0.7
@@ -102,8 +102,8 @@ ColumnLayout {
             }
 
             StyledText {
-                Layout.leftMargin: Config.appearance.spacing.extraSmall
-                Layout.rightMargin: Config.appearance.spacing.extraSmall
+                Layout.leftMargin: Tokens.spacing.extraSmall
+                Layout.rightMargin: Tokens.spacing.extraSmall
                 Layout.fillWidth: true
                 text: device.modelData.name
                 elide: Text.ElideRight
@@ -119,9 +119,9 @@ ColumnLayout {
                 id: connectBtn
 
                 implicitWidth: implicitHeight
-                implicitHeight: connectIcon.implicitHeight + Config.appearance.padding.extraSmall
+                implicitHeight: connectIcon.implicitHeight + Tokens.padding.extraSmall
 
-                radius: Config.appearance.rounding.full
+                radius: Tokens.rounding.full
                 color: Qt.alpha(Colours.palette.m3primary, device.modelData.state === BluetoothDeviceState.Connected ? 1 : 0) // qmllint disable unresolved-type
 
                 CircularIndicator {
@@ -162,7 +162,7 @@ ColumnLayout {
                     implicitHeight: connectBtn.implicitHeight
 
                     StateLayer {
-                        radius: Config.appearance.rounding.full
+                        radius: Tokens.rounding.full
                         onClicked: device.modelData.forget()
                     }
 
@@ -177,10 +177,10 @@ ColumnLayout {
 
     IconTextButton {
         Layout.fillWidth: true
-        Layout.topMargin: Config.appearance.spacing.medium
+        Layout.topMargin: Tokens.spacing.medium
         inactiveColour: Colours.palette.m3primaryContainer
         inactiveOnColour: Colours.palette.m3onPrimaryContainer
-        verticalPadding: Config.appearance.padding.extraSmall
+        verticalPadding: Tokens.padding.extraSmall
         text: qsTr("Open settings")
         icon: "settings"
 
@@ -193,8 +193,8 @@ ColumnLayout {
         property alias toggle: toggle
 
         Layout.fillWidth: true
-        Layout.rightMargin: Config.appearance.padding.extraSmall
-        spacing: Config.appearance.spacing.medium
+        Layout.rightMargin: Tokens.padding.extraSmall
+        spacing: Tokens.spacing.medium
 
         StyledText {
             Layout.fillWidth: true

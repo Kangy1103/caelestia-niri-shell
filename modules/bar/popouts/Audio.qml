@@ -18,8 +18,8 @@ Item {
 
     required property PopoutState popouts
 
-    implicitWidth: layout.implicitWidth + Config.appearance.padding.medium * 2
-    implicitHeight: layout.implicitHeight + Config.appearance.padding.medium * 2
+    implicitWidth: layout.implicitWidth + Tokens.padding.medium * 2
+    implicitHeight: layout.implicitHeight + Tokens.padding.medium * 2
 
     ButtonGroup {
         id: sinks
@@ -34,7 +34,7 @@ Item {
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Config.appearance.spacing.medium
+        spacing: Tokens.spacing.medium
 
         StyledText {
             text: qsTr("Output device")
@@ -57,7 +57,7 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Config.appearance.spacing.medium
+            Layout.topMargin: Tokens.spacing.medium
             text: qsTr("Input device")
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
@@ -76,14 +76,14 @@ Item {
         }
 
         StyledText {
-            Layout.topMargin: Config.appearance.spacing.medium
+            Layout.topMargin: Tokens.spacing.medium
             text: qsTr("Volume (%1)").arg(Audio.muted ? qsTr("Muted") : `${Math.round(Audio.volume * 100)}%`)
             font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
         }
 
         CustomMouseArea {
             Layout.fillWidth: true
-            implicitHeight: Config.appearance.padding.medium * 3
+            implicitHeight: Tokens.padding.medium * 3
 
             onWheel: event => {
                 if (event.angleDelta.y > 0)
@@ -104,10 +104,10 @@ Item {
 
         IconTextButton {
             Layout.fillWidth: true
-            Layout.topMargin: Config.appearance.spacing.medium
+            Layout.topMargin: Tokens.spacing.medium
             inactiveColour: Colours.palette.m3primaryContainer
             inactiveOnColour: Colours.palette.m3onPrimaryContainer
-            verticalPadding: Config.appearance.padding.extraSmall
+            verticalPadding: Tokens.padding.extraSmall
             text: qsTr("Open settings")
             icon: "settings"
 

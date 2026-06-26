@@ -15,7 +15,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Config.appearance.rounding.small
+        radius: Tokens.rounding.small
 
         onClicked: {
             root.modelData?.onClicked(root.list);
@@ -24,9 +24,9 @@ Item {
 
     Item {
         anchors.fill: parent
-        anchors.leftMargin: Config.appearance.padding.large
-        anchors.rightMargin: Config.appearance.padding.large
-        anchors.margins: Config.appearance.padding.small
+        anchors.leftMargin: Tokens.padding.large
+        anchors.rightMargin: Tokens.padding.large
+        anchors.margins: Tokens.padding.small
 
         StyledRect {
             id: preview
@@ -37,7 +37,7 @@ Item {
             border.color: Qt.alpha(`#${root.modelData?.colours?.outline}`, 0.5)
 
             color: `#${root.modelData?.colours?.surface}`
-            radius: Config.appearance.rounding.small
+            radius: Tokens.rounding.small
             implicitWidth: parent.height * 0.8
             implicitHeight: parent.height * 0.8
 
@@ -56,17 +56,17 @@ Item {
 
                     implicitWidth: preview.implicitWidth
                     color: `#${root.modelData?.colours?.primary}`
-                    radius: Config.appearance.rounding.small
+                    radius: Tokens.rounding.small
                 }
             }
         }
 
         Column {
             anchors.left: preview.right
-            anchors.leftMargin: Config.appearance.spacing.large
+            anchors.leftMargin: Tokens.spacing.large
             anchors.verticalCenter: parent.verticalCenter
 
-            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Config.appearance.spacing.large : 0)
+            width: parent.width - preview.width - anchors.leftMargin - (current.active ? current.width + Tokens.spacing.large : 0)
             spacing: 0
 
             StyledText {

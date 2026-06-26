@@ -26,11 +26,11 @@ Item {
         opacity = Qt.binding(() => PathView.onPath ? 1 : 0);
     }
 
-    implicitWidth: image.width + Config.appearance.padding.large * 2
-    implicitHeight: image.height + label.height + Config.appearance.spacing.small / 2 + Config.appearance.padding.largeIncreased + Config.appearance.padding.medium
+    implicitWidth: image.width + Tokens.padding.large * 2
+    implicitHeight: image.height + label.height + Tokens.spacing.small / 2 + Tokens.padding.largeIncreased + Tokens.padding.medium
 
     StateLayer {
-        radius: Config.appearance.rounding.large
+        radius: Tokens.rounding.large
 
         onClicked: {
             Wallpapers.setWallpaper(root.modelData.path);
@@ -53,9 +53,9 @@ Item {
         id: image
 
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Config.appearance.padding.largeIncreased
+        y: Tokens.padding.largeIncreased
         color: Colours.tPalette.m3surfaceContainer
-        radius: Config.appearance.rounding.large
+        radius: Tokens.rounding.large
 
         implicitWidth: TokenConfig.sizes.launcher.wallpaperWidth
         implicitHeight: implicitWidth / 16 * 9
@@ -91,10 +91,10 @@ Item {
         id: label
 
         anchors.top: image.bottom
-        anchors.topMargin: Config.appearance.spacing.small / 2
+        anchors.topMargin: Tokens.spacing.small / 2
         anchors.horizontalCenter: parent.horizontalCenter
 
-        width: image.width - Config.appearance.padding.medium * 2
+        width: image.width - Tokens.padding.medium * 2
         horizontalAlignment: Text.AlignHCenter
         elide: Text.ElideRight
         renderType: Text.QtRendering

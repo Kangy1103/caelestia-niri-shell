@@ -12,8 +12,8 @@ Rectangle {
     id: root
 
     readonly property int contextWidth: Config.bar.workspaces.windowContextWidth
-    readonly property int baseRadius: Config.appearance.rounding.large
-    readonly property int hPadding: Config.appearance.padding.extraSmall
+    readonly property int baseRadius: Tokens.rounding.large
+    readonly property int hPadding: Tokens.padding.extraSmall
     readonly property int textWidth: mouseArea.containsMouse ? contextWidth - hPadding * 2 - windowDecs.implicitWidth : contextWidth
 
     required property bool onPrimary
@@ -62,7 +62,7 @@ Rectangle {
             }
 
             Rectangle {
-                implicitWidth: classText.width + Config.appearance.padding.extraSmall * 2
+                implicitWidth: classText.width + Tokens.padding.extraSmall * 2
                 implicitHeight: classText.height
                 color: root.onPrimary ? Colours.palette.m3tertiary : "transparent"
 
@@ -93,7 +93,7 @@ Rectangle {
 
             implicitWidth: decs.implicitWidth + root.hPadding
             implicitHeight: root.itemH
-            radius: Config.appearance.rounding.small
+            radius: Tokens.rounding.small
 
             WindowDecorations {
                 id: decs

@@ -17,7 +17,7 @@ Singleton {
 
     readonly property list<PwNode> sinks: Pipewire.nodes.values.filter(n => !n.isStream && n.isSink)
     readonly property list<PwNode> sources: Pipewire.nodes.values.filter(n => !n.isStream && n.audio && !n.isSink)
-    readonly property list<PwNode> streams: Pipewire.nodes.values.filter(n => n.isStream && n.audio)
+    readonly property list<PwNode> streams: Pipewire.nodes.values.filter(n => n.isStream && n.audio && n.name !== "caelestia-niri-shell")
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property PwNode source: Pipewire.defaultAudioSource
@@ -29,6 +29,58 @@ Singleton {
     readonly property real sourceVolume: source?.audio?.volume ?? 0
 
     readonly property alias beatTracker: beatTracker
+
+    // Role-based stream grouping
+    function getStreamsByRole(role: string): list<PwNode> {
+        return root.streams.filter(s => s.properties["media.role"] === role);
+    }
+
+    readonly property var streamRoles: {
+        const roles = [];
+        const seen = new Set();
+        for (const s of root.streams) {
+            const role = s.properties["media.role"];
+            if (role && !seen.has(role)) {
+                seen.add(role);
+                roles.push(role);
+            }
+        }
+        return roles;
+    }
+
+    function setRoleVolume(role: string, volume: real): void {
+        const nodes = root.getStreamsByRole(role);
+        for (const s of nodes) {
+            if (s?.ready && s?.audio) {
+                s.audio.muted = false;
+                s.audio.volume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, volume));
+            }
+        }
+    }
+
+    function setRoleMuted(role: string, muted: bool): void {
+        const nodes = root.getStreamsByRole(role);
+        for (const s of nodes) {
+            if (s?.ready && s?.audio) {
+                s.audio.muted = muted;
+            }
+        }
+    }
+
+    // Notification volume persistence (always shown even when idle)
+    property real notificationVolume: 1.0
+    property bool notificationMuted: false
+
+    function setNotificationVolume(v: real): void {
+        root.notificationVolume = Math.max(0, Math.min(GlobalConfig.services.maxVolume, v));
+        root.notificationMuted = false;
+        root.setRoleVolume("Notification", root.notificationVolume);
+    }
+
+    function setNotificationMuted(m: bool): void {
+        root.notificationMuted = m;
+        root.setRoleMuted("Notification", m);
+    }
 
     function setVolume(newVolume: real): void {
         if (sink?.ready && sink?.audio) {

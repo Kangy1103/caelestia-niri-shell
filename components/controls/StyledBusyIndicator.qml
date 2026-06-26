@@ -8,7 +8,7 @@ BusyIndicator {
     id: root
 
     property real implicitSize: Config.appearance.font.body.medium.size * 3
-    property real strokeWidth: Config.appearance.padding.extraSmall
+    property real strokeWidth: Tokens.padding.extraSmall
     property color fgColour: Colours.palette.m3primary
     property color bgColour: Colours.palette.m3secondaryContainer
     readonly property real animDurationScale: Tokens.anim.durations.scale

@@ -13,9 +13,9 @@ StyledRect {
 
     property int variant: Card.Variant.Filled
     property alias contentItem: contentArea
-    property int padding: Config.appearance.padding.medium
+    property int padding: Tokens.padding.medium
 
-    radius: Config.appearance.rounding.large
+    radius: Tokens.rounding.large
 
     color: {
         switch (variant) {

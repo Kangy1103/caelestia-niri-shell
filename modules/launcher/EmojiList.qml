@@ -116,7 +116,7 @@ Item {
     ColumnLayout {
         id: contentColumn
         anchors.fill: parent
-        spacing: Config.appearance.spacing.medium
+        spacing: Tokens.spacing.medium
 
         // Category Bar
         StyledRect {
@@ -124,13 +124,13 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 64
             color: Colours.tPalette.m3surfaceContainerLow
-            radius: Config.appearance.rounding.small
+            radius: Tokens.rounding.small
             visible: root.search.text.startsWith(`${Config.launcher.actionPrefix}emoji `) && root.search.text.length <= `${Config.launcher.actionPrefix}emoji `.length
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: Config.appearance.padding.small
-                spacing: Config.appearance.spacing.extraSmall
+                anchors.margins: Tokens.padding.small
+                spacing: Tokens.spacing.extraSmall
 
                 Repeater {
                     model: root.categoryData
@@ -148,7 +148,7 @@ Item {
                         StyledRect {
                             anchors.fill: parent
                             anchors.margins: 4
-                            radius: Config.appearance.rounding.small
+                            radius: Tokens.rounding.small
                             color: Colours.palette.m3onSurface
                             opacity: catBtn.hovered ? 0.08 : 0
                             Behavior on opacity { Anim { duration: Tokens.anim.durations.small } }
@@ -156,7 +156,7 @@ Item {
 
                         StateLayer {
                             id: catStateLayer
-                            radius: Config.appearance.rounding.small
+                            radius: Tokens.rounding.small
                             onClicked: {
                                 root.categoryIndex = index;
                             }
@@ -205,7 +205,7 @@ Behavior on color { CAnim {} }
             
             StyledText {
                 anchors.left: parent.left
-                anchors.leftMargin: Config.appearance.padding.medium
+                anchors.leftMargin: Tokens.padding.medium
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Search Results")
                 font.pointSize: Config.appearance.font.label.large.size
@@ -219,13 +219,13 @@ Behavior on color { CAnim {} }
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: Colours.tPalette.m3surfaceContainer
-            radius: Config.appearance.rounding.small
+            radius: Tokens.rounding.small
             clip: true
 
             GridView {
                 id: grid
                 anchors.fill: parent
-                anchors.margins: Config.appearance.padding.small
+                anchors.margins: Tokens.padding.small
                 cellWidth: width / 6
                 cellHeight: cellWidth
                 model: root._filteredEmojis
@@ -235,7 +235,7 @@ Behavior on color { CAnim {} }
                 highlightMoveDuration: Tokens.anim.durations.normal
 
                 highlight: Rectangle {
-                    radius: Config.appearance.rounding.small
+                    radius: Tokens.rounding.small
                     color: Qt.alpha(Colours.palette.m3primary, 0.12)
                     border.width: 2
                     border.color: Colours.palette.m3primary
@@ -261,7 +261,7 @@ Behavior on color { CAnim {} }
 
                     StateLayer {
                         id: emojiStateLayer
-                        radius: Config.appearance.rounding.small
+                        radius: Tokens.rounding.small
                         onClicked: {
                             emojiItem.onClicked();
                         }
@@ -288,7 +288,7 @@ Behavior on color { CAnim {} }
                 ColumnLayout {
                     anchors.centerIn: parent
                     visible: grid.count === 0
-                    spacing: Config.appearance.spacing.medium
+                    spacing: Tokens.spacing.medium
                     opacity: 0.6
 
                     MaterialIcon {
@@ -314,7 +314,7 @@ color: Colours.palette.m3onSurfaceVariant
             Layout.fillWidth: true
             Layout.preferredHeight: 64
             color: Colours.tPalette.m3surfaceContainerLow
-            radius: Config.appearance.rounding.small
+            radius: Tokens.rounding.small
             
             readonly property var activeEmoji: {
                 if (grid.currentIndex !== -1 && grid.model && grid.model[grid.currentIndex]) 
@@ -324,8 +324,8 @@ color: Colours.palette.m3onSurfaceVariant
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: Config.appearance.padding.medium
-                spacing: Config.appearance.padding.large
+                anchors.margins: Tokens.padding.medium
+                spacing: Tokens.padding.large
 
                 Text {
                     text: footer.activeEmoji?.emoji ?? "✨"
@@ -363,7 +363,7 @@ color: Colours.palette.m3onSurfaceVariant
                 
                 // Shortcut hints
                 Row {
-                    spacing: Config.appearance.spacing.medium
+                    spacing: Tokens.spacing.medium
                     opacity: 0.5
                     visible: categoryHeader.visible
 

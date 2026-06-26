@@ -23,8 +23,8 @@ Item {
     readonly property color safeSecondary: useLightSet ? Colours.palette.m3secondaryContainer : Colours.palette.m3secondary
     readonly property color safeTertiary: useLightSet ? Colours.palette.m3tertiaryContainer : Colours.palette.m3tertiary
 
-    implicitWidth: layout.implicitWidth + (Config.appearance.padding.largeIncreased * 4 * root.scale)
-    implicitHeight: layout.implicitHeight + (Config.appearance.padding.largeIncreased * 2 * root.scale)
+    implicitWidth: layout.implicitWidth + (Tokens.padding.largeIncreased * 4 * root.scale)
+    implicitHeight: layout.implicitHeight + (Tokens.padding.largeIncreased * 2 * root.scale)
 
     Item {
         id: clockContainer
@@ -62,7 +62,7 @@ Item {
 
             visible: root.bgEnabled
             anchors.fill: parent
-            radius: Config.appearance.rounding.large * root.scale
+            radius: Tokens.rounding.large * root.scale
             opacity: Config.background.desktopClock.background.opacity
             color: Colours.palette.m3surface
 
@@ -73,10 +73,10 @@ Item {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Config.appearance.spacing.largeIncreased * root.scale
+            spacing: Tokens.spacing.largeIncreased * root.scale
 
             RowLayout {
-                spacing: Config.appearance.spacing.small
+                spacing: Tokens.spacing.small
 
                 StyledText {
                     text: Time.hourStr
@@ -90,7 +90,7 @@ Item {
                     font.pointSize: Config.appearance.font.headline.large.size * 3 * root.scale
                     color: root.safeTertiary
                     opacity: 0.8
-                    Layout.topMargin: -Config.appearance.padding.largeIncreased * 1.5 * root.scale
+                    Layout.topMargin: -Tokens.padding.largeIncreased * 1.5 * root.scale
                 }
 
                 StyledText {
@@ -102,7 +102,7 @@ Item {
 
                 Loader {
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: Config.appearance.padding.largeIncreased * 1.4 * root.scale
+                    Layout.topMargin: Tokens.padding.largeIncreased * 1.4 * root.scale
 
                     active: Config.services.useTwelveHourClock
                     visible: active
@@ -118,9 +118,9 @@ Item {
             StyledRect {
                 Layout.fillHeight: true
                 Layout.preferredWidth: 4 * root.scale
-                Layout.topMargin: Config.appearance.spacing.largeIncreased * root.scale
-                Layout.bottomMargin: Config.appearance.spacing.largeIncreased * root.scale
-                radius: Config.appearance.rounding.full
+                Layout.topMargin: Tokens.spacing.largeIncreased * root.scale
+                Layout.bottomMargin: Tokens.spacing.largeIncreased * root.scale
+                radius: Tokens.rounding.full
                 color: root.safePrimary
                 opacity: 0.8
             }

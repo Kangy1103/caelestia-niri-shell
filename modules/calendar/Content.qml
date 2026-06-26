@@ -24,7 +24,7 @@ Item {
     readonly property int currMonth: currentDate.getMonth()
     readonly property int currYear: currentDate.getFullYear()
 
-    readonly property int padding: Config.appearance.padding.largeIncreased
+    readonly property int padding: Tokens.padding.largeIncreased
 
     implicitWidth: 480
     implicitHeight: calLayout.implicitHeight + padding * 2
@@ -46,18 +46,18 @@ Item {
         id: calLayout
         anchors.fill: parent
         anchors.margins: root.padding
-        spacing: Config.appearance.spacing.small
+        spacing: Tokens.spacing.small
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.small
+            spacing: Tokens.spacing.small
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: prevIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
+                implicitHeight: prevIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
-                    radius: Config.appearance.rounding.full
+                    radius: Tokens.rounding.full
 
                     onClicked: {
                         currentDate = new Date(currYear, currMonth - 1, 1);
@@ -75,14 +75,14 @@ Item {
 
             Item {
                 Layout.fillWidth: true
-                implicitHeight: monthText.implicitHeight + Config.appearance.padding.extraSmall * 2
+                implicitHeight: monthText.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
                     anchors.fill: monthText
-                    anchors.margins: -Config.appearance.padding.extraSmall
-                    anchors.leftMargin: -Config.appearance.padding.medium
-                    anchors.rightMargin: -Config.appearance.padding.medium
-                    radius: Config.appearance.rounding.full
+                    anchors.margins: -Tokens.padding.extraSmall
+                    anchors.leftMargin: -Tokens.padding.medium
+                    anchors.rightMargin: -Tokens.padding.medium
+                    radius: Tokens.rounding.full
                     disabled: {
                         const now = new Date();
                         return currMonth === now.getMonth() && currYear === now.getFullYear();
@@ -107,10 +107,10 @@ Item {
 
             Item {
                 implicitWidth: implicitHeight
-                implicitHeight: nextIcon.implicitHeight + Config.appearance.padding.extraSmall * 2
+                implicitHeight: nextIcon.implicitHeight + Tokens.padding.extraSmall * 2
 
                 StateLayer {
-                    radius: Config.appearance.rounding.full
+                    radius: Tokens.rounding.full
 
                     onClicked: {
                         currentDate = new Date(currYear, currMonth + 1, 1);
@@ -131,7 +131,7 @@ Item {
                 text: "Today"
                 icon: "today"
                 type: IconTextButton.Tonal
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
 
                 onClicked: {
                     currentDate = new Date();
@@ -170,7 +170,7 @@ Item {
                     id: dayItem
                     required property var model
                     implicitWidth: implicitHeight
-                    implicitHeight: text.implicitHeight + Config.appearance.padding.extraSmall * 2 + (hasEvents ? 8 : 0)
+                    implicitHeight: text.implicitHeight + Tokens.padding.extraSmall * 2 + (hasEvents ? 8 : 0)
 
                     readonly property var eventsForDay: CalEvents.eventsForDate(new Date(model.year, model.month, model.day))
                     readonly property var dotColors: eventsForDay.slice(0, 3).map(e => e.color)
@@ -178,7 +178,7 @@ Item {
 
                     StateLayer {
                         anchors.fill: parent
-                        radius: Config.appearance.rounding.full
+                        radius: Tokens.rounding.full
 
                         onClicked: {
                             root.selectedDate = new Date(model.year, model.month, model.day);
@@ -240,7 +240,7 @@ Item {
                 implicitHeight: today?.implicitHeight ?? 0
 
                 clip: true
-                radius: Config.appearance.rounding.full
+                radius: Tokens.rounding.full
                 color: Colours.palette.m3primary
                 opacity: todayItem ? 1 : 0
                 scale: todayItem ? 1 : 0.7

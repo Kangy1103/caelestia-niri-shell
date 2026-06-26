@@ -81,7 +81,7 @@ Item {
         height: pillContainer.pillHeight
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
-        radius: Config.appearance.rounding.full
+        radius: Tokens.rounding.full
         z: 0
 
         color: {

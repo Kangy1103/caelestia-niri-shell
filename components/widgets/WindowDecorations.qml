@@ -12,7 +12,7 @@ RowLayout {
     property var client: Niri.focusedWindow
     property int implicitSize: Config.appearance.font.body.medium.size
 
-    spacing: Config.appearance.padding.extraSmall / 2
+    spacing: Tokens.padding.extraSmall / 2
 
     // Pin feature removed - Niri doesn't support window pinning
     // TODO: Implement alternative if Niri adds pin support in future

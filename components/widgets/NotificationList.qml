@@ -32,14 +32,14 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
-        spacing: Config.appearance.spacing.small
+        spacing: Tokens.spacing.small
 
         // Header row
         RowLayout {
             id: headerRow
             Layout.fillWidth: true
             visible: root.showHeader
-            spacing: Config.appearance.spacing.small
+            spacing: Tokens.spacing.small
 
             MaterialIcon {
                 text: Notifs.dnd ? "notifications_off" : "notifications"
@@ -63,7 +63,7 @@ Item {
             StyledRect {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Config.appearance.rounding.full
+                radius: Tokens.rounding.full
                 color: Notifs.dnd ? Colours.palette.m3errorContainer : "transparent"
                 visible: root.showDndToggle
 
@@ -87,7 +87,7 @@ Item {
             StyledRect {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Config.appearance.rounding.full
+                radius: Tokens.rounding.full
                 color: "transparent"
                 visible: root.showClearAll && Notifs.list.length > 0 && root.expanded
 
@@ -112,7 +112,7 @@ Item {
             StyledRect {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                radius: Config.appearance.rounding.full
+                radius: Tokens.rounding.full
                 color: "transparent"
                 visible: root.expandable
 
@@ -145,7 +145,7 @@ Item {
             ColumnLayout {
                 anchors.centerIn: parent
                 visible: Notifs.list.length === 0
-                spacing: Config.appearance.spacing.small
+                spacing: Tokens.spacing.small
 
                 MaterialIcon {
                     Layout.alignment: Qt.AlignHCenter
@@ -166,7 +166,7 @@ Item {
                 id: notifList
                 anchors.fill: parent
                 clip: true
-                spacing: Config.appearance.spacing.small
+                spacing: Tokens.spacing.small
                 visible: Notifs.list.length > 0
 
                 model: ScriptModel {
@@ -195,8 +195,8 @@ Item {
 
         readonly property bool bodyTruncated: bodyText.truncated
 
-        implicitHeight: notifContent.implicitHeight + Config.appearance.padding.small * 2
-        radius: Config.appearance.rounding.small
+        implicitHeight: notifContent.implicitHeight + Tokens.padding.small * 2
+        radius: Tokens.rounding.small
         color: notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3errorContainer : Colours.tPalette.m3surfaceContainerHigh
 
         Behavior on implicitHeight {
@@ -222,8 +222,8 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.margins: Config.appearance.padding.small
-            spacing: Config.appearance.spacing.small
+            anchors.margins: Tokens.padding.small
+            spacing: Tokens.spacing.small
 
             Item {
                 Layout.preferredWidth: 32
@@ -234,7 +234,7 @@ Item {
                 StyledRect {
                     width: 32
                     height: 32
-                    radius: Config.appearance.rounding.full
+                    radius: Tokens.rounding.full
                     color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.palette.m3secondaryContainer
 
                     Loader {
@@ -316,7 +316,7 @@ Item {
 
                 Flow {
                     Layout.fillWidth: true
-                    spacing: Config.appearance.spacing.small
+                    spacing: Tokens.spacing.small
                     visible: notifItem.itemExpanded && notifActionsRepeater.count > 0
 
                     Repeater {
@@ -326,9 +326,9 @@ Item {
                         delegate: StyledRect {
                             required property var modelData
 
-                            implicitWidth: actionLabel.implicitWidth + Config.appearance.padding.medium * 2
-                            implicitHeight: actionLabel.implicitHeight + Config.appearance.padding.extraSmall * 2
-                            radius: Config.appearance.rounding.small
+                            implicitWidth: actionLabel.implicitWidth + Tokens.padding.medium * 2
+                            implicitHeight: actionLabel.implicitHeight + Tokens.padding.extraSmall * 2
+                            radius: Tokens.rounding.small
                             color: notifItem.notif?.urgency === NotificationUrgency.Critical ? Colours.palette.m3error : Colours.palette.m3secondaryContainer
 
                             StateLayer {
@@ -364,7 +364,7 @@ Item {
 
             ColumnLayout {
                 Layout.alignment: Qt.AlignTop
-                spacing: Config.appearance.spacing.small
+                spacing: Tokens.spacing.small
 
                 StyledText {
                     Layout.alignment: Qt.AlignRight
@@ -377,7 +377,7 @@ Item {
                     Layout.preferredWidth: 20
                     Layout.preferredHeight: 20
                     Layout.alignment: Qt.AlignRight
-                    radius: Config.appearance.rounding.small
+                    radius: Tokens.rounding.small
                     color: "transparent"
 
                     StateLayer {

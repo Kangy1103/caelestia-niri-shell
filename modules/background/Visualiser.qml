@@ -55,7 +55,7 @@ Item {
 
             anchors.fill: parent
             anchors.margins: Config.border.thickness
-            anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Config.appearance.spacing.small * Config.background.visualiser.spacing
+            anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Tokens.spacing.small * Config.background.visualiser.spacing
 
             values: Cava.values
             mode: Config.background.visualiser.style === "waveform" ? VisualiserBars.Waveform
@@ -63,8 +63,8 @@ Item {
                 : VisualiserBars.Bars
             primaryColor: root.resolvedPrimary
             secondaryColor: root.resolvedSecondary
-            rounding: Config.appearance.rounding.small * Config.background.visualiser.rounding
-            spacing: Config.appearance.spacing.small * Config.background.visualiser.spacing
+            rounding: Tokens.rounding.small * Config.background.visualiser.rounding
+            spacing: Tokens.spacing.small * Config.background.visualiser.spacing
             animationDuration: Config.background.visualiser.animationDuration
             sensitivity: Config.background.visualiser.sensitivity
 

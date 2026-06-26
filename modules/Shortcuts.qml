@@ -192,6 +192,18 @@ Scope {
         }
     }
 
+    // ── IPC: greeter (used by greeter.qml entry point) ──
+    IpcHandler {
+        target: "greeter"
+        function lock(): void {
+            // Trigger lock from shell; only relevant in shell mode
+            // Forward to lock module
+        }
+        function isAvailable(): bool {
+            return false; // Greeter module not loaded in shell mode
+        }
+    }
+
     // ── IPC: toaster ──
     IpcHandler {
         target: "toaster"

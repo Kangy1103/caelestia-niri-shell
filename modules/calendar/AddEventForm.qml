@@ -38,8 +38,8 @@ Item {
     property string selectedColor: Colours.palette.m3primary
 
     visible: active
-    implicitHeight: active ? formLayout.implicitHeight + Config.appearance.padding.medium * 2 : 0
-    implicitWidth: formLayout.implicitWidth + Config.appearance.padding.medium * 2
+    implicitHeight: active ? formLayout.implicitHeight + Tokens.padding.medium * 2 : 0
+    implicitWidth: formLayout.implicitWidth + Tokens.padding.medium * 2
 
     onActiveChanged: {
         if (active)
@@ -68,8 +68,8 @@ Item {
     ColumnLayout {
         id: formLayout
         anchors.fill: parent
-        anchors.margins: Config.appearance.padding.medium
-        spacing: Config.appearance.spacing.small
+        anchors.margins: Tokens.padding.medium
+        spacing: Tokens.spacing.small
 
         StyledInputField {
             id: titleField
@@ -83,7 +83,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.small
+            spacing: Tokens.spacing.small
 
             StyledInputField {
                 id: startTimeField
@@ -132,7 +132,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.small
+            spacing: Tokens.spacing.small
 
             StyledText {
                 text: "All day"
@@ -152,7 +152,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.small
+            spacing: Tokens.spacing.small
 
             Repeater {
                 model: root.colors
@@ -182,7 +182,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.small
+            spacing: Tokens.spacing.small
 
             IconTextButton {
                 id: cancelBtn
@@ -190,7 +190,7 @@ Item {
                 text: "Cancel"
                 icon: "close"
                 type: IconTextButton.Tonal
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
 
                 onClicked: root.cancelled()
             }
@@ -201,7 +201,7 @@ Item {
                 text: "Save"
                 icon: "check"
                 type: IconTextButton.Filled
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
                 enabled: root.title.trim().length > 0
 
                 onClicked: {

@@ -18,7 +18,7 @@ Item {
     readonly property Popout currentPopout: content.children.find(c => c.shouldBeActive) ?? null
     readonly property Item current: currentPopout?.item ?? null
 
-    readonly property real margin: Config.appearance.padding.largeIncreased
+    readonly property real margin: Tokens.padding.largeIncreased
     implicitWidth: (currentPopout?.implicitWidth ?? 0) + margin
     implicitHeight: (currentPopout?.implicitHeight ?? 0) + margin
 
@@ -26,7 +26,7 @@ Item {
         id: content
 
         anchors.fill: parent
-        anchors.margins: Config.appearance.padding.large
+        anchors.margins: Tokens.padding.large
 
         // Niri workspace context popout — uses Niri.wsContextAnchor
         Popout {

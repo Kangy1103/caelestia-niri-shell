@@ -18,7 +18,7 @@ Item {
     required property var wrapper
     required property PersistentProperties visibilities
 
-    readonly property int padding: Math.max(Config.appearance.padding.largeIncreased, Config.border.rounding)
+    readonly property int padding: Math.max(Tokens.padding.largeIncreased, Config.border.rounding)
 
     implicitWidth: 420
     implicitHeight: 600
@@ -69,13 +69,13 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: root.padding
-        spacing: Config.appearance.spacing.medium
+        spacing: Tokens.spacing.medium
         anchors.leftMargin: root.padding
         anchors.rightMargin: 10
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.medium
+            spacing: Tokens.spacing.medium
             MaterialIcon {
                 text: "keyboard"
                 fontStyle: Tokens.font.icon.size(Config.appearance.font.title.medium.size).build()
@@ -90,7 +90,7 @@ color: Colours.palette.m3primary
             StyledRect {
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 32
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
                 color: "transparent"
                 StateLayer {
                     radius: parent.radius
@@ -107,7 +107,7 @@ color: Colours.palette.m3onSurfaceVariant
             StyledRect {
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 32
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
                 color: "transparent"
                 StateLayer {
                     radius: parent.radius
@@ -126,13 +126,13 @@ color: Colours.palette.m3onSurfaceVariant
         StyledRect {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.max(searchIcon.implicitHeight, searchInput.implicitHeight, clearIcon.implicitHeight)
-            radius: Config.appearance.rounding.small
+            radius: Tokens.rounding.small
             color: Colours.tPalette.m3surfaceContainer
             MaterialIcon {
                 id: searchIcon
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: Config.appearance.padding.medium
+                anchors.leftMargin: Tokens.padding.medium
                 text: "search"
                 color: Colours.palette.m3onSurfaceVariant
             }
@@ -140,10 +140,10 @@ color: Colours.palette.m3onSurfaceVariant
                 id: searchInput
                 anchors.left: searchIcon.right
                 anchors.right: clearIcon.left
-                anchors.leftMargin: Config.appearance.spacing.small
-                anchors.rightMargin: Config.appearance.spacing.small
-                topPadding: Config.appearance.padding.small
-                bottomPadding: Config.appearance.padding.small
+                anchors.leftMargin: Tokens.spacing.small
+                anchors.rightMargin: Tokens.spacing.small
+                topPadding: Tokens.padding.small
+                bottomPadding: Tokens.padding.small
                 placeholderText: qsTr("Search keybinds...")
                 onTextChanged: filterKeybinds()
                 Keys.onPressed: (event) => {
@@ -164,7 +164,7 @@ color: Colours.palette.m3onSurfaceVariant
                 id: clearIcon
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Config.appearance.padding.medium
+                anchors.rightMargin: Tokens.padding.medium
                 width: searchInput.text ? implicitWidth : implicitWidth / 2
                 opacity: searchInput.text ? 1 : 0
                 text: "close"
@@ -183,22 +183,22 @@ color: Colours.palette.m3onSurfaceVariant
         StyledClippingRect {
             Layout.fillWidth: true
             Layout.preferredHeight: 400
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
             color: Colours.tPalette.m3surfaceContainer
 
             StyledListView {
                 id: listView
                 anchors.fill: parent
-                anchors.margins: Config.appearance.padding.small
+                anchors.margins: Tokens.padding.small
                 model: filteredModel
-                spacing: Config.appearance.spacing.extraSmall
+                spacing: Tokens.spacing.extraSmall
                 currentIndex: 0
                 highlightFollowsCurrentItem: true
                 clip: true
                 highlightMoveDuration: Tokens.anim.durations.normal
                 highlightResizeDuration: 0
                 highlight: StyledRect {
-                    radius: Config.appearance.rounding.small
+                    radius: Tokens.rounding.small
                     color: Colours.palette.m3onSurface
                     opacity: 0.08
                 }
@@ -210,11 +210,11 @@ color: Colours.palette.m3onSurfaceVariant
                     required property string action
 
                     width: listView.width
-                    height: keybindContent.implicitHeight + Config.appearance.padding.small * 2
+                    height: keybindContent.implicitHeight + Tokens.padding.small * 2
 
                     StyledRect {
                         anchors.fill: parent
-                        radius: Config.appearance.rounding.small
+                        radius: Tokens.rounding.small
                         color: "transparent"
                         StateLayer {
                             anchors.fill: parent
@@ -227,11 +227,11 @@ color: Colours.palette.m3onSurfaceVariant
                         RowLayout {
                             id: keybindContent
                             anchors.fill: parent
-                            anchors.margins: Config.appearance.padding.small
-                            spacing: Config.appearance.spacing.medium
+                            anchors.margins: Tokens.padding.small
+                            spacing: Tokens.spacing.medium
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: Config.appearance.spacing.extraSmall
+                                spacing: Tokens.spacing.extraSmall
                                 StyledText {
                                     Layout.fillWidth: true
                                     text: keybindItem.action
@@ -274,7 +274,7 @@ color: Colours.palette.m3onSurfaceVariant
             Column {
                 visible: filteredModel.count === 0 && !Keybinds.loading && !Keybinds.error
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.medium
+                spacing: Tokens.spacing.medium
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: searchInput.text === "" ? "keyboard_hide" : "search_off"
@@ -292,7 +292,7 @@ color: Colours.palette.m3outline
             Column {
                 visible: Keybinds.error && !Keybinds.loading
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.medium
+                spacing: Tokens.spacing.medium
                 MaterialIcon {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "error_outline"
@@ -310,7 +310,7 @@ color: Colours.palette.m3error
             Column {
                 visible: Keybinds.loading
                 anchors.centerIn: parent
-                spacing: Config.appearance.spacing.medium
+                spacing: Tokens.spacing.medium
                 StyledBusyIndicator {
                     anchors.horizontalCenter: parent.horizontalCenter
                     running: true
@@ -326,7 +326,7 @@ color: Colours.palette.m3error
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Config.appearance.spacing.medium
+            spacing: Tokens.spacing.medium
             StyledText {
                 text: filteredModel.count + " " + qsTr("keybinds")
                 font.pointSize: Config.appearance.font.label.medium.size
@@ -334,7 +334,7 @@ color: Colours.palette.m3error
             }
             Item { Layout.fillWidth: true }
             RowLayout {
-                spacing: Config.appearance.spacing.small
+                spacing: Tokens.spacing.small
                 MaterialIcon {
                     text: "info"
                     fontStyle: Tokens.font.icon.size(Config.appearance.font.label.medium.size).build()

@@ -18,8 +18,8 @@ StyledRect {
     readonly property alias items: items
     readonly property alias expandIcon: expandIcon
 
-    readonly property int padding: Config.bar.tray.background ? TokenConfig.appearance.padding.medium : TokenConfig.appearance.padding.extraSmall
-    readonly property int spacing: Config.bar.tray.background ? TokenConfig.appearance.spacing.small : 0
+    readonly property int padding: Config.bar.tray.background ? Tokens.padding.medium : Tokens.padding.extraSmall
+    readonly property int spacing: Config.bar.tray.background ? Tokens.spacing.small : 0
 
     property bool expanded
 
@@ -36,7 +36,7 @@ StyledRect {
     implicitHeight: nonAnimHeight
 
     color: Qt.alpha(Colours.tPalette.m3surfaceContainer, (Config.bar.tray.background && items.count > 0) ? Colours.tPalette.m3surfaceContainer.a : 0)
-    radius: Config.appearance.rounding.full
+    radius: Tokens.rounding.full
 
     Column {
         id: layout
@@ -44,7 +44,7 @@ StyledRect {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: root.padding
-        spacing: TokenConfig.appearance.spacing.small
+        spacing: Tokens.spacing.small
 
         opacity: root.expanded || !Config.bar.tray.compact ? 1 : 0
 
@@ -97,14 +97,14 @@ StyledRect {
 
         sourceComponent: Item {
             implicitWidth: expandIconInner.implicitWidth
-            implicitHeight: expandIconInner.implicitHeight - TokenConfig.appearance.padding.small
+            implicitHeight: expandIconInner.implicitHeight - Tokens.padding.small
 
             MaterialIcon {
                 id: expandIconInner
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: Config.bar.tray.background ? TokenConfig.appearance.padding.extraSmall : -TokenConfig.appearance.padding.extraSmall
+                anchors.bottomMargin: Config.bar.tray.background ? Tokens.padding.extraSmall : -Tokens.padding.extraSmall
                 text: "expand_less"
                 fontStyle: Tokens.font.icon.large
                 rotation: root.expanded ? 180 : 0

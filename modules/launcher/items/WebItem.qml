@@ -36,7 +36,7 @@ Item {
     anchors.right: parent?.right
 
     StateLayer {
-        radius: Config.appearance.rounding.full
+        radius: Tokens.rounding.full
 
         onClicked: {
             root.onClicked();
@@ -47,9 +47,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: Config.appearance.padding.large
+        anchors.margins: Tokens.padding.large
 
-        spacing: Config.appearance.spacing.large
+        spacing: Tokens.spacing.large
 
         MaterialIcon {
             text: root.isUrl ? "open_in_browser" : "search"
@@ -81,11 +81,11 @@ Layout.alignment: Qt.AlignVCenter
 
         StyledRect {
             color: Colours.palette.m3tertiary
-            radius: Config.appearance.rounding.large
+            radius: Tokens.rounding.large
             clip: true
 
-            implicitWidth: icon.implicitWidth + Config.appearance.padding.medium * 2
-            implicitHeight: Math.max(icon.implicitHeight) + Config.appearance.padding.extraSmall * 2
+            implicitWidth: icon.implicitWidth + Tokens.padding.medium * 2
+            implicitHeight: Math.max(icon.implicitHeight) + Tokens.padding.extraSmall * 2
 
             Layout.alignment: Qt.AlignVCenter
 
@@ -102,7 +102,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Config.appearance.padding.medium
+                anchors.rightMargin: Tokens.padding.medium
 
                 text: root.isUrl ? "open_in_new" : "search"
                 color: Colours.palette.m3onTertiary

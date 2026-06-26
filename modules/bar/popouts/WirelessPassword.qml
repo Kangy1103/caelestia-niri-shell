@@ -73,9 +73,9 @@ ColumnLayout {
         }
     }
 
-    spacing: Config.appearance.spacing.medium
+    spacing: Tokens.spacing.medium
     implicitWidth: 400
-    implicitHeight: content.implicitHeight + Config.appearance.padding.extraLargeIncreased
+    implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
     visible: shouldBeVisible || isClosing
     enabled: shouldBeVisible && !isClosing
     focus: enabled
@@ -132,8 +132,8 @@ ColumnLayout {
     StyledRect {
         Layout.fillWidth: true
         Layout.preferredWidth: 400
-        implicitHeight: content.implicitHeight + Config.appearance.padding.extraLargeIncreased
-        radius: Config.appearance.rounding.large
+        implicitHeight: content.implicitHeight + Tokens.padding.extraLargeIncreased
+        radius: Tokens.rounding.large
         color: Colours.tPalette.m3surfaceContainer
         visible: root.shouldBeVisible || root.isClosing
         opacity: root.shouldBeVisible && !root.isClosing ? 1 : 0
@@ -177,9 +177,9 @@ ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.margins: Config.appearance.padding.large
+            anchors.margins: Tokens.padding.large
 
-            spacing: Config.appearance.spacing.medium
+            spacing: Tokens.spacing.medium
 
             MaterialIcon {
                 Layout.alignment: Qt.AlignHCenter
@@ -243,7 +243,7 @@ ColumnLayout {
                 id: statusText
 
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Config.appearance.spacing.small
+                Layout.topMargin: Tokens.spacing.small
                 visible: connectButton.connecting || connectButton.hasError
                 text: {
                     if (connectButton.hasError) {
@@ -257,7 +257,7 @@ ColumnLayout {
                 color: connectButton.hasError ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
                 font: Tokens.font.body.builders.small.weight(Font.Normal).build()
                 wrapMode: Text.WordWrap
-                Layout.maximumWidth: parent.width - Config.appearance.padding.extraLargeIncreased
+                Layout.maximumWidth: parent.width - Tokens.padding.extraLargeIncreased
             }
 
             FocusScope {
@@ -266,9 +266,9 @@ ColumnLayout {
                 property string passwordBuffer: ""
 
                 objectName: "passwordContainer"
-                Layout.topMargin: Config.appearance.spacing.largeIncreased
+                Layout.topMargin: Tokens.spacing.largeIncreased
                 Layout.fillWidth: true
-                implicitHeight: Math.max(48, charList.implicitHeight + Config.appearance.padding.medium * 2)
+                implicitHeight: Math.max(48, charList.implicitHeight + Tokens.padding.medium * 2)
                 focus: true
                 activeFocusOnTab: true
 
@@ -341,7 +341,7 @@ ColumnLayout {
 
                 StyledRect {
                     anchors.fill: parent
-                    radius: Config.appearance.rounding.large
+                    radius: Tokens.rounding.large
                     color: passwordContainer.activeFocus ? Qt.lighter(Colours.tPalette.m3surfaceContainer, 1.05) : Colours.tPalette.m3surfaceContainer
                     border.width: passwordContainer.activeFocus || connectButton.hasError ? 4 : (root.shouldBeVisible ? 1 : 0)
                     border.color: {
@@ -370,7 +370,7 @@ ColumnLayout {
                 StateLayer {
                     hoverEnabled: false
                     cursorShape: Qt.IBeamCursor
-                    radius: Config.appearance.rounding.large
+                    radius: Tokens.rounding.large
                     onClicked: passwordContainer.forceActiveFocus()
                 }
 
@@ -400,7 +400,7 @@ ColumnLayout {
                     implicitHeight: Config.appearance.font.body.medium.size
 
                     orientation: Qt.Horizontal
-                    spacing: Config.appearance.spacing.extraSmall
+                    spacing: Tokens.spacing.extraSmall
                     interactive: false
 
                     model: ScriptModel {
@@ -414,7 +414,7 @@ ColumnLayout {
                         implicitHeight: charList.implicitHeight
 
                         color: Colours.palette.m3onSurface
-                        radius: Config.appearance.rounding.medium / 2
+                        radius: Tokens.rounding.medium / 2
 
                         opacity: 0
                         scale: 0
@@ -472,15 +472,15 @@ ColumnLayout {
             }
 
             RowLayout {
-                Layout.topMargin: Config.appearance.spacing.medium
+                Layout.topMargin: Tokens.spacing.medium
                 Layout.fillWidth: true
-                spacing: Config.appearance.spacing.medium
+                spacing: Tokens.spacing.medium
 
                 TextButton {
                     id: cancelButton
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
+                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3secondaryContainer
                     inactiveOnColour: Colours.palette.m3onSecondaryContainer
                     text: qsTr("Cancel")
@@ -495,7 +495,7 @@ ColumnLayout {
                     property bool hasError: false
 
                     Layout.fillWidth: true
-                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Config.appearance.padding.medium * 2
+                    Layout.minimumHeight: Config.appearance.font.body.medium.size + Tokens.padding.medium * 2
                     inactiveColour: Colours.palette.m3primary
                     inactiveOnColour: Colours.palette.m3onPrimary
                     text: qsTr("Connect")

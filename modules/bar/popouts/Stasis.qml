@@ -14,9 +14,9 @@ import Quickshell.Io
 Column {
     id: root
 
-    spacing: Config.appearance.spacing.large
+    spacing: Tokens.spacing.large
     width: 200
-    topPadding: Config.appearance.padding.extraSmall
+    topPadding: Tokens.padding.extraSmall
 
     property string stasisState: "idle_waiting"
     property string stasisProfile: "default"
@@ -60,8 +60,8 @@ Column {
 
     StyledRect {
         width: parent.width
-        implicitHeight: pauseRow.implicitHeight + Config.appearance.padding.small * 2
-        radius: Config.appearance.rounding.full
+        implicitHeight: pauseRow.implicitHeight + Tokens.padding.small * 2
+        radius: Tokens.rounding.full
         color: stasisState === "manually_inhibited" ? Colours.palette.m3tertiary : Colours.palette.m3primary
 
         Behavior on color {
@@ -78,7 +78,7 @@ Column {
         Item {
             id: pauseRow
             anchors.centerIn: parent
-            width: pauseIcon.width + Config.appearance.spacing.small + pauseLabel.implicitWidth
+            width: pauseIcon.width + Tokens.spacing.small + pauseLabel.implicitWidth
             implicitHeight: Math.max(pauseIcon.implicitHeight, pauseLabel.implicitHeight)
 
             MaterialIcon {
@@ -92,7 +92,7 @@ Column {
             StyledText {
                 id: pauseLabel
                 anchors.left: pauseIcon.right
-                anchors.leftMargin: Config.appearance.spacing.small
+                anchors.leftMargin: Tokens.spacing.small
                 anchors.verticalCenter: parent.verticalCenter
                 text: stasisState === "manually_inhibited" ? "Resume" : "Pause"
                 color: stasisState === "manually_inhibited" ? Colours.palette.m3onTertiary : Colours.palette.m3onPrimary
@@ -108,8 +108,8 @@ Column {
 
     StyledRect {
         width: parent.width
-        implicitHeight: defRow.implicitHeight + Config.appearance.padding.small * 2
-        radius: Config.appearance.rounding.full
+        implicitHeight: defRow.implicitHeight + Tokens.padding.small * 2
+        radius: Tokens.rounding.full
         color: stasisProfile === "none" || stasisProfile === "default"
             ? Colours.palette.m3primaryContainer
             : Colours.palette.m3surfaceContainer
@@ -128,7 +128,7 @@ Column {
         Item {
             id: defRow
             anchors.centerIn: parent
-            width: defIcon.width + Config.appearance.spacing.small + defLabel.implicitWidth
+            width: defIcon.width + Tokens.spacing.small + defLabel.implicitWidth
             implicitHeight: Math.max(defIcon.implicitHeight, defLabel.implicitHeight)
 
             MaterialIcon {
@@ -144,7 +144,7 @@ Column {
             StyledText {
                 id: defLabel
                 anchors.left: defIcon.right
-                anchors.leftMargin: Config.appearance.spacing.small
+                anchors.leftMargin: Tokens.spacing.small
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Default"
                 color: stasisProfile === "none" || stasisProfile === "default"
@@ -157,8 +157,8 @@ Column {
 
     StyledRect {
         width: parent.width
-        implicitHeight: gamingRow.implicitHeight + Config.appearance.padding.small * 2
-        radius: Config.appearance.rounding.full
+        implicitHeight: gamingRow.implicitHeight + Tokens.padding.small * 2
+        radius: Tokens.rounding.full
         color: stasisProfile === "gaming"
             ? Colours.palette.m3primaryContainer
             : Colours.palette.m3surfaceContainer
@@ -177,7 +177,7 @@ Column {
         Item {
             id: gamingRow
             anchors.centerIn: parent
-            width: gamingIcon.width + Config.appearance.spacing.small + gamingLabel.implicitWidth
+            width: gamingIcon.width + Tokens.spacing.small + gamingLabel.implicitWidth
             implicitHeight: Math.max(gamingIcon.implicitHeight, gamingLabel.implicitHeight)
 
             MaterialIcon {
@@ -193,7 +193,7 @@ Column {
             StyledText {
                 id: gamingLabel
                 anchors.left: gamingIcon.right
-                anchors.leftMargin: Config.appearance.spacing.small
+                anchors.leftMargin: Tokens.spacing.small
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Gaming"
                 color: stasisProfile === "gaming"
@@ -206,8 +206,8 @@ Column {
 
     StyledRect {
         width: parent.width
-        implicitHeight: videoRow.implicitHeight + Config.appearance.padding.small * 2
-        radius: Config.appearance.rounding.full
+        implicitHeight: videoRow.implicitHeight + Tokens.padding.small * 2
+        radius: Tokens.rounding.full
         color: stasisProfile === "video"
             ? Colours.palette.m3primaryContainer
             : Colours.palette.m3surfaceContainer
@@ -226,7 +226,7 @@ Column {
         Item {
             id: videoRow
             anchors.centerIn: parent
-            width: videoIcon.width + Config.appearance.spacing.small + videoLabel.implicitWidth
+            width: videoIcon.width + Tokens.spacing.small + videoLabel.implicitWidth
             implicitHeight: Math.max(videoIcon.implicitHeight, videoLabel.implicitHeight)
 
             MaterialIcon {
@@ -242,7 +242,7 @@ Column {
             StyledText {
                 id: videoLabel
                 anchors.left: videoIcon.right
-                anchors.leftMargin: Config.appearance.spacing.small
+                anchors.leftMargin: Tokens.spacing.small
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Video"
                 color: stasisProfile === "video"

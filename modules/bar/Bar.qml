@@ -17,7 +17,7 @@ ColumnLayout {
     required property DrawerVisibilities visibilities
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
-    readonly property int vPadding: Config.appearance.padding.largeIncreased
+    readonly property int vPadding: Tokens.padding.largeIncreased
 
     // Handle Workspace Popouts for Niri
 
@@ -98,7 +98,7 @@ ColumnLayout {
         }
     }
 
-    spacing: Config.appearance.spacing.large
+    spacing: Tokens.spacing.large
 
     Repeater {
         id: repeater
@@ -118,7 +118,7 @@ ColumnLayout {
                 roleValue: "divider"
                 delegate: WrappedLoader {
                     sourceComponent: Rectangle {
-                        implicitWidth: Config.appearance.padding.medium
+                        implicitWidth: Tokens.padding.medium
                         implicitHeight: 1
                         color: Colours.palette.m3outlineVariant
                     }

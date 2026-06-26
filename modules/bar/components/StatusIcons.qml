@@ -20,11 +20,11 @@ StyledRect {
     readonly property alias items: iconColumn
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Config.appearance.rounding.full
+    radius: Tokens.rounding.full
 
     clip: true
     implicitWidth: TokenConfig.sizes.bar.innerWidth
-    implicitHeight: iconColumn.implicitHeight + Config.appearance.padding.medium * 2 - (Config.bar.status.showLockStatus && !Niri.capsLock && !Niri.numLock ? iconColumn.spacing : 0)
+    implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2 - (Config.bar.status.showLockStatus && !Niri.capsLock && !Niri.numLock ? iconColumn.spacing : 0)
 
     ColumnLayout {
         id: iconColumn
@@ -32,9 +32,9 @@ StyledRect {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Config.appearance.padding.medium
+        anchors.bottomMargin: Tokens.padding.medium
 
-        spacing: Config.appearance.spacing.medium / 2
+        spacing: Tokens.spacing.medium / 2
 
         // Lock keys status
         WrappedLoader {
@@ -175,7 +175,7 @@ StyledRect {
             active: Config.bar.status.showBluetooth
 
             sourceComponent: ColumnLayout {
-                spacing: Config.appearance.spacing.medium / 2
+                spacing: Tokens.spacing.medium / 2
 
                 // Bluetooth icon
                 MaterialIcon {

@@ -10,7 +10,7 @@ Item {
 
     // Comfortable width to fit 4 workspace buttons in single row
     implicitWidth: 720
-    implicitHeight: content.implicitHeight + Config.appearance.padding.largeIncreased * 2
+    implicitHeight: content.implicitHeight + Tokens.padding.largeIncreased * 2
 
     property var client: null
 
@@ -31,8 +31,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: Config.appearance.padding.largeIncreased
-        spacing: Config.appearance.spacing.large
+        anchors.margins: Tokens.padding.largeIncreased
+        spacing: Tokens.spacing.large
 
         // ***************************************************
         // WORKSPACE SECTION
@@ -44,8 +44,8 @@ Item {
             GridLayout {
                 id: wsGrid
                 columns: 4
-                rowSpacing: Config.appearance.spacing.large
-                columnSpacing: Config.appearance.spacing.large
+                rowSpacing: Tokens.spacing.large
+                columnSpacing: Tokens.spacing.large
                 Layout.fillWidth: true
 
                 Repeater {
@@ -87,8 +87,8 @@ Item {
 
             GridLayout {
                 columns: 3
-                rowSpacing: Config.appearance.spacing.large
-                columnSpacing: Config.appearance.spacing.large
+                rowSpacing: Tokens.spacing.large
+                columnSpacing: Tokens.spacing.large
                 Layout.fillWidth: true
 
                 // Row 1: Main window controls
@@ -149,7 +149,7 @@ Item {
     // COMPONENTS
 
     component Rect: StyledRect {
-        radius: Config.appearance.rounding.small
+        radius: Tokens.rounding.small
         color: Colours.tPalette.m3surfaceContainer
     }
 
@@ -163,11 +163,11 @@ Item {
 
         function onClicked(): void {}
 
-        radius: Config.appearance.rounding.full
+        radius: Tokens.rounding.full
         color: active ? Colours.palette.m3primary : Colours.palette.m3surfaceContainerHigh
 
-        implicitHeight: label.implicitHeight + Config.appearance.padding.extraSmall * 2
-        implicitWidth: label.implicitWidth + Config.appearance.padding.medium * 2
+        implicitHeight: label.implicitHeight + Tokens.padding.extraSmall * 2
+        implicitWidth: label.implicitWidth + Tokens.padding.medium * 2
 
         Behavior on color {
             CAnim {}
@@ -208,12 +208,12 @@ Item {
 
         function onClicked(): void {}
 
-        radius: Config.appearance.rounding.small
+        radius: Tokens.rounding.small
         color: active ? Colours.palette.m3primaryContainer : accent ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHigh
         opacity: disabled ? 0.5 : 1
 
-        implicitHeight: contentCol.implicitHeight + Config.appearance.padding.medium * 2
-        implicitWidth: Math.max(contentCol.implicitWidth + Config.appearance.padding.medium * 2, 100)
+        implicitHeight: contentCol.implicitHeight + Tokens.padding.medium * 2
+        implicitWidth: Math.max(contentCol.implicitWidth + Tokens.padding.medium * 2, 100)
 
         Behavior on color {
             CAnim {}
@@ -238,7 +238,7 @@ Item {
         Column {
             id: contentCol
             anchors.centerIn: parent
-            spacing: Config.appearance.spacing.medium
+            spacing: Tokens.spacing.medium
 
             MaterialIcon {
                 id: actionIcon

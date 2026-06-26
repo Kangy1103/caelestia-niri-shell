@@ -23,13 +23,13 @@ Item {
 
     signal addEventRequested()
 
-    implicitHeight: contentLayout.implicitHeight + Config.appearance.padding.medium * 2
-    implicitWidth: contentLayout.implicitWidth + Config.appearance.padding.medium * 2
+    implicitHeight: contentLayout.implicitHeight + Tokens.padding.medium * 2
+    implicitWidth: contentLayout.implicitWidth + Tokens.padding.medium * 2
 
     ColumnLayout {
         id: contentLayout
         anchors.fill: parent
-        spacing: Config.appearance.spacing.small
+        spacing: Tokens.spacing.small
 
         StyledText {
             Layout.fillWidth: true
@@ -47,8 +47,8 @@ Item {
                 required property var modelData
                 id: eventCard
                 Layout.fillWidth: true
-                implicitHeight: eventLayout.implicitHeight + Config.appearance.padding.small * 2
-                radius: Config.appearance.rounding.small
+                implicitHeight: eventLayout.implicitHeight + Tokens.padding.small * 2
+                radius: Tokens.rounding.small
                 color: Colours.layer(Colours.palette.m3surfaceContainer, 2)
                 clip: true
 
@@ -62,8 +62,8 @@ Item {
                 RowLayout {
                     id: eventLayout
                     anchors.fill: parent
-                    anchors.margins: Config.appearance.padding.small
-                    spacing: Config.appearance.spacing.small
+                    anchors.margins: Tokens.padding.small
+                    spacing: Tokens.spacing.small
 
                     Rectangle {
                         Layout.preferredWidth: 3
@@ -103,7 +103,7 @@ Item {
 
                         Item {
                             Layout.fillWidth: true
-                            implicitHeight: deleteBtn.implicitHeight + Config.appearance.padding.extraSmall
+                            implicitHeight: deleteBtn.implicitHeight + Tokens.padding.extraSmall
                             visible: eventCard.expanded
 
                             IconButton {
@@ -112,7 +112,7 @@ Item {
                                 icon: "delete"
                                 inactiveColour: Qt.alpha(Colours.palette.m3error, 0.1)
                                 inactiveOnColour: Colours.palette.m3error
-                                radius: Config.appearance.rounding.small
+                                radius: Tokens.rounding.small
 
                                 onClicked: CalEvents.removeEvent(modelData.id)
                             }
@@ -143,7 +143,7 @@ Item {
                 icon: "add"
                 text: "Add event"
                 type: IconTextButton.Tonal
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
 
                 onClicked: root.addEventRequested()
             }

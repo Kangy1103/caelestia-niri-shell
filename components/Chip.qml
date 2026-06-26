@@ -14,9 +14,9 @@ StyledRect {
     signal clicked()
     signal closeClicked()
 
-    radius: Config.appearance.rounding.small
-    implicitWidth: row.implicitWidth + Config.appearance.padding.medium * 2
-    implicitHeight: row.implicitHeight + Config.appearance.padding.extraSmall * 2
+    radius: Tokens.rounding.small
+    implicitWidth: row.implicitWidth + Tokens.padding.medium * 2
+    implicitHeight: row.implicitHeight + Tokens.padding.extraSmall * 2
 
     color: selected ? Colours.palette.m3secondaryContainer : "transparent"
     border.width: selected ? 0 : 1
@@ -38,7 +38,7 @@ StyledRect {
             verticalCenter: parent ? parent.verticalCenter : undefined
             horizontalCenter: parent ? parent.horizontalCenter : undefined
         }
-        spacing: Config.appearance.spacing.extraSmall
+        spacing: Tokens.spacing.extraSmall
 
         MaterialIcon {
             visible: root.icon.length > 0

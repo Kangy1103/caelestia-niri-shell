@@ -49,8 +49,8 @@ StyledRect {
     property bool effectsActive: false
     property color effectColor: Colours.palette.m3primary
 
-    property int horizontalPadding: Math.round(Config.appearance.padding.extraSmall)
-    property int spacingBetweenPills: Math.round(Config.appearance.spacing.small / 2)
+    property int horizontalPadding: Math.round(Tokens.padding.extraSmall)
+    property int spacingBetweenPills: Math.round(Tokens.spacing.small / 2)
     property int windowRevision: 0
 
     property int wheelAccumulatedDelta: 0
@@ -65,7 +65,7 @@ StyledRect {
     }
 
     color: Colours.tPalette.m3surfaceContainer
-    radius: Config.appearance.rounding.full
+    radius: Tokens.rounding.full
 
     Connections {
         target: Niri
@@ -413,7 +413,7 @@ StyledRect {
                 height: iconSize + horizontalPadding
 
                 color: modelData.isFocused ? Colours.palette.m3primaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
-                radius: Config.appearance.rounding.small
+                radius: Tokens.rounding.small
                 border.color: modelData.isFocused ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outlineVariant, 0.2)
                 border.width: modelData.isFocused ? 2 : 1
 

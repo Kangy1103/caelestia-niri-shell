@@ -62,7 +62,7 @@ Item {
 
     clip: true
     implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight, colIndicator.implicitWidth)
-    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin + (colIndicator.visible ? colIndicator.implicitHeight + Config.appearance.spacing.extraSmall : 0)
+    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin + (colIndicator.visible ? colIndicator.implicitHeight + Tokens.spacing.extraSmall : 0)
 
     MaterialIcon {
         id: icon
@@ -123,7 +123,7 @@ Item {
 
         anchors.horizontalCenter: icon.horizontalCenter
         anchors.top: icon.bottom
-        anchors.topMargin: Config.appearance.spacing.small
+        anchors.topMargin: Tokens.spacing.small
 
         font.pointSize: metrics.font.pointSize
         font.family: metrics.font.family
