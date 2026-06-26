@@ -46,6 +46,7 @@ CustomMouseArea {
             spacing: Tokens.spacing.extraSmall
 
             IconButton {
+                isRound: true
                 icon: "chevron_left"
                 type: IconButton.Text
                 font: Tokens.font.icon.builders.small.weight(Font.Bold).build()
@@ -62,7 +63,7 @@ CustomMouseArea {
 
                 StateLayer {
                     color: Colours.palette.m3primary
-                    radius: pressed ? Tokens.rounding.small : Tokens.rounding.large
+                    radius: pressed ? Tokens.rounding.small : height / 2
                     disabled: {
                         const now = new Date();
                         return root.currMonth === now.getMonth() && root.currYear === now.getFullYear();
@@ -87,6 +88,7 @@ CustomMouseArea {
             }
 
             IconButton {
+                isRound: true
                 icon: "chevron_right"
                 type: IconButton.Text
                 font: Tokens.font.icon.builders.small.weight(Font.Bold).build()

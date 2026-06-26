@@ -56,7 +56,7 @@ void Cpu::readNameOnce() {
         return;
     }
     m_name = cleaned;
-    Q_EMIT nameChanged();
+    emit nameChanged();
 }
 
 void Cpu::refreshPercentage() {
@@ -93,7 +93,7 @@ void Cpu::refreshPercentage() {
 
     if (std::abs(newPerc - m_percentage) > 0.0001) {
         m_percentage = newPerc;
-        Q_EMIT percentageChanged();
+        emit percentageChanged();
     }
 }
 
@@ -102,7 +102,7 @@ void Cpu::refreshTemperature() {
     const qreal newTemp = t.value_or(0.0);
     if (std::abs(newTemp - m_temperature) > 0.05) {
         m_temperature = newTemp;
-        Q_EMIT temperatureChanged();
+        emit temperatureChanged();
     }
 }
 
