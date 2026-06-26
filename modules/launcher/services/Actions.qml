@@ -4,6 +4,7 @@ import ".."
 import QtQuick
 import Quickshell
 import CNS.Config
+import CNS.Services
 import qs.services
 import qs.utils
 
@@ -48,7 +49,8 @@ Searcher {
                 list.visibilities.clipboard = true;
             } else {
                 list.visibilities.launcher = false;
-                Quickshell.execDetached(command);
+                if (!SessionManager.exec(command))
+                    Quickshell.execDetached(command);
             }
         }
     }

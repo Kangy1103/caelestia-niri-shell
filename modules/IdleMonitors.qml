@@ -7,7 +7,7 @@ import "lock"
 import Quickshell
 import Quickshell.Wayland
 import CNS.Config
-import CNS.Internal
+import CNS.Services
 import qs.services
 
 Scope {
@@ -26,11 +26,11 @@ Scope {
             lock.lock.locked = false;
         else if (typeof action === "string")
             Quickshell.execDetached(action.split(" "));
-        else
+        else if (!SessionManager.exec(action))
             Quickshell.execDetached(action);
     }
 
-    LogindManager {
+    SessionManager {
         onAboutToSleep: {
             if (GlobalConfig.general.idle.lockBeforeSleep)
                 root.lock.lock.locked = true;

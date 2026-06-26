@@ -439,7 +439,7 @@ StyledRect {
                     if (!root.expanded)
                         return;
 
-                    Quickshell.execDetached(["app2unit", "-O", "--", link]);
+                    Qt.openUrlExternally(link);
                     if (root.modelData)
                         root.modelData.popup = false;
                 }

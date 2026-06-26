@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import CNS
 import CNS.Config
+import CNS.Services
 import qs.components
 import qs.components.controls
 import qs.services
@@ -91,10 +92,19 @@ Column {
         inactiveOnColour: activeFocus ? Colours.palette.m3onSecondaryContainer : Colours.palette.m3onSurface
         radius: pressed ? Tokens.rounding.medium : activeFocus ? Tokens.rounding.extraLarge : Tokens.rounding.largeIncreased
         font: Tokens.font.icon.builders.large.scale(1.3).build()
-        onClicked: Quickshell.execDetached(button.command)
+        onClicked: {
+            if (!SessionManager.exec(button.command))
+                Quickshell.execDetached(button.command);
+        }
 
-        Keys.onEnterPressed: Quickshell.execDetached(button.command)
-        Keys.onReturnPressed: Quickshell.execDetached(button.command)
+        Keys.onEnterPressed: {
+            if (!SessionManager.exec(button.command))
+                Quickshell.execDetached(button.command);
+        }
+        Keys.onReturnPressed: {
+            if (!SessionManager.exec(button.command))
+                Quickshell.execDetached(button.command);
+        }
         Keys.onEscapePressed: root.visibilities.session = false
         Keys.onPressed: event => {
             if (!Config.session.vimKeybinds)

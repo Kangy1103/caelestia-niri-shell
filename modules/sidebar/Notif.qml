@@ -141,7 +141,7 @@ StyledRect {
             wrapMode: Text.WordWrap
 
             onLinkActivated: link => {
-                Quickshell.execDetached(["app2unit", "-O", "--", link]);
+                Qt.openUrlExternally(link);
                 root.visibilities.sidebar = false;
             }
         }
