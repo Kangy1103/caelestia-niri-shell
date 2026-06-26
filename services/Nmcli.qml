@@ -220,7 +220,7 @@ Singleton {
                 const connected = isConnectedState(iface.state);
 
                 devices.push({
-                    interface: iface.device,
+                    iface: iface.device,
                     type: iface.type,
                     state: iface.state,
                     connection: iface.connection,
@@ -1077,7 +1077,7 @@ Singleton {
             getEthernetInterfaces(() => {
                 if (root.activeEthernet && root.activeEthernet.connected) {
                     Qt.callLater(() => {
-                        getEthernetDeviceDetails(root.activeEthernet.interface, () => {});
+                        getEthernetDeviceDetails(root.activeEthernet.iface, () => {});
                     }, 500);
                 }
             });
