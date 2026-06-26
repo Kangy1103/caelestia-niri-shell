@@ -1,4 +1,4 @@
-qml_module(caelestia-services
+qml_module(CNS-services
     URI CNS.Services
     SOURCES
         service.hpp service.cpp
@@ -18,11 +18,14 @@ qml_module(caelestia-services
         lyriccandidate.cpp
         lyrics.cpp
         sysmonitor.hpp sysmonitor.cpp
+        sessionmanager.hpp sessionmanager.cpp
     LIBRARIES
+        Qt::DBus
         PkgConfig::Pipewire
         PkgConfig::Aubio
         PkgConfig::Cava
         Sensors::Sensors
-        caelestia-config
-        caelestia-internal
+        CNS
+        CNS-config
+        CNS-internal
 )

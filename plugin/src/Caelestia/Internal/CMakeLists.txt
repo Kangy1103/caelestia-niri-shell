@@ -1,11 +1,10 @@
-qml_module(caelestia-internal
+qml_module(CNS-internal
     URI CNS.Internal
     SOURCES
         cachingimagemanager.hpp cachingimagemanager.cpp
         circularbuffer.hpp circularbuffer.cpp
         circularindicatormanager.hpp circularindicatormanager.cpp
         linearindicatormanager.cpp
-        logindmanager.cpp
         niriipc.hpp niriipc.cpp
         nirisocket.hpp nirisocket.cpp
         sparklineitem.cpp

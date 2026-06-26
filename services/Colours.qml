@@ -92,7 +92,7 @@ Singleton {
 
     IpcHandler {
         target: "colours"
-        function reload(): void { schemeFile.reload() }
+        function reload(): void { schemeFile.reload(); Schemes.syncFromFile() }
     }
 
     ImageAnalyser {

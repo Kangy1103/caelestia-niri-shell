@@ -1,4 +1,4 @@
-qml_module(caelestia-components
+qml_module(CNS-components
     URI CNS.Components
     SOURCES
         lazylistview.cpp

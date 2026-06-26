@@ -1,11 +1,11 @@
 #pragma once
 
-#include <qdbusconnection.h>
-#include <qobject.h>
-#include <qqmlintegration.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qvariant.h>
+#include <QtDBus/QDBusConnection>
+#include <QObject>
+#include <QtQmlIntegration>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
 
 #include <optional>
 

@@ -103,14 +103,14 @@ class LauncherConfig : public ConfigObject {
                 { u"name"_s, u"Logout"_s },
                 { u"icon"_s, u"exit_to_app"_s },
                 { u"description"_s, u"Log out of the current session"_s },
-                { u"command"_s, QStringList{ u"loginctl"_s, u"terminate-user"_s, u""_s } },
+                { u"command"_s, QStringList{ u"niri"_s, u"msg"_s, u"action"_s, u"quit"_s, u"-s"_s } },
                 { u"dangerous"_s, true },
             }),
             vmap({
                 { u"name"_s, u"Lock"_s },
                 { u"icon"_s, u"lock"_s },
                 { u"description"_s, u"Lock the current session"_s },
-                { u"command"_s, QStringList{ u"loginctl"_s, u"lock-session"_s } },
+                { u"command"_s, QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"lock"_s, u"lock"_s } },
             }),
             vmap({
                 { u"name"_s, u"Sleep"_s },
@@ -123,6 +123,43 @@ class LauncherConfig : public ConfigObject {
                 { u"icon"_s, u"settings"_s },
                 { u"description"_s, u"Configure the shell"_s },
                 { u"command"_s, QStringList{ u"cns"_s, u"shell"_s, u"nexus"_s, u"open"_s } },
+            }),
+            vmap({
+                { u"name"_s, u"Clipboard"_s },
+                { u"icon"_s, u"content_paste"_s },
+                { u"description"_s, u"Search clipboard history"_s },
+                { u"command"_s, QStringList{ u"clipboard"_s } },
+            }),
+            vmap({
+                { u"name"_s, u"Emoji"_s },
+                { u"icon"_s, u"mood"_s },
+                { u"description"_s, u"Search and copy emojis"_s },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"emoji"_s } },
+            }),
+            vmap({
+                { u"name"_s, u"Google Lens"_s },
+                { u"icon"_s, u"image_search"_s },
+                { u"description"_s, u"Search a screen region with Google Lens"_s },
+                { u"command"_s, QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"picker"_s, u"regionSearch"_s } },
+            }),
+            vmap({
+                { u"name"_s, u"OCR"_s },
+                { u"icon"_s, u"document_scanner"_s },
+                { u"description"_s, u"Extract text from a screen region"_s },
+                { u"command"_s, QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"picker"_s, u"regionOcr"_s } },
+            }),
+            vmap({
+                { u"name"_s, u"Transparency"_s },
+                { u"icon"_s, u"opacity"_s },
+                { u"description"_s, u"Change shell transparency"_s },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"transparency"_s } },
+                { u"enabled"_s, false },
+            }),
+            vmap({
+                { u"name"_s, u"Web Search"_s },
+                { u"icon"_s, u"travel_explore"_s },
+                { u"description"_s, u"Search the web or open a URL"_s },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"web"_s } },
             }),
         })
 

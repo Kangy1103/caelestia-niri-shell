@@ -1,4 +1,4 @@
-qml_module(caelestia-images
+qml_module(CNS-images
     URI CNS.Images
     SOURCES
         cachingimageprovider.cpp

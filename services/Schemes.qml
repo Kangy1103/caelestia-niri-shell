@@ -15,6 +15,8 @@ Searcher {
     property var schemeItems: []
     property string lastNonDynamicScheme: "catppuccin mocha"
 
+    function syncFromFile(): void { schemeStateFile.reload() }
+
     readonly property var schemeModeMap: ({
         "caelestia default": "both",
         "catppuccin frappe": "dark",
@@ -273,13 +275,6 @@ Searcher {
         }
 
         onFileChanged: reload()
-    }
-
-    // IPC handler — receive the same `colours reload` call that Colours.qml handles.
-    // Ensures Schemes.currentScheme / currentVariant update when the CLI writes state.
-    IpcHandler {
-        target: "colours"
-        function reload(): void { schemeStateFile.reload() }
     }
 
     // Process for ensuring state directory exists before writing

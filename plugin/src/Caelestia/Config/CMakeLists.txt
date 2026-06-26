@@ -1,4 +1,4 @@
-qml_module(caelestia-config
+qml_module(CNS-config
     URI CNS.Config
     SOURCES
         config.cpp
@@ -17,6 +17,7 @@ qml_module(caelestia-config
         borderconfig.hpp
         dashboardconfig.hpp
         generalconfig.hpp
+        greeterconfig.hpp
         launcherconfig.hpp
         lockconfig.hpp
         nexusconfig.hpp

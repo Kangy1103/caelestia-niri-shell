@@ -1,4 +1,4 @@
-qml_module(caelestia
+qml_module(CNS
     URI CNS
     SOURCES
         cutils.hpp cutils.cpp
@@ -17,7 +17,7 @@ qml_module(caelestia
 )
 
 # Bake the shell version in so CUtils can expose it without spawning a process
-target_compile_definitions(caelestia PRIVATE CAELESTIA_VERSION="${VERSION}")
+target_compile_definitions(CNS PRIVATE CAELESTIA_VERSION="${VERSION}")
 
 add_subdirectory(Components)
 add_subdirectory(Config)
