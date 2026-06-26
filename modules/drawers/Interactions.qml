@@ -113,6 +113,9 @@ CustomMouseArea {
 
             if (Config.bar.showOnHover)
                 bar.isHovered = false;
+
+            if (Config.sidebar.showOnHover)
+                visibilities.sidebar = false;
         }
     }
 
@@ -160,6 +163,14 @@ CustomMouseArea {
 
             const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x);
 
+            // Show sidebar on hover (top-right corner, bounded by notification panel height)
+            if (Config.sidebar.showOnHover) {
+                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
+                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
+                if (showSidebarHover && !visibilities.sidebar)
+                    visibilities.sidebar = true;
+            }
+
             // Show/hide session on drag
             if (pressed && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
                 if (dragX < -Config.session.dragThreshold)
@@ -200,6 +211,19 @@ CustomMouseArea {
             // Hide sidebar on drag
             if (pressed && inRightPanel(panels.sidebar, dragStart.x, 0) && dragX > Config.sidebar.dragThreshold)
                 visibilities.sidebar = false;
+        }
+
+        // Show/hide sidebar on hover
+        if (Config.sidebar.showOnHover && !pressed) {
+            const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
+            const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
+            if (showSidebarHover && !visibilities.sidebar) {
+                visibilities.sidebar = true;
+            } else {
+                const inSidebarArea = inRightPanel(panels.sidebar, x, y) || inRightPanel(panels.sessionWrapper, x, y);
+                if (!inSidebarArea)
+                    visibilities.sidebar = false;
+            }
         }
 
         // Show launcher on hover, or show/hide on drag if hover is disabled

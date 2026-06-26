@@ -21,12 +21,13 @@ Item {
     readonly property bool showEmojis: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}emoji `)
     readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
     readonly property var currentList: showEmojis ? emojiList.item : showWallpapers ? wallpaperList.item : appList.item
+    property string animState: showEmojis ? "emojis" : showWallpapers ? "wallpapers" : "apps"
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
 
     clip: true
-    state: showEmojis ? "emojis" : showWallpapers ? "wallpapers" : "apps"
+    state: animState
 
     states: [
         State {
@@ -68,7 +69,7 @@ Item {
         }
     ]
 
-    Behavior on state {
+    Behavior on animState {
         SequentialAnimation {
             Anim {
                 target: root

@@ -49,7 +49,7 @@ ColumnLayout {
             return;
         }
 
-        const id = ch.id;
+        const id = ch.entryId;
         const top = ch.y;
         const item = ch.item;
         const itemHeight = item.implicitHeight;
@@ -88,7 +88,7 @@ ColumnLayout {
 
     function handleWheel(y: real, angleDelta: point): void {
         const ch = childAt(width / 2, y) as WrappedLoader;
-        if (ch?.id === "workspaces" && Config.bar.scrollActions.workspaces) {
+        if (ch?.entryId === "workspaces" && Config.bar.scrollActions.workspaces) {
             Niri.switchToWorkspaceUpDown(angleDelta.y > 0 ? "up" : "down");
         } else if (Config.bar.scrollActions.volume) {
             if (angleDelta.y > 0)
@@ -240,7 +240,8 @@ ColumnLayout {
     Component.onCompleted: updateEnabledCache()
 
     component WrappedLoader: Loader {
-        required property string id
+        required property var modelData
+        readonly property string entryId: modelData.id
         required property int index
 
         onEnabledChanged: Qt.callLater(root.updateEnabledCache)

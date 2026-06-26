@@ -190,6 +190,13 @@ Scope {
             const visibilities = Visibilities.getForActive();
             return Object.keys(visibilities).filter(k => typeof visibilities[k] === "boolean").join("\n");
         }
+
+        function isOpen(drawer: string): string {
+            const visibilities = Visibilities.getForActive();
+            if (typeof visibilities[drawer] !== "boolean")
+                return "unknown";
+            return visibilities[drawer] ? "1" : "0";
+        }
     }
 
     // ── IPC: greeter (used by greeter.qml entry point) ──
