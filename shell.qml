@@ -28,73 +28,75 @@ import Quickshell
 import Quickshell.Io
 
 ShellRoot {
-    id: root
+  id: root
 
-    // Font loader — GSFLoader doesn't block on missing fonts, safe to keep always
-    GSFLoader {}
+  // Font loader — GSFLoader doesn't block on missing fonts, safe to keep always
+  GSFLoader {}
 
-    Backdrop {}
-    Background {}
-    Drawers {}
-    AreaPicker {}
-    Lock { id: lockModule }
-    Shortcuts {}
-    ClipboardPanel {}
-    NotepadPanel {}
-    KeybindsPanel {}
-    CalendarPanel {}
-    CalendarAppPanel {}
+  // Backdrop {}  // disabled — occluded by Background wallpaper
+  Background {}
+  Drawers {}
+  AreaPicker {}
+  Lock {
+    id: lockModule
+  }
+  Shortcuts {}
+  ClipboardPanel {}
+  NotepadPanel {}
+  KeybindsPanel {}
+  CalendarPanel {}
+  CalendarAppPanel {}
 
-    // Native polkit authentication agent — replaces polkit-kde-authentication-agent-1
-    PolkitDialog {}
+  // Native polkit authentication agent — replaces polkit-kde-authentication-agent-1
+  PolkitDialog {}
 
-    ReloadPopup {}
+  ReloadPopup {}
 
-    // Config toast notifications (C++ GlobalConfig signals)
-    ConfigToasts {}
+  // Config toast notifications (C++ GlobalConfig signals)
+  ConfigToasts {}
 
-    // Initialize BatteryMonitor service
-    property var _batteryMonitor: BatteryMonitor
+  // Initialize BatteryMonitor service
+  property var _batteryMonitor: BatteryMonitor
 
-    // Initialize AudioPortSwitch service
-    property var _audioPortSwitch: AudioPortSwitch
+  // Initialize AudioPortSwitch service
+  property var _audioPortSwitch: AudioPortSwitch
 
-    // Initialize Cava audio visualiser service
-    property var _cavaService: Cava
+  // Initialize Cava audio visualiser service
+  property var _cavaService: Cava
 
-    // Initialize GameMode service
-    property var _gameMode: GameMode
+  // Initialize GameMode service
+  property var _gameMode: GameMode
 
-    // Initialize C++ Config singleton (populates Caelestia.Config.GlobalConfig)
-    property var _cppConfig: GlobalConfig
+  // Initialize C++ Config singleton (populates Caelestia.Config.GlobalConfig)
+  property var _cppConfig: GlobalConfig
 
-    Component {
-        id: geomComponent
-        Geom {}
-    }
+  Component {
+    id: geomComponent
+    Geom {}
+  }
 
-    SocketServer {
-        id: screenshotSocket
+  SocketServer {
+    id: screenshotSocket
 
-        active: true
-        path: "/tmp/quickshell_screenshot.sock"
+    active: true
+    path: "/tmp/quickshell_screenshot.sock"
 
-        handler: Socket {
-            id: handler
-            parser: SplitParser {
-                onRead: msg => {
-                    if (msg === "geom") {
-                        geomComponent.createObject(root)
-                    }
-                }
-            }
+    handler: Socket {
+      id: handler
+      parser: SplitParser {
+        onRead: msg => {
+          if (msg === "geom") {
+            geomComponent.createObject(root);
+          }
         }
+      }
     }
+  }
 
-    IpcHandler {
-        target: "screenshot"
-        function region(): void {
-            geomComponent.createObject(root)
-        }
+  IpcHandler {
+    target: "screenshot"
+    function region(): void {
+      geomComponent.createObject(root);
     }
+  }
 }

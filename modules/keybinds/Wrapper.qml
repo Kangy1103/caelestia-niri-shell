@@ -10,14 +10,14 @@ Item {
 
     visible: height > 0
     implicitHeight: 0
-    implicitWidth: content.implicitWidth
+    implicitWidth: contentLoader.item ? contentLoader.item.implicitWidth : 0
 
     states: State {
         name: "visible"
         when: root.visibilities.keybinds
 
         PropertyChanges {
-            root.implicitHeight: content.implicitHeight
+            root.implicitHeight: contentLoader.item ? contentLoader.item.implicitHeight : 0
         }
     }
 
@@ -44,9 +44,12 @@ Item {
         }
     ]
 
-    Content {
-        id: content
-        wrapper: root
-        visibilities: root.visibilities
+    Loader {
+        id: contentLoader
+        active: root.visibilities.keybinds || root.visible
+        sourceComponent: Content {
+            wrapper: root
+            visibilities: root.visibilities
+        }
     }
 }

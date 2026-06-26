@@ -10,14 +10,14 @@ Item {
 
     visible: height > 0
     implicitHeight: 0
-    implicitWidth: content.implicitWidth
+    implicitWidth: contentLoader.item ? contentLoader.item.implicitWidth : 0
 
     states: State {
         name: "visible"
         when: root.visibilities.calendar
 
         PropertyChanges {
-            root.implicitHeight: content.implicitHeight
+            root.implicitHeight: contentLoader.item ? contentLoader.item.implicitHeight : 0
         }
     }
 
@@ -44,8 +44,11 @@ Item {
         }
     ]
 
-    Content {
-        id: content
-        visibilities: root.visibilities
+    Loader {
+        id: contentLoader
+        active: root.visibilities.calendar || root.visible
+        sourceComponent: Content {
+            visibilities: root.visibilities
+        }
     }
 }

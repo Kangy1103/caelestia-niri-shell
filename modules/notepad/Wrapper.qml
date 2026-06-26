@@ -19,7 +19,7 @@ Item {
             implicitHeight = Qt.binding(() => content.implicitHeight)
     }
 
-    visible: true
+    visible: offsetScale < 1
     anchors.topMargin: (-implicitHeight - 5) * offsetScale
     implicitHeight: content.implicitHeight || 200
     implicitWidth: content.implicitWidth || 680
