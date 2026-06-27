@@ -23,7 +23,7 @@ ConnectedRect {
 
     Connections {
         target: root
-        onSelected: item => {
+        function onSelected(item: var): void {
             if (toastOnChange) {
                 Toaster.toast(label.text, item.text || "", "tune");
             }

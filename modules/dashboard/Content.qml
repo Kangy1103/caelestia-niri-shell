@@ -142,13 +142,21 @@ Item {
 
                         sourceComponent: modelData.component
 
+                        property real _paneWidth: 0
+
                         Component.onCompleted: active = Qt.binding(() => {
                             if (index === view.currentIndex)
                                 return true;
                             const vx = Math.floor(view.visibleArea.xPosition * view.contentWidth);
                             const vex = Math.floor(vx + view.visibleArea.widthRatio * view.contentWidth);
-                            return (vx >= x && vx <= x + view.width) || (vex >= x && vex <= x + view.width);
+                            const w = _paneWidth > 0 ? _paneWidth : view.width;
+                            return (vx >= x && vx <= x + w) || (vex >= x && vex <= x + w);
                         })
+
+                        onImplicitWidthChanged: {
+                            if (implicitWidth > 0 && _paneWidth === 0)
+                                _paneWidth = implicitWidth;
+                        }
                     }
                 }
             }

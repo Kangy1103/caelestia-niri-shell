@@ -24,7 +24,7 @@ ConnectedRect {
 
     Connections {
         target: root
-        onMoved: v => {
+        function onMoved(v: real): void {
             if (toastOnChange) {
                 Toaster.toast(label.text, String(v), "tune");
             }
