@@ -87,9 +87,9 @@ StyledWindow {
 
     Region {
         id: fullScreenRegion
-        x: bar.implicitWidth
+        x: 0
         y: root.borderThickness
-        width: root.width - bar.implicitWidth - root.borderThickness
+        width: root.width - root.borderThickness
         height: root.height - root.borderThickness * 2
     }
 
