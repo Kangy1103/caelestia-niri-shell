@@ -19,6 +19,7 @@ Singleton {
         return i >= 0 ? root.configPath.substring(0, i) : "";
     }
     readonly property string greeterWallpaperOverridePath: root._greeterCacheDir ? (root._greeterCacheDir + "/greeter_wallpaper_override.jpg") : ""
+    readonly property string greeterProfileCachePath: root._greeterCacheDir ? (root._greeterCacheDir + "/.face") : ""
 
     property bool settingsLoaded: false
     property bool use24HourClock: true

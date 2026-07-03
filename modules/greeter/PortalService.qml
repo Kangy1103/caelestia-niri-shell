@@ -33,10 +33,12 @@ Singleton {
             profileImage = "";
             return;
         }
-        // Check for .face files in multiple locations
+
+        profileCheckProc.running = false;
+
         profileCheckProc.command = ["sh", "-c",
-            `for f in /home/${username}/.face /home/${username}/.face.icon /var/lib/AccountsService/icons/${username}; do
-                [ -f "$f" ] && { echo "$f"; exit 0; }
+            `for f in "${GreetdSettings.greeterProfileCachePath}" /home/${username}/.face /home/${username}/.face.icon /var/lib/AccountsService/icons/${username}; do
+                [ -f "$f" ] && [ -r "$f" ] && { echo "$f"; exit 0; }
             done
             exit 1`
         ];

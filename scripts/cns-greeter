@@ -213,6 +213,10 @@ if [[ -n "$REMEMBER_LAST_USER" ]]; then
     export CNS_SAVE_USERNAME
 fi
 
+# Copy profile picture to greeter cache so PortalService can find it
+cp /home/kangy/.face "$CACHE_DIR/.face" 2>/dev/null || true
+chmod 644 "$CACHE_DIR/.face" 2>/dev/null || true
+
 export HOME="$CACHE_DIR"
 export XDG_STATE_HOME="$CACHE_DIR/.local/state"
 export XDG_DATA_HOME="$CACHE_DIR/.local/share"

@@ -3,8 +3,9 @@
 
 //@ pragma Env CAELESTIA_CONFIG_DIR=caelestia-niri-shell
 //@ pragma Env QS_NO_RELOAD_POPUP=1
-//@ pragma Env QS_DROP_EXPENSIVE_FONTS=1
+//@ pragma DefaultEnv QSG_DROP_EXPENSIVE_FONTS=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
+
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 
 import "modules"
@@ -55,21 +56,6 @@ ShellRoot {
   // Config toast notifications (C++ GlobalConfig signals)
   ConfigToasts {}
 
-  // Initialize BatteryMonitor service
-  property var _batteryMonitor: BatteryMonitor
-
-  // Initialize AudioPortSwitch service
-  property var _audioPortSwitch: AudioPortSwitch
-
-  // Initialize Cava audio visualiser service
-  property var _cavaService: Cava
-
-  // Initialize GameMode service
-  property var _gameMode: GameMode
-
-  // Initialize C++ Config singleton (populates Caelestia.Config.GlobalConfig)
-  property var _cppConfig: GlobalConfig
-
   Component {
     id: geomComponent
     Geom {}
@@ -98,5 +84,11 @@ ShellRoot {
     function region(): void {
       geomComponent.createObject(root);
     }
+  }
+
+  // Sync profile picture to greeter cache so the greeter user can read it
+  Process {
+    command: ["sh", "-c", "cp /home/kangy/.face /var/cache/cns-greeter/.face 2>/dev/null; chmod 644 /var/cache/cns-greeter/.face 2>/dev/null"]
+    running: true
   }
 }
