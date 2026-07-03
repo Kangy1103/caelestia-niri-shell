@@ -15,7 +15,10 @@ Searcher {
                 workingDirectory: entry.workingDirectory
             });
         else
-            entry.execute();
+            Quickshell.execDetached({
+                command: ["env", "-u", "DRI_PRIME", "-u", "__EGL_VENDOR_LIBRARY_FILENAMES", ...entry.command],
+                workingDirectory: entry.workingDirectory
+            });
     }
 
     function search(search: string): list<var> {

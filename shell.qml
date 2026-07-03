@@ -5,6 +5,7 @@
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma DefaultEnv QSG_DROP_EXPENSIVE_FONTS=1
 //@ pragma Env QSG_RENDER_LOOP=threaded
+//@ pragma IconTheme Slot-Symbolic-Dark-Icons
 
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 
