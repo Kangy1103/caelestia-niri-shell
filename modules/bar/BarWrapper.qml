@@ -25,7 +25,7 @@ Item {
     readonly property int padding: Math.max(Tokens.padding.small, Config.border.thickness)
     readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
     readonly property int exclusiveZone: !disabled && (Config.bar.persistent || visibilities.bar) ? contentWidth : Config.border.thickness
-    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
+    readonly property bool shouldBeVisible: !disabled && (Config.bar.persistent || visibilities.bar || isHovered)
     property bool isHovered
 
     function closeTray(): void {
@@ -42,7 +42,7 @@ Item {
 
     clip: true
     visible: width > Config.border.thickness
-    implicitWidth: fullscreen ? 0 : Config.border.thickness
+    implicitWidth: Config.border.thickness
 
     states: State {
         name: "visible"

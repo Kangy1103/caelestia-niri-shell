@@ -41,7 +41,9 @@ Searcher {
         "rosepine moon": "dark",
         "shadotheme default": "dark",
         "solarized medium": "dark",
-        "tokyonight medium": "dark"
+        "tokyonight medium": "dark",
+        "cyberpunk dark": "dark",
+        "cyberpunk light": "light"
     })
 
     // Path to the schemes data JSON file (bundled with the shell)

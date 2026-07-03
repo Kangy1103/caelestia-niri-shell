@@ -149,39 +149,7 @@ StyledRect {
         Qt.callLater(root.refreshWorkspaces);
     }
 
-    // Workaround: NiriIpc binary doesn't handle WorkspaceActivated events,
-    // so ws.is_focused is stale after initial load. Derive focus from the
-    // focused window's workspace_id instead, since WindowFocusChanged IS handled.
-    property int _focusedWsId: -1
-
-    function updateFocusedWorkspaceId() {
-        var fwId = Number(Niri.focusedWindowId);
-        if (fwId > 0) {
-            var wins = Niri.windows;
-            for (var i = 0; i < wins.length; i++) {
-                if (Number(wins[i].id) === fwId) {
-                    root._focusedWsId = Number(wins[i].workspace_id);
-                    return;
-                }
-            }
-        }
-        // Fallback: empty workspace or no focused window — use stale is_focused
-        var allWs = Niri.allWorkspaces;
-        if (!allWs) {
-            root._focusedWsId = -1;
-            return;
-        }
-        for (var i = 0; i < allWs.length; i++) {
-            if (allWs[i].is_focused) {
-                root._focusedWsId = Number(allWs[i].id);
-                return;
-            }
-        }
-        root._focusedWsId = -1;
-    }
-
     function refreshWorkspaces() {
-        updateFocusedWorkspaceId();
 
         var allWs = Niri.allWorkspaces;
         if (!allWs) allWs = [];
@@ -203,8 +171,8 @@ StyledRect {
                 idx: ws.idx,
                 name: ws.name ?? "",
                 output: ws.output ?? "",
-                isFocused: Number(ws.id) === root._focusedWsId,
-                isActive: Number(ws.id) === root._focusedWsId,
+                isFocused: Number(ws.id) === Niri.focusedWorkspaceId,
+                isActive: Number(ws.id) === Niri.focusedWorkspaceId,
                 isUrgent: ws.is_urgent ?? false,
                 isOccupied: Niri.workspaceHasWindows[String(ws.idx)] ?? false
             });
@@ -294,13 +262,6 @@ StyledRect {
             if (showApplications) root.windowRevision++;
             scheduleRefresh();
         }
-    }
-
-    Timer {
-        interval: 1000
-        repeat: true
-        running: true
-        onTriggered: scheduleRefresh()
     }
 
     // ===== Wheel scrolling =====

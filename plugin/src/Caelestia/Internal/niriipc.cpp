@@ -546,6 +546,42 @@ void NiriIpc::handleWindowFocusChanged(const QJsonObject& data) {
     emit focusedWindowChanged();
 
     checkFullscreen();
+
+    // Update focused workspace + monitor across monitors
+    if (m_focusedWindowIndex >= 0) {
+        const auto& winList = m_windowsModel->items();
+        const auto win = winList.at(m_focusedWindowIndex).toMap();
+        const int wsId = win.value(QStringLiteral("workspace_id")).toInt();
+
+        bool wsChanged = (wsId != m_focusedWorkspaceId);
+
+        // Locate workspace in model to get output + array index
+        const auto& wsList = m_workspacesModel->items();
+        QString newMonitor;
+        int newWsIndex = -1;
+        for (int i = 0; i < wsList.size(); ++i) {
+            const auto ws = wsList.at(i).toMap();
+            if (ws.value(QStringLiteral("id")).toInt() == wsId) {
+                newMonitor = ws.value(QStringLiteral("output")).toString();
+                newWsIndex = i;
+                break;
+            }
+        }
+
+        if (wsChanged && newWsIndex >= 0) {
+            m_focusedWorkspaceId = wsId;
+            m_focusedWorkspaceIndex = newWsIndex;
+        }
+
+        if (!newMonitor.isEmpty() && m_focusedMonitorName != newMonitor) {
+            m_focusedMonitorName = newMonitor;
+            updateCurrentOutputWorkspaces();
+            emit workspacesChanged();
+        }
+
+        if (wsChanged)
+            emit focusedWorkspaceChanged();
+    }
 }
 
 void NiriIpc::handleWindowLayoutsChanged(const QJsonObject& data) {

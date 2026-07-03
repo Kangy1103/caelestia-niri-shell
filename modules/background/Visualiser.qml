@@ -68,11 +68,9 @@ Item {
             animationDuration: Config.background.visualiser.animationDuration
             sensitivity: Config.background.visualiser.sensitivity
 
-            Timer {
-                running: true
-                interval: 16
-                repeat: true
-                onTriggered: parent.advance(0.016)
+            FrameAnimation {
+                running: opacity > 0 && !bars.settled
+                onTriggered: bars.advance(frameTime)
             }
 
             Behavior on anchors.leftMargin {
