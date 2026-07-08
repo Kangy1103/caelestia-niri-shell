@@ -29,11 +29,9 @@ ColumnLayout {
     }
 
     StyledText {
-        Layout.fillWidth: true
-        Layout.leftMargin: Tokens.padding.large
-        Layout.rightMargin: Tokens.padding.large
+        Layout.alignment: Qt.AlignHCenter
 
-        text: Time.format("dddd • d MMM").toUpperCase()
+        text: Time.format("dddd • d MMM yyyy").toUpperCase()
         color: Colours.palette.m3onSurface
         font: Tokens.font.title.builders.medium.weight(Font.DemiBold).build()
     }
