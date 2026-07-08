@@ -364,7 +364,7 @@ WlSessionLockSurface {
     // ── Main floating panel ────────────────────────────────────────────────────
 
     readonly property real centerFullWidth: Tokens.sizes.lock.centerWidth * Math.min(1, (root.screen?.height ?? 1440) / 1440)
-    readonly property real centerWidth: Math.round(centerFullWidth * 0.75)
+    readonly property real centerWidth: Tokens.sizes.lock.centerWidth
     readonly property real centerHeight: Math.round(centerFullWidth * 1.43)
 
     Item {
@@ -419,19 +419,17 @@ WlSessionLockSurface {
             rotation: 180
         }
 
-        RowLayout {
+        Center {
             id: content
 
             anchors.centerIn: parent
-            width: root.centerWidth - Tokens.padding.extraLargeIncreased
+            width: root.centerWidth
             height: root.centerHeight - Tokens.padding.extraLargeIncreased
 
             opacity: 0
             scale: 0
 
-            Center {
-                lock: root
-            }
+            lock: root
         }
     }
 }

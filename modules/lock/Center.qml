@@ -9,25 +9,31 @@ import qs.components
 import qs.services
 
 ColumnLayout {
-    id: root
+  id: root
 
-    required property var lock
+  required property var lock
     readonly property real centerScale: Math.min(1, (lock.screen?.height ?? 1440) / 1440)
-    readonly property int centerWidth: Tokens.sizes.lock.centerWidth * centerScale
+    readonly property int centerWidth: Tokens.sizes.lock.centerWidth
 
-    Layout.preferredWidth: centerWidth
-    Layout.fillHeight: true
+  Layout.fillWidth: false
+  Layout.preferredWidth: centerWidth
+  Layout.fillHeight: true
 
-    spacing: Tokens.spacing.largeIncreased
+  clip: true
+  spacing: Tokens.spacing.largeIncreased
 
     Clock {
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
         Layout.topMargin: Tokens.padding.large
         centerScale: root.centerScale
     }
 
     StyledText {
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
 
         text: Time.format("dddd • d MMM").toUpperCase()
         color: Colours.palette.m3onSurface
@@ -35,7 +41,9 @@ ColumnLayout {
     }
 
     ProfilePic {
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
         Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
         Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
         centerWidth: root.centerWidth
@@ -43,13 +51,15 @@ ColumnLayout {
 
     PasswordInput {
         Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
         centerScale: Math.max(0.8, root.centerScale)
         centerWidth: root.centerWidth
         lock: root.lock
     }
 
-    StateMessage {
-        Layout.fillWidth: true
-        pam: root.lock.pam
-    }
+  StateMessage {
+    Layout.fillWidth: true
+    pam: root.lock.pam
+  }
 }
