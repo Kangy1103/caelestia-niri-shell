@@ -11,23 +11,21 @@ import qs.services
 ColumnLayout {
   id: root
 
-  required property var lock
-    readonly property real centerScale: Math.min(1, (lock.screen?.height ?? 1440) / 1440)
+    required property var lock
     readonly property int centerWidth: Tokens.sizes.lock.centerWidth
 
-  Layout.fillWidth: false
-  Layout.preferredWidth: centerWidth
-  Layout.fillHeight: true
+    Layout.fillWidth: false
+    Layout.preferredWidth: centerWidth
+    Layout.fillHeight: true
 
-  clip: true
-  spacing: Tokens.spacing.largeIncreased
+    clip: true
+    spacing: Tokens.spacing.largeIncreased
 
     Clock {
         Layout.fillWidth: true
         Layout.leftMargin: Tokens.padding.large
         Layout.rightMargin: Tokens.padding.large
         Layout.topMargin: Tokens.padding.large
-        centerScale: root.centerScale
     }
 
     StyledText {
@@ -44,8 +42,8 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Tokens.padding.large
         Layout.rightMargin: Tokens.padding.large
-        Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
-        Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
+        Layout.topMargin: Tokens.spacing.extraExtraLarge
+        Layout.bottomMargin: Tokens.spacing.extraLarge
         centerWidth: root.centerWidth
     }
 
@@ -53,7 +51,6 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Tokens.padding.large
         Layout.rightMargin: Tokens.padding.large
-        centerScale: Math.max(0.8, root.centerScale)
         centerWidth: root.centerWidth
         lock: root.lock
     }

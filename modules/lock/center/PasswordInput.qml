@@ -11,7 +11,6 @@ import qs.services
 StyledRect {
     id: root
 
-    required property real centerScale
     required property int centerWidth
     required property var lock
 
@@ -79,7 +78,7 @@ StyledRect {
                         return "lock";
                     }
                     color: root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                    fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale).build()
+                    fontStyle: Tokens.font.icon.builders.medium.build()
                 }
             }
 
@@ -98,7 +97,6 @@ StyledRect {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            centerScale: root.centerScale
             pam: root.lock.pam
         }
 
@@ -145,7 +143,7 @@ StyledRect {
                 anchors.centerIn: parent
                 text: "arrow_forward"
                 color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale * 1.2).build()
+                fontStyle: Tokens.font.icon.builders.medium.scale(1.2).build()
                 opacity: root.lock.pam.buffer ? 0 : 1
 
                 Behavior on opacity {

@@ -8,11 +8,34 @@ import qs.services
 Item {
     id: root
 
-    required property real centerScale
-
     function calcTopOff(metrics: TextMetrics): real {
         return metrics.tightBoundingRect.y - metrics.boundingRect.y;
     }
+
+    readonly property font baseFont: Tokens.font.headline.builders.large.scale(1).width(30).build()
+
+    readonly property real scale_24h: 5
+    readonly property real scale_12h: 2.7
+
+    TextMetrics {
+        id: baseHourMetrics
+
+        text: Time.hourStr
+        font: root.baseFont
+    }
+
+    TextMetrics {
+        id: baseMinuteMetrics
+
+        text: Time.minuteStr
+        font: root.baseFont
+    }
+
+    readonly property real maxScale: 5
+    readonly property real baseTotalWidth: baseHourMetrics.width + baseMinuteMetrics.width + Tokens.spacing.small
+    readonly property real fitScale: root.width > 0 && baseTotalWidth > 0
+        ? Math.min(maxScale, root.width / baseTotalWidth)
+        : maxScale
 
     implicitWidth: clockGroup.implicitWidth
     implicitHeight: hourMetrics.tightBoundingRect.height
@@ -29,7 +52,7 @@ Item {
             y: -root.calcTopOff(hourMetrics)
             text: Time.hourStr
             color: Colours.palette.m3primary
-            font: Tokens.font.headline.builders.large.scale(5 * root.centerScale).width(30).build()
+            font: Tokens.font.headline.builders.large.scale(root.fitScale).width(30).build()
 
             TextMetrics {
                 id: hourMetrics
@@ -47,7 +70,11 @@ Item {
 
             text: Time.minuteStr
             color: Colours.palette.m3secondary
-            font: Tokens.font.headline.builders.large.scale((GlobalConfig.services.useTwelveHourClock ? 2.7 : 5) * root.centerScale).width(30).build()
+            font: Tokens.font.headline.builders.large.scale(
+                GlobalConfig.services.useTwelveHourClock
+                    ? root.fitScale * (root.scale_12h / root.scale_24h)
+                    : root.fitScale
+            ).width(30).build()
 
             TextMetrics {
                 id: minuteMetrics
@@ -85,7 +112,9 @@ Item {
 
                     text: Time.amPmStr
                     color: Colours.palette.m3onSurface
-                    font: Tokens.font.headline.builders.small.scale(2 * root.centerScale).width(30).build()
+                    font: Tokens.font.headline.builders.small.scale(
+                        root.fitScale * 2 / root.scale_24h
+                    ).width(30).build()
 
                     TextMetrics {
                         id: amPmMetrics
