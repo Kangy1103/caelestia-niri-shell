@@ -24,7 +24,11 @@ Item {
     implicitHeight: Math.round(nState.screen.height * Tokens.sizes.nexus.heightMult)
 
     Behavior on blobColour {
-        CAnim {}
+        Anim {}
+    }
+
+    TapHandler {
+        onTapped: root.focus = true
     }
 
     BlobGroup {

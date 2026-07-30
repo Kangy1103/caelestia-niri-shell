@@ -2,6 +2,9 @@ import "navpane"
 import QtQuick
 import QtQuick.Layouts
 import CNS.Config
+import qs.components
+import qs.components.controls
+import qs.services
 import qs.modules.nexus
 
 ColumnLayout {
@@ -12,8 +15,12 @@ ColumnLayout {
     spacing: Tokens.spacing.large
 
     SearchBar {
+        id: searchField
+
         Layout.fillWidth: true
-        nState: root.nState
+
+        onTextNonEmpty: root.nState.searchText = searchField.text
+        onTextEdited: root.nState.searchText = searchField.text
     }
 
     NavLocations {

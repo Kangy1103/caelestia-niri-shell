@@ -71,34 +71,34 @@ Item {
         anchors.margins: Tokens.padding.medium
         spacing: Tokens.spacing.small
 
-        M3TextField {
+        StyledTextField {
             id: titleField
             Layout.fillWidth: true
             text: root.title
-            placeholder: "Event title"
+            placeholderText: "Event title"
 
-            field.onTextEdited: root.title = field.text
+            onTextEdited: root.title = text
         }
 
         RowLayout {
             Layout.fillWidth: true
             spacing: Tokens.spacing.small
 
-            M3TextField {
+            StyledTextField {
                 id: startTimeField
                 Layout.fillWidth: true
                 text: root.startTime
-                placeholder: "HH:MM"
-                field.readOnly: root.allDay
+                placeholderText: "HH:MM"
+                readOnly: root.allDay
                 opacity: root.allDay ? 0.5 : 1
 
-                field.onTextEdited: {
-                    root.startTime = field.text;
-                    if (/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(field.text))
-                        root.lastValidStartTime = field.text;
+                onTextEdited: {
+                    root.startTime = text;
+                    if (/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(text))
+                        root.lastValidStartTime = text;
                 }
 
-                field.onEditingFinished: {
+                onEditingFinished: {
                     if (!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(root.startTime)) {
                         root.startTime = root.lastValidStartTime;
                         startTimeField.text = root.lastValidStartTime;
@@ -106,21 +106,21 @@ Item {
                 }
             }
 
-            M3TextField {
+            StyledTextField {
                 id: endTimeField
                 Layout.fillWidth: true
                 text: root.endTime
-                placeholder: "HH:MM"
-                field.readOnly: root.allDay
+                placeholderText: "HH:MM"
+                readOnly: root.allDay
                 opacity: root.allDay ? 0.5 : 1
 
-                field.onTextEdited: {
-                    root.endTime = field.text;
-                    if (/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(field.text))
-                        root.lastValidEndTime = field.text;
+                onTextEdited: {
+                    root.endTime = text;
+                    if (/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(text))
+                        root.lastValidEndTime = text;
                 }
 
-                field.onEditingFinished: {
+                onEditingFinished: {
                     if (!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(root.endTime)) {
                         root.endTime = root.lastValidEndTime;
                         endTimeField.text = root.lastValidEndTime;

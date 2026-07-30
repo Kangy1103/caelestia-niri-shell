@@ -26,6 +26,7 @@ ColumnLayout {
         implicitWidth: header.implicitWidth
         implicitHeight: header.implicitHeight - Layout.bottomMargin
         Layout.bottomMargin: -flickable.topMargin // Extra height to block clicks on flickable top margin
+        onClicked: focus = true
 
         RowLayout {
             id: header
@@ -68,5 +69,9 @@ ColumnLayout {
 
         contentHeight: root.contentChild?.implicitHeight ?? 0
         contentItem.children: [root.contentChild]
+
+        TapHandler {
+            onTapped: flickable.focus = true
+        }
     }
 }

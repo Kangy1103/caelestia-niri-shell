@@ -131,13 +131,13 @@ PageBase {
                         color: Colours.palette.m3outline
                     }
 
-                    M3TextField {
+                    StyledTextField {
                         Layout.fillWidth: true
-                        placeholder: qsTr("#rrggbb or empty for theme")
+                        placeholderText: qsTr("#rrggbb or empty for theme")
                         text: GlobalConfig.background.visualiser.primaryColor
                         validator: RegularExpressionValidator { regularExpression: /^(#[0-9a-fA-F]{6})?$/ }
-                        field.onTextEdited: GlobalConfig.background.visualiser.primaryColor = text
-                        field.onEditingFinished: root.forceActiveFocus()
+                        onTextEdited: GlobalConfig.background.visualiser.primaryColor = text
+                        onEditingFinished: root.forceActiveFocus()
                     }
                 }
 
@@ -151,13 +151,13 @@ PageBase {
                         color: Colours.palette.m3outline
                     }
 
-                    M3TextField {
+                    StyledTextField {
                         Layout.fillWidth: true
-                        placeholder: qsTr("#rrggbb or empty for theme")
+                        placeholderText: qsTr("#rrggbb or empty for theme")
                         text: GlobalConfig.background.visualiser.secondaryColor
                         validator: RegularExpressionValidator { regularExpression: /^(#[0-9a-fA-F]{6})?$/ }
-                        field.onTextEdited: GlobalConfig.background.visualiser.secondaryColor = text
-                        field.onEditingFinished: root.forceActiveFocus()
+                        onTextEdited: GlobalConfig.background.visualiser.secondaryColor = text
+                        onEditingFinished: root.forceActiveFocus()
                     }
                 }
             }
