@@ -64,11 +64,20 @@ StyledListView {
     spacing: Tokens.spacing.small
     orientation: Qt.Vertical
 
-    onRequestedStateChanged: {
-        if (requestedState !== displayState) {
+    Connections {
+        function onTextChanged(): void {
+            if (!screenState.launcher)
+                return;
+            displayText = search.text;
             if (requestedState === "scheme" || requestedState === "variant")
                 Schemes.reload();
         }
+        target: search
+    }
+
+    onRequestedStateChanged: {
+        if (requestedState === "scheme" || requestedState === "variant")
+            Schemes.reload();
         syncDisplayText();
     }
 

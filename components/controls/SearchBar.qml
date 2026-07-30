@@ -23,49 +23,79 @@ TextFieldBase {
     background: StyledRect {
         id: bg
 
-        radius: Tokens.rounding.extraSmall
-        color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 1)
+        anchors.fill: parent
+        color: Colours.tPalette.m3surfaceContainer
+        radius: Tokens.rounding.full
 
         StateLayer {
             id: stateLayer
 
-            radius: Tokens.rounding.extraSmall
+            cursorShape: Qt.IBeamCursor
+            disabled: root.activeFocus
+            manualPressOverride: tapHandler.pressed
+            onClicked: root.focus = true
+        }
+    }
+
+    StyledText {
+        id: placeholder
+
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.leftMargin: root.leftPadding
+
+        text: root.placeholderText
+        color: root.placeholderTextColor
+        font: root.font
+
+        opacity: root.text ? 0 : 1
+
+        Behavior on opacity {
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
     MaterialIcon {
         id: searchIcon
 
-        x: Tokens.padding.large
+        anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
+        anchors.leftMargin: Tokens.padding.large
 
         text: "search"
         color: Colours.palette.m3onSurfaceVariant
-        fontStyle: Tokens.font.icon.medium
+        fontStyle: Tokens.font.icon.builders.medium.scale(0.9).build()
     }
 
-    MaterialIcon {
+    IconButton {
         id: clearIcon
 
         anchors.right: parent.right
-        anchors.rightMargin: Tokens.padding.large
         anchors.verticalCenter: parent.verticalCenter
+        anchors.rightMargin: Tokens.padding.medium
 
-        text: "close"
-        color: Colours.palette.m3onSurfaceVariant
-        fontStyle: Tokens.font.icon.medium
-        visible: root.text.length > 0
+        icon: "clear"
+        type: IconButton.Text
+        radius: Tokens.rounding.full
+        radiusMorph: false
+        enabled: root.text
+        stateLayer.hoverEnabled: enabled
+        onClicked: root.clear()
 
-        StateLayer {
-            anchors.fill: parent
-            anchors.margins: -8
-            radius: Tokens.rounding.full
-            onClicked: root.clear()
+        opacity: root.text ? 1 : 0
+
+        Behavior on opacity {
+            Anim {
+                type: Anim.DefaultEffects
+            }
         }
     }
 
-    placeholderText: qsTr("Search")
+    TapHandler {
+        id: tapHandler
+    }
 
-    // Emitted whenever the clear button would be shown (text non-empty on non-empty)
     signal textNonEmpty
 }
