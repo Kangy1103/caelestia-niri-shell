@@ -16,7 +16,7 @@ StyledRect {
     required property string modelData
     required property Props props
     required property Flickable container
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     readonly property list<var> notifs: Notifs.list.filter(n => n.appName === modelData)
     readonly property list<var> activeNotifs: notifs.filter(n => !n.closed)
@@ -240,7 +240,6 @@ StyledRect {
                 notifs: root.notifs
                 expanded: root.expanded
                 container: root.container
-                visibilities: root.visibilities
                 onRequestToggleExpand: expand => root.toggleExpand(expand)
             }
         }

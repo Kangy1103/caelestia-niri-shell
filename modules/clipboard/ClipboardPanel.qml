@@ -14,18 +14,18 @@ Scope {
         target: "clipboard"
 
         function open(): void {
-            const visibilities = Visibilities.getForActive();
-            visibilities.clipboard = true;
+            const screenState = ShellState.forActive();
+            screenState.clipboard = true;
         }
 
         function close(): void {
-            const visibilities = Visibilities.getForActive();
-            visibilities.clipboard = false;
+            const screenState = ShellState.forActive();
+            screenState.clipboard = false;
         }
 
         function toggle(): void {
-            const visibilities = Visibilities.getForActive();
-            visibilities.clipboard = !visibilities.clipboard;
+            const screenState = ShellState.forActive();
+            screenState.clipboard = !screenState.clipboard;
         }
     }
 }

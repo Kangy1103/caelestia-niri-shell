@@ -10,7 +10,7 @@ Item {
     id: root
 
     required property DesktopEntry modelData
-    required property PersistentProperties visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     implicitHeight: TokenConfig.sizes.launcher.itemHeight
 
@@ -22,7 +22,7 @@ Item {
 
         onClicked: {
             Apps.launch(root.modelData);
-            root.visibilities.launcher = false;
+            root.screenState.launcher = false;
         }
     }
 

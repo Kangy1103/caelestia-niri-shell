@@ -14,7 +14,7 @@ Item {
 
     function onClicked(): void {
         Quickshell.execDetached(["wl-copy", Qalculator.eval(math, false)]);
-        root.list.visibilities.launcher = false;
+        root.list.screenState.launcher = false;
     }
 
     implicitHeight: TokenConfig.sizes.launcher.itemHeight
@@ -79,7 +79,7 @@ Layout.alignment: Qt.AlignVCenter
 
                 onClicked: {
                     Quickshell.execDetached([...Config.general.apps.terminal, "fish", "-C", `exec qalc -i '${root.math}'`]);
-                    root.list.visibilities.launcher = false;
+                    root.list.screenState.launcher = false;
                 }
             }
 

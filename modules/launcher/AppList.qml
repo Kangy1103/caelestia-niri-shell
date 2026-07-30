@@ -14,16 +14,65 @@ StyledListView {
     id: root
 
     required property SearchBar search
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
+
+    property string displayText
+
+    readonly property string requestedState: stateForText(search.text)
+    readonly property string displayState: stateForText(displayText)
+
+    function syncDisplayText(): void {
+        if (screenState.launcher && requestedState === displayState)
+            displayText = search.text;
+    }
+
+    function stateForText(text: string): string {
+        const prefix = GlobalConfig.launcher.actionPrefix;
+        if (text.startsWith(prefix)) {
+            for (const action of ["calc", "scheme", "variant", "web"])
+                if (text.startsWith(`${prefix}${action} `))
+                    return action;
+
+            return "actions";
+        }
+
+        return "apps";
+    }
+
+    function resultsForText(text: string): var {
+        switch (stateForText(text)) {
+        case "actions":
+            return Actions.query(text);
+        case "calc":
+            return [0];
+        case "scheme":
+            return Schemes.query(text);
+        case "variant":
+            return M3Variants.query(text);
+        case "web":
+            return [0];
+        default:
+            return Apps.search(text);
+        }
+    }
 
     model: ScriptModel {
-        id: model
-
+        values: root.resultsForText(root.displayText)
         onValuesChanged: root.currentIndex = 0
     }
 
     spacing: Tokens.spacing.small
     orientation: Qt.Vertical
+
+    onRequestedStateChanged: {
+        if (requestedState !== displayState) {
+            if (requestedState === "scheme" || requestedState === "variant")
+                Schemes.reload();
+        }
+        syncDisplayText();
+    }
+
+    onDisplayTextChanged: syncDisplayText()
     implicitHeight: (Tokens.sizes.launcher.itemHeight + spacing) * Math.min(Config.launcher.maxShown, count) - spacing
 
     preferredHighlightBegin: 0
@@ -45,123 +94,20 @@ StyledListView {
         }
     }
 
-    state: {
-        const text = search.text;
-        const prefix = GlobalConfig.launcher.actionPrefix;
-        if (text.startsWith(prefix)) {
-            for (const action of ["calc", "scheme", "variant", "web"])
-                if (text.startsWith(`${prefix}${action} `))
-                    return action;
-
-            return "actions";
-        }
-
-        return "apps";
-    }
-
-    onStateChanged: {
-        if (state === "scheme" || state === "variant")
-            Schemes.reload();
-    }
-
-    states: [
-        State {
-            name: "apps"
-
-            PropertyChanges {
-                model.values: Apps.search(search.text)
-                root.delegate: appItem
-            }
-        },
-        State {
-            name: "actions"
-
-            PropertyChanges {
-                model.values: Actions.query(search.text)
-                root.delegate: actionItem
-            }
-        },
-        State {
-            name: "calc"
-
-            PropertyChanges {
-                model.values: [0]
-                root.delegate: calcItem
-            }
-        },
-        State {
-            name: "scheme"
-
-            PropertyChanges {
-                model.values: Schemes.query(search.text)
-                root.delegate: schemeItem
-            }
-        },
-        State {
-            name: "variant"
-
-            PropertyChanges {
-                model.values: M3Variants.query(search.text)
-                root.delegate: variantItem
-            }
-        },
-        State {
-            name: "web"
-
-            PropertyChanges {
-                model.values: [0]
-                root.delegate: webItem
-            }
-        }
-    ]
-
-    transitions: Transition {
-        SequentialAnimation {
-            ParallelAnimation {
-                Anim {
-                    target: root
-                    property: "opacity"
-                    from: 1
-                    to: 0
-                    duration: Tokens.anim.durations.small
-                    easing: Tokens.anim.standardAccel
-                }
-                Anim {
-                    target: root
-                    property: "scale"
-                    from: 1
-                    to: 0.9
-                    duration: Tokens.anim.durations.small
-                    easing: Tokens.anim.standardAccel
-                }
-            }
-            PropertyAction {
-                targets: [model, root]
-                properties: "values,delegate"
-            }
-            ParallelAnimation {
-                Anim {
-                    target: root
-                    property: "opacity"
-                    from: 0
-                    to: 1
-                    duration: Tokens.anim.durations.small
-                    easing: Tokens.anim.standardDecel
-                }
-                Anim {
-                    target: root
-                    property: "scale"
-                    from: 0.9
-                    to: 1
-                    duration: Tokens.anim.durations.small
-                    easing: Tokens.anim.standardDecel
-                }
-            }
-            PropertyAction {
-                targets: [root.add, root.remove]
-                property: "enabled"
-                value: true
-            }
+    delegate: {
+        switch (root.displayState) {
+        case "actions":
+            return actionItem;
+        case "calc":
+            return calcItem;
+        case "scheme":
+            return schemeItem;
+        case "variant":
+            return variantItem;
+        case "web":
+            return webItem;
+        default:
+            return appItem;
         }
     }
 
@@ -229,7 +175,6 @@ StyledListView {
         id: appItem
 
         AppItem {
-            visibilities: root.visibilities
         }
     }
 

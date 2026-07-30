@@ -11,18 +11,18 @@ Scope {
         target: "calendar"
 
         function open(): void {
-            const visibilities = Visibilities.getForActive()
-            visibilities.calendar = true
+            const screenState = ShellState.forActive()
+            screenState.calendar = true
         }
 
         function close(): void {
-            const visibilities = Visibilities.getForActive()
-            visibilities.calendar = false
+            const screenState = ShellState.forActive()
+            screenState.calendar = false
         }
 
         function toggle(): void {
-            const visibilities = Visibilities.getForActive()
-            visibilities.calendar = !visibilities.calendar
+            const screenState = ShellState.forActive()
+            screenState.calendar = !screenState.calendar
         }
     }
 }

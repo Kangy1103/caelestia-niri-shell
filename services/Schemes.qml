@@ -389,7 +389,7 @@ Searcher {
         readonly property var colours: modelData.colours
 
         function onClicked(list: var): void {
-            list.visibilities.launcher = false;
+            list.screenState.launcher = false;
             root.setScheme(name, flavour);
         }
     }

@@ -42,9 +42,9 @@ StyledWindow {
 
     onHasFullscreenChanged: {
         if (hasFullscreen) {
-            visibilities.launcher = false;
-            visibilities.session = false;
-            visibilities.dashboard = false;
+            screenState.launcher = false;
+            screenState.session = false;
+            screenState.dashboard = false;
             panels.popouts.close();
         }
     }
@@ -52,9 +52,9 @@ StyledWindow {
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: visibilities.launcher || visibilities.session || visibilities.keybinds || visibilities.editingWeatherLocation || visibilities.dashboard || visibilities.calendar || visibilities.clipboard || visibilities.notepad || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session || screenState.keybinds || screenState.editingWeatherLocation || screenState.dashboard || screenState.calendar || screenState.clipboard || screenState.notepad || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    mask: hasFullscreen ? emptyRegion : (visibilities.launcher || visibilities.calendar || visibilities.keybinds || visibilities.sidebar || visibilities.notepad || visibilities.clipboard ? fullScreenRegion : regions)
+    mask: hasFullscreen ? emptyRegion : (screenState.launcher || screenState.calendar || screenState.keybinds || screenState.sidebar || screenState.notepad || screenState.clipboard ? fullScreenRegion : regions)
 
     anchors.top: true
     anchors.bottom: true
@@ -103,7 +103,7 @@ StyledWindow {
 
     StyledRect {
         anchors.fill: parent
-        opacity: (visibilities.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0
+        opacity: (screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0
         color: Colours.palette.m3scrim
 
         Behavior on opacity {
@@ -243,10 +243,22 @@ StyledWindow {
         }
     }
 
-    DrawerVisibilities {
-        id: visibilities
+    ScreenState {
+        id: screenState
+    }
 
-        Component.onCompleted: Visibilities.load(root.screen, this)
+    onScreenChanged: ShellState.register(screen.name, screenState)
+
+    ShellState.ComponentRef {
+        screen: root.screen
+        slot: "rootWindow"
+        component: root
+    }
+
+    ShellState.ComponentRef {
+        screen: root.screen
+        slot: "interactionWrapper"
+        component: interactions
     }
 
     Interactions {
@@ -254,7 +266,6 @@ StyledWindow {
 
         screen: root.screen
         popouts: panels.popouts
-        visibilities: visibilities
         panels: panels
         bar: bar
         borderThickness: root.borderLayoutThickness
@@ -264,7 +275,7 @@ StyledWindow {
             id: panels
 
             screen: root.screen
-            visibilities: visibilities
+            screenState: screenState
             bar: bar
             borderThickness: root.borderThickness
 
@@ -316,12 +327,16 @@ StyledWindow {
             anchors.bottom: parent.bottom
 
             screen: root.screen
-            visibilities: visibilities
+            screenState: screenState
             popouts: panels.popouts
 
             fullscreen: root.hasFullscreen
 
-            Component.onCompleted: Visibilities.bars.set(root.screen, this)
+            ShellState.ComponentRef {
+                screen: root.screen
+                slot: "bar"
+                component: bar
+            }
         }
     }
 

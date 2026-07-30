@@ -17,7 +17,7 @@ import Quickshell.Io
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     implicitWidth: 630
     implicitHeight: 500
@@ -80,9 +80,9 @@ Item {
     Component.onCompleted: refresh()
 
     Connections {
-        target: root.visibilities
+        target: root.screenState
         function onClipboardChanged(): void {
-            if (root.visibilities.clipboard) {
+            if (root.screenState.clipboard) {
                 refresh();
                 Qt.callLater(() => searchInput.forceActiveFocus());
             } else {
@@ -126,7 +126,7 @@ Item {
 
                 onTextChanged: root.filterItems()
 
-                Keys.onEscapePressed: root.visibilities.clipboard = false
+                Keys.onEscapePressed: root.screenState.clipboard = false
 
                 Keys.onPressed: (event) => {
                     if (event.key === Qt.Key_Down) {
@@ -137,7 +137,7 @@ Item {
                             listView.forceActiveFocus();
                             const entryId = filteredModel.get(listView.currentIndex).id;
                             Quickshell.execDetached(["sh", "-c", "cliphist decode '" + entryId + "' | wl-copy"]);
-                            root.visibilities.clipboard = false;
+                            root.screenState.clipboard = false;
                         }
                         event.accepted = true;
                     }
@@ -210,7 +210,7 @@ Item {
 
                     onActivated: {
                         Quickshell.execDetached(["sh", "-c", "cliphist decode '" + id + "' | wl-copy"]);
-                        root.visibilities.clipboard = false;
+                        root.screenState.clipboard = false;
                     }
 
                     onDeleteRequested: {
@@ -225,7 +225,7 @@ Item {
                     }
                 }
 
-                Keys.onEscapePressed: root.visibilities.clipboard = false
+                Keys.onEscapePressed: root.screenState.clipboard = false
 
                 Keys.onPressed: (event) => {
                     if (event.key === Qt.Key_Down && currentIndex < count - 1) {
@@ -242,7 +242,7 @@ Item {
                         if (currentIndex >= 0 && currentIndex < count) {
                             const entryId = filteredModel.get(currentIndex).id;
                             Quickshell.execDetached(["sh", "-c", "cliphist decode '" + entryId + "' | wl-copy"]);
-                            root.visibilities.clipboard = false;
+                            root.screenState.clipboard = false;
                         }
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Delete) {
@@ -304,7 +304,7 @@ Item {
 
             IconButton {
                 icon: "close"
-                onClicked: root.visibilities.clipboard = false
+                onClicked: root.screenState.clipboard = false
             }
         }
     }

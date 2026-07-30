@@ -14,7 +14,7 @@ import qs.modules.bar.popouts as BarPopouts
 StyledRect {
     id: root
 
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
     required property BarPopouts.Wrapper popouts
 
     readonly property var quickToggles: {
@@ -117,7 +117,7 @@ StyledRect {
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         isToggle: false
                         onClicked: {
-                            root.visibilities.utilities = false;
+                            root.screenState.utilities = false;
                             WindowFactory.create();
                         }
                     }

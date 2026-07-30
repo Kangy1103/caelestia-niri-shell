@@ -11,7 +11,7 @@ Item {
     id: root
 
     required property var props
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
     required property BarPopouts.Wrapper popouts
     required property matrix4x4 deformMatrix
 
@@ -51,7 +51,6 @@ Item {
                 objectName: "utilitiesScreenRecorder"
 
                 props: root.props
-                visibilities: root.visibilities
             }
         }
 
@@ -65,7 +64,6 @@ Item {
             sourceComponent: Toggles {
                 objectName: "utilitiesQuickToggles"
 
-                visibilities: root.visibilities
                 popouts: root.popouts
             }
         }

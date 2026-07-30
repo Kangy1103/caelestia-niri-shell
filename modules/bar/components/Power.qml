@@ -11,19 +11,19 @@ import qs.services
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
-
     implicitWidth: icon.implicitHeight + Tokens.padding.small
     implicitHeight: icon.implicitHeight
 
     StateLayer {
-        // Cursed workaround to make the height larger than the parent
         anchors.fill: undefined
         anchors.centerIn: parent
         implicitWidth: implicitHeight
         implicitHeight: icon.implicitHeight + Tokens.padding.small
         radius: Tokens.rounding.full
-        onClicked: root.visibilities.session = !root.visibilities.session
+        onClicked: {
+            const ss = ShellState.forActive();
+            ss.session = !ss.session;
+        }
     }
 
     MaterialIcon {

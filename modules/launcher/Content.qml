@@ -11,7 +11,7 @@ import qs.modules.launcher.services
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
     required property var panels
     required property real maxHeight
 
@@ -35,7 +35,6 @@ Item {
             id: list
 
             content: root
-            visibilities: root.visibilities
             panels: root.panels
             maxHeight: root.maxHeight - search.implicitHeight - root.padding * 3
             search: search
@@ -64,7 +63,7 @@ Item {
                     if (Colours.scheme === "dynamic" && currentItem.modelData.path !== Wallpapers.actualCurrent)
                         Wallpapers.previewColourLock = true;
                     Wallpapers.setWallpaper(currentItem.modelData.path);
-                    root.visibilities.launcher = false;
+                    root.screenState.launcher = false;
                 } else if (text.startsWith(GlobalConfig.launcher.actionPrefix)) {
                     if (text.startsWith(`${GlobalConfig.launcher.actionPrefix}calc `))
                         currentItem.onClicked();
@@ -74,7 +73,7 @@ Item {
                         currentItem.modelData.onClicked(list.currentList);
                 } else {
                     Apps.launch(currentItem.modelData);
-                    root.visibilities.launcher = false;
+                    root.screenState.launcher = false;
                 }
             }
         }
@@ -94,7 +93,7 @@ Item {
             if (list.showEmojis) list.currentList?.moveRight();
         }
 
-        Keys.onEscapePressed: root.visibilities.launcher = false
+        Keys.onEscapePressed: root.screenState.launcher = false
 
         Keys.onPressed: event => {
             if (!GlobalConfig.launcher.vimKeybinds)
@@ -121,16 +120,16 @@ Item {
 
         Connections {
             function onLauncherChanged(): void {
-                if (!root.visibilities.launcher)
+                if (!root.screenState.launcher)
                     search.text = "";
             }
 
             function onSessionChanged(): void {
-                if (!root.visibilities.session)
+                if (!root.screenState.session)
                     search.forceActiveFocus();
             }
 
-            target: root.visibilities
+            target: root.screenState
         }
     }
 }

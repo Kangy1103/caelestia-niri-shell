@@ -8,7 +8,7 @@ Item {
     id: root
 
     required property Props props
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     ColumnLayout {
         id: layout
@@ -25,7 +25,6 @@ Item {
 
             NotifDock {
                 props: root.props
-                visibilities: root.visibilities
             }
         }
 

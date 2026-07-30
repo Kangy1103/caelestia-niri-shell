@@ -6,7 +6,7 @@ import QtQuick
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property ScreenState screenState
 
     visible: height > 0
     implicitHeight: 0
@@ -14,7 +14,7 @@ Item {
 
     states: State {
         name: "visible"
-        when: root.visibilities.keybinds
+        when: root.screenState.keybinds
 
         PropertyChanges {
             root.implicitHeight: contentLoader.item ? contentLoader.item.implicitHeight : 0
@@ -46,10 +46,9 @@ Item {
 
     Loader {
         id: contentLoader
-        active: root.visibilities.keybinds || root.visible
+        active: root.screenState.keybinds || root.visible
         sourceComponent: Content {
             wrapper: root
-            visibilities: root.visibilities
         }
     }
 }

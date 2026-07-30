@@ -12,7 +12,7 @@ import qs.components.filedialog
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
     required property DashboardState dashState
     required property FileDialog facePicker
 
@@ -165,7 +165,6 @@ Item {
                 id: dashComponent
 
                 Dash {
-                    visibilities: root.visibilities
                     dashState: root.dashState
                     facePicker: root.facePicker
                 }
@@ -175,7 +174,6 @@ Item {
                 id: mediaComponent
 
                 Media {
-                    visibilities: root.visibilities
                 }
             }
 

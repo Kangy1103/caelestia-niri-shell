@@ -14,7 +14,7 @@ ColumnLayout {
     id: root
 
     required property ShellScreen screen
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
     readonly property int vPadding: Tokens.padding.largeIncreased
@@ -87,7 +87,7 @@ ColumnLayout {
     }
 
     function handleWheel(y: real, angleDelta: point): void {
-        const ch = childAt(width / 2, y) as WrappedLoader;
+        const ch = childAt(width / 2, y) as EntryWrapper;
         if (ch?.entryId === "workspaces" && Config.bar.scrollActions.workspaces) {
             Niri.switchToWorkspaceUpDown(angleDelta.y > 0 ? "up" : "down");
         } else if (Config.bar.scrollActions.volume) {
@@ -103,21 +103,23 @@ ColumnLayout {
     Repeater {
         id: repeater
 
-        model: Config.bar.entries
+        model: ScriptModel {
+            values: root.Config.bar.entries.filter(e => e.enabled ?? true)
+        }
 
         DelegateChooser {
             role: "id"
 
             DelegateChoice {
                 roleValue: "spacer"
-                delegate: WrappedLoader {
-                    Layout.fillHeight: enabled
+                delegate: EntryWrapper {
+                    Layout.fillHeight: true
                 }
             }
             DelegateChoice {
                 roleValue: "divider"
-                delegate: WrappedLoader {
-                    sourceComponent: Rectangle {
+                delegate: EntryWrapper {
+                    Rectangle {
                         implicitWidth: Tokens.padding.medium
                         implicitHeight: 1
                         color: Colours.palette.m3outlineVariant
@@ -126,8 +128,8 @@ ColumnLayout {
             }
             DelegateChoice {
                 roleValue: "logo"
-                delegate: WrappedLoader {
-                    sourceComponent: OsIcon {
+                delegate: EntryWrapper {
+                    OsIcon {
                         MouseArea {
                             anchors.fill: parent
                             acceptedButtons: Qt.RightButton
@@ -145,16 +147,9 @@ ColumnLayout {
             }
             DelegateChoice {
                 roleValue: "workspaces"
-                delegate: Loader {
-                    required property string id
-                    required property int index
-                    asynchronous: false
-                    active: true
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: root.firstEnabled === this ? root.vPadding : 0
-                    Layout.bottomMargin: root.lastEnabled === this ? root.vPadding : 0
+                delegate: EntryWrapper {
                     Layout.preferredHeight: item ? item.implicitHeight : 120
-                    sourceComponent: Workspaces {
+                    Workspaces {
                         screen: root.screen
 
                         property var anchorItem: Niri.wsContextAnchor && Niri.wsContextType !== "none" ? Niri.wsContextAnchor : null
@@ -171,14 +166,14 @@ ColumnLayout {
             }
             DelegateChoice {
                 roleValue: "stasisStatus"
-                delegate: WrappedLoader {
-                    sourceComponent: StasisStatus {}
+                delegate: EntryWrapper {
+                    StasisStatus {}
                 }
             }
             DelegateChoice {
                 roleValue: "activeWindow"
-                delegate: WrappedLoader {
-                    sourceComponent: ActiveWindow {
+                delegate: EntryWrapper {
+                    ActiveWindow {
                         bar: root
                         monitor: Brightness.getMonitorForScreen(root.screen)
                     }
@@ -186,27 +181,26 @@ ColumnLayout {
             }
             DelegateChoice {
                 roleValue: "tray"
-                delegate: WrappedLoader {
-                    sourceComponent: Tray {}
+                delegate: EntryWrapper {
+                    Tray {}
                 }
             }
             DelegateChoice {
                 roleValue: "clock"
-                delegate: WrappedLoader {
-                    sourceComponent: Clock {}
+                delegate: EntryWrapper {
+                    Clock {}
                 }
             }
             DelegateChoice {
                 roleValue: "statusIcons"
-                delegate: WrappedLoader {
-                    sourceComponent: StatusIcons {}
+                delegate: EntryWrapper {
+                    StatusIcons {}
                 }
             }
             DelegateChoice {
                 roleValue: "power"
-                delegate: WrappedLoader {
-                    sourceComponent: Power {
-                        visibilities: root.visibilities
+                delegate: EntryWrapper {
+                    Power {
                     }
                 }
             }
@@ -239,20 +233,19 @@ ColumnLayout {
 
     Component.onCompleted: updateEnabledCache()
 
-    component WrappedLoader: Loader {
+    component EntryWrapper: Item {
         required property var modelData
-        readonly property string entryId: modelData.id
         required property int index
+        default property Item item
+        readonly property string entryId: modelData.id
 
-        onEnabledChanged: Qt.callLater(root.updateEnabledCache)
-
+        Layout.topMargin: index === 0 ? root.vPadding : 0
+        Layout.bottomMargin: index === repeater.count - 1 ? root.vPadding : 0
         Layout.alignment: Qt.AlignHCenter
 
-        Layout.topMargin: root.firstEnabled === this ? root.vPadding : 0
-        Layout.bottomMargin: root.lastEnabled === this ? root.vPadding : 0
+        implicitWidth: item?.implicitWidth ?? 0
+        implicitHeight: item?.implicitHeight ?? 0
 
-        asynchronous: true
-        visible: enabled
-        active: enabled
+        children: item
     }
 }

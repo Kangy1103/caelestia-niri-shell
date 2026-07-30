@@ -16,7 +16,7 @@ Item {
     id: root
 
     required property TextField search
-    required property var visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     readonly property var categoryData: [
         { id: "recent", name: qsTr("Recent"), icon: "history" },
@@ -256,7 +256,7 @@ Behavior on color { CAnim {} }
                     function onClicked(): void {
                         Quickshell.execDetached(["sh", "-c", "echo -n '" + (modelData?.emoji ?? "") + "' | wl-copy"]);
                         if (modelData) root.addRecent(modelData);
-                        root.visibilities.launcher = false;
+                        root.screenState.launcher = false;
                     }
 
                     StateLayer {

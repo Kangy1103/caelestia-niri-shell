@@ -8,6 +8,7 @@
 #include <qfuturewatcher.h>
 #include <qloggingcategory.h>
 #include <qqmlengine.h>
+#include <qregularexpression.h>
 
 Q_LOGGING_CATEGORY(lcCUtils, "caelestia.cutils", QtInfoMsg)
 
@@ -144,6 +145,59 @@ bool CUtils::exists(const QString& path) {
 
 qreal CUtils::clamp(qreal value, qreal min, qreal max) {
     return qBound(min, value, max);
+}
+
+namespace {
+
+template <typename Predicate> QQuickItem* findChildDfs(QQuickItem* root, Predicate&& match) {
+    const auto children = root->childItems();
+    for (QQuickItem* const child : children) {
+        if (match(child))
+            return child;
+        if (QQuickItem* const found = findChildDfs(child, match))
+            return found;
+    }
+    return nullptr;
+}
+
+template <typename Predicate> void findChildrenDfs(QQuickItem* root, Predicate&& match, QList<QQuickItem*>& out) {
+    const auto children = root->childItems();
+    for (QQuickItem* const child : children) {
+        if (match(child))
+            out.append(child);
+        findChildrenDfs(child, match, out);
+    }
+}
+
+} // namespace
+
+QQuickItem* CUtils::findChild(QQuickItem* root, const QString& name) {
+    if (!root)
+        return nullptr;
+    return findChildDfs(root, [&name](const QQuickItem* item) {
+        return item->objectName() == name;
+    });
+}
+
+QList<QQuickItem*> CUtils::findChildren(QQuickItem* root, const QString& name) {
+    QList<QQuickItem*> children;
+    if (root) {
+        findChildrenDfs(root, [&name](const QQuickItem* item) {
+            return item->objectName() == name;
+        }, children);
+    }
+    return children;
+}
+
+QList<QQuickItem*> CUtils::findChildrenMatching(QQuickItem* root, const QString& pattern) {
+    QList<QQuickItem*> children;
+    if (root) {
+        const QRegularExpression re(pattern);
+        findChildrenDfs(root, [&re](const QQuickItem* item) {
+            return re.match(item->objectName()).hasMatch();
+        }, children);
+    }
+    return children;
 }
 
 QStringList CUtils::listDir(const QString& path, const QStringList& nameFilters) {

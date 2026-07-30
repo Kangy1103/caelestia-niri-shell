@@ -6,7 +6,7 @@ import QtQuick
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    required property ScreenState screenState
 
     visible: height > 0
     implicitHeight: 0
@@ -14,7 +14,7 @@ Item {
 
     states: State {
         name: "visible"
-        when: root.visibilities.calendar
+        when: root.screenState.calendar
 
         PropertyChanges {
             root.implicitHeight: contentLoader.item ? contentLoader.item.implicitHeight : 0
@@ -46,9 +46,8 @@ Item {
 
     Loader {
         id: contentLoader
-        active: root.visibilities.calendar || root.visible
+        active: root.screenState.calendar || root.visible
         sourceComponent: Content {
-            visibilities: root.visibilities
         }
     }
 }

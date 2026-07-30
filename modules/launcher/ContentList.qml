@@ -11,7 +11,7 @@ Item {
     id: root
 
     required property var content
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
     required property var panels
     required property real maxHeight
     required property SearchBar search
@@ -98,7 +98,6 @@ Item {
 
         sourceComponent: AppList {
             search: root.search
-            visibilities: root.visibilities
         }
     }
 
@@ -114,7 +113,6 @@ Item {
 
         sourceComponent: WallpaperList {
             search: root.search
-            visibilities: root.visibilities
             panels: root.panels
             content: root.content
         }
@@ -130,7 +128,6 @@ Item {
 
         sourceComponent: EmojiList {
             search: root.search
-            visibilities: root.visibilities
         }
     }
 
@@ -182,13 +179,13 @@ Item {
     }
 
     Behavior on implicitWidth {
-        enabled: root.visibilities.launcher
+        enabled: root.screenState.launcher
 
         Anim {}
     }
 
     Behavior on implicitHeight {
-        enabled: root.visibilities.launcher
+        enabled: root.screenState.launcher
 
         Anim {}
     }

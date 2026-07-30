@@ -129,7 +129,7 @@ Searcher {
         required property string description
 
         function onClicked(list: var): void {
-            list.visibilities.launcher = false;
+            list.screenState.launcher = false;
             root.setVariant(variant);
         }
     }

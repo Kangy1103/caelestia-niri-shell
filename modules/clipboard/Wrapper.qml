@@ -12,9 +12,9 @@ Item {
     id: root
 
     required property ShellScreen screen
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
 
-    readonly property bool shouldBeActive: visibilities.clipboard
+    readonly property bool shouldBeActive: screenState.clipboard
 
     property real offsetScale: shouldBeActive ? 0 : 1
 
@@ -44,7 +44,6 @@ Item {
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            visibilities: root.visibilities
         }
     }
 }

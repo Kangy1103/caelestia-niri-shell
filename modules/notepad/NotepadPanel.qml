@@ -13,18 +13,18 @@ Scope {
         target: "notepad"
 
         function open(): void {
-            const visibilities = Visibilities.getForActive()
-            if (visibilities) visibilities.notepad = true
+            const screenState = ShellState.forActive()
+            if (screenState) screenState.notepad = true
         }
 
         function close(): void {
-            const visibilities = Visibilities.getForActive()
-            if (visibilities) visibilities.notepad = false
+            const screenState = ShellState.forActive()
+            if (screenState) screenState.notepad = false
         }
 
         function toggle(): void {
-            const visibilities = Visibilities.getForActive()
-            if (visibilities) visibilities.notepad = !visibilities.notepad
+            const screenState = ShellState.forActive()
+            if (screenState) screenState.notepad = !screenState.notepad
         }
     }
 

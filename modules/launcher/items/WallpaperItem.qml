@@ -13,7 +13,7 @@ Item {
     id: root
 
     required property FileSystemEntry modelData
-    required property PersistentProperties visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     readonly property bool isVideo: Wallpapers.isPathVideo(modelData.path)
 
@@ -34,7 +34,7 @@ Item {
 
         onClicked: {
             Wallpapers.setWallpaper(root.modelData.path);
-            root.visibilities.launcher = false;
+            root.screenState.launcher = false;
         }
     }
 

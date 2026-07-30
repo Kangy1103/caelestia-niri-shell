@@ -16,7 +16,7 @@ Item {
     id: root
 
     required property var wrapper
-    required property PersistentProperties visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     readonly property int padding: Math.max(Tokens.padding.largeIncreased, Config.border.rounding)
 
@@ -46,9 +46,9 @@ Item {
     }
 
     Connections {
-        target: root.visibilities
+        target: root.screenState
         function onKeybindsChanged(): void {
-            if (root.visibilities.keybinds) {
+            if (root.screenState.keybinds) {
                 filterKeybinds()
                 Qt.callLater(() => searchInput.forceActiveFocus())
             } else {
@@ -112,7 +112,7 @@ color: Colours.palette.m3onSurfaceVariant
                 StateLayer {
                     radius: parent.radius
                     color: Colours.palette.m3onSurface
-                    onClicked: { root.visibilities.keybinds = false }
+                    onClicked: { root.screenState.keybinds = false }
                 }
                 MaterialIcon {
                     anchors.centerIn: parent
@@ -152,7 +152,7 @@ color: Colours.palette.m3onSurfaceVariant
                         event.accepted = true
                     } else if (event.key === Qt.Key_Escape) {
                         if (text === "") {
-                            root.visibilities.keybinds = false
+                            root.screenState.keybinds = false
                         } else {
                             text = ""
                         }
@@ -263,7 +263,7 @@ color: Colours.palette.m3onSurfaceVariant
                         }
                         event.accepted = true
                     } else if (event.key === Qt.Key_Escape) {
-                        root.visibilities.keybinds = false
+                        root.screenState.keybinds = false
                         event.accepted = true
                     }
                 }

@@ -11,18 +11,18 @@ Scope {
         target: "keybinds"
 
         function open(): void {
-            const visibilities = Visibilities.getForActive()
-            visibilities.keybinds = true
+            const screenState = ShellState.forActive()
+            screenState.keybinds = true
         }
 
         function close(): void {
-            const visibilities = Visibilities.getForActive()
-            visibilities.keybinds = false
+            const screenState = ShellState.forActive()
+            screenState.keybinds = false
         }
 
         function toggle(): void {
-            const visibilities = Visibilities.getForActive()
-            visibilities.keybinds = !visibilities.keybinds
+            const screenState = ShellState.forActive()
+            screenState.keybinds = !screenState.keybinds
         }
     }
 }

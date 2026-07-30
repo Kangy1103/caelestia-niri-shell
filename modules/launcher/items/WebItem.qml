@@ -27,7 +27,7 @@ Item {
     function onClicked(): void {
         if (!query) return;
         Quickshell.execDetached(["xdg-open", url]);
-        root.list.visibilities.launcher = false;
+        root.list.screenState.launcher = false;
     }
 
     implicitHeight: TokenConfig.sizes.launcher.itemHeight

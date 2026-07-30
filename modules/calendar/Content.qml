@@ -13,12 +13,12 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property PersistentProperties visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     property date selectedDate: new Date()
     property date currentDate: new Date()
 
-    Keys.onEscapePressed: root.visibilities.calendar = false
+    Keys.onEscapePressed: root.screenState.calendar = false
     focus: true
 
     readonly property int currMonth: currentDate.getMonth()

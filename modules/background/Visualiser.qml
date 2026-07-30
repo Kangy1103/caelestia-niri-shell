@@ -55,7 +55,7 @@ Item {
 
             anchors.fill: parent
             anchors.margins: Config.border.thickness
-            anchors.leftMargin: Visibilities.bars.get(root.screen).exclusiveZone + Tokens.spacing.small * Config.background.visualiser.spacing
+            anchors.leftMargin: Math.max(Config.border.thickness, (ShellState.componentsFor(root.screen)?.bar?.item as Bar.BarWrapper)?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing
 
             values: Cava.values
             mode: Config.background.visualiser.style === "waveform" ? VisualiserBars.Waveform

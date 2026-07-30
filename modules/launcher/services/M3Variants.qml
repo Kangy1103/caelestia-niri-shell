@@ -78,7 +78,7 @@ Searcher {
         required property string description
 
         function onClicked(list: AppList): void {
-            list.visibilities.launcher = false;
+            list.screenState.launcher = false;
             Quickshell.execDetached(["cns", "scheme", "set", "-v", variant]);
         }
     }

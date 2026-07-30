@@ -8,7 +8,7 @@ import qs.services
 GridLayout {
     id: root
 
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
     required property DashboardState dashState
     required property FileDialog facePicker
 
@@ -26,7 +26,6 @@ GridLayout {
         User {
             id: user
 
-            visibilities: root.visibilities
             facePicker: root.facePicker
         }
     }

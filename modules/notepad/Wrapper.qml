@@ -9,9 +9,9 @@ import qs.components
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
+    required property ScreenState screenState
 
-    readonly property bool shouldBeActive: visibilities.notepad
+    readonly property bool shouldBeActive: screenState.notepad
     property real offsetScale: shouldBeActive ? 0 : 1
 
     onShouldBeActiveChanged: {
@@ -38,7 +38,6 @@ Item {
         active: root.shouldBeActive || root.visible
 
         sourceComponent: Content {
-            visibilities: root.visibilities
         }
     }
 }

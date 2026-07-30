@@ -18,7 +18,7 @@ import Quickshell.Io
 Item {
     id: root
 
-    required property DrawerVisibilities visibilities
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     readonly property string defaultNotesDir: `${Paths.home}/Documents/cns-notes`
     property string notesDir: ""
@@ -98,9 +98,9 @@ Item {
     Timer { id: scanTimer; interval: 300; repeat: false; onTriggered: scanNotes() }
 
     Connections {
-        target: root.visibilities
+        target: root.screenState
         function onNotepadChanged(): void {
-            if (root.visibilities.notepad) {
+            if (root.screenState.notepad) {
                 scanNotes()
                 focusTimer.start()
             }
