@@ -6,6 +6,7 @@ pragma ComponentBehavior: Bound
 import "lock"
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Services.UPower
 import CNS.Config
 import CNS.Services
 import qs.services
@@ -14,7 +15,13 @@ Scope {
     id: root
 
     required property Lock lock
-    readonly property bool enabled: !GlobalConfig.general.idle.inhibitWhenAudio || !Players.list.some(p => p.isPlaying)
+    readonly property bool hasPlayer: Players.list.some(p => p.isPlaying)
+    readonly property bool isCharging: !UPower.onBattery
+    readonly property bool enabled: {
+        if (!GlobalConfig.general.idle.inhibitWhenAudio)
+            return !GlobalConfig.general.idle.inhibitWhenCharging || !isCharging || !hasPlayer;
+        return (!hasPlayer || !GlobalConfig.general.idle.inhibitWhenAudio) && (!isCharging || !GlobalConfig.general.idle.inhibitWhenCharging);
+    }
 
     function handleIdleAction(action: var): void {
         if (!action)

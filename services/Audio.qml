@@ -15,9 +15,9 @@ Singleton {
     property string previousSinkName: ""
     property string previousSourceName: ""
 
-    readonly property list<PwNode> sinks: Pipewire.nodes.values.filter(n => !n.isStream && n.isSink)
-    readonly property list<PwNode> sources: Pipewire.nodes.values.filter(n => !n.isStream && n.audio && !n.isSink)
-    readonly property list<PwNode> streams: Pipewire.nodes.values.filter(n => n.isStream && n.audio && n.name !== "caelestia-niri-shell")
+    property list<PwNode> sinks: []
+    property list<PwNode> sources: []
+    property list<PwNode> streams: []
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property PwNode source: Pipewire.defaultAudioSource
@@ -156,6 +156,27 @@ Singleton {
         return stream.properties["application.name"] || stream.description || stream.name || qsTr("Unknown Application");
     }
 
+    function refreshNodes(): void {
+        const newSinks = [];
+        const newSources = [];
+        const newStreams = [];
+
+        for (const node of Pipewire.nodes.values) {
+            if (!node.isStream) {
+                if (node.isSink)
+                    newSinks.push(node);
+                else if (node.audio)
+                    newSources.push(node);
+            } else if (node.audio) {
+                newStreams.push(node);
+            }
+        }
+
+        root.sinks = newSinks;
+        root.sources = newSources;
+        root.streams = newStreams;
+    }
+
     onSinkChanged: {
         if (!sink?.ready)
             return;
@@ -181,12 +202,21 @@ Singleton {
     }
 
     Component.onCompleted: {
+        refreshNodes();
         previousSinkName = sink?.description || sink?.name || qsTr("Unknown Device");
         previousSourceName = source?.description || source?.name || qsTr("Unknown Device");
     }
 
+    Connections {
+        function onValuesChanged(): void {
+            root.refreshNodes();
+        }
+
+        target: Pipewire.nodes
+    }
+
     PwObjectTracker {
-        objects: [...root.sinks, ...root.sources, ...root.streams]
+        objects: [root.sink, root.source, ...root.sinks, ...root.sources, ...root.streams].filter(n => n)
     }
 
     BeatTracker {

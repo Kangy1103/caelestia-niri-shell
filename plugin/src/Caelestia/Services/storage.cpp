@@ -219,6 +219,7 @@ void Storage::tick() {
         quint64 usedBytes = 0;
         bool hasRoot = false;
         QByteArray device;
+        QByteArray fsType;
     };
 
     QHash<QByteArray, DeviceEntry> byDevice;
@@ -240,6 +241,7 @@ void Storage::tick() {
 
         DeviceEntry& e = byDevice[device];
         e.device = device;
+        e.fsType = v.fileSystemType();
         e.totalBytes = totalBytes;
         e.usedBytes = usedBytes;
         e.hasRoot = e.hasRoot || isRoot;
@@ -249,6 +251,16 @@ void Storage::tick() {
         const DeviceEntry& e = it.value();
         const QStringList disks = resolveToPhysicalDisks(QString::fromLocal8Bit(e.device));
         if (disks.isEmpty()) {
+            if (e.fsType == "zfs") {
+                const qsizetype slash = e.device.indexOf('/');
+                const QString pool = QString::fromLocal8Bit(slash > 0 ? e.device.left(slash) : e.device);
+                Accum& a = byDisk[pool];
+                if (!a.hasRoot && (e.hasRoot || e.totalBytes > a.totalBytes)) {
+                    a.usedBytes = e.usedBytes;
+                    a.totalBytes = e.totalBytes;
+                    a.hasRoot = e.hasRoot;
+                }
+            }
             continue;
         }
         for (const QString& d : disks) {

@@ -34,6 +34,7 @@ ShellRoot {
 
   // Font loader — GSFLoader doesn't block on missing fonts, safe to keep always
   GSFLoader {}
+  ServiceLoader {}
 
   // Backdrop {}  // disabled — occluded by Background wallpaper
   Background {}

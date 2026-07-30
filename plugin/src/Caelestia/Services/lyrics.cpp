@@ -7,7 +7,9 @@
 #include <qdiriterator.h>
 #include <qfileinfo.h>
 #include <qjsonarray.h>
+#include <qmath.h>
 #include <qnetworkcookiejar.h>
+#include <limits>
 #include <qsavefile.h>
 #include <qurlquery.h>
 
@@ -510,7 +512,8 @@ void Lyrics::tryLrclib(int reqId) {
     if (!m_album.isEmpty()) {
         q.addQueryItem(u"album_name"_s, m_album);
     }
-    if (m_duration > 0) {
+    constexpr qreal kMaxDurationSecs = std::numeric_limits<int>::max();
+    if (m_duration > 0 && qIsFinite(m_duration) && m_duration < kMaxDurationSecs) {
         q.addQueryItem(u"duration"_s, QString::number(qRound(m_duration)));
     }
     url.setQuery(q);

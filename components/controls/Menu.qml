@@ -44,6 +44,8 @@ MouseArea {
 
     visible: expanded
     enabled: expanded
+    hoverEnabled: expanded
+    cursorShape: expanded ? Qt.ArrowCursor : undefined
     onClicked: expanded = false
 
     opacity: expanded ? 1 : 0

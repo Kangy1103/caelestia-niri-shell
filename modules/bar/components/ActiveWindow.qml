@@ -129,6 +129,7 @@ Item {
         font.family: metrics.font.family
         color: root.colour
         opacity: root.current === this ? 1 : 0
+        horizontalAlignment: Text.AlignLeft
 
         transform: [
             Translate {

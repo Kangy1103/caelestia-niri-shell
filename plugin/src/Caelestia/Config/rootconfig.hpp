@@ -35,6 +35,7 @@ signals:
 
 private:
     static QStringList collectUnknownKeys(const ConfigObject* obj, const QJsonObject& json);
+    static void mergeUnknownKeys(const ConfigObject* obj, const QJsonObject& source, QJsonObject& target);
     void emitLoadSignals(const std::optional<QString>& result, bool emitLoaded = true);
     void updateWatch();
     void onWatcherEvent();
@@ -46,6 +47,7 @@ private:
     QString m_watchedDir;
     bool m_recentlySaved = false;
     bool m_loading = false;
+    QJsonObject m_lastLoadedJson;
 
     QFileSystemWatcher* m_watcher = nullptr;
     QTimer* m_saveTimer = nullptr;

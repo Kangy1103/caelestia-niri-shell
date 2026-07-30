@@ -16,6 +16,9 @@ QtObject {
     property string selectedWallpaperCategory
     property string selectedEthernetInterface
     property BluetoothDevice selectedBtDevice
+    property int editingVpnIndex: -1
+    property string selectedNetworkSsid
+    property bool networkDetailsFromSaved
 
     signal close
     signal subPageOpened(idx: int)

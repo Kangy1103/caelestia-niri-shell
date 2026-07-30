@@ -59,6 +59,7 @@ Singleton {
     readonly property string connectionParamSsid: "ssid"
     readonly property string connectionParamPassword: "password"
     readonly property string connectionParamBssid: "802-11-wireless.bssid"
+    readonly property string connectionParamHidden: "802-11-wireless.hidden"
 
     signal connectionFailed(string ssid)
 
@@ -607,6 +608,98 @@ Singleton {
         return hasConnectionName;
     }
 
+    function addHiddenNetwork(ssid: string, password: string, security: string, hidden: bool, callback: var): void {
+        if (!ssid || ssid.length === 0) {
+            if (callback)
+                callback({
+                    success: false,
+                    output: "",
+                    error: "No SSID specified",
+                    exitCode: -1
+                });
+            return;
+        }
+
+        const isSecure = security && security !== "none";
+
+        checkAndDeleteConnection(ssid, () => {
+            let cmd = [root.nmcliCommandConnection, "add", root.connectionParamType, root.deviceTypeWifi, root.connectionParamConName, ssid, root.connectionParamIfname, "*", root.connectionParamSsid, ssid, root.connectionParamHidden, hidden ? "yes" : "no"];
+
+            if (isSecure) {
+                cmd.push(root.securityKeyMgmt, root.keyMgmtWpaPsk, root.securityPsk, password);
+            }
+
+            executeCommand(cmd, result => {
+                if (result.success) {
+                    loadSavedConnections(() => {});
+                    activateConnection(ssid, callback);
+                } else {
+                    const hasDuplicateWarning = result.error && (result.error.includes("another connection with the name") || result.error.includes("Reference the connection by its uuid"));
+
+                    if (hasDuplicateWarning) {
+                        loadSavedConnections(() => {});
+                        activateConnection(ssid, callback);
+                    } else if (callback) {
+                        callback(result);
+                    }
+                }
+            });
+        });
+    }
+
+    function getAutoconnect(connectionName: string, callback: var): void {
+        if (!connectionName || connectionName.length === 0) {
+            if (callback)
+                callback(true);
+            return;
+        }
+        executeCommand(["-t", "-f", "connection.autoconnect", root.nmcliCommandConnection, "show", connectionName], result => {
+            let auto = true;
+            if (result.success) {
+                const line = result.output.trim();
+                const idx = line.indexOf(":");
+                if (idx >= 0)
+                    auto = line.slice(idx + 1).trim() !== "no";
+            }
+            if (callback)
+                callback(auto);
+        });
+    }
+
+    function setAutoconnect(connectionName: string, enabled: bool, callback: var): void {
+        if (!connectionName || connectionName.length === 0) {
+            if (callback)
+                callback({
+                    success: false,
+                    output: "",
+                    error: "No connection specified",
+                    exitCode: -1
+                });
+            return;
+        }
+
+        let cmd = [root.nmcliCommandConnection, "modify", connectionName, "connection.autoconnect", enabled ? "yes" : "no"];
+
+        if (enabled) {
+            cmd.push("802-11-wireless-security.psk-flags", "0");
+        } else {
+            cmd.push("802-11-wireless-security.psk-flags", "2");
+            cmd.push("802-11-wireless-security.psk", "");
+        }
+
+        executeCommand(cmd, result => {
+            if (!result.success && result.error && (result.error.includes("802-11-wireless-security") || result.error.includes("is not a valid property") || result.error.includes("Error: invalid"))) {
+                executeCommand([root.nmcliCommandConnection, "modify", connectionName, "connection.autoconnect", enabled ? "yes" : "no"], retryResult => {
+                    if (callback)
+                        callback(retryResult);
+                });
+                return;
+            }
+            if (callback)
+                callback(result);
+        });
+    }
+
     function forgetNetwork(ssid: string, callback: var): void {
         if (!ssid || ssid.length === 0) {
             if (callback)
@@ -787,6 +880,10 @@ Singleton {
                     callback(root.wifiEnabled);
             }
         });
+    }
+
+    function findNetwork(ssid: string): var {
+        return networks.find(n => n.ssid === ssid) ?? null;
     }
 
     function getNetworks(callback: var): void {

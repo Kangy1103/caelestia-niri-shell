@@ -1,5 +1,4 @@
-// Created by Kangy w/ OpenCode AI Assistance
-// Version: 0.1.1-20260613
+pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
@@ -7,18 +6,26 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
 import CNS.Config
+import CNS.Services
 import QtMultimedia
 
 Scope {
     id: root
 
+    enum PamState {
+        None,
+        Error,
+        MaxTries,
+        Failed
+    }
+
     required property WlSessionLock lock
 
     readonly property alias passwd: passwd
     readonly property alias fprint: fprint
+    readonly property alias howdy: howdy
     property string lockMessage
-    property string state
-    property string fprintState
+    property int state
     property string buffer
 
     signal flashMsg
@@ -41,8 +48,17 @@ Scope {
     }
 
     function handleKey(event: KeyEvent): void {
-        if (passwd.active || state === "max")
+        if (passwd.active)
             return;
+
+        if (howdy.canAttempt && !howdy.active && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && buffer.length === 0)
+            return howdy.start();
+
+        if (state === Pam.MaxTries)
+            return;
+
+        if (howdy.active)
+            howdy.abort();
 
         if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
             passwd.start();
@@ -53,16 +69,29 @@ Scope {
                 buffer = buffer.slice(0, -1);
             }
         } else if (/^[^\x00-\x1F\x7F-\x9F]+$/.test(event.text)) {
-            // Allow anything except control characters
             buffer += event.text;
         }
+    }
+
+    function restartFprint(): void {
+        fprint.reset();
+        if (fprint.canAttempt)
+            fprint.start();
+        else
+            fprint.abort();
+    }
+
+    function clearTransientState(): void {
+        for (const obj of [root, fprint, howdy])
+            if (obj.state !== Pam.MaxTries)
+                obj.state = Pam.None;
     }
 
     PamContext {
         id: passwd
 
         config: "passwd"
-        configDirectory: "/etc/pam.d"
+        configDirectory: Quickshell.shellPath("assets/pam.d")
 
         onMessageChanged: {
             if (message.startsWith("The account is locked"))
@@ -85,15 +114,17 @@ Scope {
                 return root.lock.unlock();
             }
 
+            root.clearTransientState();
+
             if (res === PamResult.Error)
-                root.state = "error";
+                root.state = Pam.Error;
             else if (res === PamResult.MaxTries)
-                root.state = "max";
+                root.state = Pam.MaxTries;
             else if (res === PamResult.Failed)
-                root.state = "fail";
+                root.state = Pam.Failed;
 
             root.flashMsg();
-            stateReset.restart();
+            pwdStateReset.restart();
         }
     }
 
@@ -101,6 +132,7 @@ Scope {
         id: fprint
 
         property bool available
+        property int state
         property int tries
         property int errorTries
 
@@ -116,7 +148,7 @@ Scope {
         }
 
         config: "fprint"
-        configDirectory: Quickshell.shellDir + "/assets/pam.d"
+        configDirectory: Quickshell.shellPath("assets/pam.d")
 
         onCompleted: res => {
             if (!available)
@@ -128,22 +160,17 @@ Scope {
             }
 
             if (res === PamResult.Error) {
-                root.fprintState = "error";
                 errorTries++;
                 if (errorTries < 5) {
                     abort();
                     errorRetry.restart();
                 }
             } else if (res === PamResult.MaxTries) {
-                // Isn't actually the real max tries as pam only reports completed
-                // when max tries is reached.
                 tries++;
                 if (tries < GlobalConfig.lock.maxFprintTries) {
-                    // Restart if not actually real max tries
-                    root.fprintState = "fail";
                     start();
                 } else {
-                    root.fprintState = "max";
+                    state = Pam.MaxTries;
                     abort();
                 }
             }
@@ -153,11 +180,38 @@ Scope {
         }
     }
 
+    PamContext {
+        id: howdy
+
+        property bool canAttempt: Config.lock.enableHowdy && root.lock.secure
+        property int state
+
+        config: "howdy"
+        configDirectory: Quickshell.shellPath("assets/pam.d")
+
+        onCompleted: res => {
+            if (res === PamResult.Success) {
+                root.playUnlockSound();
+                return root.lock.unlock();
+            }
+
+            root.clearTransientState();
+
+            if (res === PamResult.Error)
+                state = Pam.Error;
+            else if (res === PamResult.MaxTries)
+                state = Pam.MaxTries;
+
+            root.flashMsg();
+            howdyStateReset.restart();
+        }
+    }
+
     Process {
         id: availProc
 
         command: ["sh", "-c", "fprintd-list $USER"]
-        onExited: code => { // qmllint disable signal-handler-parameters
+        onExited: code => {
             fprint.available = code === 0;
             fprint.checkAvail();
         }
@@ -171,12 +225,12 @@ Scope {
     }
 
     Timer {
-        id: stateReset
+        id: pwdStateReset
 
         interval: 4000
         onTriggered: {
-            if (root.state !== "max")
-                root.state = "";
+            if (root.state !== Pam.MaxTries)
+                root.state = Pam.None;
         }
     }
 
@@ -185,8 +239,17 @@ Scope {
 
         interval: 4000
         onTriggered: {
-            root.fprintState = "";
             fprint.errorTries = 0;
+        }
+    }
+
+    Timer {
+        id: howdyStateReset
+
+        interval: 4000
+        onTriggered: {
+            if (howdy.state !== Pam.MaxTries)
+                howdy.state = Pam.None;
         }
     }
 
@@ -195,8 +258,7 @@ Scope {
             if (root.lock.secure) {
                 availProc.running = true;
                 root.buffer = "";
-                root.state = "";
-                root.fprintState = "";
+                root.state = Pam.None;
                 root.lockMessage = "";
             }
         }
