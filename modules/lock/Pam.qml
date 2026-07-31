@@ -51,12 +51,14 @@ Scope {
         if (passwd.active)
             return;
 
+        // Trigger howdy on enter while empty buffer
         if (howdy.canAttempt && !howdy.active && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) && buffer.length === 0)
-            return howdy.start();
+            return howdy.start(); // Gate on active so double enter still allows empty password
 
         if (state === Pam.MaxTries)
             return;
 
+        // Abort howdy on pwd input
         if (howdy.active)
             howdy.abort();
 
@@ -69,6 +71,7 @@ Scope {
                 buffer = buffer.slice(0, -1);
             }
         } else if (/^[^\x00-\x1F\x7F-\x9F]+$/.test(event.text)) {
+            // Allow anything except control characters
             buffer += event.text;
         }
     }
@@ -128,102 +131,6 @@ Scope {
         }
     }
 
-    PamContext {
-        id: fprint
-
-        property bool available
-        property int state
-        property int tries
-        property int errorTries
-
-        function checkAvail(): void {
-            if (!available || !GlobalConfig.lock.enableFprint || !root.lock.secure) {
-                abort();
-                return;
-            }
-
-            tries = 0;
-            errorTries = 0;
-            start();
-        }
-
-        config: "fprint"
-        configDirectory: Quickshell.shellPath("assets/pam.d")
-
-        onCompleted: res => {
-            if (!available)
-                return;
-
-            if (res === PamResult.Success) {
-                root.playUnlockSound();
-                return root.lock.unlock();
-            }
-
-            if (res === PamResult.Error) {
-                errorTries++;
-                if (errorTries < 5) {
-                    abort();
-                    errorRetry.restart();
-                }
-            } else if (res === PamResult.MaxTries) {
-                tries++;
-                if (tries < GlobalConfig.lock.maxFprintTries) {
-                    start();
-                } else {
-                    state = Pam.MaxTries;
-                    abort();
-                }
-            }
-
-            root.flashMsg();
-            fprintStateReset.start();
-        }
-    }
-
-    PamContext {
-        id: howdy
-
-        property bool canAttempt: Config.lock.enableHowdy && root.lock.secure
-        property int state
-
-        config: "howdy"
-        configDirectory: Quickshell.shellPath("assets/pam.d")
-
-        onCompleted: res => {
-            if (res === PamResult.Success) {
-                root.playUnlockSound();
-                return root.lock.unlock();
-            }
-
-            root.clearTransientState();
-
-            if (res === PamResult.Error)
-                state = Pam.Error;
-            else if (res === PamResult.MaxTries)
-                state = Pam.MaxTries;
-
-            root.flashMsg();
-            howdyStateReset.restart();
-        }
-    }
-
-    Process {
-        id: availProc
-
-        command: ["sh", "-c", "fprintd-list $USER"]
-        onExited: code => {
-            fprint.available = code === 0;
-            fprint.checkAvail();
-        }
-    }
-
-    Timer {
-        id: errorRetry
-
-        interval: 800
-        onTriggered: fprint.start()
-    }
-
     Timer {
         id: pwdStateReset
 
@@ -234,29 +141,42 @@ Scope {
         }
     }
 
-    Timer {
-        id: fprintStateReset
+    ManualPamContext {
+        id: fprint
 
-        interval: 4000
-        onTriggered: {
-            fprint.errorTries = 0;
-        }
+        config: "fprint"
+        availCommand: ["sh", "-c", "fprintd-list $USER"]
+        retryOnFail: true
+        enabled: GlobalConfig.lock.enableFprint
+        maxTries: GlobalConfig.lock.maxFprintTries
+        onAvailProcExited: root.restartFprint()
     }
 
-    Timer {
-        id: howdyStateReset
+    ManualPamContext {
+        id: howdy
 
-        interval: 4000
-        onTriggered: {
-            if (howdy.state !== Pam.MaxTries)
-                howdy.state = Pam.None;
+        config: "howdy"
+        availCommand: ["sh", "-c", "command -v howdy"]
+        enabled: GlobalConfig.lock.enableHowdy
+        maxTries: GlobalConfig.lock.maxHowdyTries
+    }
+
+    Connections {
+        function onResumed(): void {
+            if (howdy.canAttempt && !howdy.active && GlobalConfig.lock.triggerHowdyOnWake)
+                howdy.start();
         }
+
+        target: SessionManager
     }
 
     Connections {
         function onSecureChanged(): void {
             if (root.lock.secure) {
-                availProc.running = true;
+                fprint.checkAvailable();
+                howdy.checkAvailable();
+                fprint.reset();
+                howdy.reset();
                 root.buffer = "";
                 root.state = Pam.None;
                 root.lockMessage = "";
@@ -265,6 +185,8 @@ Scope {
 
         function onUnlock(): void {
             fprint.abort();
+            howdy.abort();
+            passwd.abort();
         }
 
         target: root.lock
@@ -272,7 +194,12 @@ Scope {
 
     Connections {
         function onEnableFprintChanged(): void {
-            fprint.checkAvail();
+            root.restartFprint();
+        }
+
+        function onEnableHowdyChanged(): void {
+            if (!GlobalConfig.lock.enableHowdy && howdy.active)
+                howdy.abort();
         }
 
         target: GlobalConfig.lock
@@ -281,5 +208,111 @@ Scope {
     SoundEffect {
         id: unlockSound
         volume: 0.5
+    }
+
+    component ManualPamContext: Scope {
+        id: ctx
+
+        required property bool enabled
+        required property int maxTries
+        property alias config: pam.config
+        property alias availCommand: availProc.command
+        property bool retryOnFail
+
+        property bool available
+        property int tries
+        property int errorTries
+        property int state
+        readonly property bool canAttempt: available && enabled && root.lock.secure && tries < maxTries
+
+        readonly property alias active: pam.active
+        readonly property alias message: pam.message
+
+        signal availProcExited(code: int)
+
+        function checkAvailable(): void {
+            availProc.running = true;
+        }
+
+        function start(): void {
+            pam.start();
+        }
+
+        function abort(): void {
+            pam.abort();
+        }
+
+        function reset(): void {
+            tries = 0;
+            errorTries = 0;
+            state = Pam.None;
+        }
+
+        PamContext {
+            id: pam
+
+            configDirectory: Quickshell.shellPath("assets/pam.d")
+
+            onCompleted: res => {
+                if (!ctx.available)
+                    return;
+
+                if (res === PamResult.Success) {
+                    root.playUnlockSound();
+                    return root.lock.unlock();
+                }
+
+                root.clearTransientState();
+
+                if (res === PamResult.Error) {
+                    ctx.state = Pam.Error;
+                    ctx.errorTries++;
+                    if (ctx.errorTries < 5) {
+                        abort();
+                        errorRetry.restart();
+                    }
+                } else if (res === PamResult.MaxTries || res === PamResult.Failed) {
+                    ctx.tries++;
+                    if (ctx.tries < ctx.maxTries) {
+                        ctx.state = Pam.Failed;
+                        if (ctx.retryOnFail)
+                            start();
+                    } else {
+                        ctx.state = Pam.MaxTries;
+                        abort();
+                    }
+                }
+
+                root.flashMsg();
+                stateReset.restart();
+            }
+        }
+
+        Timer {
+            id: errorRetry
+
+            interval: 800
+            onTriggered: pam.start()
+        }
+
+        Timer {
+            id: stateReset
+
+            interval: 4000
+            onTriggered: {
+                if (ctx.state !== Pam.MaxTries)
+                    ctx.state = Pam.None;
+                ctx.errorTries = 0;
+            }
+        }
+
+        Process {
+            id: availProc
+
+            onExited: code => { // qmllint disable signal-handler-parameters
+                ctx.available = code === 0;
+                ctx.availProcExited(code);
+            }
+        }
     }
 }

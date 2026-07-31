@@ -47,7 +47,7 @@ Item {
         text: {
             if (root.pam.passwd.active)
                 return qsTr("Loading...");
-            if (root.pam.state === "max")
+            if (root.pam.state === Pam.PamState.MaxTries)
                 return qsTr("Max tries reached");
             return qsTr("Enter your password");
         }
