@@ -1,5 +1,6 @@
 pragma Singleton
 
+import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -24,13 +25,22 @@ Singleton {
         reloadableId: "idleInhibitor"
     }
 
-    IdleInhibitor {
-        enabled: props.enabled
-        window: PanelWindow {
-            implicitWidth: 0
-            implicitHeight: 0
-            color: "transparent"
-            mask: Region {}
+    // Gate the IdleInhibitor element + its PanelWindow behind a Loader so the
+    // compositor idle inhibitor is only registered while actually enabled.
+    // Otherwise the window's wayland surface registers an inhibitor on load,
+    // which suppresses ext-idle-notify for the whole session (breaks idle lock).
+    Loader {
+        active: props.enabled
+        sourceComponent: Component {
+            IdleInhibitor {
+                enabled: true
+                window: PanelWindow {
+                    implicitWidth: 0
+                    implicitHeight: 0
+                    color: "transparent"
+                    mask: Region {}
+                }
+            }
         }
     }
 
