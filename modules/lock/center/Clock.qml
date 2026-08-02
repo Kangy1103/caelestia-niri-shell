@@ -33,8 +33,9 @@ Item {
 
     readonly property real maxScale: 5
     readonly property real baseTotalWidth: baseHourMetrics.width + baseMinuteMetrics.width + Tokens.spacing.small
-    readonly property real fitScale: root.width > 0 && baseTotalWidth > 0
-        ? Math.min(maxScale, root.width / baseTotalWidth)
+    readonly property real availableWidth: Math.max(0, Tokens.sizes.lock.centerWidth - Tokens.padding.large * 2)
+    readonly property real fitScale: baseTotalWidth > 0
+        ? Math.min(maxScale, availableWidth / baseTotalWidth)
         : maxScale
 
     implicitWidth: clockGroup.implicitWidth
