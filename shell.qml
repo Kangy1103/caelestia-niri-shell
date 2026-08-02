@@ -43,6 +43,9 @@ ShellRoot {
   Lock {
     id: lockModule
   }
+  IdleMonitors {
+    lock: lockModule
+  }
   Shortcuts {}
   ClipboardPanel {}
   NotepadPanel {}
