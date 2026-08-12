@@ -44,7 +44,7 @@ Item {
         onTriggered: popoutState.blockWorkspacePopout = false
     }
 
-    function blockWorkspacePopout() {
+    function blockWorkspacePopoutTemporarily() {
         popoutState.blockWorkspacePopout = true;
         workspaceBlockTimer.restart();
     }

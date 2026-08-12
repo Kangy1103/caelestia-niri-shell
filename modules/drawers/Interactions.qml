@@ -296,7 +296,7 @@ CustomMouseArea {
             } else if (wasInWorkspacePopout) {
                 popouts.hasCurrent = false;
                 wasInWorkspacePopout = false;
-                popouts.blockWorkspacePopout();
+                popouts.blockWorkspacePopoutTemporarily();
             }
         } else {
             wasInWorkspacePopout = false;
