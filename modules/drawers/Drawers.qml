@@ -5,7 +5,7 @@ import Quickshell
 import qs.services
 
 Variants {
-    model: Quickshell.screens
+    model: Screens.screens
 
     Scope {
         id: scope

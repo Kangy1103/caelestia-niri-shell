@@ -17,6 +17,7 @@ Singleton {
     property int regVersion: 0
 
     function register(screenName: string, state: ScreenState): void {
+        if (!screenName || !state) return;
         const copy = {};
         for (const key in customScreenStates)
             copy[key] = customScreenStates[key];
@@ -26,10 +27,10 @@ Singleton {
     }
 
     function forScreen(screen: ShellScreen): ScreenState {
-        if (customScreenStates[screen.name])
+        if (screen && customScreenStates[screen.name])
             return customScreenStates[screen.name];
         for (const s of states.instances)
-            if (s.modelData === screen || s.modelData.name === screen.name)
+            if (s.modelData && (s.modelData === screen || s.modelData.name === screen.name))
                 return s;
         return null;
     }
@@ -39,14 +40,14 @@ Singleton {
         if (name && customScreenStates[name])
             return customScreenStates[name];
         for (const s of states.instances)
-            if (s.modelData.name === name)
+            if (s.modelData && s.modelData.name === name)
                 return s;
         return null;
     }
 
     function componentsFor(screen: ShellScreen): Components {
         for (const c of components.instances)
-            if (c.modelData === screen || c.modelData.name === screen.name)
+            if (c.modelData && (c.modelData === screen || c.modelData.name === screen.name))
                 return c;
         return null;
     }
@@ -54,7 +55,7 @@ Singleton {
     function componentsForActive(): Components {
         const name = Niri.focusedMonitorName;
         for (const c of components.instances)
-            if (c.modelData.name === name)
+            if (c.modelData && c.modelData.name === name)
                 return c;
         return null;
     }

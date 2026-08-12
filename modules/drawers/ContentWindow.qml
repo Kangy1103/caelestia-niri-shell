@@ -247,7 +247,15 @@ StyledWindow {
         id: screenState
     }
 
-    onScreenChanged: ShellState.register(screen.name, screenState)
+    onScreenChanged: {
+        if (screen && screenState)
+            ShellState.register(screen.name, screenState)
+    }
+
+    Component.onCompleted: {
+        if (screen && screenState)
+            ShellState.register(screen.name, screenState)
+    }
 
     ShellState.ComponentRef {
         screen: root.screen
