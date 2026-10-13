@@ -19,9 +19,10 @@ Item {
     required property int padding
     required property int rounding
 
+    readonly property bool showEmojis: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}emoji `)
     readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
-    readonly property var currentList: showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
-    property string animState: showWallpapers ? "wallpapers" : "apps"
+    readonly property var currentList: showEmojis ? emojiList.item : showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
+    property string animState: showEmojis ? "emojis" : showWallpapers ? "wallpapers" : "apps"
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
@@ -51,6 +52,22 @@ Item {
                 root.implicitWidth: Math.max(root.Tokens.sizes.launcher.itemWidth * 1.2, wallpaperList.implicitWidth)
                 root.implicitHeight: root.Tokens.sizes.launcher.wallpaperHeight
                 wallpaperList.active: true
+            }
+        },
+        // CNS: "emoji " prefix search. Upstream ships EmojiList.qml but never
+        // wires it in, so the Emoji launcher action had nothing to show.
+        State {
+            name: "emojis"
+
+            PropertyChanges {
+                root.implicitWidth: root.Tokens.sizes.launcher.itemWidth
+                root.implicitHeight: Math.min(root.maxHeight, emojiList.implicitHeight > 0 ? emojiList.implicitHeight : empty.implicitHeight)
+                emojiList.active: true
+            }
+
+            AnchorChanges {
+                anchors.left: root.parent.left
+                anchors.right: root.parent.right
             }
         }
     ]
@@ -107,6 +124,20 @@ Item {
             screenState: root.screenState
             panels: root.panels
             content: root.content
+        }
+    }
+
+    // CNS: emoji list for the "emoji " prefix search
+    Loader {
+        id: emojiList
+
+        asynchronous: true
+        active: false
+
+        anchors.fill: parent
+
+        sourceComponent: EmojiList {
+            search: root.search
         }
     }
 

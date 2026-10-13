@@ -64,7 +64,10 @@ Item {
         onAccepted: {
             const currentItem = list.currentList?.currentItem;
             if (currentItem) {
-                if (list.showWallpapers) {
+                if (list.showEmojis) {
+                    // CNS: EmojiList items copy on click; no wallpaper/app action
+                    currentItem.onClicked();
+                } else if (list.showWallpapers) {
                     if (Colours.scheme === "dynamic" && currentItem.modelData.path !== Wallpapers.actualCurrent)
                         Wallpapers.previewColourLock = true;
                     Wallpapers.setWallpaper(currentItem.modelData.path);
