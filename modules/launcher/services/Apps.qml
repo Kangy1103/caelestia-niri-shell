@@ -17,7 +17,12 @@ Searcher {
                 workingDirectory: entry.workingDirectory
             });
         else
-            entry.execute();
+            // CNS: strip GPU env vars before launching. Without this, Electron
+            // apps fail to map windows under the NVIDIA/Intel hybrid setup.
+            Quickshell.execDetached({
+                command: ["env", "-u", "DRI_PRIME", "-u", "__EGL_VENDOR_LIBRARY_FILENAMES", ...entry.command],
+                workingDirectory: entry.workingDirectory
+            });
     }
 
     function search(search: string): var {

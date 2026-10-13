@@ -18,6 +18,7 @@ PageBase {
         spacing: Tokens.spacing.extraSmall / 2
 
         StepperRow {
+            Layout.fillWidth: true
             first: true
             // TRANSLATORS: the number of workspaces shown on the bar
             label: Tr.trCtx("Shown", "bar workspaces")
@@ -30,24 +31,28 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.trCtx("Active indicator", "bar workspaces")
             checked: Config.bar.workspaces.activeIndicator
             onToggled: GlobalConfig.bar.workspaces.activeIndicator = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.trCtx("Active trail", "bar workspaces")
             checked: Config.bar.workspaces.activeTrail
             onToggled: GlobalConfig.bar.workspaces.activeTrail = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.trCtx("Occupied background", "bar workspaces")
             checked: Config.bar.workspaces.occupiedBg
             onToggled: GlobalConfig.bar.workspaces.occupiedBg = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.trCtx("Show unoccupied", "bar workspaces")
             subtext: Tr.tr("Show workspaces that are inactive and empty")
             checked: Config.bar.workspaces.showUnoccupied
@@ -68,13 +73,8 @@ PageBase {
             onToggled: GlobalConfig.bar.workspaces.showWindows = checked
         }
 
-        ToggleRow {
-            text: Tr.trCtx("Windows on special workspaces", "bar workspaces")
-            checked: Config.bar.workspaces.showWindowsOnSpecialWorkspaces
-            onToggled: GlobalConfig.bar.workspaces.showWindowsOnSpecialWorkspaces = checked
-        }
-
         StepperRow {
+            Layout.fillWidth: true
             last: true
             // TRANSLATORS: maximum number of window icons shown per workspace
             label: Tr.trCtx("Max window icons", "bar workspaces")
