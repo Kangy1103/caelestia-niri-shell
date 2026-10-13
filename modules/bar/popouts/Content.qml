@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.2.0-20260610
+
 pragma ComponentBehavior: Bound
 
 import "./kblayout"
@@ -6,7 +9,6 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import CNS.Config
 import qs.components
-import qs.services
 
 Item {
     id: root
@@ -15,13 +17,9 @@ Item {
     readonly property Popout currentPopout: content.children.find(c => c.shouldBeActive) ?? null
     readonly property Item current: currentPopout?.item ?? null
 
-    readonly property var trayItemsToIndices: SystemTray.items.values.filter(i => i.status !== Status.Passive && !GlobalConfig.bar.tray.hiddenIcons.includes(i.id)).reduce((acc, item, i) => {
-        acc[item.id] = i;
-        return acc;
-    }, {})
-
-    implicitWidth: currentPopout ? currentPopout.implicitWidth + Tokens.padding.large * 2 : 0
-    implicitHeight: currentPopout ? currentPopout.implicitHeight + Tokens.padding.large * 2 : 0
+    readonly property real margin: Tokens.padding.largeIncreased
+    implicitWidth: (currentPopout?.implicitWidth ?? 0) + margin
+    implicitHeight: (currentPopout?.implicitHeight ?? 0) + margin
 
     Item {
         id: content
@@ -29,11 +27,11 @@ Item {
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
 
+        // Niri workspace context popout — uses Niri.wsContextAnchor
         Popout {
-            name: "activewindow"
-            sourceComponent: ActiveWindow {
-                popouts: root.popouts
-            }
+            name: "wsWindow"
+            sourceComponent:
+            WsContextPopout {}
         }
 
         Popout {
@@ -42,7 +40,15 @@ Item {
             name: "network"
             sourceComponent: Network {
                 popouts: root.popouts
-                view: Nmcli.activeEthernet ? "ethernet" : "wireless"
+                view: "wireless"
+            }
+        }
+
+        Popout {
+            name: "ethernet"
+            sourceComponent: Network {
+                popouts: root.popouts
+                view: "ethernet"
             }
         }
 
@@ -51,47 +57,8 @@ Item {
 
             name: "wirelesspassword"
             sourceComponent: WirelessPassword {
-                id: passwordComponent
-
                 popouts: root.popouts
                 network: (networkPopout.item as Network)?.passwordNetwork ?? null
-            }
-
-            Connections {
-                function onCurrentNameChanged() {
-                    // Update network immediately when password popout becomes active
-                    if (root.popouts.currentName === "wirelesspassword") {
-                        // Set network immediately if available
-                        if ((networkPopout.item as Network)?.passwordNetwork) {
-                            if (passwordPopout.item) {
-                                (passwordPopout.item as WirelessPassword).network = (networkPopout.item as Network).passwordNetwork;
-                            }
-                        }
-                        // Also try after a short delay in case networkPopout.item wasn't ready
-                        Qt.callLater(() => {
-                            if (passwordPopout.item && (networkPopout.item as Network)?.passwordNetwork) {
-                                (passwordPopout.item as WirelessPassword).network = (networkPopout.item as Network).passwordNetwork;
-                            }
-                        }, 100);
-                    }
-                }
-
-                target: root.popouts
-            }
-
-            Connections {
-                function onItemChanged() {
-                    // When network popout loads, update password popout if it's active
-                    if (root.popouts.currentName === "wirelesspassword" && passwordPopout.item) {
-                        Qt.callLater(() => {
-                            if ((networkPopout.item as Network)?.passwordNetwork) {
-                                (passwordPopout.item as WirelessPassword).network = (networkPopout.item as Network).passwordNetwork;
-                            }
-                        });
-                    }
-                }
-
-                target: networkPopout
             }
         }
 
@@ -109,7 +76,7 @@ Item {
 
         Popout {
             name: "audio"
-            sourceComponent: AudioPopout {
+            sourceComponent: Audio {
                 popouts: root.popouts
             }
         }
@@ -124,17 +91,30 @@ Item {
             sourceComponent: LockStatus {}
         }
 
+        Popout {
+            name: "stasis"
+            sourceComponent: Stasis {}
+        }
+
+        Popout {
+            name: "workspaces"
+            sourceComponent: WorkspaceOverview {
+                screen: root.wrapper.screen
+            }
+        }
+
         Repeater {
             model: ScriptModel {
-                values: SystemTray.items.values.filter(i => i.hasMenu && i.status !== Status.Passive && !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
+                values: SystemTray.items.values.filter(i => !GlobalConfig.bar.tray.hiddenIcons.includes(i.id))
             }
 
             Popout {
                 id: trayMenu
 
                 required property SystemTrayItem modelData
+                required property int index
 
-                name: `traymenu${root.trayItemsToIndices[modelData.id]}`
+                name: `traymenu${index}`
                 sourceComponent: trayMenuComp
 
                 Connections {
@@ -164,8 +144,7 @@ Item {
         id: popout
 
         required property string name
-        readonly property bool shouldBeActive: root.popouts.currentName === name
-        property bool ready: true
+        readonly property bool shouldBeActive: root.popouts ? root.popouts.currentName === name : false
 
         anchors.centerIn: parent
 
