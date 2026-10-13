@@ -1,242 +1,448 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Based on Noctalia Shell (v4.7.7) Workspace.qml
+// Version: 4.1.0-20260603
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Effects
+import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
-import CNS
-import CNS.Components
-import CNS.Config
+import Quickshell.Widgets
+import CNS.Internal
 import qs.components
+import CNS.Config
 import qs.services
+import qs.utils
 
-StyledClippingRect {
+StyledRect {
     id: root
 
+    readonly property bool isVertical: true
+    readonly property real barHeight: TokenConfig.sizes.bar.innerWidth
+    readonly property real capsuleHeight: TokenConfig.sizes.bar.innerWidth * 0.85
+    readonly property real barFontSize: Tokens.font.label.large.pointSize
+
     required property ShellScreen screen
-    required property bool fullscreen
 
-    readonly property HyprlandMonitor monitor: Hypr.monitorFor(screen)
-    readonly property bool onSpecial: monitor?.lastIpcObject.specialWorkspace?.name !== ""
-    readonly property int activeWsId: monitor.activeWorkspace?.id ?? 1
-    readonly property int activeWsIdx: workspaceIndex(activeWsId)
-    readonly property int shown: Math.max(1, Config.bar.workspaces.shown)
+    readonly property bool showApplications: Config.bar.workspaces.showWindows
+    readonly property int iconSize: Config.bar.workspaces.windowIconSize || 24
 
-    readonly property var wsIds: {
-        if (Config.bar.workspaces.showUnoccupied)
-            return Array.from({
-                length: shown
-            }, (_, i) => i + 1);
+    readonly property string labelMode: "index"
+    readonly property bool hasLabel: labelMode !== "none"
+    readonly property int fontWeight: Font.Medium
+    readonly property int characterCount: 2
+    readonly property real textRatio: 0.50
 
-        const allMonitors = !Config.bar.workspaces.perMonitor;
-        const ignoredTags = GlobalConfig.bar.workspaces.ignoredTags;
-        const workspaces = Hypr.workspaces.values.filter(w => w.id > 0 && (allMonitors || w.monitor === root.monitor) && (w.id === activeWsId || w.toplevels.values.some(t => !Hypr.isToplevelIgnored(t, ignoredTags))));
-        const currentIdx = workspaces.findIndex(w => w.id === activeWsId);
-        if (currentIdx < 0)
-            return [];
+    readonly property real pillSize: 1.0
+    readonly property real baseDimensionRatio: pillSize
+    readonly property bool showLabelsOnlyWhenOccupied: false
+    readonly property bool enableScrollWheel: true
+    readonly property bool reverseScroll: false
 
-        const end = CUtils.clamp(currentIdx + 1, Math.min(shown, workspaces.length), workspaces.length);
-        const start = Math.max(0, end - shown);
+    readonly property string focusedColor: "primary"
+    readonly property string occupiedColor: "surfaceContainerHigh"
+    readonly property string emptyColor: "outlineVariant"
 
-        return workspaces.slice(start, end).map(w => w.id);
+    property ListModel localWorkspaces: ListModel {}
+    property int lastFocusedWorkspaceId: -1
+    property real masterProgress: 0.0
+    property bool effectsActive: false
+    property color effectColor: Colours.palette.m3primary
+
+    property int horizontalPadding: Math.round(Tokens.padding.extraSmall)
+    property int spacingBetweenPills: Math.round(Tokens.spacing.small / 2)
+    property int windowRevision: 0
+
+    property int wheelAccumulatedDelta: 0
+    property bool wheelCooldown: false
+
+    signal requestWindowPopout
+
+    implicitWidth: TokenConfig.sizes.bar.innerWidth
+    implicitHeight: showApplications ? computeGroupedHeight() : (pillColumn.visible ? pillColumn.implicitHeight : groupedGrid.visible ? groupedGrid.implicitHeight : capsuleHeight) + horizontalPadding * 2
+    Component.onCompleted: {
+        refreshWorkspaces()
     }
-
-    readonly property var workspaces: {
-        workspaces.itemsDirty;
-        return wsIds.map(id => workspaces.itemAtIndex(workspaceIndex(id)));
-    }
-
-    // Only relevant for when showUnoccupied is true
-    readonly property int groupOffset: {
-        if (!Config.bar.workspaces.showUnoccupied)
-            return 0;
-        return Math.floor((activeWsId - 1) / shown) * shown;
-    }
-
-    property real blur: onSpecial ? 1 : 0
-
-    function workspaceIndex(id: int): int {
-        if (!Config.bar.workspaces.showUnoccupied)
-            return wsIds.indexOf(id);
-
-        let index = id - 1;
-        while (index < 0)
-            index += shown;
-        return index % shown;
-    }
-
-    implicitWidth: Tokens.sizes.bar.innerWidth
-    implicitHeight: workspaces.layoutHeight + workspaces.anchors.margins * 2
 
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.full
 
-    Item {
-        anchors.fill: parent
-        scale: root.onSpecial ? 0.8 : 1
-        opacity: root.onSpecial ? 0.5 : 1
-        visible: !root.fullscreen
+    Connections {
+        target: Niri
+        function onWsContextTypeChanged() {
+            if (Niri.wsContextType === "workspaces")
+                Niri.wsContextAnchor = root;
+        }
+    }
 
-        layer.enabled: root.blur > 0
-        layer.effect: MultiEffect {
-            blurEnabled: true
-            blur: root.blur
-            blurMax: 32
+    // ===== Dimension helpers =====
+
+    function getWorkspaceWidth(ws, activeOverride) {
+        const d = Math.round(capsuleHeight * root.baseDimensionRatio);
+        const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
+        const factor = isActive ? 2.2 : 1;
+        if (labelMode === "none")
+            return Math.round(d * factor);
+
+        var displayText = (ws.idx ?? 0).toString();
+        if (ws.name && ws.name.length > 0) {
+            if (root.labelMode === "name")
+                displayText = ws.name.substring(0, characterCount);
+            else if (root.labelMode === "index+name")
+                displayText = (ws.idx ?? 0).toString() + " " + ws.name.substring(0, characterCount);
+        }
+        const textWidth = displayText.length * (d * 0.4);
+        const padding = d * 0.6;
+        return Math.round(Math.max(d * factor, textWidth + padding));
+    }
+
+    function getWorkspaceHeight(ws, activeOverride) {
+        const d = Math.round(capsuleHeight * root.baseDimensionRatio);
+        const isActive = activeOverride !== undefined ? activeOverride : ws.isActive;
+        const factor = isActive ? 2.2 : 1;
+        return Math.round(d * factor);
+    }
+
+    function computeHeight() {
+        let total = 0;
+        for (var i = 0; i < localWorkspaces.count; i++) {
+            const ws = localWorkspaces.get(i);
+            total += getWorkspaceHeight(ws, false);
+        }
+        total += Math.max(localWorkspaces.count - 1, 0) * spacingBetweenPills;
+        total += horizontalPadding * 2;
+        return Math.round(total);
+    }
+
+    function computeGroupedHeight() {
+        let h = localWorkspaces.count * (iconSize + horizontalPadding)
+                + (localWorkspaces.count - 1) * spacingBetweenPills
+                + horizontalPadding * 2;
+        return Math.max(capsuleHeight, h);
+    }
+
+    // ===== Workspace switching =====
+
+    function getFocusedLocalIndex() {
+        for (var i = 0; i < localWorkspaces.count; i++) {
+            if (localWorkspaces.get(i).isFocused === true)
+                return i;
+        }
+        return -1;
+    }
+
+    function switchByOffset(offset) {
+        if (localWorkspaces.count <= 1) return;
+        var current = getFocusedLocalIndex();
+        if (current < 0) current = 0;
+        var next = (current + offset) % localWorkspaces.count;
+        if (next < 0) next = localWorkspaces.count - 1;
+        if (next === current) return;
+        const ws = localWorkspaces.get(next);
+        if (ws && ws.id !== undefined)
+            Niri.switchToWorkspace(ws.id);
+    }
+
+    // ===== Sync logic =====
+
+    function scheduleRefresh() {
+        Qt.callLater(root.refreshWorkspaces);
+    }
+
+    function refreshWorkspaces() {
+
+        var allWs = Niri.allWorkspaces;
+        if (!allWs) allWs = [];
+
+        var outputName = root.screen.name;
+        var wsList = [];
+        for (var i = 0; i < allWs.length; i++) {
+            if (allWs[i].output === outputName) {
+                wsList.push(allWs[i]);
+            }
+        }
+        if (wsList.length === 0) wsList = allWs;
+
+        var targetList = [];
+        for (var i = 0; i < wsList.length; i++) {
+            const ws = wsList[i];
+            targetList.push({
+                id: ws.id,
+                idx: ws.idx,
+                name: ws.name ?? "",
+                output: ws.output ?? "",
+                isFocused: Number(ws.id) === Niri.focusedWorkspaceId,
+                isActive: Number(ws.id) === Niri.focusedWorkspaceId,
+                isUrgent: ws.is_urgent ?? false,
+                isOccupied: Niri.workspaceHasWindows[String(ws.idx)] ?? false
+            });
         }
 
-        Loader {
-            asynchronous: true
-            opacity: Config.bar.workspaces.occupiedBg ? 1 : 0
-            active: opacity > 0
-
-            anchors.fill: parent
-            anchors.margins: Tokens.padding.extraSmall
-
-            sourceComponent: OccupiedBg {
-                workspaces: root.workspaces
-                wsSpacing: workspaces.spacing
-            }
-
-            Behavior on opacity {
-                Anim {
-                    type: Anim.DefaultEffects
+        var j = 0;
+        while (j < localWorkspaces.count || j < targetList.length) {
+            if (j < localWorkspaces.count && j < targetList.length) {
+                var existing = localWorkspaces.get(j);
+                var target = targetList[j];
+                if (existing.id === target.id) {
+                    localWorkspaces.set(j, target);
+                    j++;
+                } else {
+                    localWorkspaces.remove(j);
                 }
+            } else if (j < localWorkspaces.count) {
+                localWorkspaces.remove(j);
+            } else {
+                localWorkspaces.append(targetList[j]);
+                j++;
             }
         }
 
-        LazyListView {
-            id: workspaces
+        updateWorkspaceFocus();
+    }
 
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: Tokens.padding.extraSmall
-            implicitHeight: contentHeight
-
-            spacing: Tokens.spacing.extraSmall
-            removeDuration: Tokens.anim.durations.expressiveDefaultEffects
-
-            model: ScriptModel {
-                values: root.wsIds
-            }
-
-            delegate: Workspace {
-                activeWsId: root.activeWsId
-                ws: Config.bar.workspaces.showUnoccupied ? root.groupOffset + index + 1 : modelData
-                monitor: root.monitor
-
-                displayType: Config.bar.workspaces.displayType
-                showWindows: Config.bar.workspaces.showWindows
-                iconRules: GlobalConfig.bar.workspaces.workspaceIcons
-                activeLabel: Config.bar.workspaces.activeLabel
-                occupiedLabel: Config.bar.workspaces.occupiedLabel
-                label: Config.bar.workspaces.label
-            }
-        }
-
-        Loader {
-            asynchronous: true
-            opacity: Config.bar.workspaces.showUnoccupied ? 0 : 1
-            active: opacity > 0
-
-            anchors.fill: parent
-            anchors.margins: Tokens.padding.extraSmall
-
-            sourceComponent: GapMarkers {
-                workspaces: root.workspaces
-                wsSpacing: workspaces.spacing
-            }
-
-            Behavior on opacity {
-                Anim {
-                    type: Anim.DefaultEffects
+    function updateWorkspaceFocus() {
+        for (var i = 0; i < localWorkspaces.count; i++) {
+            const ws = localWorkspaces.get(i);
+            if (ws.isFocused === true) {
+                if (root.lastFocusedWorkspaceId !== -1 && root.lastFocusedWorkspaceId !== ws.id) {
+                    root.triggerUnifiedWave();
                 }
-            }
-        }
-
-        Loader {
-            asynchronous: true
-            anchors.left: workspaces.left
-            anchors.right: workspaces.right
-            active: Config.bar.workspaces.activeIndicator
-
-            sourceComponent: ActiveIndicator {
-                activeWs: {
-                    workspaces.itemsDirty;
-                    return workspaces.itemAtIndex(root.activeWsIdx) as Workspace;
-                }
-                mask: workspaces
-            }
-        }
-
-        MouseArea {
-            anchors.fill: workspaces
-            onClicked: event => {
-                const ws = (workspaces.itemAt(event.x, event.y) as Workspace)?.ws;
-                if (!ws)
-                    return;
-                if (Hypr.activeWsId !== ws)
-                    Hypr.focusWorkspace(ws);
-                else
-                    Hypr.toggleSpecial("special");
-            }
-        }
-
-        Behavior on scale {
-            Anim {}
-        }
-
-        Behavior on opacity {
-            Anim {
-                type: Anim.DefaultEffects
+                root.lastFocusedWorkspaceId = ws.id;
+                break;
             }
         }
     }
 
-    Loader {
-        id: specialWs
+    // ===== Burst effect =====
 
-        anchors.fill: parent
+    function triggerUnifiedWave() {
+        effectColor = Colours.palette.m3primary;
+        masterAnimation.restart();
+    }
 
-        asynchronous: true
-        active: opacity > 0
-        opacity: root.onSpecial ? 1 : 0
+    SequentialAnimation {
+        id: masterAnimation
+        PropertyAction {
+            target: root; property: "effectsActive"; value: true
+        }
+        NumberAnimation {
+            target: root; property: "masterProgress"
+            from: 0.0; to: 1.0
+            duration: 600
+            easing.type: Easing.OutQuint
+        }
+        PropertyAction {
+            target: root; property: "effectsActive"; value: false
+        }
+        PropertyAction {
+            target: root; property: "masterProgress"; value: 0.0
+        }
+    }
 
-        sourceComponent: Item {
-            StyledRect {
-                anchors.fill: parent
-                radius: Tokens.rounding.full
-                color: Qt.alpha(Colours.palette.m3scrim, Colours.light ? 0 : 0.2)
+    // ===== Signal connections =====
+
+    Connections {
+        target: NiriIpc
+        function onWorkspacesChanged() { scheduleRefresh(); }
+        function onFocusedWorkspaceChanged() { scheduleRefresh(); }
+        function onWorkspaceHasWindowsChanged() { scheduleRefresh(); }
+    }
+
+    Connections {
+        target: Niri
+        function onWindowOpenedOrChanged() {
+            if (showApplications) root.windowRevision++;
+            scheduleRefresh();
+        }
+        function onFocusedWindowIdChanged() {
+            if (showApplications) root.windowRevision++;
+            scheduleRefresh();
+        }
+        function onWindowsChanged() {
+            if (showApplications) root.windowRevision++;
+            scheduleRefresh();
+        }
+    }
+
+    // ===== Wheel scrolling =====
+
+    Timer {
+        id: wheelDebounce
+        interval: 150
+        repeat: false
+        onTriggered: {
+            root.wheelCooldown = false;
+            root.wheelAccumulatedDelta = 0;
+        }
+    }
+
+    WheelHandler {
+        id: wheelHandler
+        target: root
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        enabled: root.enableScrollWheel
+        onWheel: function (event) {
+            if (root.wheelCooldown) return;
+            var dy = event.angleDelta.y;
+            var dx = event.angleDelta.x;
+            var useDy = Math.abs(dy) >= Math.abs(dx);
+            var delta = useDy ? dy : dx;
+            root.wheelAccumulatedDelta += delta;
+            var step = 120;
+            if (Math.abs(root.wheelAccumulatedDelta) >= step) {
+                var direction = root.wheelAccumulatedDelta > 0 ? -1 : 1;
+                if (root.reverseScroll) direction *= -1;
+                root.switchByOffset(direction);
+                root.wheelCooldown = true;
+                wheelDebounce.restart();
+                root.wheelAccumulatedDelta = 0;
+                event.accepted = true;
             }
+        }
+    }
 
-            SpecialWorkspaces {
-                anchors.fill: parent
-                anchors.margins: Tokens.padding.extraSmall
-                monitor: root.monitor
+    // ===== Standard pill mode =====
 
-                scale: 0.5
-                Component.onCompleted: scale = Qt.binding(() => root.onSpecial ? 1 : 0.5)
+    Column {
+        id: pillColumn
+        visible: !showApplications
+        spacing: spacingBetweenPills
+        x: Math.round((parent.width - width) / 2)
+        y: horizontalPadding
+        width: capsuleHeight
 
-                Behavior on scale {
-                    Anim {}
+        Repeater {
+            id: workspaceRepeater
+            model: localWorkspaces
+            delegate: WorkspacePill {
+                required property var modelData
+                workspace: modelData
+                isVertical: root.isVertical
+                baseDimensionRatio: root.baseDimensionRatio
+                capsuleHeight: root.capsuleHeight
+                barHeight: root.barHeight
+                labelMode: root.labelMode
+                fontWeight: root.fontWeight
+                characterCount: root.characterCount
+                textRatio: root.textRatio
+                showLabelsOnlyWhenOccupied: root.showLabelsOnlyWhenOccupied
+                focusedColor: root.focusedColor
+                occupiedColor: root.occupiedColor
+                emptyColor: root.emptyColor
+                masterProgress: root.masterProgress
+                effectsActive: root.effectsActive
+                effectColor: root.effectColor
+                getWorkspaceWidth: root.getWorkspaceWidth
+                getWorkspaceHeight: root.getWorkspaceHeight
+            }
+        }
+    }
+
+    // ===== Grouped mode (app icons) =====
+
+    Flow {
+        id: groupedGrid
+        visible: showApplications
+        flow: Flow.TopToBottom
+        spacing: spacingBetweenPills
+
+        anchors.centerIn: parent
+
+        Repeater {
+            model: showApplications ? localWorkspaces : null
+            delegate: Rectangle {
+                id: groupedContainer
+                required property var modelData
+
+                property var liveWindows: {
+                    var _ = root.windowRevision;
+                    var wins = Niri.getWindowsByWorkspaceId(modelData.id) ?? [];
+                    var focusedId = Number(Niri.focusedWindowId);
+                    var result = [];
+                    for (var i = 0; i < wins.length; i++) {
+                        if (Number(wins[i].id) === focusedId) {
+                            result.unshift(wins[i]);
+                        } else {
+                            result.push(wins[i]);
+                        }
+                    }
+                    if (result.length === 0) result = wins;
+                    return result;
+                }
+
+                width: iconSize + horizontalPadding
+                height: iconSize + horizontalPadding
+
+                color: modelData.isFocused ? Colours.palette.m3primaryContainer : Colours.layer(Colours.palette.m3surfaceContainerHigh, 1)
+                radius: Tokens.rounding.small
+                border.color: modelData.isFocused ? Colours.palette.m3primary : Qt.alpha(Colours.palette.m3outlineVariant, 0.2)
+                border.width: modelData.isFocused ? 2 : 1
+
+                Behavior on color {
+                    ColorAnimation { duration: 150 }
+                }
+
+                Behavior on border.color {
+                    ColorAnimation { duration: 150 }
+                }
+
+                Column {
+                    anchors.centerIn: parent
+                    spacing: 2
+
+                    Repeater {
+                        model: groupedContainer.liveWindows.length > 0 ? [groupedContainer.liveWindows[0]] : []
+
+                        delegate: IconImage {
+                            required property var modelData
+                            width: iconSize
+                            height: iconSize
+                            source: Icons.getAppIcon(modelData.app_id ?? "", "image-missing")
+                            smooth: true
+                            asynchronous: true
+                        }
+                    }
+
+                    StyledText {
+                        text: modelData.idx.toString()
+                        font.pointSize: 7
+                        horizontalAlignment: Text.AlignHCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        visible: groupedContainer.liveWindows.length === 0
+                        color: Colours.palette.m3onSurfaceVariant
+                    }
+                }
+
+                MouseArea {
+                    id: groupedMouseArea
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: {
+                        Niri.switchToWorkspace(modelData.id);
+                    }
+                    onEntered: showTimer.start()
+                    onExited: { showTimer.stop(); Niri.tooltipTarget = null }
+                }
+
+                Timer {
+                    id: showTimer
+                    interval: 300
+                    onTriggered: {
+                        if (groupedContainer.liveWindows.length > 0) {
+                            Niri.tooltipText = groupedContainer.liveWindows[0]?.title ?? ""
+                            Niri.tooltipTarget = groupedContainer
+                        }
+                    }
                 }
             }
         }
 
-        Behavior on opacity {
-            Anim {
-                type: Anim.DefaultEffects
+        Behavior on visible {
+            NumberAnimation {
+                duration: Tokens.anim.durations.normal
+                easing.type: Easing.OutBack
             }
         }
-    }
-
-    Behavior on blur {
-        Anim {
-            type: Anim.StandardSmall
-        }
-    }
-
-    Behavior on implicitHeight {
-        Anim {}
     }
 }
