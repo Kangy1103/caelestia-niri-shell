@@ -1,7 +1,11 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.2.0-20260610
+
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import CNS
+import CNS.Config
 import qs.components.misc
 import qs.services
 import qs.modules.nexus
@@ -10,19 +14,21 @@ Scope {
     id: root
 
     property bool launcherInterrupted
-    readonly property bool hasFullscreen: Hypr.focusedWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false
+    // Niri doesn't expose per-window fullscreen state via IPC.
+    // TODO: add when Niri IPC gains fullscreen tracking.
+    readonly property bool hasFullscreen: Niri.hasFullscreen
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: nexus ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scNexus
         name: "nexus"
         description: "Open nexus"
         onPressed: WindowFactory.create()
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: showall ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scShowall
         name: "showall"
         description: "Toggle launcher, dashboard and osd"
         onPressed: {
@@ -33,9 +39,9 @@ Scope {
         }
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: dashboard ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scDashboard
         name: "dashboard"
         description: "Toggle dashboard"
         onPressed: {
@@ -46,9 +52,9 @@ Scope {
         }
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: session ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scSession
         name: "session"
         description: "Toggle session menu"
         onPressed: {
@@ -59,9 +65,9 @@ Scope {
         }
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: launcher (hold-to-show pattern) ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scLauncher
         name: "launcher"
         description: "Toggle launcher"
         onPressed: root.launcherInterrupted = false
@@ -74,17 +80,17 @@ Scope {
         }
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: launcherInterrupt ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scLauncherInterrupt
         name: "launcherInterrupt"
         description: "Interrupt launcher keybind"
         onPressed: root.launcherInterrupted = true
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: sidebar ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scSidebar
         name: "sidebar"
         description: "Toggle sidebar"
         onPressed: {
@@ -95,9 +101,9 @@ Scope {
         }
     }
 
-    // qmllint disable unresolved-type
+    // ── CustomShortcut: utilities ──
     CustomShortcut {
-        // qmllint enable unresolved-type
+        id: scUtilities
         name: "utilities"
         description: "Toggle utilities"
         onPressed: {
@@ -108,7 +114,67 @@ Scope {
         }
     }
 
+    // ── IPC: nexus ──
     IpcHandler {
+        target: "nexus"
+        function open(): void {
+            scNexus.pressed();
+        }
+    }
+
+    // ── IPC: launcher (hold-to-show) ──
+    IpcHandler {
+        target: "launcher"
+        function open(): void { scLauncher.pressed(); }
+        function pressed(): void { scLauncher.pressed(); }
+        function released(): void { scLauncher.released(); }
+    }
+
+    // ── IPC: launcherInterrupt ──
+    IpcHandler {
+        target: "launcherInterrupt"
+        function open(): void { scLauncherInterrupt.pressed(); }
+        function pressed(): void { scLauncherInterrupt.pressed(); }
+    }
+
+    // ── IPC: dashboard ──
+    IpcHandler {
+        target: "dashboard"
+        function open(): void { scDashboard.pressed(); }
+        function pressed(): void { scDashboard.pressed(); }
+    }
+
+    // ── IPC: session ──
+    IpcHandler {
+        target: "session"
+        function open(): void { scSession.pressed(); }
+        function pressed(): void { scSession.pressed(); }
+    }
+
+    // ── IPC: sidebar ──
+    IpcHandler {
+        target: "sidebar"
+        function open(): void { scSidebar.pressed(); }
+        function pressed(): void { scSidebar.pressed(); }
+    }
+
+    // ── IPC: utilities ──
+    IpcHandler {
+        target: "utilities"
+        function open(): void { scUtilities.pressed(); }
+        function pressed(): void { scUtilities.pressed(); }
+    }
+
+    // ── IPC: showall ──
+    IpcHandler {
+        target: "showall"
+        function open(): void { scShowall.pressed(); }
+        function pressed(): void { scShowall.pressed(); }
+    }
+
+    // ── IPC: drawers ──
+    IpcHandler {
+        target: "drawers"
         function toggle(drawer: string): void {
             if (list().split("\n").includes(drawer)) {
                 if (root.hasFullscreen && ["launcher", "session", "dashboard"].includes(drawer))
@@ -131,41 +197,27 @@ Scope {
                 return "unknown";
             return screenState[drawer] ? "1" : "0";
         }
-
-        target: "drawers"
     }
 
+    // ── IPC: toaster ──
     IpcHandler {
-        function open(): void {
-            WindowFactory.create();
-        }
-
-        target: "nexus"
-    }
-
-    IpcHandler {
+        target: "toaster"
         function info(title: string, message: string, icon: string): void {
             Toaster.toast(title, message, icon, Toast.Info);
         }
-
         function success(title: string, message: string, icon: string): void {
             Toaster.toast(title, message, icon, Toast.Success);
         }
-
         function warn(title: string, message: string, icon: string): void {
             Toaster.toast(title, message, icon, Toast.Warning);
         }
-
         function error(title: string, message: string, icon: string): void {
             Toaster.toast(title, message, icon, Toast.Error);
         }
-
-        target: "toaster"
     }
 
     LoggingCategory {
         id: lc
-
         name: "caelestia.qml.shortcuts"
         defaultLogLevel: LoggingCategory.Info
     }

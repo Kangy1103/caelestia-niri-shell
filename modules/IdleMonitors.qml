@@ -32,8 +32,6 @@ Scope {
         else if (action === "unlock")
             lock.lock.locked = false;
         else if (typeof action === "string")
-            // CNS: run dpms actions directly. Upstream routes strings through
-            // Hypr.dispatch, including a Lua path that does not exist on Niri.
             Quickshell.execDetached(action.split(" "));
         else if (!SessionManager.exec(action))
             Quickshell.execDetached(action);
@@ -57,7 +55,7 @@ Scope {
     }
 
     Variants {
-        model: GlobalConfig.general.idle.timeouts.values
+        model: GlobalConfig.general.idle.timeouts
 
         IdleMonitor {
             required property var modelData

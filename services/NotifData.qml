@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Services.Notifications
 import CNS
 import CNS.Config
-import CNS.I18n
 import qs.services
 import qs.utils
 
@@ -17,20 +16,7 @@ QtObject {
     property var locks: new Set()
 
     property date time: new Date()
-    property int ageMins: 0
-    readonly property string timeStr: {
-        if (ageMins < 1)
-            return Tr.tr("now");
-
-        const h = Math.floor(ageMins / 60);
-        const d = Math.floor(h / 24);
-
-        if (d > 0)
-            return Tr.trCtx("%1d", "abbreviated notification age, days").arg(d);
-        if (h > 0)
-            return Tr.trCtx("%1h", "abbreviated notification age, hours").arg(h);
-        return Tr.trCtx("%1m", "abbreviated notification age, minutes").arg(ageMins);
-    }
+    property string timeStr: qsTr("now")
 
     readonly property Timer timeStrTimer: Timer {
         running: !notif.closed
@@ -53,15 +39,7 @@ QtObject {
     property bool hasActionIcons
     property list<var> actions
 
-    readonly property bool hasFullscreen: {
-        const monitor = Hypr.focusedMonitor;
-        const specialName = monitor?.lastIpcObject.specialWorkspace?.name;
-        if (specialName) {
-            const specialWs = Hypr.workspaces.values.find(ws => ws.name === specialName);
-            return specialWs?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
-        }
-        return monitor?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
-    }
+    readonly property bool hasFullscreen: Niri.hasFullscreen
 
     readonly property Timer timer: Timer {
         running: true
@@ -185,20 +163,24 @@ QtObject {
     function updateTimeStr(): void {
         const diff = Date.now() - time.getTime();
         const m = Math.floor(diff / 60000);
-        ageMins = m;
 
         if (m < 1) {
+            timeStr = qsTr("now");
             timeStrTimer.interval = 5000;
         } else {
             const h = Math.floor(m / 60);
             const d = Math.floor(h / 24);
 
-            if (d > 0)
+            if (d > 0) {
+                timeStr = `${d}d`;
                 timeStrTimer.interval = 3600000;
-            else if (h > 0)
+            } else if (h > 0) {
+                timeStr = `${h}h`;
                 timeStrTimer.interval = 300000;
-            else
+            } else {
+                timeStr = `${m}m`;
                 timeStrTimer.interval = m < 10 ? 30000 : 60000;
+            }
         }
     }
 

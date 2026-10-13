@@ -2,13 +2,11 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Wayland
 import CNS.Config
 import qs.components
 import qs.services
 import qs.modules.nexus
-import qs.modules.windowinfo
 
 Item {
     id: root
@@ -90,12 +88,9 @@ Item {
         onDetachRequested: mode => root.detach(mode)
     }
 
-    HyprlandFocusGrab {
-        active: root.isDetached
-        windows: [QsWindow.window]
-        onCleared: root.close()
-    }
-
+    // TODO: Implement focus grab for Niri when available.
+    // Upstream uses HyprlandFocusGrab here, which does not exist on Niri;
+    // requesting keyboard focus on demand is the working equivalent.
     Binding {
         when: root.isDetached || (root.hasCurrent && root.currentName === "wirelesspassword")
 
@@ -112,18 +107,6 @@ Item {
 
         sourceComponent: Content {
             popouts: popoutState
-        }
-    }
-
-    Comp {
-        id: winfo
-
-        shouldBeActive: root.detachedMode === "winfo"
-        anchors.centerIn: parent
-
-        sourceComponent: WindowInfo {
-            screen: root.screen
-            client: Hypr.activeToplevel
         }
     }
 

@@ -15,30 +15,33 @@ Singleton {
 
     function forScreen(screen: ShellScreen): ScreenState {
         for (const s of states.instances)
-            if (s.modelData === screen)
+            if (s.modelData && (s.modelData === screen || s.modelData.name === screen.name))
                 return s;
+        if (screen)
+            console.warn(`[ShellState] forScreen null for "${screen.name}" | instances=[${states.instances.map(s => s.modelData ? s.modelData.name : "<?>").join(",")}]`);
         return null;
     }
 
     function forActive(): ScreenState {
-        const mon = Hypr.focusedMonitor;
+        const name = Niri.focusedMonitorName;
         for (const s of states.instances)
-            if (Hypr.monitorFor(s.modelData) === mon)
+            if (s.modelData && s.modelData.name === name)
                 return s;
+        console.warn(`[ShellState] forActive null: focusedMonitorName="${name}" | instances=[${states.instances.map(s => s.modelData ? s.modelData.name : "<?>").join(",")}]`);
         return null;
     }
 
     function componentsFor(screen: ShellScreen): Components {
         for (const c of components.instances)
-            if (c.modelData === screen)
+            if (c.modelData && (c.modelData === screen || c.modelData.name === screen.name))
                 return c;
         return null;
     }
 
     function componentsForActive(): Components {
-        const mon = Hypr.focusedMonitor;
+        const name = Niri.focusedMonitorName;
         for (const c of components.instances)
-            if (Hypr.monitorFor(c.modelData) === mon)
+            if (c.modelData && c.modelData.name === name)
                 return c;
         return null;
     }
