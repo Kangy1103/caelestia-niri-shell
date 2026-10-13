@@ -14,6 +14,7 @@ LazyLoader {
     property string filterLabel: Tr.tr("All files")
     property list<string> filters: ["*"]
     property string title: Tr.tr("Select a file")
+    property bool showHidden: false
 
     signal accepted(path: string)
     signal rejected

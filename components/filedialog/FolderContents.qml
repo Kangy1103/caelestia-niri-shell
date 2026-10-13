@@ -108,6 +108,7 @@ Item {
                 else
                     return root.dialog.cwd.join("/");
             }
+            showHidden: true
             onPathChanged: view.currentIndex = -1
         }
 
