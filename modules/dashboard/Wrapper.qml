@@ -49,8 +49,20 @@ Item {
 
         active: root.shouldBeActive || root.visible
 
-        sourceComponent: Content {
+        readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
+    readonly property bool shouldBeActive: screenState.dashboard && Config.dashboard.enabled
+    property real offsetScale: shouldBeActive ? 0 : 1
+
+    // CNS: dashboard tab index lives in a reloadable persistent state object
+    // rather than screenState, so it survives content reloads. Upstream ships
+    // components/DashboardState.qml but never instantiates it.
+    readonly property DashboardState dashState: DashboardState {
+        reloadableId: "dashboardState"
+    }
+
+    sourceComponent: Content {
             screenState: root.screenState
+            dashState: root.dashState
             facePicker: root.facePicker
         }
     }
