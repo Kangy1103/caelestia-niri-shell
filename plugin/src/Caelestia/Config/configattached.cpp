@@ -67,7 +67,6 @@ void Config::attachedParentChange(
 
 CONFIG_ATTACHED_GETTER(AppearanceConfig, appearance)
 CONFIG_ATTACHED_GETTER(GeneralConfig, general)
-CONFIG_ATTACHED_GETTER(GreeterConfig, greeter)
 CONFIG_ATTACHED_GETTER(BackgroundConfig, background)
 CONFIG_ATTACHED_GETTER(BarConfig, bar)
 CONFIG_ATTACHED_GETTER(BorderConfig, border)
@@ -81,7 +80,6 @@ CONFIG_ATTACHED_GETTER(ServiceConfig, services)
 CONFIG_ATTACHED_GETTER(SessionConfig, session)
 CONFIG_ATTACHED_GETTER(SidebarConfig, sidebar)
 CONFIG_ATTACHED_GETTER(UtilitiesConfig, utilities)
-CONFIG_ATTACHED_GETTER(WInfoConfig, winfo)
 CONFIG_ATTACHED_GETTER(UserPaths, paths)
 
 #undef CONFIG_ATTACHED_GETTER

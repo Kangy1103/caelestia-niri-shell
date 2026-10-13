@@ -12,7 +12,6 @@ class BarConfig;
 class BorderConfig;
 class DashboardConfig;
 class GeneralConfig;
-class GreeterConfig;
 class LauncherConfig;
 class LockConfig;
 class NexusConfig;
@@ -23,7 +22,6 @@ class SessionConfig;
 class SidebarConfig;
 class UserPaths;
 class UtilitiesConfig;
-class WInfoConfig;
 
 class GlobalConfig : public RootConfig {
     Q_OBJECT
@@ -35,7 +33,6 @@ class GlobalConfig : public RootConfig {
     Q_MOC_INCLUDE("borderconfig.hpp")
     Q_MOC_INCLUDE("dashboardconfig.hpp")
     Q_MOC_INCLUDE("generalconfig.hpp")
-    Q_MOC_INCLUDE("greeterconfig.hpp")
     Q_MOC_INCLUDE("launcherconfig.hpp")
     Q_MOC_INCLUDE("lockconfig.hpp")
     Q_MOC_INCLUDE("nexusconfig.hpp")
@@ -46,12 +43,10 @@ class GlobalConfig : public RootConfig {
     Q_MOC_INCLUDE("sidebarconfig.hpp")
     Q_MOC_INCLUDE("userpaths.hpp")
     Q_MOC_INCLUDE("utilitiesconfig.hpp")
-    Q_MOC_INCLUDE("winfoconfig.hpp")
 
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_SUBOBJECT(AppearanceConfig, appearance)
     CONFIG_SUBOBJECT(GeneralConfig, general)
-    CONFIG_SUBOBJECT(GreeterConfig, greeter)
     CONFIG_SUBOBJECT(BackgroundConfig, background)
     CONFIG_SUBOBJECT(BarConfig, bar)
     CONFIG_SUBOBJECT(BorderConfig, border)
@@ -65,7 +60,6 @@ class GlobalConfig : public RootConfig {
     CONFIG_SUBOBJECT(SessionConfig, session)
     CONFIG_SUBOBJECT(SidebarConfig, sidebar)
     CONFIG_SUBOBJECT(UtilitiesConfig, utilities)
-    CONFIG_SUBOBJECT(WInfoConfig, winfo)
     CONFIG_SUBOBJECT(UserPaths, paths)
 
 public:

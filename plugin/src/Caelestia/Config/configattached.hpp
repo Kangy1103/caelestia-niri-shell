@@ -18,7 +18,6 @@ class Config : public QQuickAttachedPropertyPropagator, public QQmlParserStatus 
     Q_MOC_INCLUDE("borderconfig.hpp")
     Q_MOC_INCLUDE("dashboardconfig.hpp")
     Q_MOC_INCLUDE("generalconfig.hpp")
-    Q_MOC_INCLUDE("greeterconfig.hpp")
     Q_MOC_INCLUDE("launcherconfig.hpp")
     Q_MOC_INCLUDE("lockconfig.hpp")
     Q_MOC_INCLUDE("nexusconfig.hpp")
@@ -29,12 +28,10 @@ class Config : public QQuickAttachedPropertyPropagator, public QQmlParserStatus 
     Q_MOC_INCLUDE("sidebarconfig.hpp")
     Q_MOC_INCLUDE("userpaths.hpp")
     Q_MOC_INCLUDE("utilitiesconfig.hpp")
-    Q_MOC_INCLUDE("winfoconfig.hpp")
 
     Q_PROPERTY(QString screen READ screen WRITE inheritScreen NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::AppearanceConfig* appearance READ appearance NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::GeneralConfig* general READ general NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::GreeterConfig* greeter READ greeter NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::BackgroundConfig* background READ background NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::BarConfig* bar READ bar NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::BorderConfig* border READ border NOTIFY sourceChanged)
@@ -48,7 +45,6 @@ class Config : public QQuickAttachedPropertyPropagator, public QQmlParserStatus 
     Q_PROPERTY(const caelestia::config::SessionConfig* session READ session NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::SidebarConfig* sidebar READ sidebar NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::UtilitiesConfig* utilities READ utilities NOTIFY sourceChanged)
-    Q_PROPERTY(const caelestia::config::WInfoConfig* winfo READ winfo NOTIFY sourceChanged)
     Q_PROPERTY(const caelestia::config::UserPaths* paths READ paths NOTIFY sourceChanged)
 
 public:
@@ -59,7 +55,6 @@ public:
 
     [[nodiscard]] const AppearanceConfig* appearance() const;
     [[nodiscard]] const GeneralConfig* general() const;
-    [[nodiscard]] const GreeterConfig* greeter() const;
     [[nodiscard]] const BackgroundConfig* background() const;
     [[nodiscard]] const BarConfig* bar() const;
     [[nodiscard]] const BorderConfig* border() const;
@@ -73,7 +68,6 @@ public:
     [[nodiscard]] const SessionConfig* session() const;
     [[nodiscard]] const SidebarConfig* sidebar() const;
     [[nodiscard]] const UtilitiesConfig* utilities() const;
-    [[nodiscard]] const WInfoConfig* winfo() const;
     [[nodiscard]] const UserPaths* paths() const;
 
     [[nodiscard]] Q_INVOKABLE static GlobalConfig* forScreen(const QString& screen);

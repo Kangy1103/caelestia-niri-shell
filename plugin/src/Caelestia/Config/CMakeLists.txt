@@ -17,7 +17,6 @@ qml_module(CNS-config
         borderconfig.hpp
         dashboardconfig.hpp
         generalconfig.hpp
-        greeterconfig.hpp
         launcherconfig.hpp
         lockconfig.hpp
         nexusconfig.hpp
@@ -28,7 +27,6 @@ qml_module(CNS-config
         sidebarconfig.hpp
         userpaths.hpp
         utilitiesconfig.hpp
-        winfoconfig.hpp
     LIBRARIES
         Qt::Quick
         Qt::QuickControls2

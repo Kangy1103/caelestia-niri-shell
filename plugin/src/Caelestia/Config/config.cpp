@@ -5,7 +5,6 @@
 #include "borderconfig.hpp"
 #include "dashboardconfig.hpp"
 #include "generalconfig.hpp"
-#include "greeterconfig.hpp"
 #include "launcherconfig.hpp"
 #include "lockconfig.hpp"
 #include "monitorconfigmanager.hpp"
@@ -18,7 +17,6 @@
 #include "tokens.hpp"
 #include "userpaths.hpp"
 #include "utilitiesconfig.hpp"
-#include "winfoconfig.hpp"
 
 #include <qqmlengine.h>
 #include <qstandardpaths.h>
@@ -39,7 +37,6 @@ GlobalConfig::GlobalConfig(QObject* parent)
     : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
-    , m_greeter(new GreeterConfig(this))
     , m_background(new BackgroundConfig(this))
     , m_bar(new BarConfig(this))
     , m_border(new BorderConfig(this))
@@ -53,7 +50,6 @@ GlobalConfig::GlobalConfig(QObject* parent)
     , m_session(new SessionConfig(this))
     , m_sidebar(new SidebarConfig(this))
     , m_utilities(new UtilitiesConfig(this))
-    , m_winfo(new WInfoConfig(this))
     , m_paths(new UserPaths(this)) {
     setupFileBackend(configDir() + QStringLiteral("shell.json"));
 }
@@ -62,7 +58,6 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, cons
     : RootConfig(parent)
     , m_appearance(new AppearanceConfig(this))
     , m_general(new GeneralConfig(this))
-    , m_greeter(new GreeterConfig(this))
     , m_background(new BackgroundConfig(this))
     , m_bar(new BarConfig(this))
     , m_border(new BorderConfig(this))
@@ -76,7 +71,6 @@ GlobalConfig::GlobalConfig(GlobalConfig* fallback, const QString& filePath, cons
     , m_session(new SessionConfig(this))
     , m_sidebar(new SidebarConfig(this))
     , m_utilities(new UtilitiesConfig(this))
-    , m_winfo(new WInfoConfig(this))
     , m_paths(new UserPaths(this)) {
     if (!filePath.isEmpty())
         setupFileBackend(filePath, screen);
