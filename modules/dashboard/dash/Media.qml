@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import CNS.Components
 import CNS.Config
-import CNS.I18n
 import CNS.Services
 import qs.components
 import qs.components.controls
@@ -39,6 +38,7 @@ Item {
         onTriggered: Players.active?.positionChanged()
     }
 
+    // BeatTracker — re-enabled with NO_PLUGIN_OPTIONAL (2026-06-12)
     ServiceRef {
         service: Audio.beatTracker
     }
@@ -80,7 +80,7 @@ Item {
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
-        text: (Players.active?.trackTitle ?? Tr.tr("No media")) || Tr.tr("Unknown title")
+        text: (Players.active?.trackTitle ?? qsTr("No media")) || qsTr("Unknown title")
         color: Colours.palette.m3primary
         font: Tokens.font.title.small
 
@@ -97,7 +97,7 @@ Item {
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
-        text: (Players.active?.trackAlbum ?? Tr.tr("No media")) || Tr.tr("Unknown album")
+        text: (Players.active?.trackAlbum ?? qsTr("No media")) || qsTr("Unknown album")
         color: Colours.palette.m3outline
         font: Tokens.font.body.small
 
@@ -114,7 +114,7 @@ Item {
 
         animate: true
         horizontalAlignment: Text.AlignHCenter
-        text: (Players.active?.trackArtist ?? Tr.tr("No media")) || Tr.tr("Unknown artist")
+        text: (Players.active?.trackArtist ?? qsTr("No media")) || qsTr("Unknown artist")
         color: Colours.palette.m3secondary
 
         width: parent.implicitWidth - Tokens.padding.extraLargeIncreased
@@ -173,7 +173,7 @@ Item {
         anchors.margins: Tokens.padding.extraLargeIncreased
 
         playing: Players.active?.isPlaying ?? false
-        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
+        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit

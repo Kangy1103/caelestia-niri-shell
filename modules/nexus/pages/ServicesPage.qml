@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import CNS.Config
-import CNS.I18n
 import CNS.Services
 import qs.components.controls
 import qs.services
@@ -11,13 +10,13 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    // Lyrics backends, ordered to match config::LyricsBackend (Auto, Local, LRCLIB, NetEase)
+    // Lyrics backends, ordered to match LyricsBackend::Backend (Auto, Local, LRCLIB, NetEase)
     readonly property list<MenuItem> lyricsItems: [
         MenuItem {
-            text: Tr.trCtx("Auto", "lyrics backend")
+            text: qsTr("Auto")
         },
         MenuItem {
-            text: Tr.trCtx("Local", "lyrics backend")
+            text: "Local"
         },
         MenuItem {
             text: "LRCLIB"
@@ -27,25 +26,39 @@ PageBase {
         }
     ]
 
-    // GPU types, ordered to match config::GpuType (Auto, Nvidia, Generic, None)
+    // GPU options + the config string each maps to (see Gpu::parseType)
     readonly property list<MenuItem> gpuItems: [
         MenuItem {
-            text: Tr.trCtx("Auto", "gpu type")
+            text: qsTr("Auto")
         },
         MenuItem {
             text: "NVIDIA"
         },
         MenuItem {
-            text: Tr.trCtx("Generic", "gpu type")
+            text: qsTr("Generic")
         },
         MenuItem {
-            text: Tr.trCtx("None", "gpu type")
+            text: qsTr("None")
         }
     ]
+    readonly property list<string> gpuValues: ["", "NVIDIA", "GENERIC", "None"]
 
-    title: Tr.tr("Services")
+    function gpuKeyToIndex(key: string): int {
+        const u = (key ?? "").trim().toUpperCase();
+        if (u === "")
+            return 0; // Auto
+        if (u === "NVIDIA")
+            return 1;
+        if (u === "GENERIC")
+            return 2;
+        return 3; // None
+    }
+
+    title: qsTr("Services")
 
     ColumnLayout {
+        id: layout
+
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
@@ -66,31 +79,38 @@ PageBase {
             }
         }
 
-        // Notifications
+        // Notifications on Displays
         SectionHeader {
             first: true
-            text: Tr.tr("Notifications")
+            text: qsTr("Notifications on Displays")
         }
 
-        NavRow {
-            first: true
-            last: true
-            icon: "notifications"
-            text: Tr.tr("Notifications")
-            subtext: Tr.tr("Notifications, toasts, timeouts")
-            onClicked: root.nState.openSubPage(1)
+        Repeater {
+            model: Quickshell.screens
+            delegate: ToggleRow {
+                required property ShellScreen modelData
+                required property int index
+
+                Layout.fillWidth: true
+                first: index === 0
+                last: index === Quickshell.screens.length - 1
+                text: modelData.name
+                subtext: qsTr("Show notifications on this display")
+                checked: MonitorConfigManager.configForScreen(modelData.name).notifs.enabled
+                onToggled: MonitorConfigManager.configForScreen(modelData.name).notifs.enabled = checked
+            }
         }
 
         // Polling
         SectionHeader {
-            text: Tr.tr("Polling")
+            text: qsTr("Polling")
         }
 
         StepperRow {
+            Layout.fillWidth: true
             first: true
-            label: Tr.tr("Media refresh")
-            // TRANSLATORS: ms is the millisecond unit, leave it untranslated
-            subtext: Tr.tr("How often the media position updates (ms)")
+            label: qsTr("Media refresh")
+            subtext: qsTr("How often the media position updates (ms)")
             value: GlobalConfig.dashboard.mediaUpdateInterval
             from: 100
             to: 2000
@@ -99,9 +119,9 @@ PageBase {
         }
 
         StepperRow {
-            label: Tr.tr("System stats refresh")
-            // TRANSLATORS: CPU and GPU are hardware abbreviations, leave them untranslated
-            subtext: Tr.tr("CPU, memory and GPU update interval (seconds)")
+            Layout.fillWidth: true
+            label: qsTr("System stats refresh")
+            subtext: qsTr("CPU, memory and GPU update interval (seconds)")
             value: GlobalConfig.dashboard.resourceUpdateInterval / 1000
             from: 0.5
             to: 10
@@ -110,9 +130,10 @@ PageBase {
         }
 
         StepperRow {
+            Layout.fillWidth: true
             last: true
-            label: Tr.tr("Wi-Fi rescan")
-            subtext: Tr.tr("How often available networks are rescanned (seconds)")
+            label: qsTr("Wi-Fi rescan")
+            subtext: qsTr("How often available networks are rescanned (seconds)")
             value: GlobalConfig.nexus.networkRescanInterval / 1000
             from: 5
             to: 120
@@ -122,38 +143,41 @@ PageBase {
 
         // Media & lyrics
         SectionHeader {
-            text: Tr.tr("Media & lyrics")
+            text: qsTr("Media & lyrics")
         }
 
         SelectRow {
+            Layout.fillWidth: true
             first: true
-            label: Tr.tr("Lyrics backend")
-            subtext: Tr.tr("Source used to fetch synced lyrics")
+            label: qsTr("Lyrics backend")
+            subtext: qsTr("Source used to fetch synced lyrics")
             menuItems: root.lyricsItems
             active: root.lyricsItems[Lyrics.preferredBackend] ?? root.lyricsItems[0]
             onSelected: item => Lyrics.preferredBackend = root.lyricsItems.indexOf(item)
         }
 
         SelectRow {
+            Layout.fillWidth: true
             last: true
-            label: Tr.tr("Default player")
-            subtext: Tr.tr("Preferred media player when several are open")
+            label: qsTr("Default player")
+            subtext: qsTr("Preferred media player when several are open")
             menuItems: playerVariants.instances
             active: menuItems.find(i => i.text === GlobalConfig.services.defaultPlayer) ?? null
             fallbackIcon: "music_note"
-            fallbackText: GlobalConfig.services.defaultPlayer || Tr.trCtx("Auto", "default media player")
+            fallbackText: GlobalConfig.services.defaultPlayer || qsTr("Auto")
             onSelected: item => GlobalConfig.services.defaultPlayer = item.text
         }
 
         // Input increments
         SectionHeader {
-            text: Tr.tr("Input increments")
+            text: qsTr("Input increments")
         }
 
         StepperRow {
+            Layout.fillWidth: true
             first: true
-            label: Tr.tr("Volume step")
-            subtext: Tr.tr("Amount the volume changes per scroll (%)")
+            label: qsTr("Volume step")
+            subtext: qsTr("Amount the volume changes per scroll (%)")
             value: Math.round(GlobalConfig.services.audioIncrement * 100)
             from: 1
             to: 50
@@ -162,8 +186,9 @@ PageBase {
         }
 
         StepperRow {
-            label: Tr.tr("Brightness step")
-            subtext: Tr.tr("Amount the brightness changes per scroll (%)")
+            Layout.fillWidth: true
+            label: qsTr("Brightness step")
+            subtext: qsTr("Amount the brightness changes per scroll (%)")
             value: Math.round(GlobalConfig.services.brightnessIncrement * 100)
             from: 1
             to: 50
@@ -172,9 +197,10 @@ PageBase {
         }
 
         StepperRow {
+            Layout.fillWidth: true
             last: true
-            label: Tr.tr("Max volume")
-            subtext: Tr.tr("Upper limit for output volume (%)")
+            label: qsTr("Max volume")
+            subtext: qsTr("Upper limit for output volume (%)")
             value: Math.round(GlobalConfig.services.maxVolume * 100)
             from: 50
             to: 200
@@ -184,36 +210,35 @@ PageBase {
 
         // Service tuning
         SectionHeader {
-            text: Tr.tr("Service tuning")
+            text: qsTr("Service tuning")
         }
 
-        StepperRow {
+        NavRow {
+            Layout.fillWidth: true
             first: true
-            // TRANSLATORS: bars of a spectrum analyser, not the taskbar
-            label: Tr.tr("Visualiser bars")
-            subtext: Tr.tr("Number of bars in the audio visualisers")
-            value: GlobalConfig.services.visualiserBars
-            from: 10
-            to: 120
-            stepSize: 2
-            onMoved: v => GlobalConfig.services.visualiserBars = v
+            icon: "graphic_eq"
+            label: qsTr("Cava Visualiser")
+            status: VisualiserPresets.currentLabel
+            onClicked: root.nState.openSubPage(1)
         }
 
         ToggleRow {
-            text: Tr.tr("Smart colour scheme")
-            subtext: Tr.tr("Derive theme mode and variant from the wallpaper")
+            Layout.fillWidth: true
+            text: qsTr("Smart colour scheme")
+            subtext: qsTr("Derive theme mode and variant from the wallpaper")
             checked: GlobalConfig.services.smartScheme
             onToggled: GlobalConfig.services.smartScheme = checked
         }
 
         SelectRow {
+            Layout.fillWidth: true
             last: true
-            label: Tr.tr("GPU")
-            subtext: Gpu.name ? Tr.tr("Monitoring: %1").arg(Gpu.name) : Tr.tr("Override for GPU type")
+            label: qsTr("GPU")
+            subtext: Gpu.name ? qsTr("Monitoring: %1").arg(Gpu.name) : qsTr("Override for GPU type")
             menuOnTop: true
             menuItems: root.gpuItems
-            active: root.gpuItems[GlobalConfig.services.gpuType]
-            onSelected: item => GlobalConfig.services.gpuType = root.gpuItems.indexOf(item)
+            active: root.gpuItems[root.gpuKeyToIndex(GlobalConfig.services.gpuType)]
+            onSelected: item => GlobalConfig.services.gpuType = root.gpuValues[root.gpuItems.indexOf(item)]
         }
     }
 }

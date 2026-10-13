@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import Quickshell
 import CNS.Components
 import CNS.Config
-import CNS.I18n
 import CNS.Models
 import qs.components
 import qs.components.controls
@@ -17,7 +16,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: Tr.tr("Wallpapers")
+    title: qsTr("Wallpapers")
     isSubPage: true
 
     ColumnLayout {
@@ -33,7 +32,7 @@ PageBase {
 
             IconTextButton {
                 icon: "photo_library"
-                text: Tr.tr("Browse")
+                text: qsTr("Browse")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -44,8 +43,8 @@ PageBase {
                 FileDialog {
                     id: browseDialog
 
-                    title: Tr.tr("Select an image")
-                    filterLabel: Tr.tr("Image files")
+                    title: qsTr("Select an image")
+                    filterLabel: qsTr("Image files")
                     filters: Images.validImageExtensions
                     onAccepted: path => {
                         Wallpapers.setWallpaper(path);
@@ -56,7 +55,7 @@ PageBase {
 
             IconTextButton {
                 icon: "shuffle"
-                text: Tr.tr("Random")
+                text: qsTr("Random")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -68,13 +67,25 @@ PageBase {
                     root.nState.closeSubPage();
                 }
             }
+
+            IconTextButton {
+                icon: "language"
+                text: qsTr("Web")
+                font: Tokens.font.body.large
+                isRound: true
+                shapeMorph: true
+                horizontalPadding: Tokens.padding.extraLarge
+                verticalPadding: Tokens.padding.medium
+                type: IconTextButton.Tonal
+                onClicked: root.nState.openSubPage(5)
+            }
         }
 
         WallItem {
             imgHeight: Math.round(width * 0.3)
             radius: Tokens.rounding.extraLarge
             source: Quickshell.shellPath("assets/wallpaper.webp")
-            text: Tr.tr("Featured wallpaper")
+            text: qsTr("Default wallpaper")
             fillLabel: false
             onClicked: {
                 Wallpapers.setWallpaper(Quickshell.shellPath("assets/wallpaper.webp"));
@@ -84,7 +95,7 @@ PageBase {
 
         StyledText {
             Layout.topMargin: Tokens.spacing.large
-            text: Tr.tr("Local wallpapers")
+            text: qsTr("Local wallpapers")
             font: Tokens.font.title.small
         }
 
@@ -178,7 +189,7 @@ PageBase {
 
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
-                        text: Tr.tr("No local wallpapers found")
+                        text: qsTr("No local wallpapers found")
                         color: Colours.palette.m3outline
                         font: Tokens.font.title.small
                     }

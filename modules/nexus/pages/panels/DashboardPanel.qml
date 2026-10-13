@@ -3,13 +3,12 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import CNS.Config
-import CNS.I18n
 import qs.modules.nexus.common
 
 PageBase {
     id: root
 
-    title: Tr.tr("Dashboard")
+    title: qsTr("Dashboard")
     isSubPage: true
 
     ColumnLayout {
@@ -21,115 +20,121 @@ PageBase {
         // General
         SectionHeader {
             first: true
-            text: Tr.tr("General")
+            text: qsTr("General")
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.trCtx("Enabled", "toggle label")
+            text: qsTr("Enabled")
             checked: Config.dashboard.enabled
             onToggled: GlobalConfig.dashboard.enabled = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Show on hover")
-            subtext: Tr.tr("Reveal when the cursor reaches the screen edge")
+            Layout.fillWidth: true
+            last: true
+            text: qsTr("Show on hover")
+            subtext: qsTr("Reveal when the cursor reaches the screen edge")
             checked: Config.dashboard.showOnHover
             onToggled: GlobalConfig.dashboard.showOnHover = checked
         }
 
-        ToggleRow {
-            last: true
-            text: Tr.tr("Show clock seconds")
-            subtext: Tr.tr("Display seconds for the clock in the main panel")
-            checked: Config.dashboard.showClockSeconds
-            onToggled: GlobalConfig.dashboard.showClockSeconds = checked
-        }
-
         // Tabs
         SectionHeader {
-            text: Tr.tr("Tabs")
+            text: qsTr("Tabs")
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.tr("Dashboard")
+            text: qsTr("Dashboard")
             checked: Config.dashboard.showDashboard
             onToggled: GlobalConfig.dashboard.showDashboard = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Media")
+            Layout.fillWidth: true
+            text: qsTr("Media")
             checked: Config.dashboard.showMedia
             onToggled: GlobalConfig.dashboard.showMedia = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Performance")
+            Layout.fillWidth: true
+            text: qsTr("Performance")
             checked: Config.dashboard.showPerformance
             onToggled: GlobalConfig.dashboard.showPerformance = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
-            text: Tr.tr("Weather")
+            text: qsTr("Weather")
             checked: Config.dashboard.showWeather
             onToggled: GlobalConfig.dashboard.showWeather = checked
         }
 
         // Performance widgets
         SectionHeader {
-            text: Tr.tr("Performance widgets")
+            text: qsTr("Performance widgets")
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.tr("Battery")
+            text: qsTr("Battery")
             checked: Config.dashboard.performance.showBattery
             onToggled: GlobalConfig.dashboard.performance.showBattery = checked
         }
 
         ToggleRow {
-            text: Tr.tr("GPU")
+            Layout.fillWidth: true
+            text: qsTr("GPU")
             checked: Config.dashboard.performance.showGpu
             onToggled: GlobalConfig.dashboard.performance.showGpu = checked
         }
 
         ToggleRow {
-            text: Tr.tr("CPU")
+            Layout.fillWidth: true
+            text: qsTr("CPU")
             checked: Config.dashboard.performance.showCpu
             onToggled: GlobalConfig.dashboard.performance.showCpu = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Memory")
+            Layout.fillWidth: true
+            text: qsTr("Memory")
             checked: Config.dashboard.performance.showMemory
             onToggled: GlobalConfig.dashboard.performance.showMemory = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Storage")
+            Layout.fillWidth: true
+            text: qsTr("Storage")
             checked: Config.dashboard.performance.showStorage
             onToggled: GlobalConfig.dashboard.performance.showStorage = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
-            text: Tr.tr("Network")
+            text: qsTr("Network")
             checked: Config.dashboard.performance.showNetwork
             onToggled: GlobalConfig.dashboard.performance.showNetwork = checked
         }
 
         // Behaviour
         SectionHeader {
-            text: Tr.tr("Behaviour")
+            text: qsTr("Behaviour")
         }
 
         StepperRow {
+            Layout.fillWidth: true
             first: true
             last: true
-            label: Tr.tr("Drag threshold")
-            subtext: Tr.tr("Pixels dragged before the dashboard opens")
+            label: qsTr("Drag threshold")
+            subtext: qsTr("Pixels dragged before the dashboard opens")
             value: Config.dashboard.dragThreshold
             from: 0
             to: 200

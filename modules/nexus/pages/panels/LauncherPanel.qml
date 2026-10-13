@@ -3,13 +3,12 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import CNS.Config
-import CNS.I18n
 import qs.modules.nexus.common
 
 PageBase {
     id: root
 
-    title: Tr.tr("Launcher")
+    title: qsTr("Launcher")
     isSubPage: true
 
     ColumnLayout {
@@ -21,53 +20,35 @@ PageBase {
         // General
         SectionHeader {
             first: true
-            text: Tr.tr("General")
+            text: qsTr("General")
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.trCtx("Enabled", "toggle label")
+            text: qsTr("Enabled")
             checked: Config.launcher.enabled
             onToggled: GlobalConfig.launcher.enabled = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Show on hover")
-            subtext: Tr.tr("Reveal when the cursor reaches the screen edge")
+            Layout.fillWidth: true
+            last: true
+            text: qsTr("Show on hover")
+            subtext: qsTr("Reveal when the cursor reaches the screen edge")
             checked: Config.launcher.showOnHover
             onToggled: GlobalConfig.launcher.showOnHover = checked
         }
 
-        TextFieldRow {
-            id: prefixRow
-
-            last: true
-            label: Tr.tr("Action prefix")
-            subtext: Tr.tr("Prefix used to run actions in the launcher")
-            errorText: Tr.tr("Prefix must not be alphanumeric")
-            value: GlobalConfig.launcher.actionPrefix === ">" ? "" : GlobalConfig.launcher.actionPrefix // TODO: replace with empty only when not loaded once loaded state is exposed
-            placeholderText: ">"
-            maximumLength: 1
-            smallField: true
-            validate: /^[^a-zA-Z0-9\s]$/
-            onEditingFinished: value => {
-                if (!field.valid)
-                    return;
-                /// TODO: replace with GlobalConfig.launcher.resetOption("actionPrefix") on empty commit when reset is fixed
-                GlobalConfig.launcher.actionPrefix = value || ">";
-                if (GlobalConfig.launcher.actionPrefix === ">")
-                    clear();
-            }
-        }
-
         // Display
         SectionHeader {
-            text: Tr.tr("Display")
+            text: qsTr("Display")
         }
 
         StepperRow {
+            Layout.fillWidth: true
             first: true
-            label: Tr.tr("Max items shown")
+            label: qsTr("Max items shown")
             value: Config.launcher.maxShown
             from: 1
             to: 20
@@ -76,7 +57,8 @@ PageBase {
         }
 
         StepperRow {
-            label: Tr.tr("Max wallpapers")
+            Layout.fillWidth: true
+            label: qsTr("Max wallpapers")
             value: Config.launcher.maxWallpapers
             from: 1
             to: 30
@@ -85,9 +67,10 @@ PageBase {
         }
 
         StepperRow {
+            Layout.fillWidth: true
             last: true
-            label: Tr.tr("Drag threshold")
-            subtext: Tr.tr("Pixels dragged before the launcher opens")
+            label: qsTr("Drag threshold")
+            subtext: qsTr("Pixels dragged before the launcher opens")
             value: Config.launcher.dragThreshold
             from: 0
             to: 200
@@ -97,58 +80,65 @@ PageBase {
 
         // Behaviour
         SectionHeader {
-            text: Tr.tr("Behaviour")
+            text: qsTr("Behaviour")
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.tr("Vim keybinds")
-            subtext: Tr.tr("Navigate results with Ctrl+hjkl")
+            text: qsTr("Vim keybinds")
+            subtext: qsTr("Navigate results with Ctrl+hjkl")
             checked: GlobalConfig.launcher.vimKeybinds
             onToggled: GlobalConfig.launcher.vimKeybinds = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
-            text: Tr.tr("Enable dangerous actions")
-            subtext: Tr.tr("Allow actions that shut down or log out")
+            text: qsTr("Enable dangerous actions")
+            subtext: qsTr("Allow actions that shut down or log out")
             checked: GlobalConfig.launcher.enableDangerousActions
             onToggled: GlobalConfig.launcher.enableDangerousActions = checked
         }
 
         // Fuzzy search
         SectionHeader {
-            text: Tr.tr("Fuzzy search")
+            text: qsTr("Fuzzy search")
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.tr("Apps")
+            text: qsTr("Apps")
             checked: GlobalConfig.launcher.useFuzzy.apps
             onToggled: GlobalConfig.launcher.useFuzzy.apps = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Actions")
+            Layout.fillWidth: true
+            text: qsTr("Actions")
             checked: GlobalConfig.launcher.useFuzzy.actions
             onToggled: GlobalConfig.launcher.useFuzzy.actions = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Schemes")
+            Layout.fillWidth: true
+            text: qsTr("Schemes")
             checked: GlobalConfig.launcher.useFuzzy.schemes
             onToggled: GlobalConfig.launcher.useFuzzy.schemes = checked
         }
 
         ToggleRow {
-            text: Tr.tr("Variants")
+            Layout.fillWidth: true
+            text: qsTr("Variants")
             checked: GlobalConfig.launcher.useFuzzy.variants
             onToggled: GlobalConfig.launcher.useFuzzy.variants = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
-            text: Tr.tr("Wallpapers")
+            text: qsTr("Wallpapers")
             checked: GlobalConfig.launcher.useFuzzy.wallpapers
             onToggled: GlobalConfig.launcher.useFuzzy.wallpapers = checked
         }

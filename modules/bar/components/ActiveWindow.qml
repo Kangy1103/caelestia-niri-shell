@@ -1,11 +1,10 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import CNS.Config
-import CNS.I18n
 import qs.components
 import qs.services
 import qs.utils
+import CNS.Config
+import QtQuick
 
 Item {
     id: root
@@ -14,56 +13,56 @@ Item {
     required property Brightness.Monitor monitor
     property color colour: Colours.palette.m3primary
 
-    readonly property string windowTitle: {
-        const title = Hypr.activeToplevel?.title;
-        if (!title)
-            return Tr.trCtx("Desktop", "shown when no window is focused");
-        if (Config.bar.activeWindow.compact) {
-            // " - " (standard hyphen), " — " (em dash), " – " (en dash)
-            const parts = title.split(/\s+[\-\u2013\u2014]\s+/);
-            if (parts.length > 1)
-                return parts[parts.length - 1].trim();
+    // Column count indicator
+    readonly property var activeWindows: Niri.getActiveWorkspaceWindows()
+    readonly property int columnCount: {
+        const cols = new Set();
+        for (const w of activeWindows) {
+            if (w.layout?.pos_in_scrolling_layout)
+                cols.add(w.layout.pos_in_scrolling_layout[0]);
         }
-        return title;
+        return cols.size;
+    }
+    readonly property int focusedColumn: {
+        const fw = Niri.focusedWindow;
+        if (!fw?.layout?.pos_in_scrolling_layout)
+            return 0;
+        const focusedX = fw.layout.pos_in_scrolling_layout[0];
+        const cols = [];
+        for (const w of activeWindows) {
+            if (w.layout?.pos_in_scrolling_layout)
+                cols.push(w.layout.pos_in_scrolling_layout[0]);
+        }
+        const sorted = [...new Set(cols)].sort((a, b) => a - b);
+        return sorted.indexOf(focusedX) + 1;
     }
 
     readonly property int maxHeight: {
         const otherModules = bar.children.filter(c => c.entryId && c.item !== this && c.entryId !== "spacer");
-        const otherHeight = otherModules.reduce((acc, curr) => acc + (curr.item.nonAnimHeight ?? curr.height), 0);
+        const otherHeight = otherModules.reduce((acc, curr) => acc + curr.height, 0);
         // Length - 2 cause repeater counts as a child
         return bar.height - otherHeight - bar.spacing * (bar.children.length - 1) - bar.vPadding * 2;
     }
     property Title current: text1
 
-    clip: true
-    implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight)
-    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin
+    readonly property string windowTitle: Niri.focusedWindowTitle ?? qsTr("Desktop")
 
-    Loader {
-        asynchronous: true
-        anchors.fill: parent
-        active: !Config.bar.activeWindow.showOnHover
-
-        sourceComponent: MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            hoverEnabled: true
-            onPositionChanged: {
-                const popouts = root.bar.popouts;
-                if (popouts.hasCurrent && popouts.currentName !== "activewindow")
-                    popouts.hasCurrent = false;
-            }
-            onClicked: {
-                const popouts = root.bar.popouts;
-                if (popouts.hasCurrent) {
-                    popouts.hasCurrent = false;
-                } else {
-                    popouts.currentName = "activewindow";
-                    popouts.currentCenter = root.mapToItem(root.bar, 0, root.implicitHeight / 2).y;
-                    popouts.hasCurrent = true;
-                }
-            }
-        }
+    function getCompactName() {
+        if (!root.windowTitle || root.windowTitle === qsTr("Desktop"))
+            return qsTr("Desktop");
+        // " - " (standard hyphen), " — " (em dash), " – " (en dash)
+        const parts = root.windowTitle.split(/\s+[\-\u2013\u2014]\s+/);
+        if (parts.length > 1)
+            return parts[parts.length - 1].trim();
+        return root.windowTitle;
     }
+
+
+
+
+    clip: true
+    implicitWidth: Math.max(icon.implicitWidth, current.implicitHeight, colIndicator.implicitWidth)
+    implicitHeight: icon.implicitHeight + current.implicitWidth + current.anchors.topMargin + (colIndicator.visible ? colIndicator.implicitHeight + Tokens.spacing.extraSmall : 0)
 
     MaterialIcon {
         id: icon
@@ -71,8 +70,21 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         animate: true
-        text: Icons.getAppCategoryIcon(Hypr.activeToplevel?.lastIpcObject.class, "desktop_windows")
+        text: Icons.getAppCategoryIcon(Niri.focusedWindowClass, "desktop_windows")
         color: root.colour
+    }
+
+    StyledText {
+        id: colIndicator
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+
+        visible: root.columnCount > 1
+        text: `${root.focusedColumn}/${root.columnCount}`
+        color: Colours.palette.m3onSurfaceVariant
+        font.pointSize: Tokens.font.label.small.pointSize
+        font.family: Tokens.font.mono.medium.family
     }
 
     Title {
@@ -86,8 +98,9 @@ Item {
     TextMetrics {
         id: metrics
 
-        text: root.windowTitle
-        font: root.Tokens.font.body.builders.small.letterSpacing(1.4).build()
+        text: Config.bar.activeWindow.compact ? root.getCompactName() : root.windowTitle //Niri.focusedWindowTitle ?? qsTr("Desktop")
+        font.pointSize: Tokens.font.body.small.pointSize
+        font.family: Tokens.font.mono.medium.family
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 
@@ -100,7 +113,9 @@ Item {
     }
 
     Behavior on implicitHeight {
-        Anim {}
+        Anim {
+            easing: Tokens.anim.emphasized
+        }
     }
 
     component Title: StyledText {
@@ -110,17 +125,18 @@ Item {
         anchors.top: icon.bottom
         anchors.topMargin: Tokens.spacing.small
 
-        font: metrics.font
+        font.pointSize: metrics.font.pointSize
+        font.family: metrics.font.family
         color: root.colour
         opacity: root.current === this ? 1 : 0
         horizontalAlignment: Text.AlignLeft
 
         transform: [
             Translate {
-                x: root.Config.bar.activeWindow.inverted ? -text.implicitWidth + text.implicitHeight : 0
+                x: Config.bar.activeWindow.inverted ? -implicitWidth + text.implicitHeight : 0
             },
             Rotation {
-                angle: root.Config.bar.activeWindow.inverted ? 270 : 90
+                angle: Config.bar.activeWindow.inverted ? 270 : 90
                 origin.x: text.implicitHeight / 2
                 origin.y: text.implicitHeight / 2
             }
@@ -130,9 +146,7 @@ Item {
         height: implicitWidth
 
         Behavior on opacity {
-            Anim {
-                type: Anim.DefaultEffects
-            }
+            Anim {}
         }
     }
 }

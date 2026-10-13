@@ -1,12 +1,11 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Effects
-import QtQuick.Layouts
-import CNS.Config
-import CNS.I18n
 import qs.components
 import qs.services
+import CNS.Config
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Effects
 
 Item {
     id: root
@@ -15,7 +14,7 @@ Item {
     required property real absX
     required property real absY
 
-    property real clockScale: Config.background.desktopClock.scale
+    property real scale: Config.background.desktopClock.scale
     readonly property bool bgEnabled: Config.background.desktopClock.background.enabled
     readonly property bool blurEnabled: bgEnabled && Config.background.desktopClock.background.blur && !GameMode.enabled
     readonly property bool invertColors: Config.background.desktopClock.invertColors
@@ -24,8 +23,8 @@ Item {
     readonly property color safeSecondary: useLightSet ? Colours.palette.m3secondaryContainer : Colours.palette.m3secondary
     readonly property color safeTertiary: useLightSet ? Colours.palette.m3tertiaryContainer : Colours.palette.m3tertiary
 
-    implicitWidth: layout.implicitWidth + (Tokens.padding.large * 4 * root.clockScale)
-    implicitHeight: layout.implicitHeight + (Tokens.padding.extraLargeIncreased * root.clockScale)
+    implicitWidth: layout.implicitWidth + (Tokens.padding.largeIncreased * 4 * root.scale)
+    implicitHeight: layout.implicitHeight + (Tokens.padding.largeIncreased * 2 * root.scale)
 
     Item {
         id: clockContainer
@@ -41,7 +40,6 @@ Item {
         }
 
         Loader {
-            asynchronous: true
             anchors.fill: parent
             active: root.blurEnabled
 
@@ -64,7 +62,7 @@ Item {
 
             visible: root.bgEnabled
             anchors.fill: parent
-            radius: Tokens.rounding.extraLarge * root.clockScale
+            radius: Tokens.rounding.large * root.scale
             opacity: Config.background.desktopClock.background.opacity
             color: Colours.palette.m3surface
 
@@ -75,42 +73,43 @@ Item {
             id: layout
 
             anchors.centerIn: parent
-            spacing: Tokens.spacing.large * root.clockScale
+            spacing: Tokens.spacing.largeIncreased * root.scale
 
             RowLayout {
                 spacing: Tokens.spacing.small
 
                 StyledText {
                     text: Time.hourStr
-                    font: Tokens.font.clock.size(Tokens.font.headline.medium.pointSize * 3 * root.clockScale).weight(Font.Bold).build()
+                    font.pointSize: Tokens.font.headline.large.pointSize * 3 * root.scale
+                    font.weight: Font.Bold
                     color: root.safePrimary
                 }
 
                 StyledText {
                     text: ":"
-                    font: Tokens.font.clock.size(Tokens.font.headline.medium.pointSize * 3 * root.clockScale).build()
+                    font.pointSize: Tokens.font.headline.large.pointSize * 3 * root.scale
                     color: root.safeTertiary
                     opacity: 0.8
-                    Layout.topMargin: -Tokens.padding.large * 1.5 * root.clockScale
+                    Layout.topMargin: -Tokens.padding.largeIncreased * 1.5 * root.scale
                 }
 
                 StyledText {
                     text: Time.minuteStr
-                    font: Tokens.font.clock.size(Tokens.font.headline.medium.pointSize * 3 * root.clockScale).weight(Font.Bold).build()
+                    font.pointSize: Tokens.font.headline.large.pointSize * 3 * root.scale
+                    font.weight: Font.Bold
                     color: root.safeSecondary
                 }
 
                 Loader {
-                    asynchronous: true
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: Tokens.padding.large * 1.4 * root.clockScale
+                    Layout.topMargin: Tokens.padding.largeIncreased * 1.4 * root.scale
 
-                    active: Units.twelveHourClock
+                    active: Config.services.useTwelveHourClock
                     visible: active
 
                     sourceComponent: StyledText {
                         text: Time.amPmStr
-                        font: Tokens.font.clock.size(Tokens.font.title.medium.pointSize * root.clockScale).build()
+                        font.pointSize: Tokens.font.title.medium.pointSize * root.scale
                         color: root.safeSecondary
                     }
                 }
@@ -118,9 +117,9 @@ Item {
 
             StyledRect {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 4 * root.clockScale
-                Layout.topMargin: Tokens.spacing.large * root.clockScale
-                Layout.bottomMargin: Tokens.spacing.large * root.clockScale
+                Layout.preferredWidth: 4 * root.scale
+                Layout.topMargin: Tokens.spacing.largeIncreased * root.scale
+                Layout.bottomMargin: Tokens.spacing.largeIncreased * root.scale
                 radius: Tokens.rounding.full
                 color: root.safePrimary
                 opacity: 0.8
@@ -131,32 +130,40 @@ Item {
 
                 StyledText {
                     text: Time.format("MMMM").toUpperCase()
-                    font: Tokens.font.clock.size(Tokens.font.title.medium.pointSize * root.clockScale).letterSpacing(4).weight(Font.Bold).build()
+                    font.pointSize: Tokens.font.title.medium.pointSize * root.scale
+                    font.letterSpacing: 4
+                    font.weight: Font.Bold
                     color: root.safeSecondary
                 }
 
                 StyledText {
                     text: Time.format("dd")
-                    font: Tokens.font.clock.size(Tokens.font.headline.medium.pointSize * root.clockScale).letterSpacing(2).weight(Font.Medium).build()
+                    font.pointSize: Tokens.font.headline.large.pointSize * root.scale
+                    font.letterSpacing: 2
+                    font.weight: Font.Medium
                     color: root.safePrimary
                 }
 
                 StyledText {
                     text: Time.format("dddd")
-                    font: Tokens.font.clock.size(Tokens.font.body.large.pointSize * root.clockScale).letterSpacing(2).build()
+                    font.pointSize: Tokens.font.body.large.pointSize * root.scale
+                    font.letterSpacing: 2
                     color: root.safeSecondary
                 }
             }
         }
     }
 
-    Behavior on clockScale {
-        Anim {}
+    Behavior on scale {
+        Anim {
+            duration: Tokens.anim.durations.expressiveDefaultSpatial
+            easing: Tokens.anim.expressiveDefaultSpatial
+        }
     }
 
     Behavior on implicitWidth {
         Anim {
-            type: Anim.StandardSmall
+            duration: Tokens.anim.durations.small
         }
     }
 }

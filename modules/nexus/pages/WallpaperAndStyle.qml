@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import CNS.Components
 import CNS.Config
-import CNS.I18n
 import qs.components
 import qs.components.controls
 import qs.components.images
@@ -14,7 +13,7 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    title: Tr.tr("Wallpaper & style")
+    title: qsTr("Wallpaper & Style")
 
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -51,12 +50,12 @@ PageBase {
                         Layout.alignment: Qt.AlignHCenter
                         text: "hide_image"
                         color: Colours.palette.m3onSurfaceVariant
-                        fontStyle: Tokens.font.icon.extraLarge
+                        font: Tokens.font.icon.extraLarge
                     }
 
                     StyledText {
                         Layout.alignment: Qt.AlignHCenter
-                        text: Tr.tr("Wallpaper disabled")
+                        text: qsTr("Wallpaper disabled")
                         color: Colours.palette.m3onSurfaceVariant
                         font: Tokens.font.body.large
                     }
@@ -147,7 +146,7 @@ PageBase {
 
             IconTextButton {
                 icon: "wallpaper"
-                text: Tr.tr("Wallpapers")
+                text: qsTr("Wallpapers")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -160,7 +159,7 @@ PageBase {
 
             IconTextButton {
                 icon: "palette"
-                text: Tr.tr("Colours")
+                text: qsTr("Colours")
                 font: Tokens.font.body.large
                 isRound: true
                 shapeMorph: true
@@ -171,30 +170,34 @@ PageBase {
             }
         }
 
-        ToggleRow {
+        // Sub-pages
+        NavRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.tr("Display wallpaper")
+            icon: "crop_square"
+            label: qsTr("Border")
+            status: qsTr("Thickness, rounding, smoothing")
+            onClicked: root.nState.openSubPage(4)
+        }
+
+        ToggleRow {
+            Layout.fillWidth: true
+            Layout.topMargin: Tokens.spacing.large - parent.spacing
+            first: false
+            text: qsTr("Display wallpaper")
             checked: Config.background.wallpaperEnabled
             onToggled: GlobalConfig.background.wallpaperEnabled = checked
         }
 
         ToggleRow {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
-
-            text: Tr.tr("Transparency")
-            // TRANSLATORS: %1/%2 = opacity values from 0 to 1 for the base surface and layered surfaces
-            subtext: Tr.tr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
-            checked: Colours.transparency.enabled
-            onToggled: GlobalConfig.appearance.transparency.enabled = checked
-        }
-
-        ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+            Layout.fillWidth: true
 
             last: true
-            text: Tr.tr("Dark theme")
-            checked: !Colours.light
-            onToggled: Colours.setMode(checked ? "dark" : "light")
+            text: qsTr("Transparency")
+            subtext: qsTr("Base %1, layers %2").arg(Colours.transparency.base).arg(Colours.transparency.layers)
+            checked: Colours.transparency.enabled
+            onToggled: Tokens.transparency.enabled = checked
         }
     }
 }

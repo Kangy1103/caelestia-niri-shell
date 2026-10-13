@@ -2,13 +2,12 @@ pragma ComponentBehavior: Bound
 
 import QtQuick.Layouts
 import CNS.Config
-import CNS.I18n
 import qs.modules.nexus.common
 
 PageBase {
     id: root
 
-    title: Tr.tr("Tray")
+    title: qsTr("Tray")
     isSubPage: true
 
     ColumnLayout {
@@ -18,29 +17,32 @@ PageBase {
         spacing: Tokens.spacing.extraSmall / 2
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
-            text: Tr.trCtx("Background", "taskbar tray: draw a background behind the tray")
+            text: qsTr("Background")
             checked: Config.bar.tray.background
             onToggled: GlobalConfig.bar.tray.background = checked
         }
 
         ToggleRow {
-            // TRANSLATORS: tint system tray icons with the theme accent colour
-            text: Tr.tr("Recolour icons")
+            Layout.fillWidth: true
+            text: qsTr("Recolour icons")
             checked: Config.bar.tray.recolour
             onToggled: GlobalConfig.bar.tray.recolour = checked
         }
 
         ToggleRow {
-            text: Tr.trCtx("Compact", "taskbar tray layout")
+            Layout.fillWidth: true
+            text: qsTr("Compact")
             checked: Config.bar.tray.compact
             onToggled: GlobalConfig.bar.tray.compact = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
-            text: Tr.tr("Popout on hover")
-            subtext: Tr.tr("Show the tray menu popout when hovering")
+            text: qsTr("Popout on hover")
+            subtext: qsTr("Show the tray menu popout when hovering")
             checked: Config.bar.popouts.tray
             onToggled: GlobalConfig.bar.popouts.tray = checked
         }
