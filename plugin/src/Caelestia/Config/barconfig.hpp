@@ -111,6 +111,20 @@ class BarClock : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, showSeconds, false)
 };
 
+// CNS: status bar toggles as named sub-properties rather than id/enabled entries.
+class BarStatus : public settings::ObjectNode {
+    CONFIG_NODE(BarStatus, settings::ObjectNode)
+
+    CONFIG_PROPERTY(bool, showAudio, false)
+    CONFIG_PROPERTY(bool, showMicrophone, false)
+    CONFIG_PROPERTY(bool, showKbLayout, false)
+    CONFIG_PROPERTY(bool, showNetwork, true)
+    CONFIG_PROPERTY(bool, showWifi, true)
+    CONFIG_PROPERTY(bool, showBluetooth, true)
+    CONFIG_PROPERTY(bool, showBattery, true)
+    CONFIG_PROPERTY(bool, showLockStatus, true)
+};
+
 class BarConfig : public settings::ObjectNode {
     CONFIG_NODE(BarConfig, settings::ObjectNode)
 
@@ -133,6 +147,9 @@ class BarConfig : public settings::ObjectNode {
             LIST_ENTRY(bluetooth, true),
             LIST_ENTRY(battery, true),
         }))
+    // CNS: StatusIcons.qml reads named sub-properties (Config.bar.status.showAudio),
+    // not id/enabled entries, so upstream's statusIcons list cannot express it.
+    CONFIG_SUBOBJECT(BarStatus, status)
     CONFIG_LIST(EntryList, entries,
         DEFAULT_ARG({
             LIST_ENTRY(logo, true),
