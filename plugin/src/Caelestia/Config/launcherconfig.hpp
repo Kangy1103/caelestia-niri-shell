@@ -82,7 +82,7 @@ class LauncherConfig : public settings::ObjectNode {
                 { u"name"_s, markCtx(u"Random"_s, u"launcher action"_s) },
                 { u"icon"_s, u"casino"_s },
                 { u"description"_s, mark(u"Switch to a random wallpaper"_s) },
-                { u"command"_s, QStringList{ u"caelestia"_s, u"wallpaper"_s, u"-r"_s } },
+                { u"command"_s, QStringList{ u"cns"_s, u"wallpaper"_s, u"-r"_s } },
             }),
             vmap({
                 { u"name"_s, markCtx(u"Light"_s, u"launcher action"_s) },
@@ -114,26 +114,71 @@ class LauncherConfig : public settings::ObjectNode {
                 { u"name"_s, markCtx(u"Logout"_s, u"launcher action"_s) },
                 { u"icon"_s, u"exit_to_app"_s },
                 { u"description"_s, mark(u"Log out of the current session"_s) },
-                { u"command"_s, QStringList{ u"logout"_s } },
+                // CNS: upstream's "logout" is a Hyprland helper script. Niri has no
+                // equivalent, so quit the session through niri msg directly.
+                { u"command"_s, QStringList{ u"niri"_s, u"msg"_s, u"action"_s, u"quit"_s, u"-s"_s } },
                 { u"dangerous"_s, true },
             }),
             vmap({
                 { u"name"_s, markCtx(u"Lock"_s, u"launcher action"_s) },
                 { u"icon"_s, u"lock"_s },
                 { u"description"_s, mark(u"Lock the current session"_s) },
-                { u"command"_s, QStringList{ u"loginctl"_s, u"lock-session"_s } },
+                // CNS: go through the shell's own lock IPC so the lock screen
+                // animation and state stay in sync with the shell.
+                { u"command"_s, QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"lock"_s, u"lock"_s } },
             }),
             vmap({
                 { u"name"_s, markCtx(u"Sleep"_s, u"launcher action"_s) },
                 { u"icon"_s, u"bedtime"_s },
                 { u"description"_s, mark(u"Suspend then hibernate"_s) },
-                { u"command"_s, QStringList{ u"suspendThenHibernate"_s } },
+                // CNS: Niri action names are lowercase; upstream's
+                // suspendThenHibernate is the Hyprland spelling.
+                { u"command"_s, QStringList{ u"suspendthenhibernate"_s } },
             }),
             vmap({
                 { u"name"_s, markCtx(u"Settings"_s, u"launcher action"_s) },
                 { u"icon"_s, u"settings"_s },
                 { u"description"_s, mark(u"Configure the shell"_s) },
-                { u"command"_s, QStringList{ u"caelestia"_s, u"shell"_s, u"nexus"_s, u"open"_s } },
+                { u"command"_s, QStringList{ u"cns"_s, u"shell"_s, u"nexus"_s, u"open"_s } },
+            }),
+            vmap({
+                { u"name"_s, markCtx(u"Clipboard"_s, u"launcher action"_s) },
+                { u"icon"_s, u"content_paste"_s },
+                { u"description"_s, mark(u"Search clipboard history"_s) },
+                { u"command"_s, QStringList{ u"clipboard"_s } },
+            }),
+            vmap({
+                { u"name"_s, markCtx(u"Emoji"_s, u"launcher action"_s) },
+                { u"icon"_s, u"mood"_s },
+                { u"description"_s, mark(u"Search and copy emojis"_s) },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"emoji"_s } },
+            }),
+            vmap({
+                { u"name"_s, markCtx(u"Google Lens"_s, u"launcher action"_s) },
+                { u"icon"_s, u"image_search"_s },
+                { u"description"_s, mark(u"Search a screen region with Google Lens"_s) },
+                { u"command"_s,
+                  QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"picker"_s, u"regionSearch"_s } },
+            }),
+            vmap({
+                { u"name"_s, markCtx(u"OCR"_s, u"launcher action"_s) },
+                { u"icon"_s, u"document_scanner"_s },
+                { u"description"_s, mark(u"Extract text from a screen region"_s) },
+                { u"command"_s,
+                  QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"picker"_s, u"regionOcr"_s } },
+            }),
+            vmap({
+                { u"name"_s, markCtx(u"Transparency"_s, u"launcher action"_s) },
+                { u"icon"_s, u"opacity"_s },
+                { u"description"_s, mark(u"Change shell transparency"_s) },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"transparency"_s } },
+                { u"enabled"_s, false },
+            }),
+            vmap({
+                { u"name"_s, markCtx(u"Web Search"_s, u"launcher action"_s) },
+                { u"icon"_s, u"travel_explore"_s },
+                { u"description"_s, mark(u"Search the web or open a URL"_s) },
+                { u"command"_s, QStringList{ u"autocomplete"_s, u"web"_s } },
             }),
         }))
 };
