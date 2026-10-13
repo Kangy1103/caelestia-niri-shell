@@ -1,3 +1,6 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
 import "center"
 import QtQuick
 import QtQuick.Layouts
@@ -6,48 +9,52 @@ import qs.components
 import qs.services
 
 ColumnLayout {
-    id: root
+  id: root
 
     required property var lock
-    readonly property real centerScale: Math.min(1, (lock.screen?.height ?? 1440) / 1440)
-    readonly property int centerWidth: Tokens.sizes.lock.centerWidth * centerScale
+    readonly property int centerWidth: Tokens.sizes.lock.centerWidth
 
-    Layout.preferredWidth: centerWidth
     Layout.fillWidth: false
+    Layout.preferredWidth: centerWidth
     Layout.fillHeight: true
 
+    clip: true
     spacing: Tokens.spacing.largeIncreased
 
     Clock {
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
         Layout.topMargin: Tokens.padding.large
-        centerScale: root.centerScale
     }
 
     StyledText {
         Layout.alignment: Qt.AlignHCenter
 
-        text: Time.format("dddd • d MMM").toUpperCase()
+        text: Time.format("dddd • dd MMMM yyyy").toUpperCase()
         color: Colours.palette.m3onSurface
         font: Tokens.font.title.builders.medium.weight(Font.DemiBold).build()
     }
 
     ProfilePic {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
-        Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
+        Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
+        Layout.topMargin: Tokens.spacing.extraExtraLarge
+        Layout.bottomMargin: Tokens.spacing.extraLarge
         centerWidth: root.centerWidth
     }
 
     PasswordInput {
-        Layout.alignment: Qt.AlignHCenter
-        centerScale: Math.max(0.8, root.centerScale)
+        Layout.fillWidth: true
+        Layout.leftMargin: Tokens.padding.large
+        Layout.rightMargin: Tokens.padding.large
         centerWidth: root.centerWidth
         lock: root.lock
     }
 
-    StateMessage {
-        Layout.fillWidth: true
-        pam: root.lock.pam
-    }
+  StateMessage {
+    Layout.fillWidth: true
+    pam: root.lock.pam
+  }
 }

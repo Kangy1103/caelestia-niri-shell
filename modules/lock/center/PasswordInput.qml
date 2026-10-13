@@ -11,14 +11,10 @@ import qs.services
 StyledRect {
     id: root
 
-    required property real centerScale
     required property int centerWidth
     required property var lock
 
-    implicitWidth: {
-        const w = centerWidth * 0.8;
-        return lock.pam.buffer ? w : Math.min(w, inputField.placeholderWidth + iconWrapper.implicitWidth + enterButton.implicitWidth + input.spacing * 2 + Tokens.padding.medium * 2);
-    }
+    implicitWidth: centerWidth * 0.8
     implicitHeight: input.implicitHeight + Tokens.padding.small
 
     color: Colours.tPalette.m3surfaceContainer
@@ -66,7 +62,7 @@ StyledRect {
             AnimLoader {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: sourceComponent === iconComp ? 1 : 0
-                sourceComp: root.lock.pam.passwd.active || root.lock.pam.howdy.active ? loadingComp : iconComp
+                sourceComp: root.lock.pam.passwd.active ? loadingComp : iconComp
             }
 
             Component {
@@ -75,39 +71,14 @@ StyledRect {
                 MaterialIcon {
                     animate: true
                     text: {
-                        if (inputField.showPassword)
-                            return "visibility";
-                        if (root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries) {
-                            if (root.lock.pam.howdy.canAttempt)
-                                return "face";
+                        if (root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries)
                             return "fingerprint_off";
-                        }
                         if (root.lock.pam.fprint.active)
                             return "fingerprint";
-                        if (root.lock.pam.howdy.canAttempt)
-                            return "face";
                         return "lock";
                     }
-                    color: !root.lock.pam.howdy.canAttempt && root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
-                    fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale).build()
-                    fill: text === "face" || text === "visibility"
-
-                    StateLayer {
-                        anchors.fill: undefined
-                        anchors.centerIn: parent
-                        implicitWidth: {
-                            const w = parent.implicitHeight + Tokens.padding.small * 2;
-                            return w + (w % 2);
-                        }
-                        implicitHeight: implicitWidth
-                        radius: Tokens.rounding.full
-
-                        onClicked: {
-                            parent.animate = false;
-                            inputField.showPassword = !inputField.showPassword;
-                            parent.animate = true;
-                        }
-                    }
+                    color: root.lock.pam.fprint.tries >= GlobalConfig.lock.maxFprintTries ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+                    fontStyle: Tokens.font.icon.builders.medium.build()
                 }
             }
 
@@ -126,7 +97,6 @@ StyledRect {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            centerScale: root.centerScale
             pam: root.lock.pam
         }
 
@@ -173,7 +143,7 @@ StyledRect {
                 anchors.centerIn: parent
                 text: "arrow_forward"
                 color: Colours.palette.m3onSurfaceVariant
-                fontStyle: Tokens.font.icon.builders.medium.scale(root.centerScale * 1.2).build()
+                fontStyle: Tokens.font.icon.builders.medium.scale(1.2).build()
                 opacity: root.lock.pam.buffer ? 0 : 1
 
                 Behavior on opacity {
