@@ -4,8 +4,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
-import Caelestia.I18n
-import Caelestia.Services
+import CNS.I18n
+import CNS.Services
 import qs.components.misc
 
 Singleton {

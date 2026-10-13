@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia
-import Caelestia.Blobs
-import Caelestia.Config
-import Caelestia.I18n
-import Caelestia.Services
+import CNS
+import CNS.Blobs
+import CNS.Config
+import CNS.I18n
+import CNS.Services
 import qs.components
 import qs.services
 

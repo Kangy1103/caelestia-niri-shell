@@ -1,5 +1,5 @@
-qml_module(caelestia-settings
-    URI Caelestia.Settings
+qml_module(CNS-settings
+    URI CNS.Settings
     INCLUDE_PREFIX settings
     SOURCES
         common.cpp
@@ -13,5 +13,5 @@ qml_module(caelestia-settings
         settingsfile.cpp
         changebatcher.cpp
     LIBRARIES
-        caelestia-util
+        CNS-util
 )

@@ -1,5 +1,5 @@
-qml_module(caelestia-services
-    URI Caelestia.Services
+qml_module(CNS-services
+    URI CNS.Services
     SOURCES
         service.cpp
         serviceref.cpp
@@ -28,9 +28,9 @@ qml_module(caelestia-services
         PkgConfig::Aubio
         PkgConfig::Cava
         Sensors::Sensors
-        caelestia-util
-        caelestia-core
-        caelestia-config
+        CNS-util
+        CNS
+        CNS-config
     DEPENDENCIES
         Caelestia
         Caelestia.Config

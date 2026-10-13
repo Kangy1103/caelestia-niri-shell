@@ -3,9 +3,9 @@ pragma Singleton
 import ".."
 import QtQuick
 import Quickshell
-import Caelestia.Config
-import Caelestia.I18n
-import Caelestia.Services
+import CNS.Config
+import CNS.I18n
+import CNS.Services
 import qs.services
 import qs.utils
 

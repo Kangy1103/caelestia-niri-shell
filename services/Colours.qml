@@ -4,8 +4,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import Caelestia.Images
+import CNS.Config
+import CNS.Images
 import qs.services
 import qs.utils
 

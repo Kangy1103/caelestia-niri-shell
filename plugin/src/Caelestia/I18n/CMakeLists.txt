@@ -39,8 +39,8 @@ if(CAELESTIA_TEST_TRS)
     list(APPEND mo_files "${test_mo}")
 endif()
 
-qml_module(caelestia-i18n
-    URI Caelestia.I18n
+qml_module(CNS-i18n
+    URI CNS.I18n
     INCLUDE_PREFIX i18n
     SOURCES
         translator.cpp
@@ -51,8 +51,8 @@ qml_module(caelestia-i18n
     RESOURCES
         ${mo_files}
     LIBRARIES
-        caelestia-util
-        caelestia-config
+        CNS-util
+        CNS-config
     DEPENDENCIES
         Caelestia.Config
 )

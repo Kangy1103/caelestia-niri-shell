@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import M3Shapes
-import Caelestia.Config
-import Caelestia.I18n
+import CNS.Config
+import CNS.I18n
 import qs.components
 import qs.components.effects
 import qs.components.filedialog

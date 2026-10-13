@@ -2,8 +2,8 @@ import "media"
 import QtQuick
 import QtQuick.Layouts
 import M3Shapes
-import Caelestia.Config
-import Caelestia.I18n
+import CNS.Config
+import CNS.I18n
 import qs.components
 import qs.services
 

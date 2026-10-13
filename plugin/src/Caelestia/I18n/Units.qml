@@ -1,8 +1,8 @@
 pragma Singleton
 
 import QtQuick
-import Caelestia.Config
-import Caelestia.I18n
+import CNS.Config
+import CNS.I18n
 
 QtObject {
     // Whether to show a 12-hour clock, guessing from the locale when Auto

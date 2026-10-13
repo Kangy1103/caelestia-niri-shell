@@ -1,5 +1,5 @@
-qml_module(caelestia-config
-    URI Caelestia.Config
+qml_module(CNS-config
+    URI CNS.Config
     INCLUDE_PREFIX config
     SOURCES
         common.cpp
@@ -33,9 +33,9 @@ qml_module(caelestia-config
     DEPENDENCIES
         Caelestia.Settings
 )
-target_link_libraries(caelestia-config PUBLIC
+target_link_libraries(CNS-config PUBLIC
     Qt::Gui
-    caelestia-util
-    caelestia-core
-    caelestia-settings
+    CNS-util
+    CNS
+    CNS-settings
 )

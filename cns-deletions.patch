@@ -1,0 +1,1878 @@
+diff --git a/.github/CONTRIBUTING.md b/.github/CONTRIBUTING.md
+deleted file mode 100644
+index d0239c06..00000000
+--- a/.github/CONTRIBUTING.md
++++ /dev/null
+@@ -1,21 +0,0 @@
+-# Contributing
+-
+-There are only a few rules:
+-- Follow the commit convention as follows:
+-  - The name of the commit should be `module: change`
+-  - Try to be consistent with the module names; you can look at existing commits for the module names I use
+-  - If there is more than one change, the change in the commit name should be the most impactful change
+-  - Put other changes in the description
+-- Format your code
+-  - I use the vscode qml extension with default arguments to format the code, however you do not have to use it
+-  - Just try to follow the code style of the rest of the code and ensure that there is:
+-    - no trailing whitespace on any lines
+-    - a single space between operators
+-- No AI slop allowed
+-  - AI readme/docs slop = instant block
+-- PLEASE TEST YOUR PRS
+-  - I can't believe I have to put this here, but please test your PRs before submitting them
+-  - Your PR must not break anything currently existing, or specify in the description if it does
+-- PR descriptions should be descriptive
+-  - Please explain what the PR does and how to use it in your PR description
+-  - Also include any breaking changes and/or side effects of the PR
+diff --git a/.github/ISSUE_TEMPLATE/config.yml b/.github/ISSUE_TEMPLATE/config.yml
+deleted file mode 100644
+index 3ba13e0c..00000000
+--- a/.github/ISSUE_TEMPLATE/config.yml
++++ /dev/null
+@@ -1 +0,0 @@
+-blank_issues_enabled: false
+diff --git a/.github/ISSUE_TEMPLATE/crash.yml b/.github/ISSUE_TEMPLATE/crash.yml
+deleted file mode 100644
+index e37198c9..00000000
+--- a/.github/ISSUE_TEMPLATE/crash.yml
++++ /dev/null
+@@ -1,57 +0,0 @@
+-name: Crash report
+-description: Report a crash
+-labels: ["bug", "crash"]
+-type: "Bug"
+-title: "[CRASH] "
+-body:
+-  - type: textarea
+-    attributes:
+-      label: What caused the crash
+-      description: |
+-        Any information likely to help debug the crash. What were you doing when the crash occurred,
+-        what changes did you make, can you get it to happen again?
+-
+-  - type: upload
+-    attributes:
+-      label: Report file
+-      description: Attach `report.txt` here.
+-    validations:
+-      required: true
+-
+-  - type: upload
+-    attributes:
+-      label: Log file
+-      description: |
+-        Attach `log.qslog.log` here. If it is too big to upload, compress it.
+-
+-        You can preview the log if you'd like using `qs log <path-to-log> -r '*=true'`.
+-    validations:
+-      required: true
+-
+-  - type: textarea
+-    attributes:
+-      label: "Version info"
+-      description: Run `caelestia -v` and paste the result below.
+-      value: |
+-        <details><summary>Version info</summary>
+-
+-        ```
+-        <!-- Run `caelestia -v` and paste the result here! -->
+-        ```
+-
+-        </details>
+-    validations:
+-      required: true
+-
+-  - type: checkboxes
+-    attributes:
+-      label: Reminder
+-      options:
+-        - label: I've successfully updated to the latest versions following the [updating guide](https://github.com/caelestia-dots/caelestia?tab=readme-ov-file#updating).
+-          required: false
+-        - label: I've successfully updated the system packages to the latest.
+-          required: false
+-        - label: I agree that it's usually impossible for others to help me without my logs.
+-          required: true
+-        - label: I've ticked the checkboxes without reading their contents
+-          required: false
+diff --git a/.github/ISSUE_TEMPLATE/feature.yml b/.github/ISSUE_TEMPLATE/feature.yml
+deleted file mode 100644
+index c5caffa3..00000000
+--- a/.github/ISSUE_TEMPLATE/feature.yml
++++ /dev/null
+@@ -1,24 +0,0 @@
+-name: Feature request
+-description: Suggest a new feature
+-labels: ["enhancement"]
+-type: "Feature"
+-title: "[FEATURE] "
+-body:
+-    - type: markdown
+-      attributes:
+-          value: "NOTE: Please write in **English**."
+-
+-    - type: textarea
+-      attributes:
+-          label: "What would you like to be added?"
+-          description: "Can be a suggestion for an existing feature. You can suggest a widget, minor user interaction changes.. whatever."
+-
+-    - type: textarea
+-      attributes:
+-          label: "How will it help?"
+-          description: "It's helpful to include examples (like in your use case)."
+-
+-    - type: textarea
+-      attributes:
+-          label: "Extra info"
+-          description: "If you want a new widget, a pic of the inspiration (if available) would be awesome."
+diff --git a/.github/ISSUE_TEMPLATE/issue.yml b/.github/ISSUE_TEMPLATE/issue.yml
+deleted file mode 100644
+index b7671041..00000000
+--- a/.github/ISSUE_TEMPLATE/issue.yml
++++ /dev/null
+@@ -1,56 +0,0 @@
+-name: Issue
+-description: Report an issue with the dots
+-labels: ["bug"]
+-type: "Bug"
+-title: "[BUG] "
+-body:
+-    - type: markdown
+-      attributes:
+-          value: "**Welcome to submit a new issue!**\n- It takes only 3 steps, so please be patient :)\n- Tip: If your issue is not a feature request and is not an issue with the dots (e.g. \"how do I use X feature\"), please use [Discussions](https://github.com/caelestia-dots/shell/discussions) instead."
+-    - type: checkboxes
+-      attributes:
+-          label: "Step 1. Before you submit"
+-          description: "Hint: The 2nd and 3rd checkbox is **not** forcely required as you may have failed to do so."
+-          options:
+-              - label: I have read the above instructions and am sure that this is supposed to be posted here.
+-                required: true
+-              - label: I've successfully updated to the latest versions following the [updating guide](https://github.com/caelestia-dots/caelestia?tab=readme-ov-file#updating).
+-                required: false # Not required cuz user may have failed to do so
+-              - label: I've successfully updated the system packages to the latest.
+-                required: false # Not required cuz user may have failed to do so
+-              - label: I've ticked the checkboxes without reading their contents
+-                required: false # Obviously
+-
+-    - type: textarea
+-      attributes:
+-          label: "Step 2. Version info"
+-          description: "Run `caelestia -v` and paste the result below."
+-          value: "<details><summary>Version info</summary>\n\n```\n<!-- Run `caelestia -v` and paste the result here! -->\n```\n\n</details>"
+-      validations:
+-          required: true
+-
+-    - type: markdown
+-      attributes:
+-          value: |
+-              **Tips for the following Step 3**
+-              1. Use `LANG=C LC_ALL=C` to get the output of a command in English, eg. `LANG=C LC_ALL=C date` displays time in English.
+-              2. If it throws errors, **PLEASE**, attach logs and describe in detail if possible.
+-                 - Something happened to the shell (bar, dashboard, etc)? Run `caelestia shell -l` WITHOUT exiting the shell for logs.
+-                 - Installation failed? Run installation again for logs.
+-                 - You may use more code blocks when needed.
+-              3. In case you are confused, the `<details>`, `<summary>`, `</summary>`, `</details>` are HTML tags for folding the logs (typically very long) inside. Please do not touch them (unless you know what you are doing).
+-              4. If the logs are suuuuuuper long, consider using an online pastebin service instead.
+-
+-    - type: textarea
+-      attributes:
+-          label: "Step 3. Describe the issue"
+-          value: "\n<!-- Firstly describe your issue here! -->\n\n<details><summary>Logs</summary>\n\n```\n<!-- Put your log content here!-->\n```\n\n</details>"
+-      validations:
+-          required: true
+-
+-    - type: checkboxes
+-      attributes:
+-          label: Reminder
+-          options:
+-              - label: I agree that it's usually impossible for others to help me without my logs.
+-                required: true
+diff --git a/.github/workflows/check-format.yml b/.github/workflows/check-format.yml
+deleted file mode 100644
+index c1b62f3b..00000000
+--- a/.github/workflows/check-format.yml
++++ /dev/null
+@@ -1,40 +0,0 @@
+-name: Check formatting
+-
+-on:
+-  push:
+-    branches:
+-      - main
+-  pull_request:
+-
+-jobs:
+-  check-qml:
+-    runs-on: ubuntu-latest
+-    container:
+-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+-
+-    steps:
+-      - uses: actions/checkout@v6
+-
+-      - name: Check QML format
+-        shell: fish {0}
+-        run: |
+-          /usr/lib/qt6/bin/qmlformat --version
+-          for file in (string match -v 'build/*' **.qml)
+-            /usr/lib/qt6/bin/qmlformat $file | diff -u $file - || exit 1
+-          end
+-          python3 scripts/qml-lint-conventions.py
+-
+-  check-cpp:
+-    runs-on: ubuntu-latest
+-    container:
+-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+-
+-    steps:
+-      - uses: actions/checkout@v6
+-
+-      - name: Check C++ format
+-        shell: fish {0}
+-        run: |
+-          clang-format --version
+-          find plugin extras -name '*.cpp' -o -name '*.hpp' \
+-            | xargs clang-format --dry-run --Werror
+diff --git a/.github/workflows/lint.yml b/.github/workflows/lint.yml
+deleted file mode 100644
+index 9dd0d576..00000000
+--- a/.github/workflows/lint.yml
++++ /dev/null
+@@ -1,45 +0,0 @@
+-name: Lint code
+-
+-on:
+-  push:
+-    branches:
+-      - main
+-  pull_request:
+-
+-jobs:
+-  lint:
+-    runs-on: ubuntu-latest
+-
+-    container:
+-      image: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+-
+-    steps:
+-      - uses: actions/checkout@v6
+-
+-      - name: Build
+-        run: |
+-          # Set version and git rev for CI build so we don't call git
+-          cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clazy -DCMAKE_CXX_FLAGS=-Werror -DVERSION= -DGIT_REVISION=
+-          cmake --build build
+-
+-      - name: Lint QML
+-        shell: fish {0}
+-        run: |
+-          /usr/lib/qt6/bin/qmllint --version
+-
+-          # Generate tooling
+-          touch .qmlls.ini
+-          QT_QPA_PLATFORM=offscreen QML2_IMPORT_PATH="$PWD/build/qml:$QML2_IMPORT_PATH" timeout 2 qs -p .
+-
+-          # Construct linter args
+-          set -l build_dir (grep -oP "(?<=buildDir=\")(.*)(?=\")" .qmlls.ini)
+-          set -l import_paths (grep -oP "(?<=importPaths=\")(.*)(?=\")" .qmlls.ini | string split :)
+-          set -l args -I $build_dir
+-          for path in $import_paths
+-            set -a args -I $path
+-          end
+-          set -l qml_files (string match -vr '(build|modules/controlcenter)/.*' **.qml)
+-
+-          # Lint
+-          set -l lint_out (/usr/lib/qt6/bin/qmllint --import disable $args $qml_files 2>&1 | tee /dev/stderr)
+-          test -z "$lint_out" || exit 1
+diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
+deleted file mode 100644
+index 29e704a9..00000000
+--- a/.github/workflows/release.yml
++++ /dev/null
+@@ -1,42 +0,0 @@
+-name: Create release
+-
+-on:
+-  push:
+-    tags:
+-      - "v*"
+-
+-jobs:
+-  build-and-release:
+-    runs-on: ubuntu-latest
+-
+-    permissions:
+-      contents: write
+-
+-    steps:
+-      - uses: actions/checkout@v6
+-
+-      - name: Create packages
+-        run: |
+-          mkdir -p release
+-          rsync -av \
+-            --exclude='release' \
+-            --exclude='.*' \
+-            --exclude='nix' \
+-            --exclude='flake.lock' \
+-            --exclude='flake.nix' \
+-            . release
+-          tar -czf caelestia-shell-${{ github.ref_name }}.tar.gz release
+-          cp caelestia-shell-${{ github.ref_name }}.tar.gz caelestia-shell-latest.tar.gz
+-
+-      - name: Create release
+-        uses: softprops/action-gh-release@v2
+-        with:
+-          files: |
+-            caelestia-shell-${{ github.ref_name }}.tar.gz
+-            caelestia-shell-latest.tar.gz
+-          generate_release_notes: true
+-      
+-      - name: Update stable branch
+-        run: |
+-          git branch -f stable "$GITHUB_SHA"
+-          git push origin stable --force
+diff --git a/.github/workflows/update-flake-inputs.yml b/.github/workflows/update-flake-inputs.yml
+deleted file mode 100644
+index 7f24c797..00000000
+--- a/.github/workflows/update-flake-inputs.yml
++++ /dev/null
+@@ -1,92 +0,0 @@
+-name: Update flake inputs
+-
+-on:
+-  workflow_dispatch:
+-  schedule:
+-    - cron: "0 0 * * 0"
+-
+-jobs:
+-  update-flake:
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-      - name: Generate app token
+-        id: app-token
+-        uses: actions/create-github-app-token@v3
+-        with:
+-          client-id: ${{ secrets.CLIENT_ID }}
+-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+-
+-      - uses: actions/checkout@v6
+-        with:
+-          token: ${{ steps.app-token.outputs.token }}
+-
+-      - name: Install Nix
+-        uses: nixbuild/nix-quick-install-action@v34
+-        with:
+-          nix_conf: |
+-            keep-env-derivations = true
+-            keep-outputs = true
+-
+-      - name: Restore and save Nix store
+-        uses: nix-community/cache-nix-action@v7
+-        with:
+-          # restore and save a cache using this key
+-          primary-key: nix-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+-          # if there's no cache hit, restore a cache by this prefix
+-          restore-prefixes-first-match: nix-
+-          # collect garbage until the Nix store size (in bytes) is at most this number
+-          # before trying to save a new cache
+-          # 1G = 1073741824
+-          gc-max-store-size-linux: 1G
+-          # do purge caches
+-          purge: true
+-          # purge all versions of the cache
+-          purge-prefixes: nix-
+-          # created more than this number of seconds ago
+-          purge-created: 0
+-          # or, last accessed more than this number of seconds ago
+-          # relative to the start of the `Post Restore and save Nix store` phase
+-          purge-last-accessed: 0
+-          # except any version with the key that is the same as the `primary-key`
+-          purge-primary-key: never
+-
+-      - name: Update flake inputs
+-        run: nix flake update
+-
+-      - name: Attempt to build flake
+-        run: nix build
+-
+-      - name: Test on Sway
+-        env:
+-          XDG_RUNTIME_DIR: /home/runner/runtime
+-          WLR_BACKENDS: headless
+-          WLR_LIBINPUT_NO_DEVICES: 1
+-          WAYLAND_DISPLAY: wayland-1
+-        run: |
+-          mkdir $XDG_RUNTIME_DIR
+-          chown $USER $XDG_RUNTIME_DIR
+-          chmod 0700 $XDG_RUNTIME_DIR
+-
+-          nix profile install 'nixpkgs#sway'
+-          sway &
+-          sleep 3  # Give Sway some time to start
+-          result/bin/caelestia-shell -d
+-          sleep 3  # Give the shell some time to start (and die)
+-          pgrep .quickshell-wra  # Fail job if shell died
+-
+-          result/bin/caelestia-shell kill
+-          killall sway  # Screw using IPC
+-
+-      - name: Check for changes
+-        id: check
+-        run: echo modified=$(git diff --exit-code flake.lock &>/dev/null && echo 'false' || echo 'true') >> $GITHUB_OUTPUT
+-
+-      - name: Commit and push changes
+-        if: steps.check.outputs.modified == 'true'
+-        uses: EndBug/add-and-commit@v10
+-        with:
+-          github_token: ${{ steps.app-token.outputs.token }}
+-          add: flake.lock
+-          default_author: github_actions
+-          message: "[CI] chore: update flake"
+diff --git a/.github/workflows/update-image.yml b/.github/workflows/update-image.yml
+deleted file mode 100644
+index 34b9a6fc..00000000
+--- a/.github/workflows/update-image.yml
++++ /dev/null
+@@ -1,52 +0,0 @@
+-name: Update Docker CI image
+-
+-on:
+-  workflow_dispatch:
+-  schedule:
+-    - cron: "0 0 * * 0"
+-
+-permissions:
+-  packages: write
+-
+-jobs:
+-  build-image:
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-      - uses: docker/login-action@v4
+-        with:
+-          registry: ghcr.io
+-          username: ${{ github.actor }}
+-          password: ${{ secrets.GITHUB_TOKEN }}
+-
+-      - name: Write Dockerfile
+-        run: |
+-          cat > /tmp/Dockerfile <<EOF
+-          FROM archlinux:latest
+-          # TEMPORARY (remove once the upstream qmlformat regression is fixed): pin to the
+-          # 2026-05-13 Arch archive snapshot to hold qmlformat at qt6-declarative 6.11.0.
+-          # qt6-declarative 6.11.1 silently crashes qmlformat (exit 1, empty output) on QML files
+-          # that declare a property named 'id'. To unpin: delete the mirrorlist line below and
+-          # change 'pacman -Syyuu' back to 'pacman -Syu'.
+-          RUN echo 'Server = https://archive.archlinux.org/repos/2026/05/13/\$repo/os/\$arch' > /etc/pacman.d/mirrorlist && \
+-              pacman -Syyuu --needed --noconfirm sudo base-devel cmake ninja fish git clazy qt6-declarative qt6-shadertools python libpipewire aubio libqalculate && \
+-              useradd -m builder && \
+-              echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+-              sudo -u builder git clone https://aur.archlinux.org/yay-bin.git /home/builder/yay-bin && \
+-              cd /home/builder/yay-bin && \
+-              sudo -u builder makepkg -si --noconfirm && \
+-              sudo -u builder yay -S --noconfirm quickshell-git libcava && \
+-              sudo -u builder yay -Yc --noconfirm && \
+-              pacman -Rns --noconfirm yay-bin && \
+-              sed -i '/builder ALL=(ALL) NOPASSWD:ALL/d' /etc/sudoers && \
+-              userdel -r builder && \
+-              pacman -Scc --noconfirm
+-          EOF
+-
+-      - name: Build and push
+-        uses: docker/build-push-action@v7
+-        with:
+-          context: .
+-          file: /tmp/Dockerfile
+-          push: true
+-          tags: ghcr.io/${{ github.repository_owner }}/shell-arch-env:latest
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+deleted file mode 100644
+index 13763e44..00000000
+--- a/.vscode/settings.json
++++ /dev/null
+@@ -1,6 +0,0 @@
+-{
+-    "editor.defaultFormatter": "theqtcompany.qt-qml",
+-    "[cpp]": {
+-        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+-    }
+-}
+diff --git a/flake.lock b/flake.lock
+deleted file mode 100644
+index d92a2658..00000000
+--- a/flake.lock
++++ /dev/null
+@@ -1,88 +0,0 @@
+-{
+-  "nodes": {
+-    "caelestia-cli": {
+-      "inputs": {
+-        "caelestia-shell": [],
+-        "nixpkgs": [
+-          "nixpkgs"
+-        ]
+-      },
+-      "locked": {
+-        "lastModified": 1780375472,
+-        "narHash": "sha256-Q8RAJoYlakA6B2I5DVcuxzNbhCNU1nnIjqQZYP1KGrM=",
+-        "owner": "caelestia-dots",
+-        "repo": "cli",
+-        "rev": "d1c8c8fc09738d1b40576e97c274b4a11a2e0ac7",
+-        "type": "github"
+-      },
+-      "original": {
+-        "owner": "caelestia-dots",
+-        "repo": "cli",
+-        "type": "github"
+-      }
+-    },
+-    "m3shapes": {
+-      "flake": false,
+-      "locked": {
+-        "lastModified": 1781017666,
+-        "narHash": "sha256-kfHyzZaPHgqZML48OA+5JwBOsLdQJ2ci/aGPShvUB4Y=",
+-        "owner": "soramanew",
+-        "repo": "m3shapes",
+-        "rev": "bdc327b29f95394a732baf3c9b19658ba23755b6",
+-        "type": "github"
+-      },
+-      "original": {
+-        "owner": "soramanew",
+-        "repo": "m3shapes",
+-        "rev": "bdc327b29f95394a732baf3c9b19658ba23755b6",
+-        "type": "github"
+-      }
+-    },
+-    "nixpkgs": {
+-      "locked": {
+-        "lastModified": 1780243769,
+-        "narHash": "sha256-x5UQuRsH3MqI0U9afaXSNqzTPSeZlRLvFAav2Ux1pNw=",
+-        "owner": "nixos",
+-        "repo": "nixpkgs",
+-        "rev": "331800de5053fcebacf6813adb5db9c9dca22a0c",
+-        "type": "github"
+-      },
+-      "original": {
+-        "owner": "nixos",
+-        "ref": "nixos-unstable",
+-        "repo": "nixpkgs",
+-        "type": "github"
+-      }
+-    },
+-    "quickshell": {
+-      "inputs": {
+-        "nixpkgs": [
+-          "nixpkgs"
+-        ]
+-      },
+-      "locked": {
+-        "lastModified": 1780303737,
+-        "narHash": "sha256-7HgdJBG4BgAPDyHKKxWtxj7nziqsQo6zQCXtwy+L9fs=",
+-        "ref": "refs/heads/master",
+-        "rev": "b66495fcc5022681b56b61f928c7acbe910e722c",
+-        "revCount": 821,
+-        "type": "git",
+-        "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
+-      },
+-      "original": {
+-        "type": "git",
+-        "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
+-      }
+-    },
+-    "root": {
+-      "inputs": {
+-        "caelestia-cli": "caelestia-cli",
+-        "m3shapes": "m3shapes",
+-        "nixpkgs": "nixpkgs",
+-        "quickshell": "quickshell"
+-      }
+-    }
+-  },
+-  "root": "root",
+-  "version": 7
+-}
+diff --git a/flake.nix b/flake.nix
+deleted file mode 100644
+index 7058c6cc..00000000
+--- a/flake.nix
++++ /dev/null
+@@ -1,65 +0,0 @@
+-{
+-  description = "Desktop shell for Caelestia dots";
+-
+-  inputs = {
+-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+-
+-    quickshell = {
+-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+-      inputs.nixpkgs.follows = "nixpkgs";
+-    };
+-
+-    caelestia-cli = {
+-      url = "github:caelestia-dots/cli";
+-      inputs.nixpkgs.follows = "nixpkgs";
+-      inputs.caelestia-shell.follows = "";
+-    };
+-
+-    m3shapes = {
+-      url = "github:soramanew/m3shapes/bdc327b29f95394a732baf3c9b19658ba23755b6";
+-      flake = false;
+-    };
+-  };
+-
+-  outputs = {
+-    self,
+-    nixpkgs,
+-    ...
+-  } @ inputs: let
+-    forAllSystems = fn:
+-      nixpkgs.lib.genAttrs nixpkgs.lib.platforms.linux (
+-        system: fn nixpkgs.legacyPackages.${system}
+-      );
+-  in {
+-    formatter = forAllSystems (pkgs: pkgs.alejandra);
+-
+-    packages = forAllSystems (pkgs: rec {
+-      caelestia-shell = pkgs.callPackage ./nix {
+-        inherit (inputs) m3shapes;
+-        rev = self.rev or self.dirtyRev;
+-        stdenv = pkgs.clangStdenv;
+-        quickshell = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+-          withX11 = false;
+-          withI3 = false;
+-        };
+-        caelestia-cli = inputs.caelestia-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
+-      };
+-      with-cli = caelestia-shell.override {withCli = true;};
+-      debug = caelestia-shell.override {debug = true;};
+-      default = caelestia-shell;
+-    });
+-
+-    devShells = forAllSystems (pkgs: {
+-      default = let
+-        shell = self.packages.${pkgs.stdenv.hostPlatform.system}.caelestia-shell;
+-      in
+-        pkgs.mkShell.override {stdenv = shell.stdenv;} {
+-          inputsFrom = [shell shell.plugin shell.extras shell.m3shapesModule];
+-          packages = with pkgs; [clazy material-symbols rubik nerd-fonts.caskaydia-cove];
+-          CAELESTIA_XKB_RULES_PATH = "${pkgs.xkeyboard-config}/share/xkeyboard-config-2/rules/base.lst";
+-        };
+-    });
+-
+-    homeManagerModules.default = import ./nix/hm-module.nix self;
+-  };
+-}
+diff --git a/nix/default.nix b/nix/default.nix
+deleted file mode 100644
+index 6a291362..00000000
+--- a/nix/default.nix
++++ /dev/null
+@@ -1,181 +0,0 @@
+-{
+-  rev,
+-  lib,
+-  stdenv,
+-  makeWrapper,
+-  makeFontsConf,
+-  fish,
+-  ddcutil,
+-  brightnessctl,
+-  app2unit,
+-  networkmanager,
+-  lm_sensors,
+-  swappy,
+-  wl-clipboard,
+-  libqalculate,
+-  bash,
+-  hyprland,
+-  material-symbols,
+-  rubik,
+-  nerd-fonts,
+-  qt6,
+-  quickshell,
+-  aubio,
+-  libcava,
+-  fftw,
+-  pipewire,
+-  xkeyboard-config,
+-  cmake,
+-  ninja,
+-  pkg-config,
+-  caelestia-cli,
+-  m3shapes,
+-  debug ? false,
+-  withCli ? false,
+-  extraRuntimeDeps ? [],
+-}: let
+-  version = "1.0.0";
+-
+-  runtimeDeps =
+-    [
+-      fish
+-      ddcutil
+-      brightnessctl
+-      app2unit
+-      networkmanager
+-      lm_sensors
+-      swappy
+-      wl-clipboard
+-      libqalculate
+-      bash
+-      hyprland
+-    ]
+-    ++ extraRuntimeDeps
+-    ++ lib.optional withCli caelestia-cli;
+-
+-  fontconfig = makeFontsConf {
+-    fontDirectories = [material-symbols rubik nerd-fonts.caskaydia-cove];
+-  };
+-
+-  cmakeBuildType =
+-    if debug
+-    then "Debug"
+-    else "RelWithDebInfo";
+-
+-  cmakeVersionFlags = [
+-    (lib.cmakeFeature "VERSION" version)
+-    (lib.cmakeFeature "GIT_REVISION" rev)
+-    (lib.cmakeFeature "DISTRIBUTOR" "nix-flake")
+-  ];
+-
+-  # The build sandbox has no network access so add it as a flake input instead
+-  m3shapesFlag = lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_M3SHAPES_EXTERNAL" "${m3shapes}";
+-
+-  extras = stdenv.mkDerivation {
+-    inherit cmakeBuildType;
+-    name = "caelestia-extras${lib.optionalString debug "-debug"}";
+-    src = lib.fileset.toSource {
+-      root = ./..;
+-      fileset = lib.fileset.union ./../CMakeLists.txt ./../extras;
+-    };
+-
+-    nativeBuildInputs = [cmake ninja];
+-
+-    cmakeFlags =
+-      [
+-        (lib.cmakeFeature "ENABLE_MODULES" "extras")
+-        (lib.cmakeFeature "INSTALL_LIBDIR" "${placeholder "out"}/lib")
+-      ]
+-      ++ cmakeVersionFlags;
+-  };
+-
+-  plugin = stdenv.mkDerivation {
+-    inherit cmakeBuildType;
+-    name = "caelestia-qml-plugin${lib.optionalString debug "-debug"}";
+-    src = lib.fileset.toSource {
+-      root = ./..;
+-      fileset = lib.fileset.union ./../CMakeLists.txt ./../plugin;
+-    };
+-
+-    nativeBuildInputs = [cmake ninja pkg-config];
+-    buildInputs = [qt6.qtbase qt6.qtdeclarative qt6.qtshadertools libqalculate pipewire aubio libcava fftw lm_sensors];
+-
+-    dontWrapQtApps = true;
+-    cmakeFlags =
+-      [
+-        (lib.cmakeFeature "ENABLE_MODULES" "plugin")
+-        (lib.cmakeFeature "INSTALL_QMLDIR" qt6.qtbase.qtQmlPrefix)
+-      ]
+-      ++ cmakeVersionFlags;
+-  };
+-
+-  m3shapesModule = stdenv.mkDerivation {
+-    inherit cmakeBuildType;
+-    name = "caelestia-m3shapes${lib.optionalString debug "-debug"}";
+-    src = lib.fileset.toSource {
+-      root = ./..;
+-      fileset = ./../CMakeLists.txt;
+-    };
+-
+-    nativeBuildInputs = [cmake ninja];
+-    buildInputs = [qt6.qtbase qt6.qtdeclarative];
+-
+-    dontWrapQtApps = true;
+-    cmakeFlags =
+-      [
+-        (lib.cmakeFeature "ENABLE_MODULES" "m3shapes")
+-        (lib.cmakeFeature "INSTALL_QMLDIR" qt6.qtbase.qtQmlPrefix)
+-        m3shapesFlag
+-      ]
+-      ++ cmakeVersionFlags;
+-  };
+-in
+-  stdenv.mkDerivation {
+-    inherit version cmakeBuildType;
+-    pname = "caelestia-shell${lib.optionalString debug "-debug"}";
+-    src = ./..;
+-
+-    nativeBuildInputs = [cmake ninja makeWrapper qt6.wrapQtAppsHook];
+-    buildInputs = [quickshell extras plugin m3shapesModule xkeyboard-config qt6.qtbase];
+-    propagatedBuildInputs = runtimeDeps;
+-
+-    cmakeFlags =
+-      [
+-        (lib.cmakeFeature "ENABLE_MODULES" "shell")
+-        (lib.cmakeFeature "INSTALL_QSCONFDIR" "${placeholder "out"}/share/caelestia-shell")
+-      ]
+-      ++ cmakeVersionFlags;
+-
+-    dontStrip = debug;
+-
+-    prePatch = ''
+-      substituteInPlace assets/pam.d/fprint \
+-        --replace-fail pam_fprintd.so /run/current-system/sw/lib/security/pam_fprintd.so
+-    '';
+-
+-    postInstall = ''
+-      makeWrapper ${quickshell}/bin/qs $out/bin/caelestia-shell \
+-      	--prefix PATH : "${lib.makeBinPath runtimeDeps}" \
+-      	--set FONTCONFIG_FILE "${fontconfig}" \
+-      	--set CAELESTIA_LIB_DIR ${extras}/lib \
+-        --set CAELESTIA_XKB_RULES_PATH ${xkeyboard-config}/share/xkeyboard-config-2/rules/base.lst \
+-      	--add-flags "-p $out/share/caelestia-shell"
+-
+-      mkdir -p $out/lib
+-      ln -s ${extras}/lib/* $out/lib/
+-
+-      # Ensure wrap_term_launch.sh is executable
+-      chmod 755 $out/share/caelestia-shell/assets/wrap_term_launch.sh
+-    '';
+-
+-    passthru = {
+-      inherit plugin extras m3shapesModule;
+-    };
+-
+-    meta = {
+-      description = "A very segsy desktop shell";
+-      homepage = "https://github.com/caelestia-dots/shell";
+-      license = lib.licenses.gpl3Only;
+-      mainProgram = "caelestia-shell";
+-    };
+-  }
+diff --git a/nix/hm-module.nix b/nix/hm-module.nix
+deleted file mode 100644
+index 2976cf61..00000000
+--- a/nix/hm-module.nix
++++ /dev/null
+@@ -1,136 +0,0 @@
+-self: {
+-  config,
+-  pkgs,
+-  lib,
+-  ...
+-}: let
+-  inherit (pkgs.stdenv.hostPlatform) system;
+-
+-  cli-default = self.inputs.caelestia-cli.packages.${system}.default;
+-  shell-default = self.packages.${system}.with-cli;
+-
+-  cfg = config.programs.caelestia;
+-in {
+-  imports = [
+-    (lib.mkRenamedOptionModule ["programs" "caelestia" "environment"] ["programs" "caelestia" "systemd" "environment"])
+-  ];
+-  options = with lib; {
+-    programs.caelestia = {
+-      enable = mkEnableOption "Enable Caelestia shell";
+-      package = mkOption {
+-        type = types.package;
+-        default = shell-default;
+-        description = "The package of Caelestia shell";
+-      };
+-      systemd = {
+-        enable = mkOption {
+-          type = types.bool;
+-          default = true;
+-          description = "Enable the systemd service for Caelestia shell";
+-        };
+-        target = mkOption {
+-          type = types.str;
+-          description = ''
+-            The systemd target that will automatically start the Caelestia shell.
+-          '';
+-          default = config.wayland.systemd.target;
+-        };
+-        environment = mkOption {
+-          type = types.listOf types.str;
+-          description = "Extra Environment variables to pass to the Caelestia shell systemd service.";
+-          default = [];
+-          example = [
+-            "QT_QPA_PLATFORMTHEME=gtk3"
+-          ];
+-        };
+-      };
+-      settings = mkOption {
+-        type = types.attrsOf types.anything;
+-        default = {};
+-        description = "Caelestia shell settings";
+-      };
+-      extraConfig = mkOption {
+-        type = types.str;
+-        default = "";
+-        description = "Caelestia shell extra configs written to shell.json";
+-      };
+-      cli = {
+-        enable = mkEnableOption "Enable Caelestia CLI";
+-        package = mkOption {
+-          type = types.package;
+-          default = cli-default;
+-          description = "The package of Caelestia CLI"; # Doesn't override the shell's CLI, only change from home.packages
+-        };
+-        settings = mkOption {
+-          type = types.attrsOf types.anything;
+-          default = {};
+-          description = "Caelestia CLI settings";
+-        };
+-        extraConfig = mkOption {
+-          type = types.str;
+-          default = "";
+-          description = "Caelestia CLI extra configs written to cli.json";
+-        };
+-      };
+-    };
+-  };
+-
+-  config = let
+-    cli = cfg.cli.package;
+-    shell = cfg.package;
+-  in
+-    lib.mkIf cfg.enable {
+-      systemd.user.services.caelestia = lib.mkIf cfg.systemd.enable {
+-        Unit = {
+-          Description = "Caelestia Shell Service";
+-          After = [cfg.systemd.target];
+-          PartOf = [cfg.systemd.target];
+-          X-Restart-Triggers = lib.mkIf (cfg.settings != {}) [
+-            "${config.xdg.configFile."caelestia/shell.json".source}"
+-          ];
+-        };
+-
+-        Service = {
+-          Type = "exec";
+-          ExecStart = "${shell}/bin/caelestia-shell";
+-          Restart = "on-failure";
+-          RestartSec = "5s";
+-          TimeoutStopSec = "5s";
+-          Environment =
+-            [
+-              "QT_QPA_PLATFORM=wayland"
+-            ]
+-            ++ cfg.systemd.environment;
+-
+-          Slice = "session.slice";
+-        };
+-
+-        Install = {
+-          WantedBy = [cfg.systemd.target];
+-        };
+-      };
+-
+-      xdg.configFile = let
+-        mkConfig = c:
+-          lib.pipe (
+-            if c.extraConfig != ""
+-            then c.extraConfig
+-            else "{}"
+-          ) [
+-            builtins.fromJSON
+-            (lib.recursiveUpdate c.settings)
+-            builtins.toJSON
+-          ];
+-        shouldGenerate = c: c.extraConfig != "" || c.settings != {};
+-      in {
+-        "caelestia/shell.json" = lib.mkIf (shouldGenerate cfg) {
+-          text = mkConfig cfg;
+-        };
+-        "caelestia/cli.json" = lib.mkIf (shouldGenerate cfg.cli) {
+-          text = mkConfig cfg.cli;
+-        };
+-      };
+-
+-      home.packages = [shell] ++ lib.optional cfg.cli.enable cli;
+-    };
+-}
+diff --git a/scripts/qml-lint-conventions.py b/scripts/qml-lint-conventions.py
+deleted file mode 100755
+index cef46657..00000000
+--- a/scripts/qml-lint-conventions.py
++++ /dev/null
+@@ -1,648 +0,0 @@
+-#!/usr/bin/env python3
+-"""Checks QML files for Qt coding convention violations.
+-
+-https://doc.qt.io/qt-6/qml-codingconventions.html
+-
+-Required ordering within each QML object (with blank line between sections):
+-  1. id
+-  2. property declarations
+-  3. signal declarations
+-  4. JavaScript functions
+-  5. object properties (bindings)
+-  6. child objects
+-  7. component definitions
+-"""
+-
+-import re
+-import sys
+-from enum import IntEnum
+-from pathlib import Path
+-
+-RED = "\033[0;31m"
+-YELLOW = "\033[0;33m"
+-CYAN = "\033[0;36m"
+-GREEN = "\033[0;32m"
+-MAGENTA = "\033[0;35m"
+-BOLD = "\033[1m"
+-RESET = "\033[0m"
+-
+-REPO_ROOT = Path(__file__).resolve().parent.parent
+-
+-
+-class Section(IntEnum):
+-    ID = 0
+-    PROPERTY = 1
+-    SIGNAL = 2
+-    FUNCTION = 3
+-    BINDING = 4
+-    CHILD = 5
+-    COMPONENT_DEF = 6
+-
+-
+-SECTION_NAMES = {
+-    Section.ID: "id",
+-    Section.PROPERTY: "property declarations",
+-    Section.SIGNAL: "signal declarations",
+-    Section.FUNCTION: "functions",
+-    Section.BINDING: "bindings",
+-    Section.CHILD: "child objects",
+-    Section.COMPONENT_DEF: "component definitions",
+-}
+-
+-RULE_COLOURS = {
+-    "file-structure": RED,
+-    "import-order": GREEN,
+-    "section-order": YELLOW,
+-    "missing-section-separator": CYAN,
+-    "blank-after-open-brace": MAGENTA,
+-    "blank-before-close-brace": MAGENTA,
+-}
+-
+-IMPORT_RE = re.compile(r"^import\s+(\S+)")
+-
+-
+-def import_group(module: str) -> tuple[int, int] | None:
+-    """Return (group, depth) for a module import, or None to skip."""
+-    if module.startswith('"'):
+-        return None
+-    depth = module.count(".") + 1
+-    if module == "QtQuick" or module.startswith("QtQuick."):
+-        return (1, depth)
+-    if module.startswith("Qt"):
+-        return (2, depth)
+-    if module == "Quickshell" or module.startswith("Quickshell."):
+-        return (3, depth)
+-    if module == "M3Shapes":
+-        return (4, depth)
+-    if module == "Caelestia" or module.startswith("Caelestia."):
+-        return (5, depth)
+-    if module == "qs.components" or module.startswith("qs.components."):
+-        return (6, depth)
+-    if module == "qs.services":
+-        return (7, depth)
+-    if module == "qs.config":
+-        return (8, depth)
+-    if module == "qs.utils":
+-        return (9, depth)
+-    if module == "qs.modules" or module.startswith("qs.modules."):
+-        return (10, depth)
+-    return None
+-
+-
+-def parse_imports(lines: list[str]) -> tuple[int | None, int | None, list[str], list[tuple[str, int, int, str]]]:
+-    """Parse the import block, returning (first_idx, last_idx, relative_imports, module_imports).
+-
+-    module_imports entries are (line_text, group, depth, module_name).
+-    """
+-    first_import = None
+-    last_import = None
+-    relative_imports: list[str] = []
+-    module_imports: list[tuple[str, int, int, str]] = []
+-
+-    for i, line in enumerate(lines):
+-        stripped = line.strip()
+-        if not stripped or stripped.startswith("//") or stripped.startswith("pragma "):
+-            continue
+-        m = IMPORT_RE.match(stripped)
+-        if m:
+-            if first_import is None:
+-                first_import = i
+-            last_import = i
+-            module = m.group(1)
+-            result = import_group(module)
+-            if result is None:
+-                relative_imports.append(line)
+-            else:
+-                group, depth = result
+-                module_imports.append((line, group, depth, module))
+-            continue
+-        break
+-
+-    return first_import, last_import, relative_imports, module_imports
+-
+-
+-def check_imports(filepath: Path, lines: list[str], rel: str) -> list[Violation]:
+-    """Check that module imports are in the required order."""
+-    violations = []
+-    _, _, _, module_imports = parse_imports(lines)
+-    imports = [(i, *entry) for i, entry in enumerate(module_imports)]
+-
+-    for j in range(1, len(imports)):
+-        _, prev_line, prev_group, prev_depth, prev_mod = imports[j - 1]
+-        _, curr_line, curr_group, curr_depth, curr_mod = imports[j]
+-
+-        # Find actual line number for the current import
+-        lineno = 0
+-        count = 0
+-        for li, line in enumerate(lines):
+-            stripped = line.strip()
+-            m = IMPORT_RE.match(stripped)
+-            if m and import_group(m.group(1)) is not None:
+-                if count == j:
+-                    lineno = li + 1
+-                    break
+-                count += 1
+-
+-        if curr_group < prev_group:
+-            violations.append(
+-                Violation(
+-                    rel,
+-                    lineno,
+-                    "import-order",
+-                    f"'{curr_mod}' should appear before '{prev_mod}'",
+-                )
+-            )
+-        elif curr_group == prev_group and curr_depth < prev_depth:
+-            violations.append(
+-                Violation(
+-                    rel,
+-                    lineno,
+-                    "import-order",
+-                    f"'{curr_mod}' should appear before '{prev_mod}' (less nested first)",
+-                )
+-            )
+-
+-    return violations
+-
+-
+-def fix_imports(lines: list[str]) -> list[str]:
+-    """Sort imports and return the modified lines."""
+-    first, last, relative, module = parse_imports(lines)
+-    if first is None:
+-        return lines
+-
+-    module.sort(key=lambda x: (x[1], x[2], x[3]))
+-    sorted_imports = relative + [entry[0] for entry in module]
+-    return lines[:first] + sorted_imports + lines[last + 1 :]
+-
+-
+-def check_file_structure(lines: list[str], rel: str) -> list[Violation]:
+-    """Check file-level structure: pragmas, then imports, then content."""
+-    violations = []
+-    pragma_indices: list[int] = []
+-    import_indices: list[int] = []
+-    content_start: int | None = None
+-
+-    for i, line in enumerate(lines):
+-        stripped = line.strip()
+-        if not stripped:
+-            continue
+-        if stripped.startswith("pragma "):
+-            pragma_indices.append(i)
+-        elif IMPORT_RE.match(stripped):
+-            import_indices.append(i)
+-        else:
+-            content_start = i
+-            break
+-
+-    # Pragmas must come before imports
+-    if pragma_indices and import_indices:
+-        if pragma_indices[-1] > import_indices[0]:
+-            violations.append(
+-                Violation(rel, pragma_indices[-1] + 1, "file-structure", "pragmas should appear before imports")
+-            )
+-
+-    # Separator between pragmas and imports
+-    if pragma_indices and import_indices:
+-        gap = import_indices[0] - pragma_indices[-1] - 1
+-        if gap == 0:
+-            violations.append(
+-                Violation(
+-                    rel, import_indices[0] + 1, "file-structure", "blank line expected between pragmas and imports"
+-                )
+-            )
+-        elif gap > 1:
+-            violations.append(
+-                Violation(
+-                    rel,
+-                    pragma_indices[-1] + 3,
+-                    "file-structure",
+-                    "only one blank line expected between pragmas and imports",
+-                )
+-            )
+-
+-    # No blank lines within imports
+-    for j in range(1, len(import_indices)):
+-        if import_indices[j] != import_indices[j - 1] + 1:
+-            for gap_line in range(import_indices[j - 1] + 1, import_indices[j]):
+-                if not lines[gap_line].strip():
+-                    violations.append(
+-                        Violation(rel, gap_line + 1, "file-structure", "no blank lines expected within imports")
+-                    )
+-
+-    # Separator between imports/pragmas and content
+-    last_header = import_indices[-1] if import_indices else (pragma_indices[-1] if pragma_indices else None)
+-    if last_header is not None and content_start is not None:
+-        gap = content_start - last_header - 1
+-        label = "imports" if import_indices else "pragmas"
+-        if gap == 0:
+-            violations.append(
+-                Violation(
+-                    rel, content_start + 1, "file-structure", f"blank line expected between {label} and content"
+-                )
+-            )
+-        elif gap > 1:
+-            violations.append(
+-                Violation(
+-                    rel,
+-                    last_header + 3,
+-                    "file-structure",
+-                    f"only one blank line expected between {label} and content",
+-                )
+-            )
+-
+-    return violations
+-
+-
+-def fix_file_structure(lines: list[str]) -> list[str]:
+-    """Ensure correct file structure: pragmas, blank, imports (no gaps), blank, content."""
+-    pragmas: list[str] = []
+-    imports: list[str] = []
+-    content_start: int | None = None
+-
+-    for i, line in enumerate(lines):
+-        stripped = line.strip()
+-        if not stripped:
+-            continue
+-        if stripped.startswith("pragma "):
+-            pragmas.append(line)
+-        elif IMPORT_RE.match(stripped):
+-            imports.append(line)
+-        else:
+-            content_start = i
+-            break
+-
+-    if content_start is None:
+-        content_start = len(lines)
+-
+-    # Skip any blank lines at the start of content
+-    while content_start < len(lines) and not lines[content_start].strip():
+-        content_start += 1
+-
+-    result: list[str] = []
+-    has_content = content_start < len(lines)
+-    if pragmas:
+-        result.extend(pragmas)
+-        if imports or has_content:
+-            result.append("")
+-    if imports:
+-        result.extend(imports)
+-        if has_content:
+-            result.append("")
+-    result.extend(lines[content_start:])
+-    return result
+-
+-
+-def fix_section_separators(lines: list[str]) -> list[str]:
+-    """Insert blank lines between different sections and return modified lines."""
+-    insertions: list[int] = []
+-    scopes: dict[str, ScopeTracker] = {}
+-    in_block_comment = False
+-    func_skip_depth = 0
+-    prev_blank: dict[str, bool] = {}
+-
+-    for i, line in enumerate(lines):
+-        stripped = line.strip()
+-        indent = get_indent(line)
+-
+-        if in_block_comment:
+-            if BLOCK_COMMENT_END.search(stripped):
+-                in_block_comment = False
+-            continue
+-        if BLOCK_COMMENT_START.search(stripped) and not BLOCK_COMMENT_END.search(stripped):
+-            in_block_comment = True
+-            continue
+-
+-        if not stripped:
+-            for key in prev_blank:
+-                prev_blank[key] = True
+-            continue
+-
+-        if COMMENT_LINE_RE.match(stripped):
+-            continue
+-
+-        if func_skip_depth > 0:
+-            func_skip_depth += stripped.count("{") - stripped.count("}")
+-            if func_skip_depth <= 0:
+-                func_skip_depth = 0
+-            continue
+-
+-        if stripped == "}":
+-            to_remove = [k for k in scopes if len(k) > len(indent)]
+-            for k in to_remove:
+-                del scopes[k]
+-                prev_blank.pop(k, None)
+-            continue
+-
+-        section = classify_line(stripped)
+-        if section is None:
+-            continue
+-
+-        if indent not in scopes:
+-            scopes[indent] = ScopeTracker()
+-            prev_blank[indent] = True
+-
+-        tracker = scopes[indent]
+-        had_blank = prev_blank.get(indent, True)
+-
+-        if tracker.last_section is not None and section != tracker.last_section and not had_blank:
+-            insertions.append(i)
+-
+-        if tracker.last_section is None or section >= tracker.last_section:
+-            tracker.last_section = section
+-            tracker.last_section_line = i + 1
+-
+-        prev_blank[indent] = False
+-
+-        brace_count = stripped.count("{") - stripped.count("}")
+-        if brace_count > 0 and section == Section.FUNCTION:
+-            func_skip_depth = brace_count
+-        if brace_count > 0 and section == Section.BINDING:
+-            colon_idx = stripped.index(":")
+-            after_colon = stripped[colon_idx + 1 :].strip()
+-            if not re.match(r"^[A-Z]", after_colon):
+-                func_skip_depth = brace_count
+-        if brace_count > 0 and section in (Section.CHILD, Section.COMPONENT_DEF):
+-            to_remove = [k for k in scopes if len(k) > len(indent)]
+-            for k in to_remove:
+-                del scopes[k]
+-                prev_blank.pop(k, None)
+-
+-    result = list(lines)
+-    for idx in reversed(insertions):
+-        result.insert(idx, "")
+-    return result
+-
+-
+-def fix_file(filepath: Path) -> bool:
+-    """Fix auto-fixable violations. Returns True if file was modified."""
+-    try:
+-        text = filepath.read_text()
+-    except (OSError, UnicodeDecodeError):
+-        return False
+-
+-    lines = text.splitlines()
+-    lines = fix_imports(lines)
+-    lines = fix_file_structure(lines)
+-    lines = fix_section_separators(lines)
+-    new_text = "\n".join(lines)
+-    if text.endswith("\n"):
+-        new_text += "\n"
+-    if new_text != text:
+-        filepath.write_text(new_text)
+-        return True
+-    return False
+-
+-
+-# Regexes
+-PROPERTY_DECL_RE = re.compile(r"^(?:required\s+|readonly\s+|default\s+)*property\s")
+-SIGNAL_RE = re.compile(r"^signal\s")
+-FUNCTION_RE = re.compile(r"^function\s")
+-ID_RE = re.compile(r"^id\s*:\s*[a-zA-Z_]\w*\s*$")
+-ENUM_RE = re.compile(r"^enum\s")
+-COMPONENT_DEF_RE = re.compile(r"^component\s+\w+\s*:")
+-COMMENT_LINE_RE = re.compile(r"^//")
+-BLOCK_COMMENT_START = re.compile(r"/\*")
+-BLOCK_COMMENT_END = re.compile(r"\*/")
+-BINDING_RE = re.compile(r"^[a-z][a-zA-Z0-9_.]*\s*:")
+-SIGNAL_HANDLER_RE = re.compile(r"^on[A-Z][a-zA-Z]*\s*:")
+-# Child object: starts with uppercase or is a known child-like pattern
+-CHILD_OBJECT_RE = re.compile(r"^[A-Z][a-zA-Z0-9_.]*\s*\{")
+-# Inline component: Component { ... }
+-INLINE_COMPONENT_RE = re.compile(r"^Component\s*\{")
+-# Behavior on <property> {, NumberAnimation on <property> {, etc.
+-BEHAVIOR_ON_RE = re.compile(r"^[A-Z]\w+\s+on\s+\w[\w.]*\s*\{")
+-# Attached signal handler: Component.onCompleted:, Drag.onDragStarted:, etc.
+-ATTACHED_HANDLER_RE = re.compile(r"^[A-Z]\w+\.on[A-Z]\w*\s*:")
+-
+-
+-class Violation:
+-    def __init__(self, file: str, line: int, rule: str, msg: str):
+-        self.file = file
+-        self.line = line
+-        self.rule = rule
+-        self.msg = msg
+-
+-    def __str__(self):
+-        c = RULE_COLOURS.get(self.rule, "")
+-        return f"{c}[{self.rule}]{RESET} {self.file}:{self.line}: {self.msg}"
+-
+-
+-class ScopeTracker:
+-    """Tracks the current section and last-seen state for one indent level."""
+-
+-    def __init__(self):
+-        self.last_section: Section | None = None
+-        self.last_section_line: int = 0
+-        self.had_blank_before_current: bool = True  # no separator needed at start
+-
+-
+-def get_indent(line: str) -> str:
+-    return line[: len(line) - len(line.lstrip())]
+-
+-
+-def classify_line(stripped: str) -> Section | None:
+-    """Classify a stripped QML line into a section category."""
+-    if ID_RE.match(stripped):
+-        return Section.ID
+-    if PROPERTY_DECL_RE.match(stripped):
+-        return Section.PROPERTY
+-    if SIGNAL_RE.match(stripped):
+-        return Section.SIGNAL
+-    if FUNCTION_RE.match(stripped):
+-        return Section.FUNCTION
+-    if ENUM_RE.match(stripped):
+-        return Section.PROPERTY  # enums go with declarations
+-    if COMPONENT_DEF_RE.match(stripped):
+-        return Section.COMPONENT_DEF
+-    if BEHAVIOR_ON_RE.match(stripped):
+-        return Section.CHILD
+-    if CHILD_OBJECT_RE.match(stripped):
+-        return Section.CHILD
+-    if INLINE_COMPONENT_RE.match(stripped):
+-        return Section.CHILD
+-    if BINDING_RE.match(stripped) or SIGNAL_HANDLER_RE.match(stripped):
+-        return Section.BINDING
+-    if ATTACHED_HANDLER_RE.match(stripped):
+-        return Section.BINDING
+-    return None
+-
+-
+-def check_file(filepath: Path) -> list[Violation]:
+-    violations = []
+-    rel = str(filepath.relative_to(REPO_ROOT))
+-
+-    try:
+-        lines = filepath.read_text().splitlines()
+-    except (OSError, UnicodeDecodeError):
+-        return violations
+-
+-    violations.extend(check_file_structure(lines, rel))
+-    violations.extend(check_imports(filepath, lines, rel))
+-
+-    scopes: dict[str, ScopeTracker] = {}  # indent -> tracker
+-    in_block_comment = False
+-    func_skip_depth = 0  # brace depth for skipping function bodies only
+-    prev_blank: dict[str, bool] = {}  # indent -> was previous relevant line a blank?
+-
+-    for i, line in enumerate(lines):
+-        lineno = i + 1
+-        stripped = line.strip()
+-        indent = get_indent(line)
+-
+-        # Handle block comments
+-        if in_block_comment:
+-            if BLOCK_COMMENT_END.search(stripped):
+-                in_block_comment = False
+-            continue
+-        if BLOCK_COMMENT_START.search(stripped) and not BLOCK_COMMENT_END.search(stripped):
+-            in_block_comment = True
+-            continue
+-
+-        # Track blank lines per indent
+-        if not stripped:
+-            # Check: blank line right after opening brace of a QML object
+-            if i > 0 and func_skip_depth == 0 and not in_block_comment and lines[i - 1].strip().endswith("{"):
+-                violations.append(
+-                    Violation(
+-                        rel,
+-                        lineno,
+-                        "blank-after-open-brace",
+-                        "no blank line expected after opening brace",
+-                    )
+-                )
+-            for key in prev_blank:
+-                prev_blank[key] = True
+-            continue
+-
+-        # Skip line comments
+-        if COMMENT_LINE_RE.match(stripped):
+-            continue
+-
+-        # Skip inside function bodies (JS code, not QML structure)
+-        if func_skip_depth > 0:
+-            func_skip_depth += stripped.count("{") - stripped.count("}")
+-            if func_skip_depth <= 0:
+-                func_skip_depth = 0
+-            continue
+-
+-        # Closing brace: pop all scopes deeper than this indent
+-        # (the scope at this indent belongs to the parent object and must persist)
+-        if stripped == "}":
+-            # Check: blank line right before closing brace
+-            if i > 0 and not lines[i - 1].strip():
+-                violations.append(
+-                    Violation(
+-                        rel,
+-                        lineno,
+-                        "blank-before-close-brace",
+-                        "no blank line expected before closing brace",
+-                    )
+-                )
+-            to_remove = [k for k in scopes if len(k) > len(indent)]
+-            for k in to_remove:
+-                del scopes[k]
+-                prev_blank.pop(k, None)
+-            continue
+-
+-        section = classify_line(stripped)
+-        if section is None:
+-            continue
+-
+-        # Get or create scope tracker for this indent
+-        if indent not in scopes:
+-            scopes[indent] = ScopeTracker()
+-            prev_blank[indent] = True  # treat start of object as having separator
+-
+-        tracker = scopes[indent]
+-        had_blank = prev_blank.get(indent, True)
+-
+-        # --- Check 1: Section ordering ---
+-        if tracker.last_section is not None and section < tracker.last_section:
+-            violations.append(
+-                Violation(
+-                    rel,
+-                    lineno,
+-                    "section-order",
+-                    f"{SECTION_NAMES[section]} should appear before "
+-                    f"{SECTION_NAMES[tracker.last_section]} "
+-                    f"(seen at line {tracker.last_section_line})",
+-                )
+-            )
+-
+-        # --- Check 2: Missing blank line between different sections ---
+-        if tracker.last_section is not None and section != tracker.last_section and not had_blank:
+-            violations.append(
+-                Violation(
+-                    rel,
+-                    lineno,
+-                    "missing-section-separator",
+-                    f"blank line expected between {SECTION_NAMES[tracker.last_section]} and {SECTION_NAMES[section]}",
+-                )
+-            )
+-
+-        # Update tracker
+-        if tracker.last_section is None or section >= tracker.last_section:
+-            tracker.last_section = section
+-            tracker.last_section_line = lineno
+-
+-        prev_blank[indent] = False
+-
+-        # Skip function bodies (they contain JS, not QML structure)
+-        brace_count = stripped.count("{") - stripped.count("}")
+-        if brace_count > 0 and section == Section.FUNCTION:
+-            func_skip_depth = brace_count
+-
+-        # Skip JS blocks in bindings (signal handlers, attached handlers,
+-        # and expression blocks like `color: { ... }`)
+-        if brace_count > 0 and section == Section.BINDING:
+-            colon_idx = stripped.index(":")
+-            after_colon = stripped[colon_idx + 1 :].strip()
+-            # If content after : doesn't start with an uppercase type name,
+-            # it's a JS block (not an inline QML object like `contentItem: Rect {`)
+-            if not re.match(r"^[A-Z]", after_colon):
+-                func_skip_depth = brace_count
+-
+-        # Child object/component opening resets deeper scopes
+-        if brace_count > 0 and section in (Section.CHILD, Section.COMPONENT_DEF):
+-            to_remove = [k for k in scopes if len(k) > len(indent)]
+-            for k in to_remove:
+-                del scopes[k]
+-                prev_blank.pop(k, None)
+-
+-    return violations
+-
+-
+-def main():
+-    fix_mode = "--fix" in sys.argv
+-    qml_files = sorted(p for p in REPO_ROOT.rglob("*.qml") if "build" not in p.parts)
+-
+-    if fix_mode:
+-        fixed = sum(1 for f in qml_files if fix_file(f))
+-        print(f"{BOLD}Fixed {fixed} file(s).{RESET}\n")
+-
+-    print(f"{BOLD}Checking {len(qml_files)} QML files for convention violations...{RESET}\n")
+-
+-    all_violations: list[Violation] = []
+-    for f in qml_files:
+-        all_violations.extend(check_file(f))
+-
+-    for v in all_violations:
+-        print(v)
+-
+-    print()
+-    if all_violations:
+-        by_rule: dict[str, int] = {}
+-        for v in all_violations:
+-            by_rule[v.rule] = by_rule.get(v.rule, 0) + 1
+-        for rule, count in sorted(by_rule.items()):
+-            print(f"  {RULE_COLOURS.get(rule, '')}{rule}{RESET}: {count}")
+-        print(f"\n{BOLD}Found {len(all_violations)} violation(s).{RESET}")
+-        return 1
+-    else:
+-        print(f"{BOLD}No violations found.{RESET}")
+-        return 0
+-
+-
+-if __name__ == "__main__":
+-    sys.exit(main())
+diff --git a/services/Hypr.qml b/services/Hypr.qml
+deleted file mode 100644
+index 181967e7..00000000
+--- a/services/Hypr.qml
++++ /dev/null
+@@ -1,222 +0,0 @@
+-pragma Singleton
+-
+-import QtQuick
+-import Quickshell
+-import Quickshell.Hyprland
+-import Quickshell.Io
+-import Caelestia
+-import Caelestia.Config
+-import Caelestia.Internal
+-import qs.components.misc
+-
+-Singleton {
+-    id: root
+-
+-    readonly property var toplevels: Hyprland.toplevels
+-    readonly property var workspaces: Hyprland.workspaces
+-    readonly property var monitors: Hyprland.monitors
+-
+-    readonly property HyprlandToplevel activeToplevel: {
+-        const t = Hyprland.activeToplevel;
+-        return t?.workspace?.name.startsWith("special:") || Hyprland.focusedWorkspace?.toplevels.values.length > 0 ? t : null;
+-    }
+-    readonly property HyprlandWorkspace focusedWorkspace: Hyprland.focusedWorkspace
+-    readonly property HyprlandMonitor focusedMonitor: Hyprland.focusedMonitor
+-    readonly property int activeWsId: focusedWorkspace?.id ?? 1
+-
+-    readonly property HyprKeyboard keyboard: extras.devices.keyboards.find(kb => kb.main) ?? null
+-    readonly property bool capsLock: keyboard?.capsLock ?? false
+-    readonly property bool numLock: keyboard?.numLock ?? false
+-    readonly property string defaultKbLayout: keyboard?.layout.split(",")[0] ?? "??"
+-    readonly property string kbLayoutFull: keyboard?.activeKeymap ?? "Unknown"
+-    readonly property string kbLayout: kbMap.get(kbLayoutFull) ?? "??"
+-    readonly property var kbMap: new Map()
+-
+-    readonly property alias extras: extras
+-    readonly property alias options: extras.options
+-    readonly property alias devices: extras.devices
+-
+-    property bool hadKeyboard
+-    property string lastSpecialWorkspace: ""
+-
+-    signal configReloaded
+-
+-    function dispatch(request: string): void {
+-        Hyprland.dispatch(request);
+-    }
+-
+-    function cycleSpecialWorkspace(direction: string): void {
+-        const openSpecials = workspaces.values.filter(w => w.name.startsWith("special:") && w.lastIpcObject.windows > 0);
+-
+-        if (openSpecials.length === 0)
+-            return;
+-
+-        const activeSpecial = focusedMonitor.lastIpcObject.specialWorkspace.name ?? "";
+-
+-        if (!activeSpecial) {
+-            if (lastSpecialWorkspace) {
+-                const workspace = workspaces.values.find(w => w.name === lastSpecialWorkspace);
+-                if (workspace && workspace.lastIpcObject.windows > 0) {
+-                    dispatch(`workspace ${lastSpecialWorkspace}`);
+-                    return;
+-                }
+-            }
+-            dispatch(`workspace ${openSpecials[0].name}`);
+-            return;
+-        }
+-
+-        const currentIndex = openSpecials.findIndex(w => w.name === activeSpecial);
+-        let nextIndex = 0;
+-
+-        if (currentIndex !== -1) {
+-            if (direction === "next")
+-                nextIndex = (currentIndex + 1) % openSpecials.length;
+-            else
+-                nextIndex = (currentIndex - 1 + openSpecials.length) % openSpecials.length;
+-        }
+-
+-        dispatch(`workspace ${openSpecials[nextIndex].name}`);
+-    }
+-
+-    function monitorNames(): list<string> {
+-        return monitors.values.map(e => e.name);
+-    }
+-
+-    function monitorFor(screen: ShellScreen): HyprlandMonitor {
+-        return Hyprland.monitorFor(screen);
+-    }
+-
+-    function reloadDynamicConfs(): void {
+-        extras.batchMessage(["keyword bindlni ,Caps_Lock,global,caelestia:refreshDevices", "keyword bindlni ,Num_Lock,global,caelestia:refreshDevices"]);
+-    }
+-
+-    Component.onCompleted: reloadDynamicConfs()
+-
+-    onCapsLockChanged: {
+-        if (!GlobalConfig.utilities.toasts.capsLockChanged)
+-            return;
+-
+-        if (capsLock)
+-            Toaster.toast(qsTr("Caps lock enabled"), qsTr("Caps lock is currently enabled"), "keyboard_capslock_badge");
+-        else
+-            Toaster.toast(qsTr("Caps lock disabled"), qsTr("Caps lock is currently disabled"), "keyboard_capslock");
+-    }
+-
+-    onNumLockChanged: {
+-        if (!GlobalConfig.utilities.toasts.numLockChanged)
+-            return;
+-
+-        if (numLock)
+-            Toaster.toast(qsTr("Num lock enabled"), qsTr("Num lock is currently enabled"), "looks_one");
+-        else
+-            Toaster.toast(qsTr("Num lock disabled"), qsTr("Num lock is currently disabled"), "timer_1");
+-    }
+-
+-    onKbLayoutFullChanged: {
+-        if (hadKeyboard && GlobalConfig.utilities.toasts.kbLayoutChanged)
+-            Toaster.toast(qsTr("Keyboard layout changed"), qsTr("Layout changed to: %1").arg(kbLayoutFull), "keyboard");
+-
+-        hadKeyboard = !!keyboard;
+-    }
+-
+-    Connections {
+-        function onRawEvent(event: HyprlandEvent): void {
+-            const n = event.name;
+-            if (n.endsWith("v2"))
+-                return;
+-
+-            if (n === "configreloaded") {
+-                root.configReloaded();
+-                root.reloadDynamicConfs();
+-            } else if (["workspace", "moveworkspace", "activespecial", "focusedmon"].includes(n)) {
+-                Hyprland.refreshWorkspaces();
+-                Hyprland.refreshMonitors();
+-            } else if (["openwindow", "closewindow", "movewindow"].includes(n)) {
+-                Hyprland.refreshToplevels();
+-                Hyprland.refreshWorkspaces();
+-            } else if (n.includes("mon")) {
+-                Hyprland.refreshMonitors();
+-            } else if (n.includes("workspace")) {
+-                Hyprland.refreshWorkspaces();
+-            } else if (n.includes("window") || n.includes("group") || ["pin", "fullscreen", "changefloatingmode", "minimize"].includes(n)) {
+-                Hyprland.refreshToplevels();
+-            }
+-        }
+-
+-        target: Hyprland
+-    }
+-
+-    Connections {
+-        function onLastIpcObjectChanged(): void {
+-            const specialName = root.focusedMonitor.lastIpcObject.specialWorkspace.name;
+-
+-            if (specialName && specialName.startsWith("special:")) {
+-                root.lastSpecialWorkspace = specialName;
+-            }
+-        }
+-
+-        target: root.focusedMonitor
+-    }
+-
+-    FileView {
+-        id: kbLayoutFile
+-
+-        path: Quickshell.env("CAELESTIA_XKB_RULES_PATH") || "/usr/share/X11/xkb/rules/base.lst"
+-        onLoaded: {
+-            const layoutMatch = text().match(/! layout\n([\s\S]*?)\n\n/);
+-            if (layoutMatch) {
+-                const lines = layoutMatch[1].split("\n");
+-                for (const line of lines) {
+-                    if (!line.trim() || line.trim().startsWith("!"))
+-                        continue;
+-
+-                    const match = line.match(/^\s*([a-z]{2,})\s+([a-zA-Z() ]+)$/);
+-                    if (match)
+-                        root.kbMap.set(match[2], match[1]);
+-                }
+-            }
+-
+-            const variantMatch = text().match(/! variant\n([\s\S]*?)\n\n/);
+-            if (variantMatch) {
+-                const lines = variantMatch[1].split("\n");
+-                for (const line of lines) {
+-                    if (!line.trim() || line.trim().startsWith("!"))
+-                        continue;
+-
+-                    const match = line.match(/^\s*([a-zA-Z0-9_-]+)\s+([a-z]{2,}): (.+)$/);
+-                    if (match)
+-                        root.kbMap.set(match[3], match[2]);
+-                }
+-            }
+-        }
+-    }
+-
+-    IpcHandler {
+-        function refreshDevices(): void {
+-            extras.refreshDevices();
+-        }
+-
+-        function cycleSpecialWorkspace(direction: string): void {
+-            root.cycleSpecialWorkspace(direction);
+-        }
+-
+-        function listSpecialWorkspaces(): string {
+-            return root.workspaces.values.filter(w => w.name.startsWith("special:") && w.lastIpcObject.windows > 0).map(w => w.name).join("\n");
+-        }
+-
+-        target: "hypr"
+-    }
+-
+-    // qmllint disable unresolved-type
+-    CustomShortcut {
+-        // qmllint enable unresolved-type
+-        name: "refreshDevices"
+-        description: "Reload devices"
+-        onPressed: extras.refreshDevices()
+-        onReleased: extras.refreshDevices()
+-    }
+-
+-    HyprExtras {
+-        id: extras
+-    }
+-}

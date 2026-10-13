@@ -1,5 +1,5 @@
-qml_module(caelestia-components
-    URI Caelestia.Components
+qml_module(CNS-components
+    URI CNS.Components
     SOURCES
         animatedrepeater.cpp
         lazylistview.cpp
@@ -12,7 +12,7 @@ qml_module(caelestia-components
     LIBRARIES
         Qt::Gui
         Qt::Quick
-        caelestia-core
+        CNS
     DEPENDENCIES
         Caelestia
 )

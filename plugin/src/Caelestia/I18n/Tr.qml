@@ -1,6 +1,6 @@
 pragma Singleton
 
-import Caelestia.I18n
+import CNS.I18n
 
 TranslatorInternal {
     // No-op so the flag var isn't optimised away

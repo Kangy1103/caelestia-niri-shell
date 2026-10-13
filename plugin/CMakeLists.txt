@@ -16,7 +16,7 @@ include(cmake/pch.cmake)
 include(cmake/qml-module.cmake)
 
 # Header only helpers
-add_library(caelestia-util INTERFACE)
-target_include_directories(caelestia-util INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+add_library(CNS-util INTERFACE)
+target_include_directories(CNS-util INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 add_subdirectory(src/Caelestia)

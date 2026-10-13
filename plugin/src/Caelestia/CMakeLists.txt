@@ -1,5 +1,5 @@
-qml_module(caelestia-core
-    URI Caelestia
+qml_module(CNS
+    URI CNS
     INCLUDE_PREFIX core
     SOURCES
         cutils.cpp
@@ -13,10 +13,10 @@ qml_module(caelestia-core
         Qt::Concurrent
         PkgConfig::Qalculate
 )
-target_link_libraries(caelestia-core PUBLIC caelestia-util)
+target_link_libraries(CNS PUBLIC CNS-util)
 
 # Bake the shell version in so CUtils can expose it without spawning a process
-target_compile_definitions(caelestia-core PRIVATE CAELESTIA_VERSION="${VERSION}")
+target_compile_definitions(CNS PRIVATE CAELESTIA_VERSION="${VERSION}")
 
 # Node macros expand to Q_OBJECT, automoc can't see it otherwise
 list(APPEND CMAKE_AUTOMOC_MACRO_NAMES

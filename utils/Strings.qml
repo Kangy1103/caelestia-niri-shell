@@ -1,7 +1,7 @@
 pragma Singleton
 
 import Quickshell
-import Caelestia.I18n
+import CNS.I18n
 
 Singleton {
     property var _regexCache: ({})

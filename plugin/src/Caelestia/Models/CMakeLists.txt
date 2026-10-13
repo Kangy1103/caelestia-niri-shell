@@ -1,5 +1,5 @@
-qml_module(caelestia-models
-    URI Caelestia.Models
+qml_module(CNS-models
+    URI CNS.Models
     SOURCES
         filesystemmodel.cpp
         appdb.cpp

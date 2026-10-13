@@ -3,8 +3,8 @@ pragma Singleton
 import ".."
 import QtQuick
 import Quickshell
-import Caelestia.Config
-import Caelestia.I18n
+import CNS.Config
+import CNS.I18n
 import qs.utils
 
 Searcher {
