@@ -158,6 +158,17 @@ Singleton {
         return NiriIpc.getWorkspaceIdxById(workspaceId);
     }
 
+    // Strips leading non-ASCII noise some Wayland/GTK apps prepend to window
+    // titles (icon placeholders, PUA glyphs). Referenced by MultiWindowContext,
+    // WindowIconContext and WorkspaceOverview; the definition was lost in a
+    // later Niri.qml refactor, restored from 417ee182.
+    function cleanWindowTitle(windowTitle) {
+        if (windowTitle) {
+            return windowTitle.replace(/^[^ -~]+/, "");
+        }
+        return windowTitle;
+    }
+
     function getActiveWorkspaceName() {
         if (allWorkspaces && focusedWorkspaceIndex >= 0 && focusedWorkspaceIndex < allWorkspaces.length) {
             return allWorkspaces[focusedWorkspaceIndex].name || "";

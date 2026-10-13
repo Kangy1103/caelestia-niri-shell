@@ -1,12 +1,13 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell.Io
-import CNS
 import CNS.Config
-import CNS.I18n
-
-// TODO: handle this better later
+import qs.services
 
 Item {
     id: model
@@ -19,17 +20,32 @@ Item {
 
     function start() {
         xkbXmlBase.running = true;
-        getKbLayoutOpt.running = true;
+        readLayouts();
     }
 
     function refresh() {
         _notifiedLimit = false;
-        getKbLayoutOpt.running = true;
+        readLayouts();
     }
 
-    function switchTo(idx) {
-        switchProc.command = ["hyprctl", "switchxkblayout", "all", String(idx)];
-        switchProc.running = true;
+    function cycleLayout() {
+        // CNS called Niri.action(), which does not exist on the Niri singleton —
+        // it threw on every click. The invokable lives on NiriIpc.
+        NiriIpc.action("switch-layout", []);
+    }
+
+    function readLayouts() {
+        const arr = Niri.kbLayoutsArray;
+        if (arr && arr.length > 0)
+            _setLayoutsFromArray(arr);
+
+        activeIndex = Niri.kbLayoutIndex;
+        if (activeIndex >= 0 && activeIndex < layoutsModel.count)
+            activeLabel = layoutsModel.get(activeIndex).label;
+        else
+            activeLabel = "";
+
+        _rebuildVisible();
     }
 
     function _buildXmlMap(xml) {
@@ -63,7 +79,6 @@ Item {
             }
             layoutsModel.clear();
             tmp.forEach(t => layoutsModel.append(t));
-            fetchActiveLayouts.running = true;
         }
     }
 
@@ -74,25 +89,24 @@ Item {
         const lang = m[1].trim();
         const region = m[2].trim();
         const code = (region.split(/[,\s-]/)[0] || region).slice(0, 2).toUpperCase();
-        // TRANSLATORS: %1 = language, %2 = layout code
-        return Tr.trCtx("%1 (%2)", "keyboard layout language and code").arg(lang).arg(code);
+        return `${lang} (${code})`;
     }
 
-    function _setLayouts(raw) {
-        const parts = raw.split(",").map(s => s.trim()).filter(Boolean);
+    function _setLayoutsFromArray(arr) {
         layoutsModel.clear();
 
         const seen = new Set();
         let idx = 0;
 
-        for (const p of parts) {
-            if (seen.has(p))
+        for (let i = 0; i < arr.length; i++) {
+            const token = arr[i].toString().trim();
+            if (!token || seen.has(token))
                 continue;
-            seen.add(p);
+            seen.add(token);
             layoutsModel.append({
                 layoutIndex: idx,
-                token: p,
-                label: _pretty(p)
+                token: token,
+                label: _pretty(token)
             });
             idx++;
         }
@@ -108,21 +122,19 @@ Item {
         arr = arr.filter(i => i.layoutIndex !== activeIndex);
         arr.forEach(i => visibleModel.append(i));
 
-        if (!GlobalConfig.utilities.toasts.kbLimit)
+        if (!Config.utilities.toasts.kbLimit)
             return;
 
         if (layoutsModel.count > 4) {
-            Toaster.toast(Tr.tr("Keyboard layout limit"), Tr.tr("XKB supports only 4 layouts at a time"), "warning");
+            Toaster.toast(qsTr("Keyboard layout limit"), qsTr("XKB supports only 4 layouts at a time"), "warning");
         }
     }
 
     function _pretty(token) {
         const code = token.replace(/\(.*\)$/, "").trim();
         if (_xkbMap[code])
-            // TRANSLATORS: %1 = layout code, %2 = layout name
-            return Tr.trCtx("%1 - %2", "keyboard layout code and name").arg(code.toUpperCase()).arg(_xkbMap[code]);
-        // TRANSLATORS: %1 = layout code, %2 = layout name
-        return Tr.trCtx("%1 - %2", "keyboard layout code and name").arg(code.toUpperCase()).arg(code);
+            return code.toUpperCase() + " - " + _xkbMap[code];
+        return code.toUpperCase() + " - " + code;
     }
 
     visible: false
@@ -155,71 +167,16 @@ Item {
         }
     }
 
-    Process {
-        id: getKbLayoutOpt
+    Connections {
+        target: Niri
 
-        command: ["hyprctl", "-j", "getoption", "input:kb_layout"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const j = JSON.parse(text);
-                    const raw = (j?.str || j?.value || "").toString().trim();
-                    if (raw.length) {
-                        model._setLayouts(raw);
-                        fetchActiveLayouts.running = true;
-                        return;
-                    }
-                } catch (e) {}
-                fetchLayoutsFromDevices.running = true;
-            }
+        function onKbLayoutIndexChanged() {
+            activeIndex = Niri.kbLayoutIndex;
+            if (activeIndex >= 0 && activeIndex < layoutsModel.count)
+                activeLabel = layoutsModel.get(activeIndex).label;
+            else
+                activeLabel = "";
+            _rebuildVisible();
         }
-    }
-
-    Process {
-        id: fetchLayoutsFromDevices
-
-        command: ["hyprctl", "-j", "devices"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const dev = JSON.parse(text);
-                    const kb = dev?.keyboards?.find(k => k.main) || dev?.keyboards?.[0];
-                    const raw = (kb?.layout || "").trim();
-                    if (raw.length)
-                        model._setLayouts(raw);
-                } catch (e) {}
-                fetchActiveLayouts.running = true;
-            }
-        }
-    }
-
-    Process {
-        id: fetchActiveLayouts
-
-        command: ["hyprctl", "-j", "devices"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const dev = JSON.parse(text);
-                    const kb = dev?.keyboards?.find(k => k.main) || dev?.keyboards?.[0];
-                    const idx = kb?.active_layout_index ?? -1;
-
-                    model.activeIndex = idx >= 0 ? idx : -1;
-                    model.activeLabel = (idx >= 0 && idx < layoutsModel.count) ? layoutsModel.get(idx).label : "";
-                } catch (e) {
-                    model.activeIndex = -1;
-                    model.activeLabel = "";
-                }
-
-                model._rebuildVisible();
-            }
-        }
-    }
-
-    Process {
-        id: switchProc
-
-        onRunningChanged: if (!running)
-            fetchActiveLayouts.running = true
     }
 }

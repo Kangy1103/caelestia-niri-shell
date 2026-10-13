@@ -1,11 +1,14 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
+
+
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import CNS.Config
-import CNS.I18n
 import qs.components
+import qs.components.controls
 import qs.services
 
 ColumnLayout {
@@ -16,7 +19,7 @@ ColumnLayout {
     }
 
     spacing: Tokens.spacing.small
-    width: Tokens.sizes.bar.kbLayoutWidth
+    width: TokenConfig.sizes.bar.kbLayoutWidth
 
     Component.onCompleted: kb.start()
 
@@ -27,8 +30,7 @@ ColumnLayout {
     StyledText {
         Layout.topMargin: Tokens.padding.medium
         Layout.rightMargin: Tokens.padding.extraSmall
-        text: Tr.tr("Keyboard layouts")
-        font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
+        text: qsTr("Keyboard Layouts")
     }
 
     ListView {
@@ -90,31 +92,13 @@ ColumnLayout {
 
             width: list.width
             height: Math.max(36, rowText.implicitHeight + Tokens.padding.small)
-            ToolTip.visible: isDisabled && layer.containsMouse
-            ToolTip.text: Tr.tr("XKB limitation: maximum 4 layouts allowed")
-
-            StateLayer {
-                id: layer
-
-                onClicked: {
-                    if (!kbDelegate.isDisabled)
-                        kb.switchTo(kbDelegate.layoutIndex);
-                }
-
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: parent.height - 4
-                radius: Tokens.rounding.full
-                enabled: !kbDelegate.isDisabled
-            }
 
             StyledText {
                 id: rowText
 
-                anchors.verticalCenter: layer.verticalCenter
-                anchors.left: layer.left
-                anchors.right: layer.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.leftMargin: Tokens.padding.extraSmall
                 anchors.rightMargin: Tokens.padding.extraSmall
                 text: kbDelegate.label
@@ -156,7 +140,6 @@ ColumnLayout {
             Layout.fillWidth: true
             text: kb.activeLabel
             elide: Text.ElideRight
-            font: Tokens.font.body.builders.medium.weight(Font.Medium).build()
             color: Colours.palette.m3primary
         }
 
@@ -207,5 +190,17 @@ ColumnLayout {
                 }
             }
         }
+    }
+
+    IconTextButton {
+        Layout.fillWidth: true
+        Layout.topMargin: Tokens.spacing.medium
+        inactiveColour: Colours.palette.m3primaryContainer
+        inactiveOnColour: Colours.palette.m3onPrimaryContainer
+        verticalPadding: Tokens.padding.extraSmall
+        text: qsTr("Next Layout")
+        icon: "arrow_forward"
+
+        onClicked: kb.cycleLayout()
     }
 }

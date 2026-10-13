@@ -1,13 +1,14 @@
 pragma ComponentBehavior: Bound
 
-import QtQuick
-import QtQuick.Effects
-import Quickshell
-import CNS.Components
-import CNS.Config
-import CNS.Services
 import qs.components
 import qs.services
+import CNS.Config
+import CNS.Internal
+import CNS.Services
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Effects
 
 Item {
     id: root
@@ -15,15 +16,21 @@ Item {
     required property ShellScreen screen
     required property Item wallpaper
 
-    readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || (Hypr.monitorFor(screen)?.activeWorkspace?.toplevels?.values.every(t => t.lastIpcObject?.floating) ?? true))
-    property real offset: shouldBeActive ? 0 : screen.height * 0.2
+    readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0) && !GameMode.enabled
+
+    readonly property color resolvedPrimary: Config.background.visualiser.primaryColor
+        ? Qt.alpha(Config.background.visualiser.primaryColor, 0.7)
+        : Qt.alpha(Colours.palette.m3primary, 0.7)
+
+    readonly property color resolvedSecondary: Config.background.visualiser.secondaryColor
+        ? Qt.alpha(Config.background.visualiser.secondaryColor, 0.7)
+        : Qt.alpha(Colours.palette.m3inversePrimary, 0.7)
 
     opacity: shouldBeActive ? 1 : 0
 
     Loader {
-        asynchronous: true
         anchors.fill: parent
-        active: root.opacity > 0 && Config.background.visualiser.blur
+        active: opacity > 0 && Config.background.visualiser.blur
 
         sourceComponent: MultiEffect {
             source: root.wallpaper
@@ -40,55 +47,43 @@ Item {
         id: wrapper
 
         anchors.fill: parent
-        layer.enabled: true
+        visible: opacity > 0
+        clip: true
 
-        Loader {
-            asynchronous: true
+        VisualiserBars {
+            id: bars
+
             anchors.fill: parent
-            anchors.topMargin: root.offset
-            anchors.bottomMargin: -root.offset
+            anchors.margins: Config.border.thickness
+            anchors.leftMargin: Math.max(Config.border.thickness, (ShellState.componentsFor(root.screen)?.bar?.item as Bar.BarWrapper)?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing
 
-            active: root.opacity > 0
+            values: Cava.values
+            mode: Config.background.visualiser.style === "waveform" ? VisualiserBars.Waveform
+                : Config.background.visualiser.style === "filled" ? VisualiserBars.FilledWaveform
+                : VisualiserBars.Bars
+            primaryColor: root.resolvedPrimary
+            secondaryColor: root.resolvedSecondary
+            rounding: Tokens.rounding.small * Config.background.visualiser.rounding
+            spacing: Tokens.spacing.small * Config.background.visualiser.spacing
+            animationDuration: Config.background.visualiser.animationDuration
+            sensitivity: Config.background.visualiser.sensitivity
 
-            sourceComponent: Item {
-                ServiceRef {
-                    service: Audio.cava
-                }
+            FrameAnimation {
+                running: opacity > 0 && !bars.settled
+                onTriggered: bars.advance(frameTime)
+            }
 
-                VisualiserBars {
-                    id: bars
-
-                    anchors.fill: parent
-                    anchors.margins: Config.border.thickness
-                    anchors.leftMargin: (ShellState.componentsFor(root.screen)?.bar?.exclusiveZone ?? 0) + Tokens.spacing.small * Config.background.visualiser.spacing
-
-                    values: Audio.cava.values
-                    primaryColor: Qt.alpha(Colours.palette.m3primary, 0.7)
-                    secondaryColor: Qt.alpha(Colours.palette.m3inversePrimary, 0.7)
-                    rounding: Tokens.rounding.medium * Config.background.visualiser.rounding
-                    spacing: Tokens.spacing.extraSmall * Config.background.visualiser.spacing
-                    animationDuration: Tokens.anim.durations.normal
-
-                    Behavior on anchors.leftMargin {
-                        Anim {}
-                    }
-                }
-
-                FrameAnimation {
-                    running: root.opacity > 0 && !bars.settled
-                    onTriggered: bars.advance(frameTime)
-                }
+            Behavior on anchors.leftMargin {
+                Anim {}
             }
         }
-    }
 
-    Behavior on offset {
-        Anim {}
+        ServiceRef {
+            service: Cava.provider
+        }
     }
 
     Behavior on opacity {
-        Anim {
-            type: Anim.DefaultEffects
-        }
+        Anim {}
     }
 }
