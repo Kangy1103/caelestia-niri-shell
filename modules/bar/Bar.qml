@@ -1,14 +1,14 @@
 pragma ComponentBehavior: Bound
 
+import qs.services
+import qs.components
+import CNS.Config
 import "popouts" as BarPopouts
 import "components"
 import "components/workspaces"
+import Quickshell
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
-import CNS.Config
-import qs.components
-import qs.services
 
 ColumnLayout {
     id: root
@@ -17,60 +17,69 @@ ColumnLayout {
     required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
-    readonly property int vPadding: Tokens.padding.large
+    readonly property int vPadding: Tokens.padding.largeIncreased
 
-    function closeTray(): void {
-        if (!Config.bar.tray.compact)
-            return;
+    // Handle Workspace Popouts for Niri
 
-        for (let i = 0; i < repeater.count; i++) {
-            const tray = (repeater.itemAt(i) as EntryWrapper)?.item as Tray;
-            if (tray)
-                tray.expanded = false;
+    Connections {
+        target: root.popouts
+        function onHasCurrentChanged() {
+            if (!root.popouts.hasCurrent && root.popouts.currentName === "wsWindow") {
+                Niri.wsContextAnchor = null;
+            }
         }
     }
 
+    // Handle Popouts Hover
+
     function checkPopout(y: real): void {
-        const ch = childAt(width / 2, y) as EntryWrapper;
+        if (Niri.wsContextType === "workspaces") {
+            const anchor = Niri.wsContextAnchor;
+            if (!anchor) {
+                popouts.hasCurrent = false;
+                return;
+            }
+            popouts.currentCenter = Qt.binding(() => Math.round(anchor.mapToItem(root, 0, anchor.height / 2).y));
+            return;
+        }
 
-        if (ch?.entryId !== "tray")
-            closeTray();
-
-        if (!ch) {
+        const ch = childAt(width / 2, y);
+        if (!ch?.item) {
             popouts.hasCurrent = false;
             return;
         }
 
         const id = ch.entryId;
         const top = ch.y;
+        const item = ch.item;
+        const itemHeight = item.implicitHeight;
 
-        if (id === "statusIcons" && Config.bar.popouts.statusIcons) {
-            const items = (ch.item as StatusIcons).items;
+        if (id === "statusIcons") {
+            const items = item.items;
             const icon = items.childAt(items.width / 2, mapToItem(items, 0, y).y);
             if (icon) {
                 popouts.currentName = icon.name;
                 popouts.currentCenter = Qt.binding(() => icon.mapToItem(root, 0, icon.implicitHeight / 2).y);
                 popouts.hasCurrent = true;
             }
-        } else if (id === "tray" && Config.bar.popouts.tray) {
-            const tray = ch.item as Tray;
-            if (!Config.bar.tray.compact || (tray.expanded && !tray.expandIcon.contains(mapToItem(tray.expandIcon, tray.implicitWidth / 2, y)))) {
-                const index = Math.floor(((y - top - tray.padding * 2 + tray.spacing) / tray.layout.implicitHeight) * tray.items.count);
-                const trayItem = tray.items.itemAt(index);
-                if (trayItem) {
-                    popouts.currentName = `traymenu${index}`;
-                    popouts.currentCenter = Qt.binding(() => trayItem.mapToItem(root, 0, trayItem.implicitHeight / 2).y);
-                    popouts.hasCurrent = true;
-                } else {
-                    popouts.hasCurrent = false;
-                }
-            } else {
-                popouts.hasCurrent = false;
-                tray.expanded = true;
+        } else if (id === "stasisStatus") {
+            popouts.currentName = "stasis";
+            popouts.currentCenter = Qt.binding(() => ch.mapToItem(root, 0, ch.implicitHeight / 2).y);
+            popouts.hasCurrent = true;
+        } else if (id === "tray") {
+            const index = Math.floor(((y - top) / itemHeight) * item.items.count);
+            const trayItem = item.items.itemAt(index);
+            if (trayItem) {
+                popouts.currentName = `traymenu${index}`;
+                popouts.currentCenter = Qt.binding(() => trayItem.mapToItem(root, 0, trayItem.implicitHeight / 2).y);
+                popouts.hasCurrent = true;
             }
-        } else if (id === "activeWindow" && Config.bar.popouts.activeWindow && Config.bar.activeWindow.showOnHover) {
-            popouts.currentName = id.toLowerCase();
-            popouts.currentCenter = (ch.item as Item).mapToItem(root, 0, (ch.item as Item).implicitHeight / 2).y ?? 0;
+        } else if (id === "workspaces") {
+            popouts.currentName = "workspaces";
+            popouts.currentCenter = Qt.binding(() => {
+                const centerY = ch.mapToItem(root, 0, ch.implicitHeight / 2).y;
+                return Math.round(Math.max(centerY + Config.border.thickness, 350));
+            });
             popouts.hasCurrent = true;
         }
     }
@@ -78,36 +87,22 @@ ColumnLayout {
     function handleWheel(y: real, angleDelta: point): void {
         const ch = childAt(width / 2, y) as EntryWrapper;
         if (ch?.entryId === "workspaces" && Config.bar.scrollActions.workspaces) {
-            // Workspace scroll
-            const mon = Hypr.monitorFor(screen);
-            const specialWs = mon?.lastIpcObject.specialWorkspace.name;
-            if (specialWs?.length > 0)
-                Hypr.dispatch(Hypr.usingLua ? `hl.dsp.workspace.toggle_special("${specialWs.slice(8)}")` : `togglespecialworkspace ${specialWs.slice(8)}`);
-            else if (angleDelta.y < 0 || mon.activeWorkspace?.id > 1)
-                Hypr.dispatch(Hypr.usingLua ? `hl.dsp.focus({ workspace = "r${angleDelta.y > 0 ? "-" : "+"}1" })` : `workspace r${angleDelta.y > 0 ? "-" : "+"}1`);
-        } else if (y < screen.height / 2 && Config.bar.scrollActions.volume) {
-            // Volume scroll on top half
+            Niri.switchToWorkspaceUpDown(angleDelta.y > 0 ? "up" : "down");
+        } else if (Config.bar.scrollActions.volume) {
             if (angleDelta.y > 0)
                 Audio.incrementVolume();
             else if (angleDelta.y < 0)
                 Audio.decrementVolume();
-        } else if (Config.bar.scrollActions.brightness) {
-            // Brightness scroll on bottom half
-            const monitor = Brightness.getMonitorForScreen(screen);
-            if (angleDelta.y > 0)
-                monitor.setBrightness(monitor.brightness + GlobalConfig.services.brightnessIncrement);
-            else if (angleDelta.y < 0)
-                monitor.setBrightness(monitor.brightness - GlobalConfig.services.brightnessIncrement);
         }
     }
 
-    spacing: Tokens.spacing.medium
+    spacing: Tokens.spacing.large
 
     Repeater {
         id: repeater
 
         model: ScriptModel {
-            values: root.Config.bar.entries.values.filter(e => e.enabled)
+            values: root.Config.bar.entries.filter(e => e.enabled ?? true)
         }
 
         DelegateChooser {
@@ -120,28 +115,63 @@ ColumnLayout {
                 }
             }
             DelegateChoice {
+                roleValue: "divider"
+                delegate: EntryWrapper {
+                    Rectangle {
+                        implicitWidth: Tokens.padding.medium
+                        implicitHeight: 1
+                        color: Colours.palette.m3outlineVariant
+                    }
+                }
+            }
+            DelegateChoice {
                 roleValue: "logo"
                 delegate: EntryWrapper {
                     OsIcon {
-                        objectName: "taskbarLogo"
+                        MouseArea {
+                            anchors.fill: parent
+                            acceptedButtons: Qt.RightButton
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: mouse => {
+                                if (mouse.button === Qt.RightButton) {
+                                    Niri.wsContextType = "workspaces";
+                                    root.popouts.currentName = "wsWindow";
+                                    root.popouts.hasCurrent = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
             DelegateChoice {
                 roleValue: "workspaces"
                 delegate: EntryWrapper {
+                    Layout.preferredHeight: item ? item.implicitHeight : 120
                     Workspaces {
-                        objectName: "taskbarWorkspaces"
                         screen: root.screen
-                        fullscreen: root.fullscreen
+
+                        property var anchorItem: Niri.wsContextAnchor && Niri.wsContextType !== "none" ? Niri.wsContextAnchor : null
+
+                        onRequestWindowPopout: {
+                            if (anchorItem && Config.bar.workspaces.windowRighClickContext) {
+                                root.popouts.currentName = "wsWindow";
+                                root.popouts.currentCenter = Qt.binding(() => Math.round(anchorItem.mapToItem(null, anchorItem.width, (anchorItem.height) / 2).y));
+                                root.popouts.hasCurrent = true;
+                            }
+                        }
                     }
+                }
+            }
+            DelegateChoice {
+                roleValue: "stasisStatus"
+                delegate: EntryWrapper {
+                    StasisStatus {}
                 }
             }
             DelegateChoice {
                 roleValue: "activeWindow"
                 delegate: EntryWrapper {
                     ActiveWindow {
-                        objectName: "taskbarActiveWindow"
                         bar: root
                         monitor: Brightness.getMonitorForScreen(root.screen)
                     }
@@ -150,38 +180,57 @@ ColumnLayout {
             DelegateChoice {
                 roleValue: "tray"
                 delegate: EntryWrapper {
-                    Tray {
-                        objectName: "taskbarTray"
-                    }
+                    Tray {}
                 }
             }
             DelegateChoice {
                 roleValue: "clock"
                 delegate: EntryWrapper {
-                    Clock {
-                        objectName: "taskbarClock"
-                    }
+                    Clock {}
                 }
             }
             DelegateChoice {
                 roleValue: "statusIcons"
                 delegate: EntryWrapper {
-                    StatusIcons {
-                        objectName: "taskbarStatusIcons"
-                    }
+                    StatusIcons {}
                 }
             }
             DelegateChoice {
                 roleValue: "power"
                 delegate: EntryWrapper {
                     Power {
-                        objectName: "taskbarPowerButton"
                         screenState: root.screenState
                     }
                 }
             }
         }
     }
+
+    // Cached first/last enabled items — recomputed once when repeater changes
+    property Item firstEnabled: null
+    property Item lastEnabled: null
+
+    function updateEnabledCache(): void {
+        let first = null;
+        let last = null;
+        const count = repeater.count;
+        for (let i = 0; i < count; i++) {
+            const item = repeater.itemAt(i);
+            if (item?.enabled) {
+                if (!first) first = item;
+                last = item;
+            }
+        }
+        firstEnabled = first;
+        lastEnabled = last;
+    }
+
+    Connections {
+        target: repeater
+        function onCountChanged() { root.updateEnabledCache(); }
+    }
+
+    Component.onCompleted: updateEnabledCache()
 
     component EntryWrapper: Item {
         required property var modelData
