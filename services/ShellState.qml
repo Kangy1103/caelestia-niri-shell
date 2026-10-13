@@ -13,35 +13,21 @@ Singleton {
         return states.instances.some(s => s.sidebar);
     }
 
-    property var customScreenStates: ({})
-    property int regVersion: 0
-
-    function register(screenName: string, state: ScreenState): void {
-        if (!screenName || !state) return;
-        const copy = {};
-        for (const key in customScreenStates)
-            copy[key] = customScreenStates[key];
-        copy[screenName] = state;
-        customScreenStates = copy;
-        regVersion++;
-    }
-
     function forScreen(screen: ShellScreen): ScreenState {
-        if (screen && customScreenStates[screen.name])
-            return customScreenStates[screen.name];
         for (const s of states.instances)
             if (s.modelData && (s.modelData === screen || s.modelData.name === screen.name))
                 return s;
+        if (screen)
+            console.warn(`[ShellState] forScreen null for "${screen.name}" | instances=[${states.instances.map(s => s.modelData ? s.modelData.name : "<?>").join(",")}]`);
         return null;
     }
 
     function forActive(): ScreenState {
         const name = Niri.focusedMonitorName;
-        if (name && customScreenStates[name])
-            return customScreenStates[name];
         for (const s of states.instances)
             if (s.modelData && s.modelData.name === name)
                 return s;
+        console.warn(`[ShellState] forActive null: focusedMonitorName="${name}" | instances=[${states.instances.map(s => s.modelData ? s.modelData.name : "<?>").join(",")}]`);
         return null;
     }
 

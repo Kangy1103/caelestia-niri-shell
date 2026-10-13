@@ -14,7 +14,7 @@ CustomMouseArea {
     required property ShellScreen screen
     required property BarPopouts.Wrapper popouts
     required property Panels panels
-    readonly property ScreenState screenState: ShellState.forScreen(screen)
+    required property ScreenState screenState
     required property Bar.BarWrapper bar
     required property real borderThickness
     required property bool fullscreen

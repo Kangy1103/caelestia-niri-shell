@@ -11,6 +11,8 @@ import qs.services
 Item {
     id: root
 
+    required property ScreenState screenState
+
     implicitWidth: icon.implicitHeight + Tokens.padding.small
     implicitHeight: icon.implicitHeight
 
@@ -21,8 +23,7 @@ Item {
         implicitHeight: icon.implicitHeight + Tokens.padding.small
         radius: Tokens.rounding.full
         onClicked: {
-            const ss = ShellState.forActive();
-            ss.session = !ss.session;
+            root.screenState.session = !root.screenState.session;
         }
     }
 

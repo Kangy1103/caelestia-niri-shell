@@ -14,7 +14,7 @@ ColumnLayout {
     id: root
 
     required property ShellScreen screen
-    readonly property ScreenState screenState: ShellState.forScreen(screen)
+    required property ScreenState screenState
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
     readonly property int vPadding: Tokens.padding.largeIncreased
@@ -201,6 +201,7 @@ ColumnLayout {
                 roleValue: "power"
                 delegate: EntryWrapper {
                     Power {
+                        screenState: root.screenState
                     }
                 }
             }

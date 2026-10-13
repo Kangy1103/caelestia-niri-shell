@@ -35,10 +35,15 @@ Singleton {
             IdleInhibitor {
                 enabled: true
                 window: PanelWindow {
-                    implicitWidth: 0
-                    implicitHeight: 0
+                    screen: Quickshell.screens[0]
+                    anchors.top: true
+                    anchors.left: true
+                    implicitWidth: 1
+                    implicitHeight: 1
                     color: "transparent"
                     mask: Region {}
+                    WlrLayershell.namespace: "caelestia-idle-inhibitor"
+                    WlrLayershell.exclusionMode: ExclusionMode.Ignore
                 }
             }
         }

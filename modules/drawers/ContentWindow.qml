@@ -20,6 +20,7 @@ StyledWindow {
 
     readonly property bool hasSpecialWorkspace: false  // Niri: no special workspaces
     readonly property bool hasFullscreen: Niri.hasFullscreen
+    readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     property real fsTransitionProg: hasFullscreen ? 1 : 0
     readonly property real sdfBorderOffset: 2 * fsTransitionProg
@@ -243,20 +244,6 @@ StyledWindow {
         }
     }
 
-    ScreenState {
-        id: screenState
-    }
-
-    onScreenChanged: {
-        if (screen && screenState)
-            ShellState.register(screen.name, screenState)
-    }
-
-    Component.onCompleted: {
-        if (screen && screenState)
-            ShellState.register(screen.name, screenState)
-    }
-
     ShellState.ComponentRef {
         screen: root.screen
         slot: "rootWindow"
@@ -276,6 +263,7 @@ StyledWindow {
         popouts: panels.popouts
         panels: panels
         bar: bar
+        screenState: root.screenState
         borderThickness: root.borderLayoutThickness
         fullscreen: root.hasFullscreen
 
@@ -283,7 +271,7 @@ StyledWindow {
             id: panels
 
             screen: root.screen
-            screenState: screenState
+            screenState: root.screenState
             bar: bar
             borderThickness: root.borderThickness
 
@@ -335,7 +323,7 @@ StyledWindow {
             anchors.bottom: parent.bottom
 
             screen: root.screen
-            screenState: screenState
+            screenState: root.screenState
             popouts: panels.popouts
 
             fullscreen: root.hasFullscreen
