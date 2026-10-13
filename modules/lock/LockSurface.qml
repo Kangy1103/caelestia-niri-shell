@@ -1,12 +1,15 @@
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.2.0-20260610
+
 pragma ComponentBehavior: Bound
 
+import qs.components
+import qs.services
+import CNS.Config
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Effects
-import Quickshell.Wayland
-import CNS.Config
-import qs.components
-import qs.components.images
-import qs.services
+import QtQuick.Layouts
 
 WlSessionLockSurface {
     id: root
@@ -16,6 +19,10 @@ WlSessionLockSurface {
 
     readonly property alias unlocking: unlockAnim.running
 
+    readonly property bool isTargetScreen: screen && screen.name === "DP-3"
+
+    Config.screen: screen.name
+    Tokens.screen: screen.name
     contentItem.Config.screen: screen.name
     contentItem.Tokens.screen: screen.name
 
@@ -36,12 +43,12 @@ WlSessionLockSurface {
             Anim {
                 target: lockContent
                 properties: "implicitWidth,implicitHeight"
-                to: lockContent.size
+                to: lockContent.iconSize
             }
             Anim {
                 target: lockBg
                 property: "radius"
-                to: lockContent.radius
+                to: lockContent.iconSize / 4 * Tokens.rounding.scale
             }
             Anim {
                 target: content
@@ -50,6 +57,12 @@ WlSessionLockSurface {
             }
             Anim {
                 target: content
+                property: "opacity"
+                to: 0
+                type: Anim.StandardSmall
+            }
+            Anim {
+                target: extrasLayer
                 property: "opacity"
                 to: 0
                 type: Anim.StandardSmall
@@ -88,7 +101,7 @@ WlSessionLockSurface {
     ParallelAnimation {
         id: initAnim
 
-        running: true
+        running: root.isTargetScreen
 
         Anim {
             target: background
@@ -139,27 +152,46 @@ WlSessionLockSurface {
                 Anim {
                     target: lockBg
                     property: "radius"
-                    to: lockContent.Tokens.rounding.extraLarge * 1.5
+                    to: Tokens.rounding.extraLarge * 1.5
                 }
                 Anim {
                     target: lockContent
                     property: "implicitWidth"
-                    to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult * lockContent.Tokens.sizes.lock.ratio
+                    to: root.centerWidth
                 }
                 Anim {
                     target: lockContent
                     property: "implicitHeight"
-                    to: (root.screen?.height ?? 0) * lockContent.Tokens.sizes.lock.heightMult
+                    to: root.centerHeight
                 }
             }
         }
     }
 
-    Item {
-        id: background
+    // ── Background layers ──────────────────────────────────────────────────────
 
+    Rectangle {
+        id: solidFallback
         anchors.fill: parent
-        opacity: 0
+        color: Colours.palette.m3surface
+        z: 0
+    }
+
+    Image {
+        id: wallpaperFallback
+        anchors.fill: parent
+        source: {
+            const path = Wallpapers.current || Config.paths.wallpaper || "";
+            if (!path) return "";
+            const source = Wallpapers.getColorSource(path);
+            return source.startsWith("/") ? "file://" + source : source;
+        }
+        fillMode: Image.PreserveAspectCrop
+        sourceSize.width: root.screen.width
+        sourceSize.height: root.screen.height
+        opacity: 1
+        z: 1
+        visible: !root.isTargetScreen && (status === Image.Ready || status === Image.Loading)
 
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -169,40 +201,183 @@ WlSessionLockSurface {
             blurMax: 64
             blurMultiplier: 1
         }
+    }
 
-        Loader {
-            anchors.fill: parent
-            sourceComponent: Config.lock.useWallpaper ? wallpaperBackground : screencopyBackground
+    ScreencopyView {
+        id: background
+
+        anchors.fill: parent
+        captureSource: root.screen
+        opacity: 0
+        z: 2
+        visible: root.isTargetScreen
+
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            autoPaddingEnabled: false
+            blurEnabled: true
+            blur: 1
+            blurMax: 64
+            blurMultiplier: 1
         }
     }
 
-    Component {
-        id: screencopyBackground
+    Rectangle {
+        id: dimScrim
+        anchors.fill: parent
+        z: 3
+        color: Qt.alpha("#000000", 0.2)
+    }
 
-        ScreencopyView {
-            captureSource: root.screen
+    // ── Optional flanking side panels ──────────────────────────────────────────
+
+    Item {
+        id: extrasLayer
+        visible: root.isTargetScreen
+        anchors.fill: parent
+        z: 4
+        opacity: 0
+
+        ParallelAnimation {
+            id: extrasShowAnim
+            running: false
+
+            Anim {
+                target: extrasLayer
+                property: "opacity"
+                to: 1
+                type: Anim.Standard
+            }
+            Anim {
+                target: leftPanel
+                property: "x"
+                from: Tokens.spacing.extraExtraLarge
+                to: 0
+                type: Anim.DefaultSpatial
+            }
+            Anim {
+                target: rightPanel
+                property: "x"
+                from: -Tokens.spacing.extraExtraLarge
+                to: 0
+                type: Anim.DefaultSpatial
+            }
+        }
+
+        Connections {
+            target: initAnim
+            function onFinished(): void {
+                extrasShowAnim.start();
+            }
+        }
+
+        StyledRect {
+            id: leftPanel
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.horizontalCenter
+            anchors.rightMargin: centerWidth / 2 + Tokens.spacing.medium
+
+            width: Math.min(370, parent.width / 4)
+            height: centerHeight
+
+            radius: Tokens.rounding.extraLarge
+            color: Colours.tPalette.m3surfaceContainer
+            opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                    blurMax: 12
+                    shadowVerticalOffset: 4
+                shadowHorizontalOffset: 0
+                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.4)
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.large
+                spacing: Tokens.spacing.medium
+
+                WeatherInfo {
+                    Layout.fillWidth: true
+                    rootHeight: parent.height
+                }
+
+                Fetch {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    rootHeight: centerHeight
+                }
+
+                Media {
+                    Layout.fillWidth: true
+                    lock: root
+                }
+            }
+        }
+
+        StyledRect {
+            id: rightPanel
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.horizontalCenter
+            anchors.leftMargin: centerWidth / 2 + Tokens.spacing.medium
+
+            width: Math.min(370, parent.width / 4)
+            height: centerHeight
+
+            radius: Tokens.rounding.extraLarge
+            color: Colours.tPalette.m3surfaceContainer
+            opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                    blurMax: 12
+                    shadowVerticalOffset: 4
+                shadowHorizontalOffset: 0
+                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.4)
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.large
+                spacing: Tokens.spacing.medium
+
+                Resources {
+                    Layout.fillWidth: true
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    NotifDock {
+                        anchors.fill: parent
+                        lock: root
+                    }
+                }
+            }
         }
     }
 
-    Component {
-        id: wallpaperBackground
+    // ── Main floating panel ────────────────────────────────────────────────────
 
-        CachingImage {
-            path: Wallpapers.current
-        }
-    }
+    readonly property real centerFullWidth: Tokens.sizes.lock.centerWidth * Math.min(1, (root.screen?.height ?? 1440) / 1440)
+    readonly property real centerWidth: Tokens.sizes.lock.centerWidth
+    readonly property real centerHeight: Math.round(centerFullWidth * 1.43)
 
     Item {
         id: lockContent
+        visible: root.isTargetScreen
 
-        readonly property int size: lockIcon.implicitHeight + Tokens.padding.large * 4
-        readonly property int radius: size / 4 * Tokens.rounding.scale
+        readonly property int iconSize: lockIcon.implicitHeight + Tokens.padding.largeIncreased * 4
 
         anchors.centerIn: parent
-        implicitWidth: size
-        implicitHeight: size
+        implicitWidth: iconSize
+        implicitHeight: iconSize
+        z: 5
 
-        visible: Config.lock.enabled
         rotation: 180
         scale: 0
 
@@ -210,16 +385,28 @@ WlSessionLockSurface {
             id: lockBg
 
             anchors.fill: parent
-            color: Colours.palette.m3surface
-            radius: parent.radius
+            color: Colours.palette.m3surfaceContainer
+            radius: parent.iconSize / 4 * Tokens.rounding.scale
             opacity: Colours.transparency.enabled ? Colours.transparency.base : 1
 
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 blurMax: 15
-                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.7)
+                shadowVerticalOffset: 8
+                shadowHorizontalOffset: 0
+                shadowBlur: 0.7
+                shadowColor: Qt.alpha(Colours.palette.m3shadow, 0.45)
             }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: lockBg.radius
+            color: "transparent"
+            border.width: 1
+            border.color: Qt.alpha(Colours.palette.m3outlineVariant, 0.5)
+            z: 1
         }
 
         MaterialIcon {
@@ -227,20 +414,22 @@ WlSessionLockSurface {
 
             anchors.centerIn: parent
             text: "lock"
-            fontStyle: Tokens.font.icon.builders.extraLarge.scale(4).weight(Font.Bold).build()
+            color: Colours.palette.m3primary
+            fontStyle: Tokens.font.icon.size(Tokens.font.headline.large.pointSize * 4).weight(Font.Bold).build()
             rotation: 180
         }
 
-        Content {
+        Center {
             id: content
 
             anchors.centerIn: parent
-            width: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult * Tokens.sizes.lock.ratio - Tokens.padding.extraLargeIncreased
-            height: (root.screen?.height ?? 0) * Tokens.sizes.lock.heightMult - Tokens.padding.extraLargeIncreased
+            width: root.centerWidth
+            height: root.centerHeight - Tokens.padding.extraLargeIncreased
 
-            lock: root
             opacity: 0
             scale: 0
+
+            lock: root
         }
     }
 }
