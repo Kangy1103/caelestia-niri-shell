@@ -32,7 +32,9 @@ Scope {
         else if (action === "unlock")
             lock.lock.locked = false;
         else if (typeof action === "string")
-            Hypr.dispatch(Hypr.usingLua && ["dpms off", "dpms on"].includes(action) ? `hl.dsp.dpms({ action = "${action === "dpms off" ? "disable" : "enable"}" })` : action);
+            // CNS: run dpms actions directly. Upstream routes strings through
+            // Hypr.dispatch, including a Lua path that does not exist on Niri.
+            Quickshell.execDetached(action.split(" "));
         else if (!SessionManager.exec(action))
             Quickshell.execDetached(action);
     }

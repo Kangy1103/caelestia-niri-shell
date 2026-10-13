@@ -107,6 +107,8 @@ QtObject {
         const used = _scaleBytes(usedKib * 1024, refBytes);
         const total = _scaleBytes(refBytes, refBytes);
         // TRANSLATORS: %1 = used amount, %2 = total amount with unit
-        return Tr.trCtx("%1 / %2", "used / total amount").arg(+used.value.toFixed(1)).arg(withDataUnit(+total.value.toFixed(1), total.unit));
+        // CNS: show the total as a whole number ("15 GB") rather than "15.8 GB",
+// matching the per-card formatting CNS had before upstream centralised it here.
+return Tr.trCtx("%1 / %2", "used / total amount").arg(+used.value.toFixed(1)).arg(withDataUnit(Math.floor(total.value), total.unit));
     }
 }
