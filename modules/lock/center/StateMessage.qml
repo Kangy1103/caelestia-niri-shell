@@ -14,27 +14,25 @@ Item {
 
     readonly property string msg: {
         // Errors
-        if (pam.fprint.state === Pam.Error)
+        if (pam.fprint.state === Pam.PamState.Error)
             return Tr.tr("FP ERROR: %1").arg(pam.fprint.message);
-        if (pam.howdy.state === Pam.Error)
+        // CNS: howdy messaging was lost in c6aaaeec. Pam.qml still exposes
+        // available/tries/state/message, so upstream's feedback works here.
+        if (pam.howdy.state === Pam.PamState.Error)
             return Tr.tr("FACE ERROR: %1").arg(pam.howdy.message);
-        if (pam.state === Pam.Error)
+        if (pam.state === Pam.PamState.Error)
             return Tr.tr("PW ERROR: %1").arg(pam.passwd.message);
 
         // Fprint/howdy fail
-        if (pam.state !== Pam.MaxTries) {
-            if (pam.fprint.state === Pam.Failed)
-                // TRANSLATORS: %1 = attempts used so far, %2 = maximum attempts allowed
+        if (pam.state !== Pam.PamState.MaxTries) {
+            if (pam.fprint.state === Pam.PamState.Failed)
                 return Tr.tr("Fingerprint not recognised (%1/%2). Please try again or use password.").arg(pam.fprint.tries).arg(GlobalConfig.lock.maxFprintTries);
-            if (pam.howdy.state === Pam.Failed)
-                // TRANSLATORS: %1 = attempts used so far, %2 = maximum attempts allowed
+            if (pam.howdy.state === Pam.PamState.Failed)
                 return Tr.tr("Face not recognised (%1/%2). Please try again or use password.").arg(pam.howdy.tries).arg(GlobalConfig.lock.maxHowdyTries);
         } else {
-            if (pam.fprint.state === Pam.Failed)
-                // TRANSLATORS: %1 = attempts used so far, %2 = maximum attempts allowed
+            if (pam.fprint.state === Pam.PamState.Failed)
                 return Tr.tr("Fingerprint not recognised (%1/%2). Please try again.").arg(pam.fprint.tries).arg(GlobalConfig.lock.maxFprintTries);
-            if (pam.howdy.state === Pam.Failed)
-                // TRANSLATORS: %1 = attempts used so far, %2 = maximum attempts allowed
+            if (pam.howdy.state === Pam.PamState.Failed)
                 return Tr.tr("Face not recognised (%1/%2). Please try again.").arg(pam.howdy.tries).arg(GlobalConfig.lock.maxHowdyTries);
         }
 
@@ -42,52 +40,49 @@ Item {
             return pam.lockMessage;
 
         // Password fail
-        if (pam.state === Pam.Failed) {
-            if (pam.fprint.available && pam.fprint.state !== Pam.MaxTries)
+        if (pam.state === Pam.PamState.Failed) {
+            if (pam.fprint.available && pam.fprint.state !== Pam.PamState.MaxTries)
                 return Tr.tr("Incorrect password. Please try again or use fingerprint.");
-            if (pam.howdy.available && pam.howdy.state !== Pam.MaxTries)
+            if (pam.howdy.available && pam.howdy.state !== Pam.PamState.MaxTries)
                 return Tr.tr("Incorrect password. Please try again or use face.");
             return Tr.tr("Incorrect password. Please try again.");
         }
 
         // Maxed out
-        if (pam.state === Pam.MaxTries) {
-            if (pam.fprint.available && pam.fprint.state !== Pam.MaxTries)
+        if (pam.state === Pam.PamState.MaxTries) {
+            if (pam.fprint.available && pam.fprint.state !== Pam.PamState.MaxTries)
                 return Tr.tr("Maximum password attempts reached. Please use fingerprint.");
-            if (pam.howdy.available && pam.howdy.state !== Pam.MaxTries)
+            if (pam.howdy.available && pam.howdy.state !== Pam.PamState.MaxTries)
                 return Tr.tr("Maximum password attempts reached. Please use face.");
             if (pam.fprint.available || pam.howdy.available)
                 return Tr.tr("Maximum attempts for all authentication methods reached.");
             return Tr.tr("Maximum password attempts reached.");
         }
-        if (pam.fprint.state === Pam.MaxTries)
+        if (pam.fprint.state === Pam.PamState.MaxTries)
             return Tr.tr("Maximum fingerprint attempts reached. Please use password.");
-        if (pam.howdy.state === Pam.MaxTries)
+        if (pam.howdy.state === Pam.PamState.MaxTries)
             return Tr.tr("Maximum face attempts reached. Please use password.");
 
         return "";
     }
 
+    // CNS: Niri, not Hypr — no special-workspace or Hypr IPC here.
     readonly property string stateMsg: {
-        if (Hypr.kbLayout !== Hypr.defaultKbLayout) {
-            if (Hypr.capsLock && Hypr.numLock)
-                // TRANSLATORS: %1 = the active keyboard layout name, e.g. "English (US)"
-                return Tr.tr("Caps lock and Num lock are ON.\nKeyboard layout: %1").arg(Hypr.kbLayoutFull);
-            if (Hypr.capsLock)
-                // TRANSLATORS: %1 = the active keyboard layout name, e.g. "English (US)"
-                return Tr.tr("Caps lock is ON. Keyboard layout: %1").arg(Hypr.kbLayoutFull);
-            if (Hypr.numLock)
-                // TRANSLATORS: %1 = the active keyboard layout name, e.g. "English (US)"
-                return Tr.tr("Num lock is ON. Keyboard layout: %1").arg(Hypr.kbLayoutFull);
-            // TRANSLATORS: %1 = the active keyboard layout name, e.g. "English (US)"
-            return Tr.tr("Keyboard layout: %1").arg(Hypr.kbLayoutFull);
+        if (Niri.kbLayout !== Niri.defaultKbLayout) {
+            if (Niri.capsLock && Niri.numLock)
+                return Tr.tr("Caps lock and Num lock are ON.\nKeyboard layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+            if (Niri.capsLock)
+                return Tr.tr("Caps lock is ON. Kb layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+            if (Niri.numLock)
+                return Tr.tr("Num lock is ON. Kb layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+            return Tr.tr("Keyboard layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
         }
 
-        if (Hypr.capsLock && Hypr.numLock)
+        if (Niri.capsLock && Niri.numLock)
             return Tr.tr("Caps lock and Num lock are ON.");
-        if (Hypr.capsLock)
+        if (Niri.capsLock)
             return Tr.tr("Caps lock is ON.");
-        if (Hypr.numLock)
+        if (Niri.numLock)
             return Tr.tr("Num lock is ON.");
 
         return "";
