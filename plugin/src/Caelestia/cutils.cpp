@@ -211,6 +211,21 @@ QList<QQuickItem*> CUtils::findChildrenMatching(QQuickItem* root, const QString&
     return children;
 }
 
+bool CUtils::exists(const QString& path) {
+    return QFile::exists(path);
+}
+
+QStringList CUtils::listDir(const QString& path, const QStringList& nameFilters) {
+    QDir dir(path);
+    if (!dir.exists()) return {};
+
+    if (!nameFilters.isEmpty())
+        dir.setNameFilters(nameFilters);
+
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+    return dir.entryList();
+}
+
 #ifndef CAELESTIA_VERSION
 #define CAELESTIA_VERSION ""
 #endif

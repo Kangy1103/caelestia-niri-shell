@@ -61,6 +61,8 @@ class UtilitiesConfig : public settings::ObjectNode {
 
     CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_PROPERTY(int, maxToasts, 4)
+    // CNS: set once niri's own config has loaded, for the reload toast
+    CONFIG_GLOBAL_PROPERTY(bool, niriConfigLoaded, true)
     CONFIG_SUBOBJECT(UtilitiesCards, cards)
     CONFIG_GLOBAL_SUBOBJECT(UtilitiesToasts, toasts)
     CONFIG_GLOBAL_SUBOBJECT(UtilitiesVpn, vpn)

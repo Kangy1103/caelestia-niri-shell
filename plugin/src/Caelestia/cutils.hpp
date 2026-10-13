@@ -34,6 +34,9 @@ public:
     Q_INVOKABLE static QList<QQuickItem*> findChildren(QQuickItem* root, const QString& name);
     Q_INVOKABLE static QList<QQuickItem*> findChildrenMatching(QQuickItem* root, const QString& pattern);
 
+    Q_INVOKABLE static bool exists(const QString& path);
+    Q_INVOKABLE static QStringList listDir(const QString& path, const QStringList& nameFilters = {});
+
     [[nodiscard]] static QString version();
     [[nodiscard]] static QString qtVersion();
 };
