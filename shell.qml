@@ -90,10 +90,4 @@ ShellRoot {
       geomComponent.createObject(root);
     }
   }
-
-  // Sync profile picture to greeter cache so the greeter user can read it
-  Process {
-    command: ["sh", "-c", "cp /home/kangy/.face /var/cache/cns-greeter/.face 2>/dev/null; chmod 644 /var/cache/cns-greeter/.face 2>/dev/null"]
-    running: true
-  }
 }
