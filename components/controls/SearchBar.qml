@@ -96,4 +96,6 @@ TextFieldBase {
     TapHandler {
         id: tapHandler
     }
+
+    signal textNonEmpty
 }
