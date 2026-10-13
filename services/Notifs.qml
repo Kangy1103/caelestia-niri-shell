@@ -7,10 +7,10 @@ import Quickshell.Io
 import Quickshell.Services.Notifications
 import CNS
 import CNS.Config
-import CNS.I18n
 import qs.components.misc
 import qs.services
 import qs.utils
+import QtMultimedia
 
 Singleton {
     id: root
@@ -23,17 +23,11 @@ Singleton {
     property bool loaded
 
     function hasFullscreen(): bool {
-        for (const monitor of Hypr.monitors.values) {
-            if (monitor?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1))
-                return true;
-        }
-        return false;
+        return Niri.hasFullscreen;
     }
 
     function shouldShowPopup(): bool {
-        if (props.dnd || ShellState.anySidebarOpen())
-            return false;
-        if (GlobalConfig.notifs.fullscreen === NotifsFullscreen.Off && hasFullscreen())
+        if (props.dnd)
             return false;
         return true;
     }
@@ -43,9 +37,9 @@ Singleton {
             return;
 
         if (dnd)
-            Toaster.toast(Tr.tr("Do not disturb enabled"), Tr.tr("Popup notifications are now disabled"), "do_not_disturb_on");
+            Toaster.toast(qsTr("Do not disturb enabled"), qsTr("Popup notifications are now disabled"), "do_not_disturb_on");
         else
-            Toaster.toast(Tr.tr("Do not disturb disabled"), Tr.tr("Popup notifications are now enabled"), "do_not_disturb_off");
+            Toaster.toast(qsTr("Do not disturb disabled"), qsTr("Popup notifications are now enabled"), "do_not_disturb_off");
     }
 
     onListChanged: {
@@ -59,7 +53,7 @@ Singleton {
         interval: 1000
         onTriggered: storage.setText(JSON.stringify(root.notClosed.map(n => ({
                     time: n.time,
-                    id: n.id,
+                    notificationId: n.notificationId,
                     summary: n.summary,
                     body: n.body,
                     appIcon: n.appIcon,
@@ -93,7 +87,26 @@ Singleton {
         persistenceSupported: true
 
         onNotification: notif => {
+            // Suppress internal screenshot notifications from workspace preview captures
+            if (notif.appName === "niri" && notif.summary === "Screenshot captured") {
+                notif.tracked = false;
+                notif.close();
+                return;
+            }
+
             notif.tracked = true;
+
+            if (notif.hints?.["suppress-sound"]) {
+                // skip — app explicitly asked for silence
+            } else if (notif.hints?.["sound-file"]) {
+                notifSound.source = root.resolveSoundUrl(notif.hints["sound-file"]);
+                notifSound.play();
+            } else if (notif.hints?.["sound-name"]) {
+                notifSound.source = "file:///usr/share/sounds/freedesktop/stereo/" + notif.hints["sound-name"] + ".oga";
+                notifSound.play();
+            } else {
+                root.playDefaultSound(notif.urgency, notif.appName);
+            }
 
             const comp = notifComp.createObject(root, {
                 popup: root.shouldShowPopup(),
@@ -101,6 +114,55 @@ Singleton {
             });
             root.list = [comp, ...root.list];
         }
+    }
+
+    function resolveSoundUrl(configPath: string): string {
+        if (configPath.startsWith("root:"))
+            return "file://" + Quickshell.shellPath(configPath.substring(5));
+        if (configPath.startsWith("/"))
+            return "file://" + configPath;
+        return configPath;
+    }
+
+    function isElectronApp(appName: string): bool {
+        if (!appName) return false;
+        const name = appName.toLowerCase();
+        const knownElectron = [
+            "discord", "vesktop", "webcord", "armcord", "vencord",
+            "code", "code-oss", "vscodium", "vscode",
+            "slack", "skype", "teams", "element", "riot",
+            "opencode", "opencode desktop",
+            "spotify", "postman", "figma", "notion",
+            "brave", "chromium", "google-chrome"
+        ];
+        for (const pattern of knownElectron) {
+            if (name.indexOf(pattern) !== -1)
+                return true;
+        }
+        return false;
+    }
+
+    function playDefaultSound(urgency: int, appName: string): void {
+        if (!GlobalConfig.notifs.soundEnabled)
+            return;
+
+        const soundPath = urgency === NotificationUrgency.Critical
+            ? GlobalConfig.notifs.soundCritical
+            : GlobalConfig.notifs.soundNormal;
+
+        if (!soundPath)
+            return;
+
+        if (isElectronApp(appName))
+            return;
+
+        notifSound.source = root.resolveSoundUrl(soundPath);
+        notifSound.play();
+    }
+
+    SoundEffect {
+        id: notifSound
+        volume: 0.5
     }
 
     FileView {
@@ -128,17 +190,6 @@ Singleton {
                 root.loaded = true;
                 Qt.callLater(() => setText("[]"));
             }
-        }
-    }
-
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "clearNotifs"
-        description: "Clear all notifications"
-        onPressed: {
-            for (const notif of root.list.slice())
-                notif.close();
         }
     }
 
