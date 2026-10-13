@@ -176,12 +176,43 @@ PageBase {
             }
         }
 
-        RowButton {
+        // CNS: full-width connected-rect row rather than a compact RowButton, so the
+// "pair new device" action reads as a row in the settings list.
+        ConnectedRect {
             last: true
-            icon: "add"
-            text: Tr.tr("Pair new device")
-            disabled: !root.btEnabled
-            onClicked: root.nState.openSubPage(2)
+            Layout.fillWidth: true
+            implicitHeight: pairLayout.implicitHeight + pairLayout.anchors.margins * 2
+
+            StateLayer {
+                disabled: !root.btEnabled
+                onClicked: root.nState.openSubPage(2)
+            }
+
+            RowLayout {
+                id: pairLayout
+
+                anchors.fill: parent
+                anchors.margins: Tokens.padding.medium
+                anchors.leftMargin: Tokens.padding.largeIncreased
+                anchors.rightMargin: Tokens.padding.largeIncreased
+                spacing: Tokens.spacing.medium
+                opacity: root.btEnabled ? 1 : 0.5
+
+                Behavior on opacity {
+                    Anim {}
+                }
+
+                MaterialIcon {
+                    text: "add"
+                    font: Tokens.font.icon.medium
+                }
+
+                StyledText {
+                    text: Tr.tr("Pair new device")
+                    font: Tokens.font.body.medium
+                    color: Colours.palette.m3onSurface
+                }
+            }
         }
 
         ToggleRow {
