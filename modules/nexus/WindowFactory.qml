@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import CNS.Config
-import CNS.I18n
 import qs.components
 import qs.services
 import qs.modules.nexus
@@ -39,10 +38,12 @@ Singleton {
             minimumSize.width: contentItem.Tokens.sizes.nexus.minWidth
             minimumSize.height: contentItem.Tokens.sizes.nexus.minHeight
 
+            Config.screen: screen.name
+            Tokens.screen: screen.name
             contentItem.Config.screen: screen.name
             contentItem.Tokens.screen: screen.name
 
-            title: Tr.tr("Nexus — %1").arg(PageRegistry.pages[nexus.nState.currentPageIdx].label)
+            title: qsTr("Nexus — %1").arg(PageRegistry.pages[nexus.nState.currentPageIdx].label)
 
             Nexus {
                 id: nexus

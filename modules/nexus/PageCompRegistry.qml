@@ -3,17 +3,14 @@ pragma Singleton
 import QtQuick
 import QtQuick.Layouts
 import CNS.Config
-import CNS.I18n
 import qs.components
 import qs.services
 import qs.modules.nexus.common
 import qs.modules.nexus.pages
-import qs.modules.nexus.pages.apps
 import qs.modules.nexus.pages.audio
 import qs.modules.nexus.pages.bluetooth
 import qs.modules.nexus.pages.network
 import qs.modules.nexus.pages.panels
-import qs.modules.nexus.pages.services
 import qs.modules.nexus.pages.wallandstyle
 import qs.modules.nexus.pages.panels.taskbar
 
@@ -36,6 +33,12 @@ QtObject {
                 }
                 Component {
                     ColourSelect {}
+                }
+                Component {
+                    BorderPage {}
+                }
+                Component {
+                    WebWallpaperPage {}
                 }
             }
         },
@@ -90,6 +93,9 @@ QtObject {
                 Component {
                     AppVolumes {}
                 }
+                Component {
+                    AudioSinkSwitch {}
+                }
             }
         },
 
@@ -98,7 +104,12 @@ QtObject {
             PlaceholderComp {}
         },
         Component {
-            PlaceholderComp {}
+            // Lock screen
+            StackPage {
+                Component {
+                    LockPage {}
+                }
+            }
         },
 
         // Shell
@@ -143,27 +154,29 @@ QtObject {
             }
         },
         Component {
-            // Apps
-            StackPage {
-                Component {
-                    AppsPage {}
-                }
-                Component {
-                    AllApps {}
-                }
-                Component {
-                    AppInfo {}
-                }
-            }
-        },
-        Component {
             // Services
             StackPage {
                 Component {
                     ServicesPage {}
                 }
                 Component {
-                    NotificationsPage {}
+                    VisualiserPresetsPage {}
+                }
+            }
+        },
+        Component {
+            // Session
+            StackPage {
+                Component {
+                    SessionPage {}
+                }
+            }
+        },
+        Component {
+            // Notifications & popups
+            StackPage {
+                Component {
+                    NotificationsPopupsPage {}
                 }
             }
         },
@@ -201,19 +214,19 @@ QtObject {
                 Layout.alignment: Qt.AlignHCenter
                 text: "handyman"
                 color: Colours.palette.m3outlineVariant
-                fontStyle: Tokens.font.icon.extraLarge
+                font: Tokens.font.icon.extraLarge
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
-                text: Tr.tr("Page under construction")
+                text: qsTr("Page under construction")
                 color: Colours.palette.m3outlineVariant
                 font: Tokens.font.title.large
             }
 
             StyledText {
                 Layout.alignment: Qt.AlignHCenter
-                text: Tr.tr("This page will be available in a future update.")
+                text: qsTr("This page will be available in a future update.")
                 color: Colours.palette.m3outlineVariant
                 font: Tokens.font.body.large
             }
