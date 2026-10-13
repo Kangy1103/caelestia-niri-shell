@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Wayland
 import CNS.Blobs
 import CNS.Config
@@ -19,58 +18,44 @@ StyledWindow {
     readonly property alias bar: bar
     readonly property alias interactionWrapper: interactions
 
+    readonly property bool hasSpecialWorkspace: false  // Niri: no special workspaces
+    readonly property bool hasFullscreen: Niri.hasFullscreen
     readonly property ScreenState screenState: ShellState.forScreen(screen)
 
-    readonly property HyprlandMonitor monitor: Hypr.monitorFor(screen)
-    readonly property bool hasSpecialWorkspace: (monitor?.lastIpcObject.specialWorkspace?.name.length ?? 0) > 0
-    readonly property bool hasFullscreenOnNormalWs: monitor?.activeWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false
-    readonly property bool hasFullscreen: {
-        if (hasSpecialWorkspace) {
-            const specialName = monitor?.lastIpcObject.specialWorkspace?.name;
-            if (!specialName)
-                return false;
-            const specialWs = Hypr.workspaces.values.find(ws => ws.name === specialName);
-            return specialWs?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false;
-        }
-        return hasFullscreenOnNormalWs;
-    }
-
     property real fsTransitionProg: hasFullscreen ? 1 : 0
-    readonly property real sdfBorderOffset: 2 * fsTransitionProg // SDFs joins are not exact, so offset by 2px to ensure nothing shows
+    readonly property real sdfBorderOffset: 2 * fsTransitionProg
     readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
     readonly property real borderRounding: contentItem.Config.border.rounding * (1 - fsTransitionProg)
     readonly property real shadowOpacity: 0.7 * (1 - fsTransitionProg)
+    readonly property bool _panelsAnimating: {
+        const d = panels.dashboard;
+        const l = panels.launcher;
+        const s = panels.sidebar;
+        return (d.offsetScale > 0 && d.offsetScale < 1) ||
+               (l.offsetScale > 0 && l.offsetScale < 1) ||
+               (s.offsetScale > 0 && s.offsetScale < 1);
+    }
     readonly property real borderLayoutThickness: hasFullscreen ? 0 : contentItem.Config.border.thickness
 
     property color surfaceColour: Colours.tPalette.m3surface
 
-    readonly property int dragMaskPadding: {
-        if (focusGrab.active || panels.popouts.isDetached)
-            return 0;
-
-        if (monitor?.lastIpcObject.specialWorkspace?.name || monitor?.activeWorkspace?.toplevels.values.length > 0)
-            return 0;
-
-        const thresholds = [];
-        for (const panel of ["dashboard", "launcher", "session", "sidebar"])
-            if (contentItem.Config[panel].enabled)
-                thresholds.push(contentItem.Config[panel].dragThreshold);
-        return Math.max(...thresholds);
-    }
+    readonly property int dragMaskPadding: 0  // Niri: no Hypr monitor data
 
     onHasFullscreenChanged: {
-        screenState.launcher = false;
-        screenState.session = false;
-        screenState.dashboard = false;
-        panels.popouts.close();
+        if (hasFullscreen) {
+            screenState.launcher = false;
+            screenState.session = false;
+            screenState.dashboard = false;
+            panels.popouts.close();
+        }
     }
 
     name: "drawers"
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
-    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.layer: fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen ? WlrLayer.Overlay : WlrLayer.Top
+    WlrLayershell.keyboardFocus: screenState.launcher || screenState.session || screenState.keybinds || screenState.editingWeatherLocation || screenState.dashboard || screenState.calendar || screenState.clipboard || screenState.notepad || panels.popouts.isDetached ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    mask: hasFullscreen ? emptyRegion : regions
+    mask: hasFullscreen ? emptyRegion : (screenState.launcher || screenState.calendar || screenState.keybinds || screenState.sidebar || screenState.notepad || screenState.clipboard ? fullScreenRegion : regions)
 
     anchors.top: true
     anchors.bottom: true
@@ -101,6 +86,14 @@ StyledWindow {
         }
     }
 
+    Region {
+        id: fullScreenRegion
+        x: 0
+        y: root.borderThickness
+        width: root.width - root.borderThickness
+        height: root.height - root.borderThickness * 2
+    }
+
     Regions {
         id: regions
 
@@ -109,34 +102,9 @@ StyledWindow {
         win: root
     }
 
-    HyprlandFocusGrab {
-        id: focusGrab
-
-        active: {
-            const s = root.screenState;
-            const conf = root.contentItem.Config;
-            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
-                return true;
-            if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
-                return true;
-            if (panels.popouts.currentName.startsWith("traymenu") && (panels.popouts.current as StackView)?.depth > 1)
-                return true;
-            return false;
-        }
-        windows: [root]
-        onCleared: {
-            root.screenState.launcher = false;
-            root.screenState.session = false;
-            root.screenState.sidebar = false;
-            root.screenState.dashboard = false;
-            panels.popouts.hasCurrent = false;
-            bar.closeTray();
-        }
-    }
-
     StyledRect {
         anchors.fill: parent
-        opacity: (root.screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0
+        opacity: (screenState.session && Config.session.enabled) || panels.popouts.detachedMode !== "" ? 0.5 : 0
         color: Colours.palette.m3scrim
 
         Behavior on opacity {
@@ -151,7 +119,7 @@ StyledWindow {
         opacity: root.surfaceColour.a
         layer.enabled: true
         layer.effect: MultiEffect {
-            shadowEnabled: true
+            shadowEnabled: root.shadowOpacity > 0 && !root._panelsAnimating
             blurMax: 15
             shadowColor: Qt.alpha(Colours.palette.m3shadow, Math.max(0, root.shadowOpacity))
         }
@@ -165,7 +133,7 @@ StyledWindow {
 
         BlobInvertedRect {
             anchors.fill: parent
-            anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
+            anchors.margins: -50
             group: blobGroup
             radius: root.borderRounding
             borderLeft: bar.implicitWidth - anchors.margins - root.sdfBorderOffset
@@ -220,6 +188,7 @@ StyledWindow {
             id: notifsBg
 
             panel: panels.notifications
+            visible: panels.notifications.visible
         }
 
         PanelBg {
@@ -234,7 +203,6 @@ StyledWindow {
         PanelBg {
             id: popoutBg
 
-            // Extra width to prevent vertical movement deformation partially detaching panel from bar
             property real extraWidth: panels.popouts.isDetached ? 0 : 0.2
 
             panel: panels.popoutsWrapper
@@ -246,6 +214,46 @@ StyledWindow {
                 Anim {}
             }
         }
+
+        PanelBg {
+            id: clipboardBg
+
+            panel: panels.clipboard
+            deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: notepadBg
+
+            panel: panels.notepad
+            deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: calendarBg
+
+            panel: panels.calendar
+            deformAmount: 0.1
+        }
+
+        PanelBg {
+            id: keybindsBg
+
+            panel: panels.keybinds
+            deformAmount: 0.1
+        }
+    }
+
+    ShellState.ComponentRef {
+        screen: root.screen
+        slot: "rootWindow"
+        component: root
+    }
+
+    ShellState.ComponentRef {
+        screen: root.screen
+        slot: "interactionWrapper"
+        component: interactions
     }
 
     Interactions {
@@ -253,9 +261,9 @@ StyledWindow {
 
         screen: root.screen
         popouts: panels.popouts
-        screenState: root.screenState
         panels: panels
         bar: bar
+        screenState: root.screenState
         borderThickness: root.borderLayoutThickness
         fullscreen: root.hasFullscreen
 
@@ -294,6 +302,18 @@ StyledWindow {
             popouts.transform: Matrix4x4 {
                 matrix: popoutBg.deformMatrix
             }
+            clipboard.transform: Matrix4x4 {
+                matrix: clipboardBg.deformMatrix
+            }
+            notepad.transform: Matrix4x4 {
+                matrix: notepadBg.deformMatrix
+            }
+            calendar.transform: Matrix4x4 {
+                matrix: calendarBg.deformMatrix
+            }
+            keybinds.transform: Matrix4x4 {
+                matrix: keybindsBg.deformMatrix
+            }
         }
 
         BarWrapper {
@@ -307,31 +327,55 @@ StyledWindow {
             popouts: panels.popouts
 
             fullscreen: root.hasFullscreen
+
+            ShellState.ComponentRef {
+                screen: root.screen
+                slot: "bar"
+                component: bar
+            }
         }
     }
 
-    ShellState.ComponentRef {
-        screen: root.screen
-        slot: "rootWindow"
-        component: root
-    }
+    // Tooltip overlay — renders above all content, escapes clipping
+    Rectangle {
+        id: workspaceTooltip
 
-    ShellState.ComponentRef {
-        screen: root.screen
-        slot: "interactionWrapper"
-        component: interactions
-    }
+        visible: Niri.tooltipTarget !== null
+        z: 10000
 
-    ShellState.ComponentRef {
-        screen: root.screen
-        slot: "bar"
-        component: bar
-    }
+        x: {
+            if (Niri.tooltipTarget === null) return 0
+            var cx = Niri.mousePos.x + 16
+            if (cx + width > parent.width)
+                cx = parent.width - width - 4
+            return cx
+        }
+        y: {
+            if (Niri.tooltipTarget === null) return 0
+            var cy = Niri.mousePos.y - height / 2
+            if (cy < 4) cy = 4
+            if (cy + height > parent.height) cy = parent.height - height - 4
+            return cy
+        }
 
-    ShellState.ComponentRef {
-        screen: root.screen
-        slot: "panels"
-        component: panels
+        width: Math.min(tooltipLabel.implicitWidth + 16, 350)
+        height: tooltipLabel.implicitHeight + 10
+        color: Colours.palette.m3surfaceContainerHighest
+        radius: 8
+        border.color: Colours.palette.m3outlineVariant
+        border.width: 1
+        clip: true
+
+        StyledText {
+            id: tooltipLabel
+            anchors.centerIn: parent
+            text: Niri.tooltipText
+            width: parent.width - 16
+            color: Colours.palette.m3onSurface
+            font.pointSize: 10
+            elide: Text.ElideRight
+            maximumLineCount: 1
+        }
     }
 
     component PanelBg: BlobRect {
