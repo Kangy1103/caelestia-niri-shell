@@ -24,6 +24,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
             text: Tr.trCtx("Enabled", "toggle label")
             checked: Config.sidebar.enabled
@@ -31,6 +32,7 @@ PageBase {
         }
 
         StepperRow {
+            Layout.fillWidth: true
             last: true
             label: Tr.tr("Drag threshold")
             subtext: Tr.tr("Pixels dragged before the sidebar opens")

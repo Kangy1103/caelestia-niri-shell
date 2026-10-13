@@ -18,6 +18,7 @@ PageBase {
         spacing: Tokens.spacing.extraSmall / 2
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
             text: Tr.trCtx("Compact", "taskbar active window layout")
             checked: Config.bar.activeWindow.compact
@@ -25,12 +26,14 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.trCtx("Inverted", "taskbar active window: swap the title and class order")
             checked: Config.bar.activeWindow.inverted
             onToggled: GlobalConfig.bar.activeWindow.inverted = checked
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.tr("Show on hover")
             subtext: Tr.tr("Only show the active window title while hovering")
             checked: Config.bar.activeWindow.showOnHover
@@ -38,6 +41,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
             text: Tr.tr("Popout on hover")
             subtext: Tr.tr("Show a window details popout when hovering")

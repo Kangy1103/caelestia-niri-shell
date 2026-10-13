@@ -18,6 +18,7 @@ PageBase {
         spacing: Tokens.spacing.extraSmall / 2
 
         ToggleRow {
+            Layout.fillWidth: true
             first: true
             text: Tr.trCtx("Background", "taskbar clock: draw a background behind the clock")
             checked: Config.bar.clock.background
@@ -25,6 +26,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             text: Tr.tr("Show date")
             checked: Config.bar.clock.showDate
             onToggled: GlobalConfig.bar.clock.showDate = checked
@@ -37,6 +39,7 @@ PageBase {
         }
 
         ToggleRow {
+            Layout.fillWidth: true
             last: true
             text: Tr.tr("Show seconds")
             checked: Config.bar.clock.showSeconds
