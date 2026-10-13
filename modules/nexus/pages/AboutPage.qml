@@ -17,6 +17,12 @@ PageBase {
 
     property string quickshellVersion
     property string cliVersion
+    // CNS: hardware/host details that SysInfo does not surface directly
+    property string sysHostname
+    property string sysDevice
+    property string sysKernel
+    property string sysFirmware
+    property string sysShell
 
     title: Tr.tr("About")
 
@@ -35,17 +41,48 @@ PageBase {
             }
         }
 
-        // Parsed from the caelestia CLI's package listing; the sh wrapper avoids a
+        // Parsed from the cns CLI's package listing; the sh wrapper avoids a
         // warning when the (optional) CLI isn't installed
         Process {
             running: true
-            command: ["sh", "-c", "caelestia --version 2>/dev/null"]
+            command: ["sh", "-c", "cns --version 2>/dev/null"]
             stdout: StdioCollector {
                 onStreamFinished: {
-                    const m = text.match(/caelestia-cli\S*\s+(\d+(?:\.\d+)*)/);
+                    const m = text.match(/cns-cli\S*\s+(\d+(?:\.\d+)*)/);
                     root.cliVersion = m ? m[1] : "";
                 }
             }
+        }
+
+        // CNS: DMI + hostname probes, with SysInfo as fallback
+        Process {
+            running: true
+            command: ["sh", "-c", "hostname 2>/dev/null"]
+            stdout: StdioCollector { onStreamFinished: root.sysHostname = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["sh", "-c", "cat /sys/devices/virtual/dmi/id/product_name 2>/dev/null || uname -n 2>/dev/null"]
+            stdout: StdioCollector { onStreamFinished: root.sysDevice = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["uname", "-r"]
+            stdout: StdioCollector { onStreamFinished: root.sysKernel = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["sh", "-c", "cat /sys/devices/virtual/dmi/id/bios_version 2>/dev/null"]
+            stdout: StdioCollector { onStreamFinished: root.sysFirmware = text.trim() }
+        }
+
+        Process {
+            running: true
+            command: ["sh", "-c", "basename \"${SHELL:-}\" 2>/dev/null || echo ''"]
+            stdout: StdioCollector { onStreamFinished: root.sysShell = text.trim() }
         }
 
         // Hero
@@ -92,29 +129,29 @@ PageBase {
         InfoRow {
             first: true
             label: Tr.tr("Hostname")
-            value: SysInfo.hostname
+            value: root.sysHostname || SysInfo.hostname || "…"
         }
 
         InfoRow {
             label: Tr.trCtx("Device", "system model name")
-            value: SysInfo.device
+            value: root.sysDevice || SysInfo.device || "…"
         }
 
         InfoRow {
             label: Tr.tr("Distro")
-            value: SysInfo.osPrettyName || SysInfo.osName
+            value: SysInfo.osPrettyName || SysInfo.osName || "…"
         }
 
         InfoRow {
             label: Tr.tr("Kernel")
-            value: SysInfo.kernel
+            value: root.sysKernel || SysInfo.kernel || "…"
         }
 
         InfoRow {
             last: true
             // TRANSLATORS: BIOS or UEFI firmware version
             label: Tr.tr("Firmware")
-            value: SysInfo.firmware
+            value: root.sysFirmware || SysInfo.firmware || "…"
         }
 
         // Software
@@ -126,6 +163,11 @@ PageBase {
             first: true
             label: Tr.trCtx("Shell", "the caelestia shell itself, not a unix shell")
             value: CUtils.version || "…"
+        }
+
+        InfoRow {
+            label: Tr.tr("Login shell")
+            value: root.sysShell || "…"
         }
 
         InfoRow {
