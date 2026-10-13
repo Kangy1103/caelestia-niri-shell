@@ -14,5 +14,5 @@ qml_module(CNS-components
         Qt::Quick
         CNS
     DEPENDENCIES
-        Caelestia
+        CNS
 )

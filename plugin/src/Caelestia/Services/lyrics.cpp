@@ -913,7 +913,7 @@ const QString& Lyrics::stateDir() {
         if (state.isEmpty()) {
             state = QDir::homePath() + u"/.local/state"_s;
         }
-        return state + u"/caelestia/lyrics"_s;
+        return state + u"/caelestia-niri-shell/lyrics"_s;
     }();
     return k_dir;
 }
@@ -924,7 +924,7 @@ const QString& Lyrics::cacheDir() {
         if (cache.isEmpty()) {
             cache = QDir::homePath() + u"/.cache"_s;
         }
-        return cache + u"/caelestia/lyrics"_s;
+        return cache + u"/caelestia-niri-shell/lyrics"_s;
     }();
     return k_dir;
 }

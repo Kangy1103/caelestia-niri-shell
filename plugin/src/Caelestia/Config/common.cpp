@@ -9,7 +9,14 @@ using Qt::StringLiterals::operator""_s;
 Q_LOGGING_CATEGORY(lcConfig, "caelestia.config", QtInfoMsg)
 
 QString configDir() {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + u"/caelestia"_s;
+    // CNS honours CAELESTIA_CONFIG_DIR (set by //@ pragma Env in shell.qml).
+    // The fallback must stay CNS-namespaced too — if the shell is ever started
+    // without that pragma, a bare "/caelestia" would silently read an empty
+    // config dir rather than erroring.
+    const QByteArray env = qgetenv("CAELESTIA_CONFIG_DIR");
+    if (!env.isEmpty())
+        return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + u'/' + QString::fromUtf8(env) + u'/';
+    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + u"/caelestia-niri-shell"_s;
 }
 
 QString monitorConfigDir() {

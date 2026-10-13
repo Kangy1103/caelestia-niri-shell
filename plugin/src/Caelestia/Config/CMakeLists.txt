@@ -31,7 +31,7 @@ qml_module(CNS-config
         Qt::Quick
         Qt::QuickControls2
     DEPENDENCIES
-        Caelestia.Settings
+        CNS.Settings
 )
 target_link_libraries(CNS-config PUBLIC
     Qt::Gui

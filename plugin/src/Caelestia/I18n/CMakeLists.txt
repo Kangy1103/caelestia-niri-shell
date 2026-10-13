@@ -54,5 +54,5 @@ qml_module(CNS-i18n
         CNS-util
         CNS-config
     DEPENDENCIES
-        Caelestia.Config
+        CNS.Config
 )

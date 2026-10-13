@@ -20,6 +20,8 @@ qml_module(CNS-services
         networkusage.cpp
         hyprdevices.cpp
         hyprextras.cpp
+        niriipc.cpp
+        nirisocket.cpp
     LIBRARIES
         Qt::Concurrent
         Qt::DBus
@@ -32,6 +34,6 @@ qml_module(CNS-services
         CNS
         CNS-config
     DEPENDENCIES
-        Caelestia
-        Caelestia.Config
+        CNS
+        CNS.Config
 )

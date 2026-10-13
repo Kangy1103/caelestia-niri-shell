@@ -55,7 +55,7 @@ const QString& ImageCacher::cacheDir() {
         QString cache = qEnvironmentVariable("XDG_CACHE_HOME");
         if (cache.isEmpty())
             cache = QDir::homePath() + u"/.cache"_s;
-        return cache + u"/caelestia/imagecache"_s;
+        return cache + u"/caelestia-niri-shell/imagecache"_s;
     }();
     return k_dir;
 }
