@@ -9,6 +9,7 @@ import Quickshell
 import Quickshell.Io
 import CNS
 import CNS.Config
+import CNS.Images
 import qs.services
 import qs.utils
 
