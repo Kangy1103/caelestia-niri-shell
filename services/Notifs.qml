@@ -22,13 +22,28 @@ Singleton {
 
     property bool loaded
 
+    // CNS: this file had no logging at all, so the notification path could
+    // only be judged by the absence of QML warnings - which is exactly how
+    // the close()/dismiss() bug survived, since a failed call still surfaces
+    // as only a scene warning. These confirm the path positively: received,
+    // tracked or suppressed, popped up or dropped, and cleared.
+    LoggingCategory {
+        id: lc
+
+        name: "caelestia.qml.services.notifs"
+        defaultLogLevel: LoggingCategory.Info
+    }
+
     function hasFullscreen(): bool {
         return Niri.hasFullscreen;
     }
 
     function shouldShowPopup(): bool {
-        if (props.dnd)
+        if (props.dnd) {
+            console.log(lc, "popup suppressed: dnd is on");
             return false;
+        }
+        console.log(lc, "popup allowed: dnd is off");
         return true;
     }
 
@@ -87,6 +102,8 @@ Singleton {
         persistenceSupported: true
 
         onNotification: notif => {
+            console.log(lc, `received: id=${notif.id} app="${notif.appName}" summary="${notif.summary}" urgency=${notif.urgency} resident=${notif.resident}`);
+
             // Suppress internal screenshot notifications from workspace preview captures
             if (notif.appName === "niri" && notif.summary === "Screenshot captured") {
                 notif.tracked = false;
@@ -94,7 +111,9 @@ Singleton {
                 // close() threw "Property 'close' ... is not a func", so
                 // screenshot notifications were never suppressed and the
                 // clear-all IPC never cleared anything. main has this bug too.
+                console.log(lc, `suppressing niri screenshot notification, dismissing id=${notif.id}`);
                 notif.dismiss();
+                console.log(lc, `screenshot notification dismissed id=${notif.id}`);
                 return;
             }
 
@@ -102,23 +121,34 @@ Singleton {
 
             if (notif.hints?.["suppress-sound"]) {
                 // skip — app explicitly asked for silence
+                console.log(lc, `app requested silence: ${notif.summary}`);
             } else if (notif.hints?.["sound-file"]) {
                 notifSound.source = root.resolveSoundUrl(notif.hints["sound-file"]);
                 notifSound.play();
+                console.log(lc, `sound-file: ${notifSound.source}`);
             } else if (notif.hints?.["sound-name"]) {
                 notifSound.source = "file:///usr/share/sounds/freedesktop/stereo/" + notif.hints["sound-name"] + ".oga";
                 notifSound.play();
+                console.log(lc, `sound-name: ${notif.hints["sound-name"]}`);
             } else {
                 root.playDefaultSound(notif.urgency, notif.appName);
+                console.log(lc, `default sound played for "${notif.appName}"`);
             }
 
             const comp = notifComp.createObject(root, {
                 popup: root.shouldShowPopup(),
                 notification: notif
             });
+            if (!comp) {
+                console.warn(lc, `createObject returned null for id=${notif.id} - notification will not appear`);
+            } else {
+                console.log(lc, `tracked: id=${notif.id} popup=${comp.popup} listSize=${root.list.length + 1}`);
+            }
             root.list = [comp, ...root.list];
         }
     }
+
+    Component.onCompleted: console.log(lc, "notification server up, actionsSupported:", server.actionsSupported)
 
     function resolveSoundUrl(configPath: string): string {
         if (configPath.startsWith("root:"))
@@ -199,8 +229,22 @@ Singleton {
 
     IpcHandler {
         function clear(): void {
-            for (const notif of root.list.slice())
-                notif.dismiss();
+            const items = root.list.slice();
+            console.log(lc, `clear(): closing ${items.length} notification(s)`);
+            let failed = 0;
+            for (const notif of items) {
+                // root.list holds NotifData wrappers, not raw Notifications.
+                // NotifData.close() is the correct call here - it delegates to
+                // notification?.dismiss() internally. Calling dismiss() directly
+                // on the wrapper throws "Property 'dismiss' ... is not a func".
+                try {
+                    notif.close();
+                } catch (e) {
+                    failed++;
+                    console.warn(lc, `clear(): close failed: ${e}`);
+                }
+            }
+            console.log(lc, `clear(): done, ${items.length - failed} closed, ${failed} failed, list=${root.list.length}`);
         }
 
         function isDndEnabled(): bool {
@@ -209,14 +253,17 @@ Singleton {
 
         function toggleDnd(): void {
             props.dnd = !props.dnd;
+            console.log(lc, `dnd toggled -> ${props.dnd}`);
         }
 
         function enableDnd(): void {
             props.dnd = true;
+            console.log(lc, "dnd enabled via IPC");
         }
 
         function disableDnd(): void {
             props.dnd = false;
+            console.log(lc, "dnd disabled via IPC");
         }
 
         target: "notifs"
