@@ -1,7 +1,14 @@
-import Quickshell.Hyprland
+// Created by Kangy w/ OpenCode AI Assistance
+// Version: 0.1.0-20260610
 
-// qmllint disable unresolved-type
-GlobalShortcut {
-    // qmllint enable unresolved-type
-    appid: "caelestia"
+import QtQuick
+
+QtObject {
+    id: root
+
+    property string name
+    property string description
+
+    signal pressed
+    signal released
 }
