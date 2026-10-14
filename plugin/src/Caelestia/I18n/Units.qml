@@ -17,8 +17,12 @@ QtObject {
     function resolveTempUnit(unit: int): int {
         if (Number(unit) !== TemperatureUnit.Auto)
             return unit;
-        const system = Qt.locale().measurementSystem;
-        return system === Locale.ImperialUSSystem || system === Locale.ImperialUKSystem ? TemperatureUnit.Fahrenheit : TemperatureUnit.Celsius;
+        // Only US-system locales use Fahrenheit for temperature. Qt reports
+        // en_GB as ImperialUKSystem because the UK keeps imperial for road
+        // distance and paper sizes, but it uses Celsius for weather - the Met
+        // Office publishes in Celsius. Mapping ImperialUKSystem to Fahrenheit
+        // showed a UK user their own weather in the wrong unit.
+        return Qt.locale().measurementSystem === Locale.ImperialUSSystem ? TemperatureUnit.Fahrenheit : TemperatureUnit.Celsius;
     }
 
     // Converts a temperature in Celsius to the given TemperatureUnit
