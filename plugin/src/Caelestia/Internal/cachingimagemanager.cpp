@@ -79,8 +79,8 @@ void CachingImageManager::setCacheDir(const QUrl& cacheDir) {
     }
 
     m_cacheDir = cacheDir;
-    if (!m_cacheDir.path().endsWith("/")) {
-        m_cacheDir.setPath(m_cacheDir.path() + "/");
+    if (!m_cacheDir.path().endsWith(QLatin1Char('/'))) {
+        m_cacheDir.setPath(m_cacheDir.path() + QLatin1Char('/'));
     }
     emit cacheDirChanged();
 }
@@ -134,9 +134,11 @@ void CachingImageManager::updateSource(const QString& path) {
 
         const QString fillMode = m_item->property("fillMode").toString();
         // clang-format off
-        const QString filename = QString("%1@%2x%3-%4.png")
+        const QString filename = QStringLiteral("%1@%2x%3-%4.png")
             .arg(watcher->result()).arg(size.width()).arg(size.height())
-            .arg(fillMode == "PreserveAspectCrop" ? "crop" : fillMode == "PreserveAspectFit" ? "fit" : "stretch");
+            .arg(fillMode == QLatin1String("PreserveAspectCrop") ? QStringLiteral("crop")
+                : fillMode == QLatin1String("PreserveAspectFit")   ? QStringLiteral("fit")
+                                                                   : QStringLiteral("stretch"));
         // clang-format on
 
         const QUrl cache = m_cacheDir.resolved(QUrl(filename));
@@ -237,15 +239,15 @@ void CachingImageManager::createCache(
 
         image.convertTo(QImage::Format_ARGB32);
 
-        if (fillMode == "PreserveAspectCrop") {
+        if (fillMode == QLatin1String("PreserveAspectCrop")) {
             image = image.scaled(size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-        } else if (fillMode == "PreserveAspectFit") {
+        } else if (fillMode == QLatin1String("PreserveAspectFit")) {
             image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         } else {
             image = image.scaled(size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
 
-        if (fillMode == "PreserveAspectCrop" || fillMode == "PreserveAspectFit") {
+        if (fillMode == QLatin1String("PreserveAspectCrop") || fillMode == QLatin1String("PreserveAspectFit")) {
             QImage canvas(size, QImage::Format_ARGB32);
             canvas.fill(Qt::transparent);
 
@@ -279,15 +281,15 @@ void CachingImageManager::createCache(
 QString CachingImageManager::sha256sum(const QString& path) {
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "CachingImageManager::sha256sum: failed to open" << path;
-        return "";
+        qWarning() << QLatin1String("CachingImageManager::sha256sum: failed to open") << path;
+        return {};
     }
 
     QCryptographicHash hash(QCryptographicHash::Sha256);
     hash.addData(&file);
     file.close();
 
-    return hash.result().toHex();
+    return QString::fromLatin1(hash.result().toHex());
 }
 
 } // namespace caelestia

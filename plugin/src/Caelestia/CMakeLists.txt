@@ -25,6 +25,7 @@ list(APPEND CMAKE_AUTOMOC_MACRO_NAMES
 )
 
 add_subdirectory(Settings)
+add_subdirectory(Internal)
 add_subdirectory(Components)
 add_subdirectory(Config)
 add_subdirectory(Models)
