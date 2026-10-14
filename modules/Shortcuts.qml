@@ -180,6 +180,15 @@ Scope {
                 if (root.hasFullscreen && ["launcher", "session", "dashboard"].includes(drawer))
                     return;
                 const screenState = ShellState.forActive();
+                // CNS: forActive() resolves via Niri.focusedMonitorName, which is
+                // empty until the first Niri IPC reply lands - measured at ~5s
+                // after shell start. Dereferencing it unguarded threw a TypeError
+                // for any drawer toggled in that window, which is every keybind
+                // pressed immediately after launch.
+                if (!screenState) {
+                    console.warn(lc, `Drawer "${drawer}" ignored: no active screen state yet (Niri has not reported a focused monitor)`);
+                    return;
+                }
                 screenState[drawer] = !screenState[drawer];
             } else {
                 console.warn(lc, `Drawer "${drawer}" does not exist`);
