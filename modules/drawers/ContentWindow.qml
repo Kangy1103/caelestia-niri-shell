@@ -20,7 +20,10 @@ StyledWindow {
     readonly property alias interactionWrapper: interactions
 
     readonly property bool hasSpecialWorkspace: false  // Niri: no special workspaces
-    readonly property bool hasFullscreen: Niri.hasFullscreen
+    // CNS: NiriIpc.hasFullscreen describes the focused window globally. Scope
+    // it to this output so a fullscreen app on one monitor doesn't hide the
+    // bar or change the layer/mask on every other monitor.
+    readonly property bool hasFullscreen: Niri.hasFullscreen && Niri.focusedMonitorName === screen.name
     readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     property real fsTransitionProg: hasFullscreen ? 1 : 0

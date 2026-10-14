@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import CNS.Config
+import CNS.I18n
 import qs.components
 import qs.services
 
@@ -72,7 +73,7 @@ Item {
             text: Time.minuteStr
             color: Colours.palette.m3secondary
             font: Tokens.font.headline.builders.large.scale(
-                GlobalConfig.services.useTwelveHourClock
+                Units.twelveHourClock
                     ? root.fitScale * (root.scale_12h / root.scale_24h)
                     : root.fitScale
             ).width(30).build()
@@ -90,7 +91,7 @@ Item {
             anchors.leftMargin: minuteMetrics.tightBoundingRect.x
             y: hourMetrics.tightBoundingRect.height - implicitHeight
 
-            active: GlobalConfig.services.useTwelveHourClock
+            active: Units.twelveHourClock
             asynchronous: true
 
             sourceComponent: StyledRect {

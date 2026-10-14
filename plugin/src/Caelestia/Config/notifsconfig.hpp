@@ -9,6 +9,11 @@ namespace caelestia::config {
 class NotifsConfig : public settings::ObjectNode {
     CONFIG_NODE(NotifsConfig, settings::ObjectNode)
 
+    // CNS: per-screen notification visibility. Toasts.qml filters every toast
+    // through Config.notifs.enabled, and ServicesPage exposes a per-display
+    // toggle. This property existed in main but was dropped in the settings
+    // API migration; undefined evaluated false and silently hid all toasts.
+    CONFIG_PROPERTY(bool, enabled, true)
     CONFIG_GLOBAL_PROPERTY(bool, expire, true)
     CONFIG_GLOBAL_ENUM_PROPERTY(NotifsFullscreen, fullscreen, NotifsFullscreen::On)
     CONFIG_GLOBAL_PROPERTY(int, defaultExpireTimeout, 5000)

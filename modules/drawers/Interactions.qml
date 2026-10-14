@@ -64,6 +64,14 @@ CustomMouseArea {
     hoverEnabled: true
 
     onPressed: event => dragStart = Qt.point(event.x, event.y)
+    // CNS: the launcher uses an exclusive full-screen layer-shell input mask,
+    // so clicks outside its visual panel are captured here rather than passed
+    // through to Niri. Previously this handler only recorded dragStart; there
+    // was no click-to-dismiss path, so the launcher stayed open indefinitely.
+    onClicked: event => {
+        if (screenState.launcher && !inBottomPanel(panels.launcher, event.x, event.y))
+            screenState.launcher = false;
+    }
     onContainsMouseChanged: {
         if (!containsMouse) {
             // Only hide if not activated by shortcut

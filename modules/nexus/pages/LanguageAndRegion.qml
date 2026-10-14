@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import CNS.Config
+import CNS.I18n
 import qs.components
 import qs.components.controls
 import qs.services
@@ -9,23 +10,39 @@ import qs.modules.nexus.common
 PageBase {
     id: root
 
-    // Temperature units (index 0 = Celsius, 1 = Fahrenheit — matches Weather.formatTemp)
+    // Temperature units (keep values aligned with TemperatureUnit)
     readonly property list<MenuItem> tempItems: [
         MenuItem {
+            text: qsTr("Auto")
+            value: TemperatureUnit.Auto
+        },
+        MenuItem {
             text: "°C"
+            value: TemperatureUnit.Celsius
         },
         MenuItem {
             text: "°F"
+            value: TemperatureUnit.Fahrenheit
+        },
+        MenuItem {
+            text: "K"
+            value: TemperatureUnit.Kelvin
         }
     ]
 
-    // Clock format (index 0 = 24-hour, 1 = 12-hour — matches Time.useTwelveHourClock)
+    // Clock formats (keep values aligned with ClockFormat)
     readonly property list<MenuItem> clockItems: [
         MenuItem {
-            text: qsTr("24-hour")
+            text: qsTr("Auto")
+            value: ClockFormat.Auto
         },
         MenuItem {
             text: qsTr("12-hour")
+            value: ClockFormat.TwelveHour
+        },
+        MenuItem {
+            text: qsTr("24-hour")
+            value: ClockFormat.TwentyFourHour
         }
     ]
 
@@ -142,8 +159,8 @@ PageBase {
             label: qsTr("Temperature")
             subtext: qsTr("Units for weather temperatures")
             menuItems: root.tempItems
-            active: root.tempItems[GlobalConfig.services.useFahrenheit ? 1 : 0]
-            onSelected: item => GlobalConfig.services.useFahrenheit = root.tempItems.indexOf(item) === 1
+            active: root.tempItems.find(item => item.value === GlobalConfig.services.weatherUnits)
+            onSelected: item => GlobalConfig.services.weatherUnits = item.value
         }
 
         SelectRow {
@@ -152,8 +169,8 @@ PageBase {
             label: qsTr("System temperatures")
             subtext: qsTr("Units for CPU and GPU temperatures")
             menuItems: root.tempItems
-            active: root.tempItems[GlobalConfig.services.useFahrenheitPerformance ? 1 : 0]
-            onSelected: item => GlobalConfig.services.useFahrenheitPerformance = root.tempItems.indexOf(item) === 1
+            active: root.tempItems.find(item => item.value === GlobalConfig.services.sensorUnits)
+            onSelected: item => GlobalConfig.services.sensorUnits = item.value
         }
 
         // Time & date
@@ -168,8 +185,8 @@ PageBase {
             label: qsTr("Clock format")
             subtext: qsTr("How times are shown across the shell")
             menuItems: root.clockItems
-            active: root.clockItems[GlobalConfig.services.useTwelveHourClock ? 1 : 0]
-            onSelected: item => GlobalConfig.services.useTwelveHourClock = root.clockItems.indexOf(item) === 1
+            active: root.clockItems.find(item => item.value === GlobalConfig.services.clockFormat)
+            onSelected: item => GlobalConfig.services.clockFormat = item.value
         }
     }
 }

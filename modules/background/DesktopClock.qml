@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import qs.components
 import qs.services
 import CNS.Config
+import CNS.I18n
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -104,7 +105,7 @@ Item {
                     Layout.alignment: Qt.AlignTop
                     Layout.topMargin: Tokens.padding.largeIncreased * 1.4 * root.scale
 
-                    active: Config.services.useTwelveHourClock
+                    active: Units.twelveHourClock
                     visible: active
 
                     sourceComponent: StyledText {

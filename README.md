@@ -195,6 +195,14 @@ All configuration options belong in `~/.config/caelestia/shell.json`. This file 
 default; you must create it manually. Options that you omit from the config file will use their default
 values.
 
+### CNS configuration example
+
+`shell.json.example` contains a small, sanitised set of CNS overrides using the current config
+schema. CNS reads its active config from
+`~/.config/caelestia-niri-shell/shell.json`; the example is not loaded automatically. Merge the
+values you want into that file rather than replacing it wholesale. It intentionally omits
+personal paths, locations, app lists, and the currently unsafe monitor-power-off action.
+
 ### Per-monitor configuration
 
 You can configure per-monitor options in `~/.config/caelestia/monitors/<monitor_name>/shell.json`.

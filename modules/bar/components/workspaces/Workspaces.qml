@@ -155,9 +155,10 @@ StyledRect {
         if (!allWs) allWs = [];
 
         var outputName = root.screen.name;
+        const perMonitor = Config.bar.workspaces.perMonitor;
         var wsList = [];
         for (var i = 0; i < allWs.length; i++) {
-            if (allWs[i].output === outputName) {
+            if (!perMonitor || allWs[i].output === outputName) {
                 wsList.push(allWs[i]);
             }
         }

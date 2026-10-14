@@ -55,7 +55,10 @@ Scope {
     }
 
     Variants {
-        model: GlobalConfig.general.idle.timeouts
+        // CNS: timeouts is a settings ListNode, not a QVariantList. Quickshell
+        // Variants silently creates zero delegates for the node itself; use
+        // its values list, as with other EntryList/ListNode-backed models.
+        model: GlobalConfig.general.idle.timeouts.values
 
         IdleMonitor {
             required property var modelData
