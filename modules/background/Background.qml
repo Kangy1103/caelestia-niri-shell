@@ -51,10 +51,23 @@ Variants {
                 sourceComponent: Wallpaper {}
             }
 
-            Visualiser {
+            // CNS: restored the Loader gate from main. Upstream's rewrite
+            // inlined Visualiser as a direct child, so it was constructed on
+            // every screen regardless of background.visualiser.enabled.
+            // Visualiser only zeroes its own opacity when disabled, but its
+            // Cava.values / Cava.provider bindings still evaluate at
+            // construction, which touches the Cava singleton and builds cava's
+            // FFTW plan. That made the visualiser toggle a no-op and put an
+            // intermittent libfftw3 crash in the shell's startup path.
+            Loader {
                 anchors.fill: parent
-                screen: win.modelData
-                wallpaper: wallpaper
+                active: Config.background.visualiser.enabled
+
+                sourceComponent: Visualiser {
+                    anchors.fill: parent
+                    screen: win.modelData
+                    wallpaper: wallpaper
+                }
             }
         }
 
