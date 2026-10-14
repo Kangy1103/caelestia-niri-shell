@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import qs.components
 import qs.services
+import qs.modules.bar as Bar
 import CNS.Config
 import CNS.Internal
 import CNS.Services

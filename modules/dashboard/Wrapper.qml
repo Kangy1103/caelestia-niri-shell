@@ -13,6 +13,16 @@ Item {
     id: root
 
     required property ScreenState screenState
+
+    // CNS: dashboard tab index lives in a reloadable persistent state object
+    // rather than screenState, so it survives content reloads. Upstream ships
+    // components/DashboardState.qml but never instantiates it.
+    // Must be declared on root, not on the content Loader below, or
+    // `root.dashState` in sourceComponent resolves to undefined.
+    readonly property DashboardState dashState: DashboardState {
+        reloadableId: "dashboardState"
+    }
+
     readonly property FileDialog facePicker: FileDialog {
         title: Tr.tr("Select a profile picture")
         filterLabel: Tr.tr("Image files")
@@ -52,13 +62,6 @@ Item {
         readonly property real nonAnimHeight: (content.item as Content)?.nonAnimHeight ?? 0
     readonly property bool shouldBeActive: screenState.dashboard && Config.dashboard.enabled
     property real offsetScale: shouldBeActive ? 0 : 1
-
-    // CNS: dashboard tab index lives in a reloadable persistent state object
-    // rather than screenState, so it survives content reloads. Upstream ships
-    // components/DashboardState.qml but never instantiates it.
-    readonly property DashboardState dashState: DashboardState {
-        reloadableId: "dashboardState"
-    }
 
     sourceComponent: Content {
             screenState: root.screenState

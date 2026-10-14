@@ -122,4 +122,22 @@ Searcher {
             }
         }
     }
+
+    // CNS: video-wallpaper detection. main's Wallpapers.qml had this; the sync
+    // took upstream's version, which has no video support, but
+    // modules/background/Wallpaper.qml still calls it for both `isVideo` and
+    // the video-frame colour source.
+    function isPathVideo(path: string): bool {
+        if (!path)
+            return false;
+        const p = path.toString().toLowerCase();
+        return p.endsWith(".mp4") || p.endsWith(".mkv") || p.endsWith(".webm") || p.endsWith(".mov") || p.endsWith(".avi") || p.endsWith(".m4v");
+    }
+
+    function getColorSource(path: string): string {
+        if (!isPathVideo(path))
+            return path;
+        const hash = Qt.md5(path.toString());
+        return `${Paths.state}/generated/video_frames/${hash}.png`;
+    }
 }
