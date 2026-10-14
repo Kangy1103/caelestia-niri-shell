@@ -9,6 +9,7 @@ import CNS.Blobs
 import CNS.Config
 import qs.components
 import qs.components.containers
+import qs.components.misc
 import qs.services
 import qs.modules.bar
 
@@ -244,13 +245,13 @@ StyledWindow {
         }
     }
 
-    ShellState.ComponentRef {
+    ComponentRef {
         screen: root.screen
         slot: "rootWindow"
         component: root
     }
 
-    ShellState.ComponentRef {
+    ComponentRef {
         screen: root.screen
         slot: "interactionWrapper"
         component: interactions
@@ -328,7 +329,7 @@ StyledWindow {
 
             fullscreen: root.hasFullscreen
 
-            ShellState.ComponentRef {
+            ComponentRef {
                 screen: root.screen
                 slot: "bar"
                 component: bar

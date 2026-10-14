@@ -83,21 +83,4 @@ Singleton {
             return CUtils.findChildrenMatching(rootItem ?? rootWindow?.contentItem, pattern);
         }
     }
-
-    component ComponentRef: QtObject {
-        required property ShellScreen screen
-        required property string slot
-        required property var component
-
-        readonly property QtObject target: ShellState.componentsFor(screen)
-
-        onTargetChanged: {
-            if (target)
-                target[slot] = component;
-        }
-        Component.onDestruction: {
-            if (target && target[slot] === component)
-                target[slot] = null;
-        }
-    }
 }

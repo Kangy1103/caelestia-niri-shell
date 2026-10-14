@@ -11,6 +11,10 @@ import qs.modules.session as Session
 import qs.modules.sidebar as Sidebar
 import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
+import qs.modules.keybinds as Keybinds
+import qs.modules.calendar as Calendar
+import qs.modules.clipboard as Clipboard
+import qs.modules.notepad as Notepad
 import qs.modules.utilities.toasts as Toasts
 
 Item {
@@ -33,6 +37,10 @@ Item {
     readonly property alias utilities: utilities
     readonly property alias toasts: toasts
     readonly property alias sidebar: sidebar
+    readonly property alias keybinds: keybinds
+    readonly property alias calendar: calendar
+    readonly property alias clipboard: clipboard
+    readonly property alias notepad: notepad
 
     anchors.fill: parent
     anchors.margins: borderThickness
@@ -151,5 +159,42 @@ Item {
         anchors.bottom: utilities.top
         anchors.right: parent.right
         anchors.topMargin: -notifications.anchors.topMargin
+    }
+
+    Keybinds.Wrapper {
+        id: keybinds
+
+        screenState: root.screenState
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+    Calendar.Wrapper {
+        id: calendar
+
+        screenState: root.screenState
+
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+    }
+
+    Clipboard.Wrapper {
+        id: clipboard
+
+        screen: root.screen
+        screenState: root.screenState
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+    }
+
+    Notepad.Wrapper {
+        id: notepad
+
+        screenState: root.screenState
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
     }
 }

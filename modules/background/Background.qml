@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import CNS.Config
 import qs.components
 import qs.components.containers
+import qs.components.misc
 import qs.services
 
 Variants {
@@ -28,7 +29,7 @@ Variants {
         anchors.left: true
         anchors.right: true
 
-        ShellState.ComponentRef {
+        ComponentRef {
             screen: win.screen
             slot: "background"
             component: win
