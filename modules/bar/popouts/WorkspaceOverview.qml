@@ -13,6 +13,9 @@ import Quickshell.Widgets
 import qs.components
 import CNS.Config
 import qs.services
+// CNS: Icons.getAppIcon() at the app-icon fallback was throwing
+// ReferenceError on every cell — qs.utils was never imported.
+import qs.utils
 
 Item {
     id: root

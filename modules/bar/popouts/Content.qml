@@ -14,6 +14,14 @@ Item {
     id: root
 
     required property PopoutState popouts
+    // CNS: Content used to reach the screen via root.wrapper.screen, but the
+    // wrapper property was dropped when popouts became a direct required
+    // PopoutState. That left root.wrapper undefined, so the workspaces popout
+    // was handed an undefined screen and WorkspaceOverview's
+    // `ws.output === root.screen.name` threw. Wrapper.qml owns the screen, so
+    // take it from there directly.
+    required property ShellScreen screen
+
     readonly property Popout currentPopout: content.children.find(c => c.shouldBeActive) ?? null
     readonly property Item current: currentPopout?.item ?? null
 
@@ -99,7 +107,7 @@ Item {
         Popout {
             name: "workspaces"
             sourceComponent: WorkspaceOverview {
-                screen: root.wrapper.screen
+                screen: root.screen
             }
         }
 

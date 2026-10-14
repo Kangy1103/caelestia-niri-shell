@@ -90,7 +90,11 @@ Singleton {
             // Suppress internal screenshot notifications from workspace preview captures
             if (notif.appName === "niri" && notif.summary === "Screenshot captured") {
                 notif.tracked = false;
-                notif.close();
+                // CNS: quickshell's Notification exposes dismiss(), not close().
+                // close() threw "Property 'close' ... is not a func", so
+                // screenshot notifications were never suppressed and the
+                // clear-all IPC never cleared anything. main has this bug too.
+                notif.dismiss();
                 return;
             }
 
@@ -196,7 +200,7 @@ Singleton {
     IpcHandler {
         function clear(): void {
             for (const notif of root.list.slice())
-                notif.close();
+                notif.dismiss();
         }
 
         function isDndEnabled(): bool {
