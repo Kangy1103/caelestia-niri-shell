@@ -19,6 +19,14 @@ Singleton {
 
     readonly property string imagecache: `${cache}/imagecache`
     readonly property string notifimagecache: `${imagecache}/notifs`
+    // CNS: eventsData and notificationsData were dropped when Paths.qml was
+    // ported. CalEvents.qml calls Qt.resolvedUrl(Paths.eventsData), so with the
+    // property missing it passed undefined into a C++ function and threw
+    // "Passing incompatible arguments to C++ functions from JavaScript is not
+    // allowed" on every load — the calendar events file never opened.
+    // notificationsData is unreferenced today but kept for parity with main.
+    readonly property string eventsData: `${data}/events.json`
+    readonly property string notificationsData: `${data}/notifications.json`
     readonly property string wallsdir: Quickshell.env("CAELESTIA_WALLPAPERS_DIR") || absolutePath(GlobalConfig.paths.wallpaperDir)
     readonly property string recsdir: Quickshell.env("CAELESTIA_RECORDINGS_DIR") || `${videos}/Recordings`
     readonly property string libdir: Quickshell.env("CAELESTIA_LIB_DIR") || "/usr/lib/caelestia"
