@@ -8,7 +8,6 @@ qml_module(CNS-components
         circularindicatormanager.cpp
         linearindicatormanager.cpp
         sparklineitem.cpp
-        visualiserbars.cpp
     LIBRARIES
         Qt::Gui
         Qt::Quick

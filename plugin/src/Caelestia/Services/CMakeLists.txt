@@ -20,8 +20,6 @@ qml_module(CNS-services
         networkusage.cpp
         hyprdevices.cpp
         hyprextras.cpp
-        niriipc.cpp
-        nirisocket.cpp
     LIBRARIES
         Qt::Concurrent
         Qt::DBus
