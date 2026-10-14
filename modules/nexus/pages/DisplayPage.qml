@@ -67,36 +67,36 @@ PageBase {
                     first: true
                     text: qsTr("Visualiser")
                     subtext: qsTr("Audio visualiser on this display")
-                    checked: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.enabled
-                    onToggled: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.enabled = checked
+                    checked: GlobalConfig.forScreen(modelData.name).background.visualiser.enabled
+                    onToggled: GlobalConfig.forScreen(modelData.name).background.visualiser.enabled = checked
                 }
 
                 ToggleRow {
                     Layout.fillWidth: true
                     text: qsTr("Auto-hide")
                     subtext: qsTr("Hide when windows are present")
-                    checked: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.autoHide
-                    onToggled: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.autoHide = checked
+                    checked: GlobalConfig.forScreen(modelData.name).background.visualiser.autoHide
+                    onToggled: GlobalConfig.forScreen(modelData.name).background.visualiser.autoHide = checked
                 }
 
                 ToggleRow {
                     Layout.fillWidth: true
                     text: qsTr("Blur")
                     subtext: qsTr("Blur wallpaper behind visualiser bars")
-                    checked: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.blur
-                    onToggled: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.blur = checked
+                    checked: GlobalConfig.forScreen(modelData.name).background.visualiser.blur
+                    onToggled: GlobalConfig.forScreen(modelData.name).background.visualiser.blur = checked
                 }
 
                 StepperRow {
                     Layout.fillWidth: true
                     label: qsTr("Rounding")
                     subtext: qsTr("Bar corner radius factor")
-                    value: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.rounding
+                    value: GlobalConfig.forScreen(modelData.name).background.visualiser.rounding
                     from: 0
                     to: 2
                     stepSize: 0.25
                     toastOnChange: false
-                    onMoved: v => MonitorConfigManager.configForScreen(modelData.name).background.visualiser.rounding = v
+                    onMoved: v => GlobalConfig.forScreen(modelData.name).background.visualiser.rounding = v
                 }
 
                 StepperRow {
@@ -104,12 +104,12 @@ PageBase {
                     last: true
                     label: qsTr("Spacing")
                     subtext: qsTr("Gap between bars")
-                    value: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.spacing
+                    value: GlobalConfig.forScreen(modelData.name).background.visualiser.spacing
                     from: 0
                     to: 3
                     stepSize: 0.25
                     toastOnChange: false
-                    onMoved: v => MonitorConfigManager.configForScreen(modelData.name).background.visualiser.spacing = v
+                    onMoved: v => GlobalConfig.forScreen(modelData.name).background.visualiser.spacing = v
                 }
             }
         }

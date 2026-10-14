@@ -96,8 +96,8 @@ PageBase {
                 last: index === Quickshell.screens.length - 1
                 text: modelData.name
                 subtext: qsTr("Show notifications on this display")
-                checked: MonitorConfigManager.configForScreen(modelData.name).notifs.enabled
-                onToggled: MonitorConfigManager.configForScreen(modelData.name).notifs.enabled = checked
+                checked: GlobalConfig.forScreen(modelData.name).notifs.enabled
+                onToggled: GlobalConfig.forScreen(modelData.name).notifs.enabled = checked
             }
         }
 

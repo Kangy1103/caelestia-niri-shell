@@ -258,8 +258,8 @@ PageBase {
                     first: true
                     text: qsTr("Visualiser")
                     subtext: qsTr("Audio visualiser on this display")
-                    checked: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.enabled
-                    onToggled: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.enabled = checked
+                    checked: GlobalConfig.forScreen(modelData.name).background.visualiser.enabled
+                    onToggled: GlobalConfig.forScreen(modelData.name).background.visualiser.enabled = checked
                 }
 
                 ToggleRow {
@@ -267,8 +267,8 @@ PageBase {
                     last: true
                     text: qsTr("Auto-hide")
                     subtext: qsTr("Hide when windows are present")
-                    checked: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.autoHide
-                    onToggled: MonitorConfigManager.configForScreen(modelData.name).background.visualiser.autoHide = checked
+                    checked: GlobalConfig.forScreen(modelData.name).background.visualiser.autoHide
+                    onToggled: GlobalConfig.forScreen(modelData.name).background.visualiser.autoHide = checked
                 }
             }
         }
