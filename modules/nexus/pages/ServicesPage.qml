@@ -217,8 +217,8 @@ PageBase {
             Layout.fillWidth: true
             first: true
             icon: "graphic_eq"
-            label: qsTr("Cava Visualiser")
-            status: VisualiserPresets.currentLabel
+            text: qsTr("Cava Visualiser")
+            subtext: VisualiserPresets.currentLabel
             onClicked: root.nState.openSubPage(1)
         }
 

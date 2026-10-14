@@ -17,6 +17,16 @@ ConnectedRect {
     property real from: 0
     property real to: 99
     property real stepSize: 1
+    property bool toastOnChange: true
+
+    Connections {
+        target: root
+        function onMoved(v: real): void {
+            if (toastOnChange) {
+                Toaster.toast(label.text, String(v), "tune");
+            }
+        }
+    }
 
     signal moved(value: real)
 

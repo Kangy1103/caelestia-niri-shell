@@ -11,6 +11,16 @@ StyledSwitch {
     property string subtext
     property alias first: bg.first
     property alias last: bg.last
+    property bool toastOnChange: true
+    property bool _ready: false
+
+    Component.onCompleted: _ready = true
+
+    onCheckedChanged: {
+        if (_ready && toastOnChange) {
+            Toaster.toast(root.text, checked ? qsTr("On") : qsTr("Off"), "tune");
+        }
+    }
     readonly property alias bg: bg
 
     Layout.fillWidth: true

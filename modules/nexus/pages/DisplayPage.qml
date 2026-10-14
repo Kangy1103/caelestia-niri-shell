@@ -40,8 +40,8 @@ PageBase {
                 first: true
                 last: true
                 icon: "tune"
-                label: qsTr("Visualiser presets")
-                status: VisualiserPresets.currentLabel
+                text: qsTr("Visualiser presets")
+                subtext: VisualiserPresets.currentLabel
                 onClicked: root.nState.openSubPage(1)
             }
         }

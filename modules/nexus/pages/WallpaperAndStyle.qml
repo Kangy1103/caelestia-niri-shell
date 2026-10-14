@@ -175,8 +175,8 @@ PageBase {
             Layout.fillWidth: true
             first: true
             icon: "crop_square"
-            label: qsTr("Border")
-            status: qsTr("Thickness, rounding, smoothing")
+            text: qsTr("Border")
+            subtext: qsTr("Thickness, rounding, smoothing")
             onClicked: root.nState.openSubPage(4)
         }
 

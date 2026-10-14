@@ -126,7 +126,6 @@ LazyListView {
                 modelData: notif.modelData
                 props: root.props
                 expanded: root.expanded
-                screenState: root.screenState
             }
 
             Behavior on y {

@@ -16,6 +16,16 @@ ConnectedRect {
     property alias fallbackText: splitButton.fallbackText
     property alias fallbackIcon: splitButton.fallbackIcon
     property alias menuOnTop: splitButton.menuOnTop
+    property bool toastOnChange: true
+
+    Connections {
+        target: root
+        function onSelected(item: var): void {
+            if (toastOnChange) {
+                Toaster.toast(label.text, item.text || "", "tune");
+            }
+        }
+    }
 
     signal selected(item: MenuItem)
 
