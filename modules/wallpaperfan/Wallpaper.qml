@@ -165,7 +165,7 @@ Item {
     // screen at 3440x1440, so the deck runs them slightly smaller. The card's
     // own `u` is scaled with it so its text and chips shrink in proportion
     // rather than being laid out small and drawn at full size.
-    readonly property real cardScale: 0.7
+    readonly property real cardScale: 0.9
     readonly property real cardU: u * cardScale
     readonly property real cardW: 212 * cardU
     readonly property real cardH: gauge.implicitHeight

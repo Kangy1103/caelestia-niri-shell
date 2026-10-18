@@ -166,6 +166,7 @@ Item {
                 visible: thumb.status !== Image.Ready
                 text: thumb.status === Image.Error ? "broken_image" : card.entry && card.entry.video ? "movie" : "image"
                 font.pixelSize: Math.round(22 * card.u)
+                renderType: Text.QtRendering
                 color: Qt.alpha(card.dress.muted, 0.5)
             }
         }
@@ -242,6 +243,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "check"
                     font.pixelSize: Math.round(12 * card.u)
+                    renderType: Text.QtRendering
                     color: card.dress.accentInk
                 }
 
@@ -249,6 +251,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: qsTr("current")
                     font.pixelSize: Math.round(10 * card.u)
+                    renderType: Text.QtRendering
                     font.letterSpacing: 0.4 * card.u
                     color: card.dress.accentInk
                 }
@@ -291,6 +294,7 @@ Item {
                 anchors.verticalCenterOffset: 0.5 * card.u
                 text: "favorite"
                 font.pixelSize: Math.round(14 * card.u)
+                renderType: Text.QtRendering
                 color: "#ff5c7a"
             }
         }
@@ -309,6 +313,7 @@ Item {
                 anchors.centerIn: parent
                 text: "download_done"
                 font.pixelSize: Math.round(14 * card.u)
+                renderType: Text.QtRendering
                 color: "white"
             }
         }
@@ -365,6 +370,7 @@ Item {
                         visible: !!chip.spec && chip.spec.label !== ""
                         text: chip.spec ? chip.spec.label.toUpperCase() : ""
                         font.pixelSize: Math.round(8.5 * card.u)
+                        renderType: Text.QtRendering
                         font.letterSpacing: 1.1 * card.u
                         color: card.inkOn(chip.color)
                         opacity: 0.85
@@ -377,6 +383,7 @@ Item {
                         visible: !!chip.spec
                         text: chip.spec ? String(chip.spec.fill).toUpperCase() : ""
                         font.pixelSize: Math.round(9.5 * card.u)
+                        renderType: Text.QtRendering
                         color: card.inkOn(chip.color)
                     }
                 }
@@ -393,6 +400,7 @@ Item {
             text: card.title
             elide: Text.ElideRight
             font.pixelSize: Math.round(13 * card.u)
+            renderType: Text.QtRendering
             color: card.dress.ink
         }
 
@@ -405,6 +413,7 @@ Item {
             text: card.meta
             elide: Text.ElideRight
             font.pixelSize: Math.round(10 * card.u)
+            renderType: Text.QtRendering
             color: card.dress.muted
         }
 
