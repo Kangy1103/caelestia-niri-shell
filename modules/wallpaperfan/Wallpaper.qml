@@ -65,10 +65,10 @@ Item {
     required property var config
     property string screenName: ""
 
-    // The source's DesktopTheme.rad(n): a corner radius scaled by the theme.
-    // Identity here, as in the source's packaging build — the call sites
-    // already multiply by `u`, so folding u in would square it.
-    function rad(n: real): real { return n; }
+    // The source's DesktopTheme.rad(n). Its "pill" shape rounds controls by
+    // half again on top of the designed radius, which is what the source
+    // renders with. Call sites multiply by `u` themselves.
+    function rad(n: real): real { return Math.round(n * 1.5); }
 
     // The source's window.kind(): "video", "animated" or "image".
     function kind(path: string): string {
@@ -309,6 +309,9 @@ Item {
             arr.push({
                 fileName: entry.relativePath || entry.name,
                 fileUrl: Qt.resolvedUrl("file://" + entry.path),
+                // The plain path as well: `cns wallpaper -f` wants a path, not
+                // a file:// URL, and rejects the URL outright.
+                path: entry.path,
                 modified: entry.modified ?? null,
                 size: entry.size ?? 0,
                 video: kind(entry.path) === "video",
@@ -441,7 +444,7 @@ Item {
             choose(e);
         if (!e.item) {
             if (!animate || !e.video)
-                Wallpapers.setWallpaper(e.fileUrl);
+                Wallpapers.setWallpaper(e.path);
         } else if (isSaved(e)) {
             Wallpapers.setWallpaper(wallhaven.savePathFor(e.item));
         } else if (downloading === "") {
@@ -529,7 +532,7 @@ Item {
         if (!chosen.item && chosen.video && !isSet(chosen)) {
             settling = true;
             settleTimer.start();
-            Wallpapers.setWallpaper(chosen.fileUrl);
+            Wallpapers.setWallpaper(chosen.path);
             if (false)
                 settled();
         } else if (isSet(chosen)) {

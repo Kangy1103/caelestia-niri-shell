@@ -23,6 +23,12 @@ import qs.utils
 Rectangle {
     id: card
 
+    // The source's DesktopTheme.rad(n). Its "pill" shape rounds controls by half
+    // again on top of the designed radius — that is what the source renders
+    // with, and what gives the chips and fields their capsule corners. Taking
+    // the bare `normal` instead leaves them rectangular.
+    function rad(n: real): real { return Math.round(n * 1.5); }
+
     required property var config
 
     property real u: 1
@@ -128,7 +134,7 @@ Rectangle {
 
     width: 460 * u
     height: body.implicitHeight + 40 * u
-    radius: 20 * u
+    radius: rad(20) * u
     color: Qt.alpha(surface, 0.95)
     border.width: 1
     border.color: Qt.alpha(ink, 0.12)
@@ -204,7 +210,7 @@ Rectangle {
         selectedTextColor: card.ink
 
         background: Rectangle {
-            radius: 12 * card.u
+            radius: rad(12) * card.u
             color: Colours.palette.m3surfaceContainer
             border.width: 1
             border.color: field.activeFocus ? card.accent : Colours.palette.m3outlineVariant
@@ -222,7 +228,7 @@ Rectangle {
 
         width: chipText.implicitWidth + 22 * card.u
         height: 28 * card.u
-        radius: 14 * card.u
+        radius: rad(14) * card.u
         color: chip.containsMouse ? Qt.lighter(card.accent, 1.08) : card.accent
 
         MouseArea {
@@ -377,7 +383,7 @@ Rectangle {
                 anchors.right: parent.right
                 width: 40 * card.u
                 height: 40 * card.u
-                radius: 12 * card.u
+                radius: rad(12) * card.u
                 color: eye.containsMouse ? Qt.alpha(card.ink, 0.12) : Qt.alpha(card.ink, 0.06)
                 onClicked: card.showKey = !card.showKey
 
@@ -419,7 +425,7 @@ Rectangle {
 
             width: parent.width
             height: 40 * card.u
-            radius: 12 * card.u
+            radius: rad(12) * card.u
             color: animateRow.containsMouse ? Qt.alpha(card.ink, 0.1) : Qt.alpha(card.ink, 0.06)
             border.width: 1
             border.color: Qt.alpha(card.ink, 0.12)

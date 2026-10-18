@@ -31,6 +31,12 @@ import qs.services
 Item {
     id: card
 
+    // The source's DesktopTheme.rad(n). Its "pill" shape rounds controls by half
+    // again on top of the designed radius — that is what the source renders
+    // with, and what gives the chips and fields their capsule corners. Taking
+    // the bare `normal` instead leaves them rectangular.
+    function rad(n: real): real { return Math.round(n * 1.5); }
+
     required property var entry
     property var paletteCache
 
@@ -65,8 +71,8 @@ Item {
     signal doubleClicked
 
     readonly property real pad: 9 * u
-    readonly property real radius: 16 * u
-    readonly property real thumbRadius: 10 * u
+    readonly property real radius: rad(16) * u
+    readonly property real thumbRadius: rad(10) * u
     readonly property real chipHeight: 22 * u
 
     // Fixed decode size: the largest this card ever renders at, so scaling
@@ -234,7 +240,7 @@ Item {
             visible: card.current
             width: currentRow.implicitWidth + 12 * card.u
             height: 19 * card.u
-            radius: 9.5 * card.u
+            radius: rad(9.5) * card.u
             antialiasing: true
             color: card.dress.accent
             transformOrigin: Item.Left

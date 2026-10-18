@@ -13,6 +13,12 @@ import qs.services
 Item {
     id: ribbon
 
+    // The source's DesktopTheme.rad(n). Its "pill" shape rounds controls by half
+    // again on top of the designed radius — that is what the source renders
+    // with, and what gives the chips and fields their capsule corners. Taking
+    // the bare `normal` instead leaves them rectangular.
+    function rad(n: real): real { return Math.round(n * 1.5); }
+
     // The deck's entries, in the order shown.
     // Unused: kept only so callers that pass it are harmless. The count below reads
     // `colors`, which is what the picker actually supplies.
@@ -122,7 +128,7 @@ Item {
         width: Math.max(6 * ribbon.u, (to - from) * ribbon.seg + 6 * ribbon.u)
         y: track.y - 4 * ribbon.u
         height: track.height + 8 * ribbon.u
-        radius: 5 * ribbon.u
+        radius: rad(5) * ribbon.u
         color: "transparent"
         border.width: Math.max(1, 1.3 * ribbon.u)
         border.color: Qt.alpha(ribbon.ink, 0.55)
@@ -177,7 +183,7 @@ Item {
         y: ribbon.height + 8 * ribbon.u
         width: 176 * ribbon.u
         height: glimpseCol.implicitHeight + 12 * ribbon.u
-        radius: 12 * ribbon.u
+        radius: rad(12) * ribbon.u
         color: Colours.palette.m3surfaceContainerLow
         border.width: 1
         border.color: Qt.alpha(Colours.palette.m3onSurface, 0.16)
@@ -208,7 +214,7 @@ Item {
 
                 width: parent.width
                 height: Math.round(width * 10 / 16)
-                radius: 8 * ribbon.u
+                radius: rad(8) * ribbon.u
                 color: glimpse.index >= 0 && ribbon.swatchAt(glimpse.index)
                     ? ribbon.swatchAt(glimpse.index)
                     : Colours.palette.m3surfaceContainerHigh
