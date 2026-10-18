@@ -71,8 +71,32 @@ Scope {
     readonly property string sorting: config.wallhavenSorting
     readonly property string order: config.wallhavenOrder
     readonly property string topRange: config.wallhavenTopRange
-    readonly property string resolution: config.wallhavenResolution
+    // Minimum resolution, as WxH. Persisted as wallhavenAtleast; this used to
+    // read wallhavenResolution, which PickerConfig does not persist, so the
+    // setting never survived a restart and never reached a search.
+    readonly property string resolution: config.wallhavenAtleast
     readonly property string color: config.wallhavenColor
+    // Aspect band: "", "ultrawide", "widescreen" or "portrait".
+    readonly property string aspect: config.wallhavenRatios
+
+    // Wallhaven accepts a ratios= parameter but ignores it on the public API
+    // (verified: ratios=21:9 returns portrait results), so the band is applied
+    // to each result as it arrives instead. Bands are on width/height.
+    function aspectMatches(ratioText: string): bool {
+        if (root.aspect === "")
+            return true;
+        const parts = String(ratioText ?? "").split(":");
+        const r = parts.length === 2 ? parseFloat(parts[0]) / parseFloat(parts[1]) : NaN;
+        if (isNaN(r))
+            return true;
+        switch (root.aspect) {
+            case "ultrawide": return r >= 2.0;
+            case "widescreen": return r >= 1.4 && r < 2.0;
+            case "square": return r >= 0.95 && r < 1.4;
+            case "portrait": return r < 0.95;
+            default: return true;
+        }
+    }
 
     function buildArgs(page: int): array {
         const args = [
@@ -250,7 +274,11 @@ Scope {
                     return;
                 try {
                     const payload = JSON.parse(text);
-                    const incoming = (payload.data ?? []).map(item => ({
+                    // The API's own ratios filter is a no-op, so drop results
+                    // outside the chosen band here.
+                    const incoming = (payload.data ?? [])
+                        .filter(item => root.aspectMatches(item.ratio))
+                        .map(item => ({
                         id: item.id,
                         thumbUrl: item.thumbs?.large ?? "",
                         fullUrl: item.path ?? "",

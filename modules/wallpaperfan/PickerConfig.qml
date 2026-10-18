@@ -29,6 +29,15 @@ Scope {
     property string wallhavenRatios: ""
     property string wallpaperDir: Paths.wallsdir
 
+    // How a wallpaper that doesn't match the screen's aspect is drawn.
+    //  crop — fill the screen, cropping the overflow (what the shell has
+    //         always done; a 16:9 wallpaper on a 21:9 screen loses top and
+    //         bottom, and a portrait one is magnified into a narrow strip).
+    //  fit  — show the whole wallpaper, letterboxed.
+    //  blur — the whole wallpaper, centred, over a blurred, scaled copy of
+    //         itself filling the gaps. Fills without cropping or distorting.
+    property string wallpaperFit: "crop"
+
     // The API key is CNS's own, read from the bundled client's config.
     readonly property string wallhavenApiKey: _apiKey
 
@@ -52,7 +61,8 @@ Scope {
             wallhavenTopRange,
             wallhavenAtleast,
             wallhavenRatios,
-            wallpaperDir
+            wallpaperDir,
+            wallpaperFit
         });
     }
 
@@ -70,9 +80,13 @@ Scope {
         wallhavenOrder = normalise(d.wallhavenOrder, ["asc", "desc"], wallhavenOrder);
         wallhavenCategories = normaliseList(d.wallhavenCategories, ["general", "anime", "people"], wallhavenCategories);
         wallhavenTopRange = d.wallhavenTopRange ?? wallhavenTopRange;
+        // Aspect band, and a WxH minimum the API understands.
+        wallhavenRatios = normalise(d.wallhavenRatios, ["", "ultrawide", "widescreen", "square", "portrait"], wallhavenRatios);
+        wallhavenAtleast = normalise(d.wallhavenAtleast, ["", "1920x1080", "2560x1440", "3840x2160", "5120x2880"], wallhavenAtleast);
         wallhavenAtleast = d.wallhavenAtleast ?? wallhavenAtleast;
         wallhavenRatios = d.wallhavenRatios ?? wallhavenRatios;
         wallpaperDir = d.wallpaperDir ?? wallpaperDir;
+        wallpaperFit = normalise(d.wallpaperFit, ["crop", "fit", "blur"], wallpaperFit);
     }
 
     // Keeps `value` only if it is one of `allowed`, else the fallback.

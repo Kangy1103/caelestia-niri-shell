@@ -8,6 +8,7 @@ import CNS.Config
 import qs.utils
 import CNS
 import QtQuick
+import QtQuick.Effects
 import QtMultimedia
 
 Item {
@@ -198,10 +199,45 @@ Item {
             z: 1
         }
 
+        // A scaled, blurred copy of the wallpaper filling the whole screen. Only
+        // shown in "blur" fit mode, behind the wallpaper drawn whole, so a
+        // wallpaper whose aspect doesn't match the screen fills the gaps
+        // instead of being letterboxed black.
+        CachingImage {
+            id: blurFill
+
+            anchors.fill: parent
+            path: !item.isVideo && Wallpapers.wallpaperFit === "blur" ? item.path : ""
+            fillMode: Image.PreserveAspectCrop
+            visible: opacity > 0.01
+            opacity: status === Image.Ready ? 1 : 0
+            z: 1
+
+            sourceSize.width: root.width
+            sourceSize.height: root.height
+
+            layer.enabled: opacity > 0.01
+            // CNS's own blur idiom (see LockSurface): MultiEffect with a
+            // blurMax ceiling rather than a fixed radius.
+            layer.effect: MultiEffect {
+                autoPaddingEnabled: false
+                blurEnabled: true
+                blur: 1
+                blurMax: 64
+            }
+
+            Behavior on opacity {
+                NumberAnimation { duration: 220 }
+            }
+        }
+
         CachingImage {
             id: img
             anchors.fill: parent
             path: !item.isVideo ? item.path : ""
+            // "crop" fills the screen and loses the overflow; "fit" and
+            // "blur" show the wallpaper whole, so nothing is cut off.
+            fillMode: Wallpapers.wallpaperFit === "crop" ? Image.PreserveAspectCrop : Image.PreserveAspectFit
             visible: !item.isVideo
             opacity: status === Image.Ready ? 1 : 0
             z: 2
@@ -219,7 +255,7 @@ Item {
             id: videoOutput
             anchors.fill: parent
             visible: item.isVideo
-            fillMode: VideoOutput.PreserveAspectCrop
+            fillMode: Wallpapers.wallpaperFit === "crop" ? VideoOutput.PreserveAspectCrop : VideoOutput.PreserveAspectFit
             z: 3
         }
 

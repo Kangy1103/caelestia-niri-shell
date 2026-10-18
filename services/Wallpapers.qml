@@ -95,6 +95,48 @@ Searcher {
         target: "wallpaper"
     }
 
+    // How a wallpaper that doesn't match the screen's aspect is drawn.
+    //  crop — fill the screen, cropping the overflow. What the shell has
+    //         always done: a 16:9 wallpaper on a 21:9 screen loses its top
+    //         and bottom, and a portrait one is magnified into a narrow strip.
+    //  fit  — the whole wallpaper, letterboxed.
+    //  blur — the whole wallpaper centred over a blurred, scaled copy of
+    //         itself filling the gaps: fills without cropping or distorting.
+    property string wallpaperFit: "crop"
+
+    readonly property string fitPath: `${Paths.state}/wallpaper-fit.json`
+
+    // Guarded so the settings panel and the picker can't fight over it.
+    property bool _applyingFit: false
+
+    function setWallpaperFit(mode: string): void {
+        if (root._applyingFit || root.wallpaperFit === mode)
+            return;
+        root.wallpaperFit = mode;
+        fitStore.setText(JSON.stringify({ version: 1, wallpaperFit: mode }));
+    }
+
+    FileView {
+        id: fitStore
+
+        path: root.fitPath
+        watchChanges: true
+        printErrors: false
+        blockWrites: false
+        onFileChanged: reload()
+        onLoaded: {
+            let mode = "crop";
+            try {
+                mode = JSON.parse(text()).wallpaperFit ?? "crop";
+            } catch (e) {
+                console.warn("wallpaper: unreadable fit setting", e);
+            }
+            root._applyingFit = true;
+            root.wallpaperFit = mode;
+            root._applyingFit = false;
+        }
+    }
+
     FileView {
         path: root.currentNamePath
         watchChanges: true

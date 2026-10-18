@@ -415,6 +415,61 @@ Rectangle {
             text: qsTr("SETTING A WALLPAPER")
         }
 
+        // How a wallpaper that doesn't match the screen's aspect is drawn.
+        // Lives on the Wallpapers service, not in the picker's config, because
+        // it decides how the desktop paints — the picker isn't even open when
+        // that changes.
+        Label {
+            text: qsTr("ASPECT")
+        }
+
+        Note {
+            text: qsTr("Crop fills the screen and cuts off the overflow. Fit shows the whole wallpaper letterboxed. Blur fills the gaps with a blurred copy.")
+        }
+
+        Row {
+            spacing: 8 * card.u
+
+            Repeater {
+                model: [["Crop", "crop"], ["Fit", "fit"], ["Blur", "blur"]]
+
+                Chip {
+                    required property var modelData
+
+                    width: chipRow.implicitWidth + 22 * card.u
+                    height: 30 * card.u
+                    radius: rad(15) * card.u
+                    color: Wallpapers.wallpaperFit === modelData[1] ? card.accent
+                        : fitMouse.containsMouse ? Qt.alpha(card.ink, 0.12) : Qt.alpha(card.ink, 0.06)
+                    border.width: 1
+                    border.color: Qt.alpha(card.ink, 0.12)
+
+                    Row {
+                        id: chipRow
+                        anchors.centerIn: parent
+                        spacing: 6 * card.u
+
+                        StyledText {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: modelData[0]
+                            font.pixelSize: 12 * card.u
+                            font.weight: Font.DemiBold
+                            color: Wallpapers.wallpaperFit === modelData[1] ? card.accentInk : card.ink
+                        }
+                    }
+
+                    MouseArea {
+                        id: fitMouse
+
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingClickCursor
+                        onClicked: Wallpapers.setWallpaperFit(modelData[1])
+                    }
+                }
+            }
+        }
+
         // The whole row flips the switch.
         Rectangle {
             id: animateRow

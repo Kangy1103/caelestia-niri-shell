@@ -1783,6 +1783,35 @@ Item {
                 onClicked: window.config.wallhavenPurity = modelData[1]
             }
         }
+
+        Gap {}
+
+        // Aspect. The API's own ratios filter is ignored, so this picks a band
+        // that results are filtered against as they arrive.
+        Repeater {
+            model: [["Any", ""], ["Ultrawide", "ultrawide"], ["Wide", "widescreen"], ["Square", "square"], ["Portrait", "portrait"]]
+
+            Chip {
+                required property var modelData
+                label: modelData[0]
+                active: window.config.wallhavenRatios === modelData[1]
+                onClicked: window.config.wallhavenRatios = modelData[1]
+            }
+        }
+
+        Gap {}
+
+        // Minimum resolution. This one the API does honour, as --atleast.
+        Repeater {
+            model: [["Any", ""], ["1080p", "1920x1080"], ["1440p", "2560x1440"], ["4K", "3840x2160"], ["5K", "5120x2880"]]
+
+            Chip {
+                required property var modelData
+                label: modelData[0]
+                active: window.config.wallhavenAtleast === modelData[1]
+                onClicked: window.config.wallhavenAtleast = modelData[1]
+            }
+        }
     }
 
     Glass {
