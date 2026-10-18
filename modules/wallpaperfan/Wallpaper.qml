@@ -1369,6 +1369,10 @@ Item {
         color: Qt.alpha(tint.surface, 0.8)
         border.width: 1
         border.color: Qt.alpha(tint.ink, 0.12)
+        // The source rounds every glass panel. Without this the Segments rows,
+        // the hints bar and the search field all render as plain rectangles;
+        // at 20 * 1.5 against a 28-40u panel this clamps to a full capsule.
+        radius: rad(20) * window.u
     }
 
     // A row of choices in a glass pill.
@@ -1556,10 +1560,22 @@ Item {
                 visible: window.online
                 width: 280 * window.u
                 height: 40 * window.u
+                // The source's StyledTextField carries its own box; TextFieldBase
+                // is bare, so supply the same one it would have had.
+                leftPadding: 16 * window.u
                 color: tint.ink
+                placeholderTextColor: tint.muted
                 placeholderText: "Search Wallhaven  ( / )"
                 font.pixelSize: 13 * window.u
                 text: wallhaven.currentSearchText
+
+                background: Rectangle {
+                    radius: rad(20) * window.u
+                    color: Qt.alpha(tint.surface, 0.8)
+                    border.width: 1
+                    border.color: search.activeFocus ? tint.accent : Qt.alpha(tint.ink, 0.12)
+                }
+
                 onAccepted: {
                     wallhaven.updateSearch(text);
                     keys.forceActiveFocus();
