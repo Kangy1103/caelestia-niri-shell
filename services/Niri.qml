@@ -99,6 +99,21 @@ Singleton {
 
     // --- Outputs ---
     readonly property var outputs: NiriIpc.outputs
+
+    // CNS: in-process wrapper over NiriIpc.action(), which is the same request
+    // `niri msg action <name>` makes but sent over the already-open socket
+    // instead of forking a client process.
+    //
+    // This exists because upstream dispatches idle actions straight into its
+    // compositor (Hypr.dispatch("hl.dsp.dpms(...)")). Niri has no equivalent, so
+    // the port fell back to Quickshell.execDetached() — which forks, execs,
+    // connects a socket and exits, every single time. Firing that from inside
+    // the IdleMonitor callback means the request lands asynchronously at an
+    // unpredictable offset from the shell's own output handling.
+    // Returns false when niri is unavailable, so callers can fall back.
+    function action(name: string): bool {
+        return NiriIpc.action(name);
+    }
     
     // --- Keyboard ---
     readonly property var kbLayoutsArray: NiriIpc.kbLayoutsArray

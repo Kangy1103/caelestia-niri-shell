@@ -22,6 +22,16 @@ Searcher {
     property bool previewColourLock
     property bool pendingPreviewClear
 
+    // CNS: the wallpaper actually on screen, set by modules/background once it
+    // has drawn. The wallpaper picker waits on this before closing, so it never
+    // cuts away while the new wallpaper is still on its way up.
+    property string drawn: ""
+
+    // CNS: the screen the picker is covering while a chosen card is in the
+    // middle. The background reads it to swap the wallpaper straight in rather
+    // than animating underneath the card.
+    property string pickerCovers: ""
+
     function getCategoryFor(w: FileSystemEntry): string {
         let category = w.parentDir.slice(Paths.wallsdir.length + 1);
         if (category.includes("/"))
@@ -35,6 +45,9 @@ Searcher {
 
     function setWallpaper(path: string): void {
         actualCurrent = path;
+        // CNS: nothing is on screen for this path yet, so the picker must keep
+        // waiting (see drawn).
+        drawn = "";
         Quickshell.execDetached(["cns", "wallpaper", "-f", path, ...smartArg]);
     }
 

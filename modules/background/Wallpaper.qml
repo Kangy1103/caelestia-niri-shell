@@ -150,7 +150,10 @@ Item {
 
         anchors.fill: parent
         opacity: 0
-        scale: Wallpapers.showPreview ? 1 : 0.8
+        // CNS: while the wallpaper picker has a chosen card in the middle of
+        // this screen it draws its own crossfade, so the wallpaper underneath
+        // must appear straight away rather than animating behind the card.
+        scale: Wallpapers.showPreview || Wallpapers.pickerCovers === screen.name ? 1 : 0.8
 
         readonly property bool isVideo: Wallpapers.isPathVideo(path)
 
@@ -205,6 +208,9 @@ Item {
             onStatusChanged: {
                 if (status === Image.Ready && !item.isVideo) {
                     root.current = item;
+                    // CNS: tell the wallpaper picker this wallpaper is really
+                    // on screen now, so it can close instead of guessing.
+                    Wallpapers.drawn = item.path;
                 }
             }
         }
@@ -226,6 +232,9 @@ Item {
             onMediaStatusChanged: {
                 if (mediaStatus === MediaPlayer.LoadedMedia && root.current === item && item.isVideo) {
                     player.play();
+                    // CNS: a video's frames are up once its media is loaded; the
+                    // picker waits on drawn for this path the same way.
+                    Wallpapers.drawn = item.path;
                 }
             }
 
@@ -259,7 +268,7 @@ Item {
 
                 PropertyChanges {
                     item.opacity: 0
-                    item.scale: Wallpapers.showPreview ? 1 : 0.8
+                    item.scale: Wallpapers.showPreview || Wallpapers.pickerCovers === screen.name ? 1 : 0.8
                 }
 
                 StateChangeScript {

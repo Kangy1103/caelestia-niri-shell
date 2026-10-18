@@ -9,6 +9,11 @@ import qs.services
 Singleton {
     property ShellRoot shellRoot
 
+    // CNS: the fan wallpaper picker (modules/wallpaperfan). Held here so the
+    // launcher can hand off to it in-process — it is a Scope, not a singleton,
+    // so importing the module directly would build a second copy of it.
+    property var wallpaperFan
+
     function anySidebarOpen(): bool {
         return states.instances.some(s => s.sidebar);
     }

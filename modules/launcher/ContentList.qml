@@ -21,8 +21,25 @@ Item {
 
     readonly property bool showEmojis: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}emoji `)
     readonly property bool showWallpapers: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaper `)
+    // CNS: the fan picker is a fullscreen overlay with its own search and keys,
+    // so ">wallpaperfan" is an action, not a list to render in here — it hands
+    // straight over to the picker and gets out of the way. Checked before
+    // showWallpapers so the two prefixes can never be confused.
+    readonly property bool showWallpaperFan: search.text.startsWith(`${GlobalConfig.launcher.actionPrefix}wallpaperfan `)
     readonly property var currentList: showEmojis ? emojiList.item : showWallpapers ? wallpaperList.item : appList.item // Can be either ListView or PathView, so can't type properly
     property string animState: showEmojis ? "emojis" : showWallpapers ? "wallpapers" : "apps"
+
+    // CNS: ">wallpaperfan " hands off to the fullscreen fan picker and closes
+    // the launcher. Fired on the prefix appearing rather than on Enter, because
+    // the picker brings its own search field — there is nothing to select here.
+    onShowWallpaperFanChanged: {
+        if (!showWallpaperFan)
+            return;
+        screenState.launcher = false;
+        // Deferred so the launcher is already on its way out and the picker's
+        // window can take keyboard focus when it appears.
+        Qt.callLater(() => ShellState.wallpaperFan?.open());
+    }
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom

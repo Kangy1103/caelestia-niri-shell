@@ -31,9 +31,23 @@ Scope {
             lock.lock.locked = true;
         else if (action === "unlock")
             lock.lock.locked = false;
-        else if (typeof action === "string")
+        else if (typeof action === "string") {
+            // CNS: route niri actions over the already-open Niri socket instead
+            // of forking a `niri msg` client. Upstream dispatches idle actions
+            // straight into its compositor (Hypr.dispatch("hl.dsp.dpms(...)"));
+            // Niri has no equivalent API, so the port used execDetached, which
+            // forks, execs, connects and exits on every call. Run from inside the
+            // IdleMonitor callback, that lands asynchronously relative to the
+            // shell's own output handling.
+            //
+            // Only "niri msg action <name>" is intercepted. Suspend and session
+            // commands still go through execDetached, and that is also the
+            // fallback if the Niri socket is unavailable.
+            const prefix = "niri msg action ";
+            if (action.startsWith(prefix) && Niri.action(action.slice(prefix.length)))
+                return;
             Quickshell.execDetached(action.split(" "));
-        else if (!SessionManager.exec(action))
+        } else if (!SessionManager.exec(action))
             Quickshell.execDetached(action);
     }
 

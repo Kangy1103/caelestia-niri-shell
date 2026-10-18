@@ -147,37 +147,42 @@ StyledRect {
                 }
             }
 
-            RowLayout {
-                id: buttonsLayout
+            Loader {
+                anchors.fill: parent
+                active: GlobalConfig.lock.enableSessionControls
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: Tokens.padding.large
-                spacing: Tokens.spacing.large
+                sourceComponent: RowLayout {
+                    id: buttonsLayout
 
-                transform: buttonsTranslate
-                opacity: root.sessionControlsShown ? 1 : 0
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: Tokens.padding.large
+                    spacing: Tokens.spacing.large
 
-                Behavior on opacity {
-                    Anim {}
-                }
+                    transform: buttonsTranslate
+                    opacity: root.sessionControlsShown ? 1 : 0
 
-                SessionButton {
-                    icon: Config.session.icons.logout
-                    command: Config.session.commands.logout
-                }
-                SessionButton {
-                    icon: Config.session.icons.shutdown
-                    command: Config.session.commands.shutdown
-                }
-                SessionButton {
-                    icon: Config.session.icons.hibernate
-                    command: Config.session.commands.hibernate
-                }
-                SessionButton {
-                    icon: Config.session.icons.reboot
-                    command: Config.session.commands.reboot
+                    Behavior on opacity {
+                        Anim {}
+                    }
+
+                    SessionButton {
+                        icon: Config.session.icons.logout
+                        command: Config.session.commands.logout
+                    }
+                    SessionButton {
+                        icon: Config.session.icons.shutdown
+                        command: Config.session.commands.shutdown
+                    }
+                    SessionButton {
+                        icon: Config.session.icons.hibernate
+                        command: Config.session.commands.hibernate
+                    }
+                    SessionButton {
+                        icon: Config.session.icons.reboot
+                        command: Config.session.commands.reboot
+                    }
                 }
             }
         }

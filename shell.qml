@@ -20,6 +20,7 @@ import "modules/background"
 import "modules/polkit"
 import "modules/clipboard"
 import "modules/notepad"
+import "modules/wallpaperfan"
 import qs.services
 import CNS.Config
 import QtQuick
@@ -53,6 +54,18 @@ ShellRoot {
     Shortcuts {}
     ClipboardPanel {}
     NotepadPanel {}
+
+    // CNS: fan wallpaper picker. Opens on its own IPC target (wallpaperFan),
+    // Mod+Shift+W, or the ">wallpaperfan" launcher entry — not on startup.
+    WallpaperPicker {
+        id: wallpaperFan
+    }
+
+    Binding {
+        target: ShellState
+        property: "wallpaperFan"
+        value: wallpaperFan
+    }
     KeybindsPanel {}
     CalendarPanel {}
     CalendarAppPanel {}
