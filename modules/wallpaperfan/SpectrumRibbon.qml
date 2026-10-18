@@ -14,6 +14,8 @@ Item {
     id: ribbon
 
     // The deck's entries, in the order shown.
+    // Unused: kept only so callers that pass it are harmless. The count below reads
+    // `colors`, which is what the picker actually supplies.
     property var entries: []
     property var paletteCache
 
@@ -37,7 +39,10 @@ Item {
     signal settle(int index)
     signal jumped(int index)
 
-    readonly property int count: entries.length
+    // Counted off `colors`, which is what the picker supplies. This was reading
+    // `entries`, a property nothing ever assigns, so count stayed 0 and the
+    // track drew no segments at all — the whole ribbon was invisible.
+    readonly property int count: colors.length
     readonly property real seg: count > 0 ? width / count : 0
     readonly property bool active: mouse.containsMouse || mouse.pressed
 
@@ -54,9 +59,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 
         Behavior on height {
-            Anim {
-                type: Anim.FastSpatial
-            }
+            NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
         }
 
         Repeater {
@@ -119,7 +122,7 @@ Item {
         width: Math.max(6 * ribbon.u, (to - from) * ribbon.seg + 6 * ribbon.u)
         y: track.y - 4 * ribbon.u
         height: track.height + 8 * ribbon.u
-        radius: Tokens.rounding.large * ribbon.u
+        radius: 5 * ribbon.u
         color: "transparent"
         border.width: Math.max(1, 1.3 * ribbon.u)
         border.color: Qt.alpha(ribbon.ink, 0.55)
@@ -174,7 +177,7 @@ Item {
         y: ribbon.height + 8 * ribbon.u
         width: 176 * ribbon.u
         height: glimpseCol.implicitHeight + 12 * ribbon.u
-        radius: Tokens.rounding.extraLarge * ribbon.u
+        radius: 12 * ribbon.u
         color: Colours.palette.m3surfaceContainerLow
         border.width: 1
         border.color: Qt.alpha(Colours.palette.m3onSurface, 0.16)
@@ -205,7 +208,7 @@ Item {
 
                 width: parent.width
                 height: Math.round(width * 10 / 16)
-                radius: Tokens.rounding.large * ribbon.u
+                radius: 8 * ribbon.u
                 color: glimpse.index >= 0 && ribbon.swatchAt(glimpse.index)
                     ? ribbon.swatchAt(glimpse.index)
                     : Colours.palette.m3surfaceContainerHigh
@@ -218,30 +221,38 @@ Item {
                     asynchronous: true
                     smooth: true
                 }
+
+                // Rounds the picture's corners (see SwatchCard).
+                Rectangle {
+                    visible: glimpseFrame.radius > 0
+                    anchors.fill: parent
+                    anchors.margins: -border.width
+                    radius: glimpseFrame.radius + border.width
+                    color: "transparent"
+                    border.width: 4 * ribbon.u
+                    border.color: glimpse.color
+                }
             }
 
             StyledText {
                 width: parent.width
                 text: glimpse.index >= 0 ? (glimpse.index + 1) + "  ·  " + (ribbon.names[glimpse.index] ?? "") : ""
                 elide: Text.ElideMiddle
-                font.pixelSize: Math.round(11 * ribbon.u)
+                font.pixelSize: 11 * ribbon.u
                 color: Colours.palette.m3onSurface
                 horizontalAlignment: Text.AlignHCenter
             }
         }
     }
 
-    // ── Derived ──────────────────────────────────────────────────────────
 
     // One colour per wallpaper, in the order shown. Supplied by the picker ("" for
     // one that hasn't been read yet).
+    // ── Derived ──────────────────────────────────────────────────────────
+
     property var colors: []
 
     function swatchAt(index: int): string {
         return index >= 0 && index < colors.length ? (colors[index] ?? "") : "";
     }
-
-    // Which segments are favourites, as indexes into the deck.
-
-    // The pill takes the front card's own colour, as the picker's accents do.
 }

@@ -66,7 +66,9 @@ Item {
     property string screenName: ""
 
     // The source's DesktopTheme.rad(n): a corner radius scaled by the theme.
-    function rad(n: real): real { return n * u; }
+    // Identity here, as in the source's packaging build — the call sites
+    // already multiply by `u`, so folding u in would square it.
+    function rad(n: real): real { return n; }
 
     // The source's window.kind(): "video", "animated" or "image".
     function kind(path: string): string {
@@ -1279,7 +1281,7 @@ Item {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: 1
                 text: "favorite"
-                font.pixelSize: 20 * window.u
+                fontStyle: Tokens.font.icon.size(20 * window.u).build()
                 color: actions.fav ? "#ff5c7a" : tint.ink
             }
         }
@@ -1322,7 +1324,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: actions.active ? "check_circle" : actions.mine || actions.busy ? "downloading"
                         : actions.failed ? "refresh" : actions.saved ? "wallpaper" : "download"
-                    font.pixelSize: 19 * window.u
+                    fontStyle: Tokens.font.icon.size(19 * window.u).build()
                     color: actions.active ? tint.accent : tint.accentInk
                 }
 
@@ -1407,7 +1409,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             visible: !!seg.modelData.icon
                             text: seg.modelData.icon ?? ""
-                            font.pixelSize: 17 * window.u
+                            fontStyle: Tokens.font.icon.size(17 * window.u).build()
                             color: seg.current ? tint.accentInk : tint.muted
                         }
 
@@ -1443,7 +1445,7 @@ Item {
         MaterialIcon {
             anchors.centerIn: parent
             text: rb.icon
-            font.pixelSize: 19 * window.u
+            fontStyle: Tokens.font.icon.size(19 * window.u).build()
             color: rb.checked ? tint.accentInk : tint.ink
         }
     }
@@ -1465,7 +1467,7 @@ Item {
             MaterialIcon {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "style"
-                font.pixelSize: 28 * window.u
+                fontStyle: Tokens.font.icon.size(28 * window.u).build()
                 color: tint.accent
             }
 
@@ -1806,7 +1808,7 @@ Item {
             MaterialIcon {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "broken_image"
-                font.pixelSize: 16 * window.u
+                fontStyle: Tokens.font.icon.size(16 * window.u).build()
                 color: tint.ink
             }
 
@@ -1842,7 +1844,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             visible: !(window.online && wallhaven.isFetchingOnline)
             text: window.online ? (wallhaven.onlineError ? "cloud_off" : "travel_explore") : window.favoritesOnly ? "heart_plus" : "hide_image"
-            font.pixelSize: 52 * window.u
+            fontStyle: Tokens.font.icon.size(52 * window.u).build()
             color: "white"
             opacity: 0.85
         }
@@ -1874,7 +1876,7 @@ Item {
                 MaterialIcon {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "folder_open"
-                    font.pixelSize: 18 * window.u
+                    fontStyle: Tokens.font.icon.size(18 * window.u).build()
                     color: tint.accentInk
                 }
 

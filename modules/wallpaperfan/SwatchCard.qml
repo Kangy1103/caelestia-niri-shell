@@ -14,7 +14,8 @@ import qs.services
 // CNS notes, against the source this is ported from:
 //  - `paletteCache` is passed in rather than reaching for a singleton; the
 //    source's WallpaperSwatches is a Singleton, this module is a Scope.
-//  - `Colors.*` -> Colours.palette.m3*, `DesktopTheme.rad()` -> Tokens.rounding.
+//  - `Colors.*` -> Colours.palette.m3*. Corner radii keep the source's literal
+//    values: `DesktopTheme.rad(n)` is identity in the source's packaging build.
 //  - `Glyph` -> MaterialIcon. The source's PanelDecor frame is dropped: it is
 //    the desktop theme's window decoration, which has no Niri/CNS equivalent.
 //  - The picture decodes at a fixed size rather than from the live item width,
@@ -22,6 +23,11 @@ import qs.services
 //    Binding decode size to an animating width made Qt re-decode the image on
 //    every frame of the grow/shrink, and a scale transform magnified an
 //    already-rasterised card. Both were visible as a blank or blurry card.
+//  - renderType is forced back to QtRendering on every text element here. CNS's
+//    global StyledText sets Text.NativeRendering, which rasterises at the item's
+//    own size and is then transformed like a bitmap — inside the deck's
+//    scale+rotation that made all card text blocky. Upstream has no renderType
+//    anywhere, so its default was already correct.
 Item {
     id: card
 
@@ -59,8 +65,8 @@ Item {
     signal doubleClicked
 
     readonly property real pad: 9 * u
-    readonly property real radius: Tokens.rounding.extraLarge * u
-    readonly property real thumbRadius: Tokens.rounding.large * u
+    readonly property real radius: 16 * u
+    readonly property real thumbRadius: 10 * u
     readonly property real chipHeight: 22 * u
 
     // Fixed decode size: the largest this card ever renders at, so scaling
@@ -165,7 +171,7 @@ Item {
                 anchors.centerIn: parent
                 visible: thumb.status !== Image.Ready
                 text: thumb.status === Image.Error ? "broken_image" : card.entry && card.entry.video ? "movie" : "image"
-                font.pixelSize: Math.round(22 * card.u)
+                fontStyle: Tokens.font.icon.size(22 * card.u).build()
                 renderType: Text.QtRendering
                 color: Qt.alpha(card.dress.muted, 0.5)
             }
@@ -228,7 +234,7 @@ Item {
             visible: card.current
             width: currentRow.implicitWidth + 12 * card.u
             height: 19 * card.u
-            radius: Tokens.rounding.large * card.u
+            radius: 9.5 * card.u
             antialiasing: true
             color: card.dress.accent
             transformOrigin: Item.Left
@@ -242,7 +248,7 @@ Item {
                 MaterialIcon {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "check"
-                    font.pixelSize: Math.round(12 * card.u)
+                    fontStyle: Tokens.font.icon.size(12 * card.u).build()
                     renderType: Text.QtRendering
                     color: card.dress.accentInk
                 }
@@ -250,7 +256,8 @@ Item {
                 StyledText {
                     anchors.verticalCenter: parent.verticalCenter
                     text: qsTr("current")
-                    font.pixelSize: Math.round(10 * card.u)
+                    font.pixelSize: 10 * card.u
+                    font.weight: Font.Bold
                     renderType: Text.QtRendering
                     font.letterSpacing: 0.4 * card.u
                     color: card.dress.accentInk
@@ -293,7 +300,7 @@ Item {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: 0.5 * card.u
                 text: "favorite"
-                font.pixelSize: Math.round(14 * card.u)
+                fontStyle: Tokens.font.icon.size(14 * card.u).build()
                 renderType: Text.QtRendering
                 color: "#ff5c7a"
             }
@@ -312,7 +319,7 @@ Item {
             MaterialIcon {
                 anchors.centerIn: parent
                 text: "download_done"
-                font.pixelSize: Math.round(14 * card.u)
+                fontStyle: Tokens.font.icon.size(14 * card.u).build()
                 renderType: Text.QtRendering
                 color: "white"
             }
@@ -369,7 +376,8 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: !!chip.spec && chip.spec.label !== ""
                         text: chip.spec ? chip.spec.label.toUpperCase() : ""
-                        font.pixelSize: Math.round(8.5 * card.u)
+                        font.pixelSize: 8.5 * card.u
+                        font.weight: Font.Bold
                         renderType: Text.QtRendering
                         font.letterSpacing: 1.1 * card.u
                         color: card.inkOn(chip.color)
@@ -382,7 +390,8 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: !!chip.spec
                         text: chip.spec ? String(chip.spec.fill).toUpperCase() : ""
-                        font.pixelSize: Math.round(9.5 * card.u)
+                        font.pixelSize: 9.5 * card.u
+                        font.weight: Font.Medium
                         renderType: Text.QtRendering
                         color: card.inkOn(chip.color)
                     }
@@ -399,7 +408,8 @@ Item {
             width: thumbBase.width - 4 * card.u
             text: card.title
             elide: Text.ElideRight
-            font.pixelSize: Math.round(13 * card.u)
+            font.pixelSize: 13 * card.u
+            font.weight: Font.DemiBold
             renderType: Text.QtRendering
             color: card.dress.ink
         }
@@ -412,7 +422,7 @@ Item {
             width: titleText.width
             text: card.meta
             elide: Text.ElideRight
-            font.pixelSize: Math.round(10 * card.u)
+            font.pixelSize: 10 * card.u
             renderType: Text.QtRendering
             color: card.dress.muted
         }

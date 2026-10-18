@@ -128,7 +128,7 @@ Rectangle {
 
     width: 460 * u
     height: body.implicitHeight + 40 * u
-    radius: Tokens.rounding.extraLarge * u
+    radius: 20 * u
     color: Qt.alpha(surface, 0.95)
     border.width: 1
     border.color: Qt.alpha(ink, 0.12)
@@ -169,7 +169,8 @@ Rectangle {
     }
 
     component Label: StyledText {
-        font.pixelSize: Math.round(11 * card.u)
+        font.pixelSize: 11 * card.u
+        font.weight: Font.Bold
         font.letterSpacing: 1.2 * card.u
         color: card.muted
     }
@@ -177,18 +178,38 @@ Rectangle {
     component Note: StyledText {
         width: parent.width
         wrapMode: Text.Wrap
-        font.pixelSize: Math.round(12 * card.u)
+        font.pixelSize: 12 * card.u
         color: card.muted
     }
 
     // CNS: the source styled its own field (background/border/focus colours and
     // padding). TextFieldBase brings CNS's own chrome already, so this only
     // sets the metrics the source's sizing was written against.
+    // The source's Field is a StyledTextField, which carries its own
+    // background box; TextFieldBase is bare, so the box is supplied here to
+    // match the source's radius, surface, outline and focus border. The values
+    // are the source's, in its theme: rad(12) radius, 1px border,
+    // surface_container fill, outline_variant border, accent on focus.
     component Field: TextFieldBase {
+        id: field
+
         width: parent.width
         height: 40 * card.u
-        font.pixelSize: Math.round(13 * card.u)
+        font.pixelSize: 13 * card.u
         verticalAlignment: TextInput.AlignVCenter
+        leftPadding: 14 * card.u
+        rightPadding: 14 * card.u
+        color: card.ink
+        placeholderTextColor: card.muted
+        selectedTextColor: card.ink
+
+        background: Rectangle {
+            radius: 12 * card.u
+            color: Colours.palette.m3surfaceContainer
+            border.width: 1
+            border.color: field.activeFocus ? card.accent : Colours.palette.m3outlineVariant
+        }
+
         Keys.onEscapePressed: card.closeRequested()
     }
 
@@ -201,7 +222,7 @@ Rectangle {
 
         width: chipText.implicitWidth + 22 * card.u
         height: 28 * card.u
-        radius: Tokens.rounding.large * card.u
+        radius: 14 * card.u
         color: chip.containsMouse ? Qt.lighter(card.accent, 1.08) : card.accent
 
         MouseArea {
@@ -218,7 +239,8 @@ Rectangle {
 
             anchors.centerIn: parent
             text: chip.label
-            font.pixelSize: Math.round(12 * card.u)
+            font.pixelSize: 12 * card.u
+            font.weight: Font.DemiBold
             color: card.accentInk
         }
     }
@@ -262,14 +284,15 @@ Rectangle {
                 MaterialIcon {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "settings"
-                    font.pixelSize: Math.round(20 * card.u)
+                    fontStyle: Tokens.font.icon.size(20 * card.u).build()
                     color: card.accent
                 }
 
                 StyledText {
                     anchors.verticalCenter: parent.verticalCenter
                     text: qsTr("Picker settings")
-                    font.pixelSize: Math.round(16 * card.u)
+                    font.pixelSize: 16 * card.u
+                    font.weight: Font.Bold
                     color: card.ink
                 }
             }
@@ -286,7 +309,7 @@ Rectangle {
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: "close"
-                    font.pixelSize: Math.round(18 * card.u)
+                    fontStyle: Tokens.font.icon.size(18 * card.u).build()
                     color: card.ink
                 }
             }
@@ -354,14 +377,14 @@ Rectangle {
                 anchors.right: parent.right
                 width: 40 * card.u
                 height: 40 * card.u
-                radius: Tokens.rounding.large * card.u
+                radius: 12 * card.u
                 color: eye.containsMouse ? Qt.alpha(card.ink, 0.12) : Qt.alpha(card.ink, 0.06)
                 onClicked: card.showKey = !card.showKey
 
                 MaterialIcon {
                     anchors.centerIn: parent
                     text: card.showKey ? "visibility_off" : "visibility"
-                    font.pixelSize: Math.round(18 * card.u)
+                    fontStyle: Tokens.font.icon.size(18 * card.u).build()
                     color: card.ink
                 }
             }
@@ -396,7 +419,7 @@ Rectangle {
 
             width: parent.width
             height: 40 * card.u
-            radius: Tokens.rounding.large * card.u
+            radius: 12 * card.u
             color: animateRow.containsMouse ? Qt.alpha(card.ink, 0.1) : Qt.alpha(card.ink, 0.06)
             border.width: 1
             border.color: Qt.alpha(card.ink, 0.12)
@@ -421,7 +444,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Grow the chosen card into the wallpaper")
                 elide: Text.ElideRight
-                font.pixelSize: Math.round(13 * card.u)
+                font.pixelSize: 13 * card.u
                 color: card.ink
             }
 
