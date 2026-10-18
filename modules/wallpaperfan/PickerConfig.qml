@@ -62,13 +62,32 @@ Scope {
         wallpaperLivePreview = d.wallpaperLivePreview ?? wallpaperLivePreview;
         wallpaperAnimateChoice = d.wallpaperAnimateChoice ?? wallpaperAnimateChoice;
         wallhavenSorting = d.wallhavenSorting ?? wallhavenSorting;
-        wallhavenPurity = d.wallhavenPurity ?? wallhavenPurity;
-        wallhavenOrder = d.wallhavenOrder ?? wallhavenOrder;
-        wallhavenCategories = d.wallhavenCategories ?? wallhavenCategories;
+        // An earlier build stored these as the source's "110"/"100" bitmask and
+        // the category chips wrote "0"/"1" over the real characters, leaving
+        // values like "10neral,anime" and "010" — which no search could satisfy.
+        // Anything outside the vocabulary is dropped rather than passed on.
+        wallhavenPurity = normalise(d.wallhavenPurity, ["sfw", "sketchy", "nsfw"], wallhavenPurity);
+        wallhavenOrder = normalise(d.wallhavenOrder, ["asc", "desc"], wallhavenOrder);
+        wallhavenCategories = normaliseList(d.wallhavenCategories, ["general", "anime", "people"], wallhavenCategories);
         wallhavenTopRange = d.wallhavenTopRange ?? wallhavenTopRange;
         wallhavenAtleast = d.wallhavenAtleast ?? wallhavenAtleast;
         wallhavenRatios = d.wallhavenRatios ?? wallhavenRatios;
         wallpaperDir = d.wallpaperDir ?? wallpaperDir;
+    }
+
+    // Keeps `value` only if it is one of `allowed`, else the fallback.
+    function normalise(value: var, allowed: array, fallback: string): string {
+        return allowed.indexOf(value) >= 0 ? value : fallback;
+    }
+
+    // The comma-separated form, with any unrecognised or empty entry dropped.
+    // A bitmask like "010" shares no characters with the vocabulary, so it is
+    // discarded wholesale; nothing valid survives it by accident.
+    function normaliseList(value: var, allowed: array, fallback: string): string {
+        if (typeof value !== "string")
+            return fallback;
+        const kept = value.split(",").map(s => s.trim()).filter(s => allowed.indexOf(s) >= 0);
+        return kept.length > 0 ? kept.join(",") : fallback;
     }
 
     Timer {

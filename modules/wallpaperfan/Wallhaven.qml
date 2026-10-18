@@ -18,6 +18,9 @@ Scope {
     id: root
 
     readonly property string wallpaperDir: Paths.wallsdir
+    // The picker supplies its settings; the filter state is read off these
+    // rather than kept here, so the chips and the search agree.
+    required property var config
     readonly property string script: `${Quickshell.shellPath("scripts/webWallpaper/wallhaven")}/main.py`
 
     property string currentSearchText: ""
@@ -30,10 +33,23 @@ Scope {
     // CNS: the source calls its own engine here; Wallpapers does it instead.
     property var setWallpaperPath: null
 
-    // Where a result is (or would be) saved.
+    // Wallhaven's own tree, kept out of the top level of the wallpaper folder so
+    // it doesn't crowd the local listing: <walls>/wallhaven/<category>/.
+    readonly property string downloadRoot: `${wallpaperDir}/wallhaven`
+
+    // The subfolder a result belongs in, from the category the search reported
+    // (general / anime / people).
+    function saveDirFor(wallpaper): string {
+        const cat = (wallpaper?.category ?? "").trim();
+        return `${root.downloadRoot}/${cat !== "" ? cat : "general"}`;
+    }
+
+    // Where a result is (or would be) saved. Must match the downloader's own
+    // naming — it writes "wallhaven-<id>.<ext>" — or isSaved() never matches
+    // and the same wallpaper is fetched again every time.
     function savePathFor(wallpaper): string {
-        const ext = wallpaper.fullUrl.split(".").pop().split("?")[0] || "jpg";
-        return `${root.wallpaperDir}/${wallpaper.id}.${ext}`;
+        const ext = (wallpaper?.fullUrl ?? "").split(".").pop().split("?")[0] || "jpg";
+        return `${root.saveDirFor(wallpaper)}/wallhaven-${wallpaper.id}.${ext}`;
     }
 
     // ── Online / Wallhaven ───────────────────────────────────────────────
@@ -46,15 +62,17 @@ Scope {
     property string onlineError: ""
 
     // ── Filters ─────────────────────────────────────────────────────────
-    // The source keeps these in SettingsConfig and re-fetches on each change;
-    // here they are session state, with re-fetch left to the caller.
-    property string categories: "general,anime"
-    property string purity: "sfw"
-    property string sorting: "date_added"
-    property string order: "desc"
-    property string topRange: ""
-    property string resolution: ""
-    property string color: ""
+    // These live in PickerConfig, which is what the picker's filter chips
+    // write to. They used to be duplicated here as plain properties, which
+    // silently did nothing: the chips updated the config while buildArgs()
+    // went on reading these stale copies, so no filter ever changed a search.
+    readonly property string categories: config.wallhavenCategories
+    readonly property string purity: config.wallhavenPurity
+    readonly property string sorting: config.wallhavenSorting
+    readonly property string order: config.wallhavenOrder
+    readonly property string topRange: config.wallhavenTopRange
+    readonly property string resolution: config.wallhavenResolution
+    readonly property string color: config.wallhavenColor
 
     function buildArgs(page: int): array {
         const args = [
@@ -102,6 +120,17 @@ Scope {
         fetchWallhaven(false);
     }
 
+    // A filter changed. Only worth re-running when the Wallhaven source is
+    // actually on screen — otherwise it fires a request nobody is looking at,
+    // and the picker resets the list when it opens anyway.
+    function refetch(): void {
+        if (onlineActive && !isFetchingOnline)
+            refetchTimer.restart();
+    }
+
+    // Whether the picker is currently showing Wallhaven results.
+    property bool onlineActive: false
+
     // Back to a blank search (the picker calls this when it's destroyed, so it
     // opens fresh). A fetch in flight is stopped and its result dropped.
     function resetSearch(): void {
@@ -125,6 +154,28 @@ Scope {
         fetchWallhaven(true);
     }
 
+    // The source re-fetches whenever a filter changes. Without this the chips
+    // only repainted: the list stayed exactly as the last search left it.
+    // Batched so a burst of changes (categories toggling off, then on) is one
+    // request, and ignored while a fetch is already in flight.
+    Timer {
+        id: refetchTimer
+        interval: 120
+        onTriggered: root.fetchWallhaven(true)
+    }
+
+    Connections {
+        target: root.config
+
+        function onWallhavenSortingChanged(): void { root.refetch(); }
+        function onWallhavenPurityChanged(): void { root.refetch(); }
+        function onWallhavenOrderChanged(): void { root.refetch(); }
+        function onWallhavenCategoriesChanged(): void { root.refetch(); }
+        function onWallhavenTopRangeChanged(): void { root.refetch(); }
+        function onWallhavenAtleastChanged(): void { root.refetch(); }
+        function onWallhavenRatiosChanged(): void { root.refetch(); }
+    }
+
     // Downloads one result into CNS's wallpaper folder. The saved path is
     // handed to the picker, which sets it once the download lands.
     function downloadAndSetWallpaper(wallpaper): void {
@@ -136,7 +187,8 @@ Scope {
         downloadError = "";
         downloadProcess.command = [
             "python3", script, "download", wallpaper.id,
-            "--dir", wallpaperDir, "--json"
+            // Into its category folder, not the top of the wallpaper tree.
+            "--dir", saveDirFor(wallpaper), "--json"
         ];
         downloadProcess.running = true;
     }
@@ -150,31 +202,39 @@ Scope {
     }
 
     // Ids known to exist on disk, filled in by the picker from Wallpapers.list.
+    // Which results are already on disk, so the picker can badge them and skip
+    // re-downloading. This was declared and never filled in, so isSaved() was
+    // permanently false. Results are filed as <wallhaven>/<category>/
+    // wallhaven-<id>.<ext>, so the scan looks one level into each category.
+    // FileView can't help: this build of Quickshell's FileView is file-only,
+    // with no directory model.
     property var savedPaths: []
 
-    function cyclePurity(): void {
-        const all = ["sfw", "sfw,sketchy", "sfw,sketchy,nsfw"];
-        purity = all[(all.indexOf(purity) + 1) % all.length];
-        fetchWallhaven(true);
+    function refreshSaved(): void {
+        savedScan.running = true;
     }
 
-    function cycleSort(): void {
-        const all = ["date_added", "relevance", "toplist", "favorites", "random"];
-        sorting = all[(all.indexOf(sorting) + 1) % all.length];
-        topRange = sorting === "toplist" ? "1M" : "";
-        fetchWallhaven(true);
+    Component.onCompleted: refreshSaved()
+
+    Process {
+        id: savedScan
+
+        command: ["sh", "-c",
+            `find "${root.downloadRoot}" -maxdepth 2 -type f -name 'wallhaven-*' -printf '%f\\n' 2>/dev/null`]
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.savedPaths = text.trim().split("\n")
+                    .filter(n => n.startsWith("wallhaven-"))
+                    .map(n => n.substring("wallhaven-".length).split(".")[0])
+                    .filter(n => n.length > 0);
+            }
+        }
     }
 
-    function cycleOrder(): void {
-        order = order === "desc" ? "asc" : "desc";
-        fetchWallhaven(true);
-    }
 
-    function cycleRange(): void {
-        const all = ["1d", "3d", "1w", "1M", "3M", "6M", "1y"];
-        topRange = all[(all.indexOf(topRange) + 1) % all.length];
-        fetchWallhaven(true);
-    }
+
+
 
     Process {
         id: search
@@ -196,6 +256,8 @@ Scope {
                         fullUrl: item.path ?? "",
                         resolution: item.resolution ?? "",
                         colors: item.colors ?? [],
+                        // Kept so saveDirFor() can file the download by category.
+                        category: item.category ?? "",
                         favorites: item.favorites ?? 0,
                         fileSize: item.file_size ?? 0
                     }));
@@ -240,6 +302,8 @@ Scope {
                         if (root.setWallpaperPath)
                             root.setWallpaperPath(saved);
                         root._pendingDownloadPath = "";
+                        // This one is on disk now, so the badge should show.
+                        root.refreshSaved();
                     } else {
                         root.downloadError = qsTr("Download failed");
                     }

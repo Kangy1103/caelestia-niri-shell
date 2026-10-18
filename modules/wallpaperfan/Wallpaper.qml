@@ -86,6 +86,14 @@ Item {
     // source, so the picker owns one and refers to it by id.
     Wallhaven {
         id: wallhaven
+        // The filter chips write to window.config; without this Wallhaven kept
+        // its own copies and every search ran with stale filters.
+        config: window.config
+        // The download completes asynchronously and has to be applied through
+        // CNS's Wallpapers service, which this scope can't reach directly.
+        // This was declared and never assigned, so downloads landed on disk
+        // and the wallpaper was never set.
+        setWallpaperPath: path => Wallpapers.setWallpaper(path)
     }
 
     // The source's ClickableRect: a rounded rect that lights on hover and
@@ -360,6 +368,9 @@ Item {
         reshuffle(() => {
             modeChanging = true;
             mode = m;
+            // Tells Wallhaven whether its results are on screen, so a filter
+            // change only re-fetches when someone would see it.
+            wallhaven.onlineActive = (m === "wallhaven");
             if (m === "wallhaven" && wallhaven.onlineWallpapers.length === 0 && !wallhaven.isFetchingOnline)
                 wallhaven.fetchWallhaven(true);
             Qt.callLater(refocus);
@@ -1733,17 +1744,26 @@ Item {
         Gap {}
 
         Repeater {
-            model: [["General", 0], ["Anime", 1], ["People", 2]]
+            model: [["General", "general"], ["Anime", "anime"], ["People", "people"]]
 
             Chip {
                 required property var modelData
                 label: modelData[0]
-                active: window.config.wallhavenCategories[modelData[1]] === "1"
+                // The source stores categories as a "110" bitmask; here they
+                // are the names the API takes, so test membership. Indexing
+                // the string wrote "0"/"1" over real characters and left
+                // --categories "10neral,anime", which no search could satisfy.
+                active: window.config.wallhavenCategories.split(",").indexOf(modelData[1]) >= 0
                 onClicked: {
-                    const c = window.config.wallhavenCategories.split("");
-                    c[modelData[1]] = c[modelData[1]] === "1" ? "0" : "1";
-                    if (c.includes("1"))
-                        window.config.wallhavenCategories = c.join("");
+                    const list = window.config.wallhavenCategories.split(",").filter(s => s !== "");
+                    const at = list.indexOf(modelData[1]);
+                    if (at >= 0)
+                        list.splice(at, 1);
+                    else
+                        list.push(modelData[1]);
+                    // At least one category has to stay on.
+                    if (list.length > 0)
+                        window.config.wallhavenCategories = list.join(",");
                 }
             }
         }
@@ -1751,19 +1771,16 @@ Item {
         Gap {}
 
         Repeater {
-            model: window.config.wallhavenApiKey.length > 0 ? [["SFW", 0], ["Sketchy", 1], ["NSFW", 2]] : [["SFW", 0], ["Sketchy", 1]]
+            model: window.config.wallhavenApiKey.length > 0 ? [["SFW", "sfw", false], ["Sketchy", "sketchy", false], ["NSFW", "nsfw", true]] : [["SFW", "sfw", false], ["Sketchy", "sketchy", false]]
 
             Chip {
                 required property var modelData
                 label: modelData[0]
-                danger: modelData[1] === 2
-                active: window.config.wallhavenPurity[modelData[1]] === "1"
-                onClicked: {
-                    const p = window.config.wallhavenPurity.split("");
-                    p[modelData[1]] = p[modelData[1]] === "1" ? "0" : "1";
-                    if (p.includes("1"))
-                        window.config.wallhavenPurity = p.join("");
-                }
+                danger: modelData[2]
+                // Single choice: the API takes one purity, so this is equality
+                // rather than the source's multi-select bitmask.
+                active: window.config.wallhavenPurity === modelData[1]
+                onClicked: window.config.wallhavenPurity = modelData[1]
             }
         }
     }
