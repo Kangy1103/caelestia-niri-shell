@@ -75,9 +75,13 @@ Item {
     readonly property real thumbRadius: rad(10) * u
     readonly property real chipHeight: 22 * u
 
-    // Fixed decode size: the largest this card ever renders at, so scaling
-    // stays sharp and nothing re-decodes while the card animates.
-    readonly property size decodeSize: Qt.size(340, 220)
+    // Fixed decode size, scaled by how big this card actually gets drawn.
+    // A deck card sits at 1:1, but the chosen card is magnified by midScale
+    // (up to 2.4x) while it rises — decoding for the deck size alone left the
+    // big card upscaling a 340px texture to ~800px, which read as a blurry
+    // card. Scaling the decode keeps it sharp without re-decoding per frame.
+    property real decodeScale: 1
+    readonly property size decodeSize: Qt.size(Math.ceil(340 * decodeScale), Math.ceil(220 * decodeScale))
 
     // Pre-loads this card's picture ahead of time, so a slot handed a new
     // wallpaper shows it at once instead of flashing empty.

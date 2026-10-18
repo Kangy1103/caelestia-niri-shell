@@ -235,7 +235,16 @@ Item {
     }
 
     function isActive(entry) {
-        return !!entry && activeName === (entry.item ? savedName(entry) : entry.fileName);
+        return !!entry && activeName === (entry.item ? savedName(entry) : fileKey(entry.fileName));
+    }
+
+    // Wallpapers.list is recursive, so fileName is a path relative to the
+    // wallpaper folder ("Anime Chicks/x.jpg"), while Wallpapers.actualCurrent is
+    // only ever compared as a bare filename. Identity checks go through this so
+    // wallpapers in subfolders still match; everything keyed by identity (the
+    // palette cache, favourites, downloads) keeps the full path.
+    function fileKey(name: string): string {
+        return (name ?? "").split("/").pop();
     }
 
     function baseName(name) {
@@ -321,7 +330,7 @@ Item {
         allWallpapers = arr;
         resort();
         // Colours for the cards near the wallpaper on screen first.
-        const at = Math.max(0, arr.findIndex(w => w.fileName === activeName));
+        const at = Math.max(0, arr.findIndex(w => fileKey(w.fileName) === activeName));
         window.paletteCache.ensure(arr.map((w, i) => ({ w, d: Math.abs(i - at) })).sort((a, b) => a.d - b.d).map(x => x.w));
     }
 
@@ -365,7 +374,7 @@ Item {
         let i = -1;
         if (modeChanging || frontName === "") {
             modeChanging = false;
-            i = online ? -1 : list.findIndex(w => w.fileName === activeName);
+            i = online ? -1 : list.findIndex(w => fileKey(w.fileName) === activeName);
         } else {
             i = list.findIndex(w => w.fileName === frontName);
             if (i < 0)
@@ -457,7 +466,7 @@ Item {
     // activeName, which may lag inside the engine's change handlers).
     function isSet(entry) {
         const name = Wallpapers.actualCurrent.split("/").pop();
-        return !!entry && name === (entry.item ? savedName(entry) : entry.fileName);
+        return !!entry && name === (entry.item ? savedName(entry) : fileKey(entry.fileName));
     }
 
     // The slot holding an entry, if it's in the hand.
@@ -663,7 +672,7 @@ Item {
         peekKept = false;
         peekHeld = false;
         settingsOpen = false;
-        place(displayedWallpapers.findIndex(w => w.fileName === activeName));
+        place(displayedWallpapers.findIndex(w => fileKey(w.fileName) === activeName));
         if (currentIndex < 0 && count > 0)
             place(0);
         backdrop.show(currentEntry ? (currentEntry.fullUrl || pictureOf(currentEntry)) : "", true);
@@ -2050,6 +2059,9 @@ Item {
 
             anchors.fill: parent
             scale: 1 + 0.035 * flight.pulse
+            // This card is magnified by flight.scale (to midScale) as it rises,
+            // so decode its picture for the size it actually reaches.
+            decodeScale: Math.max(1, window.midScale)
             opacity: 1 - flight.fade
             u: window.cardU
             entry: chosen
