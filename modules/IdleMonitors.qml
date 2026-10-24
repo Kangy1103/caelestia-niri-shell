@@ -27,10 +27,17 @@ Scope {
         if (!action)
             return;
 
+        // CNS: fire the lock out-of-process (like the old stasis `cns shell lock
+        // lock`) instead of setting lock.lock.locked in-engine. Locking from
+        // inside the IdleMonitor callback interleaves with the QML engine's own
+        // screen/panel reconciliation; the resulting Variants/Scope teardown can
+        // destroy a PanelWindow while its backing QQuickWindow is already freed,
+        // which is a use-after-free in Quickshell (proxywindow.cpp). Driving the
+        // lock over IPC from a separate process keeps that teardown clean.
         if (action === "lock")
-            lock.lock.locked = true;
+            Quickshell.execDetached(["cns", "shell", "lock", "lock"]);
         else if (action === "unlock")
-            lock.lock.locked = false;
+            Quickshell.execDetached(["cns", "shell", "lock", "unlock"]);
         else if (typeof action === "string") {
             // CNS: route niri actions over the already-open Niri socket instead
             // of forking a `niri msg` client. Upstream dispatches idle actions

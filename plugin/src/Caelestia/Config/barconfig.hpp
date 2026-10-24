@@ -40,6 +40,13 @@ class BarWorkspaces : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, showWindows, true)
     CONFIG_PROPERTY(bool, showWindowsOnSpecialWorkspaces, true)
     CONFIG_PROPERTY(int, maxWindowIcons, 5)
+    CONFIG_PROPERTY(bool, windowIconImage, false)
+    CONFIG_PROPERTY(int, windowIconGap, 5)
+    CONFIG_PROPERTY(int, windowIconSize, 30)
+    CONFIG_PROPERTY(bool, groupIconsByApp, false)
+    CONFIG_PROPERTY(bool, windowRighClickContext, true)
+    CONFIG_PROPERTY(bool, doubleClickToCenter, true)
+    CONFIG_PROPERTY(int, windowContextWidth, 250)
     CONFIG_PROPERTY(bool, activeTrail, true)
     CONFIG_ENUM_PROPERTY(BarWorkspaceDisplay, displayType, BarWorkspaceDisplay::Shapes)
     CONFIG_ENUM_PROPERTY(BarWorkspaceDisplay, specialDisplayType, BarWorkspaceDisplay::Icons)
@@ -73,14 +80,6 @@ class BarActiveWindow : public settings::ObjectNode {
     CONFIG_PROPERTY(bool, compact, false)
     CONFIG_PROPERTY(bool, inverted, false)
     CONFIG_PROPERTY(bool, showOnHover, true)
-    // CNS: workspace window-icon rendering and interaction
-    CONFIG_PROPERTY(bool, windowIconImage, false)
-    CONFIG_PROPERTY(int, windowIconGap, 5)
-    CONFIG_PROPERTY(int, windowIconSize, 30)
-    CONFIG_PROPERTY(bool, groupIconsByApp, false)
-    CONFIG_PROPERTY(bool, windowRighClickContext, true)
-    CONFIG_PROPERTY(bool, doubleClickToCenter, true)
-    CONFIG_PROPERTY(int, windowContextWidth, 250)
 };
 
 class BarTrayIconSub : public settings::ObjectNode {

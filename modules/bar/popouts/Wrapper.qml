@@ -102,7 +102,6 @@ Item {
         id: content
 
         shouldBeActive: root.hasCurrent && !root.detachedMode
-        anchors.fill: parent
 
         sourceComponent: Content {
             popouts: popoutState

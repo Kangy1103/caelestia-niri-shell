@@ -49,7 +49,9 @@ Item {
     }
 
     readonly property int contentWidth: Math.max(
-        Config.bar.workspaces.windowContextWidth,
+        Config.bar.workspaces.windowContextWidth
+            ?? Config.bar.activeWindow.windowContextWidth
+            ?? 250,
         (maxCols * (cellMinWidth + cellGap)) + cellGap
     )
 
