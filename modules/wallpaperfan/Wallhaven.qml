@@ -98,7 +98,7 @@ Scope {
         }
     }
 
-    function buildArgs(page: int): array {
+    function buildArgs(page: int): var {
         const args = [
             "search",
             "--json",

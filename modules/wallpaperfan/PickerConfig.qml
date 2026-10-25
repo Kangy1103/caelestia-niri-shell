@@ -76,28 +76,26 @@ Scope {
         // the category chips wrote "0"/"1" over the real characters, leaving
         // values like "10neral,anime" and "010" — which no search could satisfy.
         // Anything outside the vocabulary is dropped rather than passed on.
-        wallhavenPurity = normalise(d.wallhavenPurity, ["sfw", "sketchy", "nsfw"], wallhavenPurity);
+        wallhavenPurity = normaliseList(d.wallhavenPurity, ["sfw", "sketchy", "nsfw"], wallhavenPurity);
         wallhavenOrder = normalise(d.wallhavenOrder, ["asc", "desc"], wallhavenOrder);
         wallhavenCategories = normaliseList(d.wallhavenCategories, ["general", "anime", "people"], wallhavenCategories);
         wallhavenTopRange = d.wallhavenTopRange ?? wallhavenTopRange;
         // Aspect band, and a WxH minimum the API understands.
         wallhavenRatios = normalise(d.wallhavenRatios, ["", "ultrawide", "widescreen", "square", "portrait"], wallhavenRatios);
         wallhavenAtleast = normalise(d.wallhavenAtleast, ["", "1920x1080", "2560x1440", "3840x2160", "5120x2880"], wallhavenAtleast);
-        wallhavenAtleast = d.wallhavenAtleast ?? wallhavenAtleast;
-        wallhavenRatios = d.wallhavenRatios ?? wallhavenRatios;
         wallpaperDir = d.wallpaperDir ?? wallpaperDir;
         wallpaperFit = normalise(d.wallpaperFit, ["crop", "fit", "blur"], wallpaperFit);
     }
 
     // Keeps `value` only if it is one of `allowed`, else the fallback.
-    function normalise(value: var, allowed: array, fallback: string): string {
+    function normalise(value: var, allowed: var, fallback: string): string {
         return allowed.indexOf(value) >= 0 ? value : fallback;
     }
 
     // The comma-separated form, with any unrecognised or empty entry dropped.
     // A bitmask like "010" shares no characters with the vocabulary, so it is
     // discarded wholesale; nothing valid survives it by accident.
-    function normaliseList(value: var, allowed: array, fallback: string): string {
+    function normaliseList(value: var, allowed: var, fallback: string): string {
         if (typeof value !== "string")
             return fallback;
         const kept = value.split(",").map(s => s.trim()).filter(s => allowed.indexOf(s) >= 0);
@@ -154,4 +152,5 @@ Scope {
     onWallhavenAtleastChanged: writeTimer.restart()
     onWallhavenRatiosChanged: writeTimer.restart()
     onWallpaperDirChanged: writeTimer.restart()
+    onWallpaperFitChanged: writeTimer.restart()
 }
