@@ -25,6 +25,14 @@ UmbrielIpc::UmbrielIpc(QObject* parent)
     connectToUmbriel();
 }
 
+UmbrielIpc::~UmbrielIpc() {
+    // Member destruction precedes QObject's automatic disconnection. Closing
+    // the socket must not invoke slots that access already-destroyed members.
+    QObject::disconnect(&m_eventSocket, nullptr, this, nullptr);
+    m_reconnectTimer.stop();
+    m_eventSocket.abort();
+}
+
 bool UmbrielIpc::available() const { return m_available; }
 const QVariantList& UmbrielIpc::workspaces() const { return m_workspaces; }
 const QVariantList& UmbrielIpc::windows() const { return m_windows; }

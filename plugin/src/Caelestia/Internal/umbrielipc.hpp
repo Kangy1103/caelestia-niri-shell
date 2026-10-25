@@ -31,6 +31,7 @@ class UmbrielIpc final : public QObject {
 
 public:
     explicit UmbrielIpc(QObject* parent = nullptr);
+    ~UmbrielIpc() override;
 
     [[nodiscard]] bool available() const;
     [[nodiscard]] const QVariantList& workspaces() const;
