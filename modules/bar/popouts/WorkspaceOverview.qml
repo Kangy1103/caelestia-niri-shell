@@ -495,6 +495,8 @@ Item {
             if (captureIndex < captureList.length) {
                 captureNext()
             } else {
+                // grim writes only preview files; it creates no clipboard entries.
+                if (Compositor.isUmbriel) return;
                 // All done — clean up cliphist via detached process (survives popout close)
                 Quickshell.execDetached(["sh", "-c",
                     "sleep 0.5; " +
