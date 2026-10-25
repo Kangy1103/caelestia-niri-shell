@@ -128,7 +128,7 @@ Qt's [animation-driver documentation](https://doc.qt.io/qt-6/qtquick-visualcanva
 
 Full-screen effects remain unchanged. Cutting their resolution, shadow area or composition without demonstrated parity would conflict with preserving the shell's look. A region-based redesign can be a later measured project; it is not required to finish this conservative pass.
 
-## Final soak and deployment
+## Final soak and deployment at the requested stop
 
 Stopped at the user's request during the wallpaper-picker settling phase. Completed portions include the initial 120-second idle window, three cycles of all ten drawers, three real Alt+Tab/release cycles and three wallpaper-picker cycles. The capture-picker, notification and final idle portions were **not completed**. Partial samples/checks were saved by the harness's cleanup handler. This is not reported as a completed soak.
 
@@ -143,3 +143,11 @@ The reload logs exposed null-object binding warnings in `modules/notifications/N
 No lock/authentication, logout, suspend or human smoothness comparison was performed during this unattended pass.
 
 Raw local evidence is under this report's directory. The large profiler traces, test screenshots, desktop-state data and build artifacts remain local; they are not published as shell source.
+
+## Installation verification after the user ran the installer
+
+The system installation and activation are now complete. All four native module files and all three wallpaper QML files match the tested activation manifest. Both background files now match committed `optimisation`; the temporary previous-wallpaper deployment is resolved.
+
+A clean start with the ordinary `cns-start` succeeded. `/proc` mappings confirm both multimedia libraries load from `/usr/lib/qt6/qml/CNS`, with no staged QML import path, profiler preload or allocator profiling flags. A temporary read-only probe verified the actual selected wallpaper is ready and settled on all four outputs; background captures were visually inspected. The probe was removed and ordinary startup verified again. No configuration errors were logged.
+
+Evidence: `installed-verification/checks.json`, normal startup/runtime logs and four output captures. This verification did not resume the unfinished optimisation/soak work listed above.
