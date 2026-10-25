@@ -268,7 +268,9 @@ color: Colours.palette.m3onSurfaceVariant
                     }
                 }
 
-                ScrollBar.vertical: StyledScrollBar {}
+                ScrollBar.vertical: StyledScrollBar {
+                    flickable: listView
+                }
             }
 
             Column {

@@ -39,7 +39,7 @@ QtObject {
     property bool hasActionIcons
     property list<var> actions
 
-    readonly property bool hasFullscreen: Niri.hasFullscreen
+    readonly property bool hasFullscreen: Compositor.hasFullscreen
 
     readonly property Timer timer: Timer {
         running: true

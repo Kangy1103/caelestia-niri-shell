@@ -68,21 +68,21 @@ Item {
 
     // CNS: Niri, not Hypr — no special-workspace or Hypr IPC here.
     readonly property string stateMsg: {
-        if (Niri.kbLayout !== Niri.defaultKbLayout) {
-            if (Niri.capsLock && Niri.numLock)
-                return Tr.tr("Caps lock and Num lock are ON.\nKeyboard layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
-            if (Niri.capsLock)
-                return Tr.tr("Caps lock is ON. Kb layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
-            if (Niri.numLock)
-                return Tr.tr("Num lock is ON. Kb layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
-            return Tr.tr("Keyboard layout: %1").arg(Niri.kbLayoutFull ?? Niri.kbLayout);
+        if (Compositor.kbLayout !== Compositor.defaultKbLayout) {
+            if (Compositor.capsLock && Compositor.numLock)
+                return Tr.tr("Caps lock and Num lock are ON.\nKeyboard layout: %1").arg(Compositor.kbLayoutFull ?? Compositor.kbLayout);
+            if (Compositor.capsLock)
+                return Tr.tr("Caps lock is ON. Kb layout: %1").arg(Compositor.kbLayoutFull ?? Compositor.kbLayout);
+            if (Compositor.numLock)
+                return Tr.tr("Num lock is ON. Kb layout: %1").arg(Compositor.kbLayoutFull ?? Compositor.kbLayout);
+            return Tr.tr("Keyboard layout: %1").arg(Compositor.kbLayoutFull ?? Compositor.kbLayout);
         }
 
-        if (Niri.capsLock && Niri.numLock)
+        if (Compositor.capsLock && Compositor.numLock)
             return Tr.tr("Caps lock and Num lock are ON.");
-        if (Niri.capsLock)
+        if (Compositor.capsLock)
             return Tr.tr("Caps lock is ON.");
-        if (Niri.numLock)
+        if (Compositor.numLock)
             return Tr.tr("Num lock is ON.");
 
         return "";

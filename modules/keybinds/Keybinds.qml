@@ -1,6 +1,7 @@
 pragma Singleton
 
 import qs.utils
+import qs.services
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -19,6 +20,11 @@ Singleton {
     property string error: ""
 
     function refresh(): void {
+        if (Compositor.isUmbriel) {
+            loading = true;
+            umbrielGenerator.running = true;
+            return;
+        }
         loading = true;
         generator.running = true;
     }
@@ -53,6 +59,26 @@ Singleton {
                 cacheFileView.reload();
             } else {
                 root.error = qsTr("Failed to generate keybinds");
+            }
+        }
+    }
+
+    Process {
+        id: umbrielGenerator
+
+        command: [
+            "python3",
+            `${root.scriptsDir}/extract_umbriel_binds.py`,
+            root.cacheFile
+        ]
+
+        onExited: (code, exitStatus) => {
+            root.loading = false;
+            if (code === 0) {
+                root.error = "";
+                cacheFileView.reload();
+            } else {
+                root.error = qsTr("Failed to read Umbriel keybinds");
             }
         }
     }

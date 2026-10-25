@@ -29,17 +29,15 @@ Item {
     }
 
     function cycleLayout() {
-        // CNS called Niri.action(), which does not exist on the Niri singleton —
-        // it threw on every click. The invokable lives on NiriIpc.
-        NiriIpc.action("switch-layout", []);
+        Compositor.switchKeyboardLayout();
     }
 
     function readLayouts() {
-        const arr = Niri.kbLayoutsArray;
+        const arr = Compositor.kbLayoutsArray;
         if (arr && arr.length > 0)
             _setLayoutsFromArray(arr);
 
-        activeIndex = Niri.kbLayoutIndex;
+        activeIndex = Compositor.kbLayoutIndex;
         if (activeIndex >= 0 && activeIndex < layoutsModel.count)
             activeLabel = layoutsModel.get(activeIndex).label;
         else
@@ -168,10 +166,10 @@ Item {
     }
 
     Connections {
-        target: Niri
+        target: Compositor
 
         function onKbLayoutIndexChanged() {
-            activeIndex = Niri.kbLayoutIndex;
+            activeIndex = Compositor.kbLayoutIndex;
             if (activeIndex >= 0 && activeIndex < layoutsModel.count)
                 activeLabel = layoutsModel.get(activeIndex).label;
             else

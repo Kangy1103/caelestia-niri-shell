@@ -23,7 +23,7 @@ StyledWindow {
     // CNS: NiriIpc.hasFullscreen describes the focused window globally. Scope
     // it to this output so a fullscreen app on one monitor doesn't hide the
     // bar or change the layer/mask on every other monitor.
-    readonly property bool hasFullscreen: Niri.hasFullscreen && Niri.focusedMonitorName === screen.name
+    readonly property bool hasFullscreen: Compositor.hasFullscreen && Compositor.focusedMonitorName === screen.name
     readonly property ScreenState screenState: ShellState.forScreen(screen)
 
     property real fsTransitionProg: hasFullscreen ? 1 : 0
@@ -344,19 +344,19 @@ StyledWindow {
     Rectangle {
         id: workspaceTooltip
 
-        visible: Niri.tooltipTarget !== null
+        visible: Compositor.tooltipTarget !== null
         z: 10000
 
         x: {
-            if (Niri.tooltipTarget === null) return 0
-            var cx = Niri.mousePos.x + 16
+            if (Compositor.tooltipTarget === null) return 0
+            var cx = Compositor.mousePos.x + 16
             if (cx + width > parent.width)
                 cx = parent.width - width - 4
             return cx
         }
         y: {
-            if (Niri.tooltipTarget === null) return 0
-            var cy = Niri.mousePos.y - height / 2
+            if (Compositor.tooltipTarget === null) return 0
+            var cy = Compositor.mousePos.y - height / 2
             if (cy < 4) cy = 4
             if (cy + height > parent.height) cy = parent.height - height - 4
             return cy
@@ -373,7 +373,7 @@ StyledWindow {
         StyledText {
             id: tooltipLabel
             anchors.centerIn: parent
-            text: Niri.tooltipText
+            text: Compositor.tooltipText
             width: parent.width - 16
             color: Colours.palette.m3onSurface
             font.pointSize: 10

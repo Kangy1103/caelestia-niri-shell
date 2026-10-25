@@ -197,20 +197,20 @@ Item {
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: {
-            Niri.switchToWorkspaceByNumber(workspace.idx);
+            Compositor.switchToWorkspaceByNumber(workspace.idx);
         }
         onEntered: showTimer.start()
-        onExited: { showTimer.stop(); Niri.tooltipTarget = null }
+        onExited: { showTimer.stop(); Compositor.tooltipTarget = null }
     }
 
     Timer {
         id: showTimer
         interval: 300
         onTriggered: {
-            const wins = (Niri.windows || []).filter(function(w) { return w.workspace_id === workspace.id; });
+            const wins = (Compositor.windows || []).filter(function(w) { return w.workspace_id === workspace.id; });
             if (wins.length > 0) {
-                Niri.tooltipText = wins[0].title || "Untitled"
-                Niri.tooltipTarget = pillContainer
+                Compositor.tooltipText = wins[0].title || "Untitled"
+                Compositor.tooltipTarget = pillContainer
             }
         }
     }

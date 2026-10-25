@@ -35,7 +35,7 @@ Item {
         anchors.fill: parent
         anchors.margins: Tokens.padding.large
 
-        // Niri workspace context popout — uses Niri.wsContextAnchor
+        // Niri workspace context popout — uses Compositor.wsContextAnchor
         Popout {
             name: "wsWindow"
             sourceComponent:

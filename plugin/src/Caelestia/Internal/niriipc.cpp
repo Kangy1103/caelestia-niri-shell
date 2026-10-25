@@ -75,7 +75,10 @@ NiriIpc::NiriIpc(QObject* parent)
     connect(&m_eventSocket, &NiriEventSocket::eventReceived, this, &NiriIpc::onEvent);
 
     setupLedWatchers();
-    m_eventSocket.connectToNiri();
+    // Lock LEDs are compositor-independent; do not start the Niri transport
+    // when this singleton is only being used for LEDs under another compositor.
+    if (!qEnvironmentVariableIsEmpty("NIRI_SOCKET"))
+        m_eventSocket.connectToNiri();
 }
 
 // ── Property getters ─────────────────────────────────────────────────

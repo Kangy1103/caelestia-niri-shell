@@ -34,7 +34,7 @@ Singleton {
     }
 
     function forActive(): ScreenState {
-        const name = Niri.focusedMonitorName;
+        const name = Compositor.focusedMonitorName;
         if (!name)
             return null;
         for (const s of states.instances)
@@ -55,7 +55,7 @@ Singleton {
     }
 
     function componentsForActive(): Components {
-        const name = Niri.focusedMonitorName;
+        const name = Compositor.focusedMonitorName;
         if (!name)
             return null;
         for (const c of components.instances)

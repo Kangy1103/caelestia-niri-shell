@@ -12,17 +12,17 @@ Scope {
 
         function open(): void {
             const screenState = ShellState.forActive()
-            screenState.keybinds = true
+            if (screenState) screenState.keybinds = true
         }
 
         function close(): void {
             const screenState = ShellState.forActive()
-            screenState.keybinds = false
+            if (screenState) screenState.keybinds = false
         }
 
         function toggle(): void {
             const screenState = ShellState.forActive()
-            screenState.keybinds = !screenState.keybinds
+            if (screenState) screenState.keybinds = !screenState.keybinds
         }
     }
 }

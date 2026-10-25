@@ -36,10 +36,10 @@ Scope {
     }
 
     function open(): void {
-        // Niri.focusedMonitorName is the output with the focused workspace. It
+        // Compositor.focusedMonitorName is the output with the focused workspace. It
         // is reliably populated once the event stream has settled; screens[0]
         // is an arbitrary fallback that can land on a monitor nobody is on.
-        targetScreen = Niri.focusedMonitorName || (Screens.screens[0]?.name ?? "");
+        targetScreen = Compositor.focusedMonitorName || (Screens.screens[0]?.name ?? "");
         // Reopening inside the teardown delay below: the Loader is still active
         // and its item still exists, so onLoaded will NOT fire again and
         // flipping `requested` (already true) changes nothing. Tell the item

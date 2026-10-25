@@ -44,7 +44,7 @@ StyledRect {
     readonly property string emptyColor: "outlineVariant"
 
     property ListModel localWorkspaces: ListModel {}
-    property int lastFocusedWorkspaceId: -1
+    property var lastFocusedWorkspaceId: -1
     property real masterProgress: 0.0
     property bool effectsActive: false
     property color effectColor: Colours.palette.m3primary
@@ -68,10 +68,10 @@ StyledRect {
     radius: Tokens.rounding.full
 
     Connections {
-        target: Niri
+        target: Compositor
         function onWsContextTypeChanged() {
-            if (Niri.wsContextType === "workspaces")
-                Niri.wsContextAnchor = root;
+            if (Compositor.wsContextType === "workspaces")
+                Compositor.wsContextAnchor = root;
         }
     }
 
@@ -140,7 +140,7 @@ StyledRect {
         if (next === current) return;
         const ws = localWorkspaces.get(next);
         if (ws && ws.id !== undefined)
-            Niri.switchToWorkspace(ws.id);
+            Compositor.switchToWorkspace(ws.id);
     }
 
     // ===== Sync logic =====
@@ -151,7 +151,7 @@ StyledRect {
 
     function refreshWorkspaces() {
 
-        var allWs = Niri.allWorkspaces;
+        var allWs = Compositor.allWorkspaces;
         if (!allWs) allWs = [];
 
         var outputName = root.screen.name;
@@ -172,10 +172,10 @@ StyledRect {
                 idx: ws.idx,
                 name: ws.name ?? "",
                 output: ws.output ?? "",
-                isFocused: Number(ws.id) === Niri.focusedWorkspaceId,
-                isActive: Number(ws.id) === Niri.focusedWorkspaceId,
+                isFocused: Compositor.sameId(ws.id, Compositor.focusedWorkspaceId),
+                isActive: Compositor.sameId(ws.id, Compositor.focusedWorkspaceId),
                 isUrgent: ws.is_urgent ?? false,
-                isOccupied: Niri.workspaceHasWindows[String(ws.idx)] ?? false
+                isOccupied: Compositor.workspaceHasWindows[String(ws.idx)] ?? false
             });
         }
 
@@ -243,14 +243,14 @@ StyledRect {
     // ===== Signal connections =====
 
     Connections {
-        target: NiriIpc
+        target: Compositor
         function onWorkspacesChanged() { scheduleRefresh(); }
         function onFocusedWorkspaceChanged() { scheduleRefresh(); }
         function onWorkspaceHasWindowsChanged() { scheduleRefresh(); }
     }
 
     Connections {
-        target: Niri
+        target: Compositor
         function onWindowOpenedOrChanged() {
             if (showApplications) root.windowRevision++;
             scheduleRefresh();
@@ -357,11 +357,11 @@ StyledRect {
 
                 property var liveWindows: {
                     var _ = root.windowRevision;
-                    var wins = Niri.getWindowsByWorkspaceId(modelData.id) ?? [];
-                    var focusedId = Number(Niri.focusedWindowId);
+                    var wins = Compositor.getWindowsByWorkspaceId(modelData.id) ?? [];
+                    var focusedId = String(Compositor.focusedWindowId);
                     var result = [];
                     for (var i = 0; i < wins.length; i++) {
-                        if (Number(wins[i].id) === focusedId) {
+                        if (Compositor.sameId(wins[i].id, focusedId)) {
                             result.unshift(wins[i]);
                         } else {
                             result.push(wins[i]);
@@ -420,10 +420,10 @@ StyledRect {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        Niri.switchToWorkspace(modelData.id);
+                        Compositor.switchToWorkspace(modelData.id);
                     }
                     onEntered: showTimer.start()
-                    onExited: { showTimer.stop(); Niri.tooltipTarget = null }
+                    onExited: { showTimer.stop(); Compositor.tooltipTarget = null }
                 }
 
                 Timer {
@@ -431,8 +431,8 @@ StyledRect {
                     interval: 300
                     onTriggered: {
                         if (groupedContainer.liveWindows.length > 0) {
-                            Niri.tooltipText = groupedContainer.liveWindows[0]?.title ?? ""
-                            Niri.tooltipTarget = groupedContainer
+                            Compositor.tooltipText = groupedContainer.liveWindows[0]?.title ?? ""
+                            Compositor.tooltipTarget = groupedContainer
                         }
                     }
                 }

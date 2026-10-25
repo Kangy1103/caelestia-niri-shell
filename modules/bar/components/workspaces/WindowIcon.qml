@@ -25,7 +25,7 @@ Item {
 
     property int currentGroupIndex: 0
 
-    property bool popupActive: (Niri.wsContextAnchor === iconItem) || (Niri.wsContextAnchor === workspace) || (Niri.wsContextType === "workspaces")
+    property bool popupActive: (Compositor.wsContextAnchor === iconItem) || (Compositor.wsContextAnchor === workspace) || (Compositor.wsContextType === "workspaces")
 
     // --- Drag Properties ---
     property bool dragActive: false
@@ -56,7 +56,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: iconLoader.implicitWidth + Tokens.padding.extraSmall
         anchors.verticalCenter: parent.verticalCenter
-        active: (Niri.wsContextType !== "none" && Config.bar.workspaces.windowRighClickContext)
+        active: (Compositor.wsContextType !== "none" && Config.bar.workspaces.windowRighClickContext)
         sourceComponent: WindowIconContext {
             iconObj: iconItem
         }
@@ -209,8 +209,8 @@ grade: 0
         onClicked: mouse => {
             if (mouse.button === Qt.LeftButton && !iconItem.dragActive) {
                 // cycle through group windows or focus single window
-                if (Number(Niri.focusedWindowId) !== Number(iconItem.windowData.id)) {
-                    Niri.focusWindow(iconItem.windowData.id);
+                if (!Compositor.sameId(Compositor.focusedWindowId, iconItem.windowData.id)) {
+                    Compositor.focusWindow(iconItem.windowData.id);
                 } else if (iconItem.groupIconsByApp && iconItem.windowCount > 1) {
                     let idx = iconItem.groupWindowData.findIndex(w => w.id === iconItem.windowData.id);
                     if (idx === -1)
@@ -218,17 +218,17 @@ grade: 0
                     let nextIdx = (idx + 1) % iconItem.groupWindowData.length;
                     iconItem.currentGroupIndex = nextIdx;
                     iconItem.windowData = iconItem.groupWindowData[nextIdx];
-                    Niri.focusWindow(iconItem.windowData.id);
+                    Compositor.focusWindow(iconItem.windowData.id);
                 } else if (iconItem.windowData?.id) {
-                    Niri.focusWindow(iconItem.windowData.id);
+                    Compositor.focusWindow(iconItem.windowData.id);
                 }
             } else if (mouse.button === Qt.RightButton) {
-                if (!(Niri.wsContextAnchor === iconItem)) {
-                    Niri.wsContextAnchor = iconItem;
-                    Niri.wsContextType = "item";
+                if (!(Compositor.wsContextAnchor === iconItem)) {
+                    Compositor.wsContextAnchor = iconItem;
+                    Compositor.wsContextType = "item";
                 } else {
-                    Niri.wsContextAnchor = iconItem.workspace;
-                    Niri.wsContextType = "workspace";
+                    Compositor.wsContextAnchor = iconItem.workspace;
+                    Compositor.wsContextType = "workspace";
                 }
                 iconItem.requestPopup(iconItem.groupWindowData, iconItem);
             }
@@ -243,7 +243,7 @@ grade: 0
         active: iconItem.groupIconsByApp
 
         function calculateMargins() {
-            if (iconItem.popupActive && Niri.wsContextType === "item")
+            if (iconItem.popupActive && Compositor.wsContextType === "item")
                 return {
                     right: -Tokens.padding.largeIncreased,
                     bottom: (iconLoader.implicitHeight - badgeLoader.height) / 2 - (!iconItem.isFocused ? Tokens.padding.extraSmall / 2 : Config.bar.workspaces.windowIconGap),

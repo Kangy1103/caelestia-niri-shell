@@ -14,7 +14,7 @@ Item {
     property color colour: Colours.palette.m3primary
 
     // Column count indicator
-    readonly property var activeWindows: Niri.getActiveWorkspaceWindows()
+    readonly property var activeWindows: Compositor.getActiveWorkspaceWindows()
     readonly property int columnCount: {
         const cols = new Set();
         for (const w of activeWindows) {
@@ -24,7 +24,7 @@ Item {
         return cols.size;
     }
     readonly property int focusedColumn: {
-        const fw = Niri.focusedWindow;
+        const fw = Compositor.focusedWindow;
         if (!fw?.layout?.pos_in_scrolling_layout)
             return 0;
         const focusedX = fw.layout.pos_in_scrolling_layout[0];
@@ -45,7 +45,7 @@ Item {
     }
     property Title current: text1
 
-    readonly property string windowTitle: Niri.focusedWindowTitle ?? qsTr("Desktop")
+    readonly property string windowTitle: Compositor.focusedWindowTitle ?? qsTr("Desktop")
 
     function getCompactName() {
         if (!root.windowTitle || root.windowTitle === qsTr("Desktop"))
@@ -70,7 +70,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         animate: true
-        text: Icons.getAppCategoryIcon(Niri.focusedWindowClass, "desktop_windows")
+        text: Icons.getAppCategoryIcon(Compositor.focusedWindowClass, "desktop_windows")
         color: root.colour
     }
 
@@ -98,9 +98,9 @@ Item {
     TextMetrics {
         id: metrics
 
-        text: Config.bar.activeWindow.compact ? root.getCompactName() : root.windowTitle //Niri.focusedWindowTitle ?? qsTr("Desktop")
-        font.pointSize: Tokens.font.body.small.pointSize
-        font.family: Tokens.font.mono.medium.family
+        text: root.Config.bar.activeWindow.compact ? root.getCompactName() : root.windowTitle
+        font.pointSize: root.Tokens.font.body.small.pointSize
+        font.family: root.Tokens.font.mono.medium.family
         elide: Qt.ElideRight
         elideWidth: root.maxHeight - icon.height
 
@@ -133,10 +133,10 @@ Item {
 
         transform: [
             Translate {
-                x: Config.bar.activeWindow.inverted ? -implicitWidth + text.implicitHeight : 0
+                x: text.Config.bar.activeWindow.inverted ? -text.implicitWidth + text.implicitHeight : 0
             },
             Rotation {
-                angle: Config.bar.activeWindow.inverted ? 270 : 90
+                angle: text.Config.bar.activeWindow.inverted ? 270 : 90
                 origin.x: text.implicitHeight / 2
                 origin.y: text.implicitHeight / 2
             }

@@ -8,9 +8,9 @@ Item {
     id: root
 
     // Constants
-    readonly property Item anchorWs: Niri.wsContextAnchor
+    readonly property Item anchorWs: Compositor.wsContextAnchor
     readonly property int anchorWsCount: {
-        if (Niri.wsContextType === "workspace" || Niri.wsContextType === "workspaces")
+        if (Compositor.wsContextType === "workspace" || Compositor.wsContextType === "workspaces")
             return 1;
         // For item context, check if anchor has wsWindowCount (WindowIcon) or use 1
         return anchorWs?.wsWindowCount ?? anchorWs?.windowCount ?? 1;

@@ -17,7 +17,7 @@ Item {
             }
         })
     readonly property bool popupActive: iconObj.popupActive
-    readonly property bool isWorkspace: ["workspace", "workspaces"].includes(Niri.wsContextType)
+    readonly property bool isWorkspace: ["workspace", "workspaces"].includes(Compositor.wsContextType)
     readonly property int windowCount: iconObj.windowCount
 
     readonly property var windows: root.isWorkspace ? [root.iconObj.groupWindowData[0]] : root.iconObj.groupWindowData
@@ -33,8 +33,8 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     // opacity: popupActive && activated ? 1 : 0
 
-    // height: popupActive && activated && (Niri.wsContextAnchor) ? contextLoader.height : parent.height
-    // width: popupActive && activated && (Niri.wsContextAnchor) ? contextLoader.width : parent.width
+    // height: popupActive && activated && (Compositor.wsContextAnchor) ? contextLoader.height : parent.height
+    // width: popupActive && activated && (Compositor.wsContextAnchor) ? contextLoader.width : parent.width
 
     // clip: true
 
@@ -55,7 +55,7 @@ Item {
 
             mainWindow: root.mainWindow
 
-            displayTitle: Niri.cleanWindowTitle(root.mainWindow.title || "Untitled")
+            displayTitle: Compositor.cleanWindowTitle(root.mainWindow.title || "Untitled")
             displaySubtitle: (root.mainWindow.app_id || "Untitled")  /* + (root.windowCount > 1 ? " (" + root.windowCount + " windows)" : "") */
 
             // activated: root.activated
@@ -80,7 +80,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         active: root.popupActive && root.activated
-        // active: root.activated && !(Niri.wsContextType === "none") && root.popupActive
+        // active: root.activated && !(Compositor.wsContextType === "none") && root.popupActive
 
         sourceComponent: root.multiWindow ? multiComp : singleComp
     }

@@ -17,7 +17,7 @@ Item {
     required property ShellScreen screen
     required property Item wallpaper
 
-    readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || Niri.getActiveWorkspaceWindows().length === 0) && !GameMode.enabled
+    readonly property bool shouldBeActive: Config.background.visualiser.enabled && (!Config.background.visualiser.autoHide || Compositor.getActiveWorkspaceWindows().length === 0) && !GameMode.enabled
 
     readonly property color resolvedPrimary: Config.background.visualiser.primaryColor
         ? Qt.alpha(Config.background.visualiser.primaryColor, 0.7)

@@ -47,12 +47,18 @@ Scope {
             // IdleMonitor callback, that lands asynchronously relative to the
             // shell's own output handling.
             //
-            // Only "niri msg action <name>" is intercepted. Suspend and session
-            // commands still go through execDetached, and that is also the
-            // fallback if the Niri socket is unavailable.
-            const prefix = "niri msg action ";
-            if (action.startsWith(prefix) && Niri.action(action.slice(prefix.length)))
+            // Intercept the selected compositor's native action spelling.
+            // Suspend and session commands still use execDetached/SessionManager.
+            const niriPrefix = "niri msg action ";
+            const umbrielPrefix = "umbriel msg ";
+            if (action.startsWith(niriPrefix) && Compositor.action(action.slice(niriPrefix.length)))
                 return;
+            if (action.startsWith(umbrielPrefix) && Compositor.action(action.slice(umbrielPrefix.length)))
+                return;
+            if (Compositor.isUmbriel && (action === "dpms off" || action === "dpms on")) {
+                Compositor.action(action === "dpms off" ? "dpms-off" : "dpms-on");
+                return;
+            }
             Quickshell.execDetached(action.split(" "));
         } else if (!SessionManager.exec(action))
             Quickshell.execDetached(action);

@@ -26,8 +26,8 @@ Singleton {
     // Uses Niri service if available, falls back to first screen
     function getActiveMonitorName(): string {
         // Try Niri service first
-        if (typeof Niri !== "undefined" && Niri.niriAvailable && Niri.focusedMonitorName) {
-            return Niri.focusedMonitorName;
+        if (Compositor.available && Compositor.focusedMonitorName) {
+            return Compositor.focusedMonitorName;
         }
         // Fallback: return first screen's name
         if (monitors.length > 0) {

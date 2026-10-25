@@ -24,7 +24,7 @@ StyledRect {
 
     clip: true
     implicitWidth: TokenConfig.sizes.bar.innerWidth
-    implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2 - (Config.bar.status.showLockStatus && !Niri.capsLock && !Niri.numLock ? iconColumn.spacing : 0)
+    implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2 - (Config.bar.status.showLockStatus && !Compositor.capsLock && !Compositor.numLock ? iconColumn.spacing : 0)
 
     ColumnLayout {
         id: iconColumn
@@ -46,15 +46,15 @@ StyledRect {
 
                 Item {
                     implicitWidth: capslockIcon.implicitWidth
-                    implicitHeight: Niri.capsLock ? capslockIcon.implicitHeight : 0
+                    implicitHeight: Compositor.capsLock ? capslockIcon.implicitHeight : 0
 
                     MaterialIcon {
                         id: capslockIcon
 
                         anchors.centerIn: parent
 
-                        scale: Niri.capsLock ? 1 : 0.5
-                        opacity: Niri.capsLock ? 1 : 0
+                        scale: Compositor.capsLock ? 1 : 0.5
+                        opacity: Compositor.capsLock ? 1 : 0
 
                         text: "keyboard_capslock_badge"
                         color: root.colour
@@ -74,18 +74,18 @@ StyledRect {
                 }
 
                 Item {
-                    Layout.topMargin: Niri.capsLock && Niri.numLock ? iconColumn.spacing : 0
+                    Layout.topMargin: Compositor.capsLock && Compositor.numLock ? iconColumn.spacing : 0
 
                     implicitWidth: numlockIcon.implicitWidth
-                    implicitHeight: Niri.numLock ? numlockIcon.implicitHeight : 0
+                    implicitHeight: Compositor.numLock ? numlockIcon.implicitHeight : 0
 
                     MaterialIcon {
                         id: numlockIcon
 
                         anchors.centerIn: parent
 
-                        scale: Niri.numLock ? 1 : 0.5
-                        opacity: Niri.numLock ? 1 : 0
+                        scale: Compositor.numLock ? 1 : 0.5
+                        opacity: Compositor.numLock ? 1 : 0
 
                         text: "looks_one"
                         color: root.colour
@@ -137,7 +137,7 @@ StyledRect {
 
             sourceComponent: StyledText {
                 animate: true
-                text: Niri.kbLayout
+                text: Compositor.kbLayout
                 color: root.colour
                 font.family: Tokens.font.mono.medium.family
             }

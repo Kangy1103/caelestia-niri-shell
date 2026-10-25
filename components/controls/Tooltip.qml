@@ -16,8 +16,8 @@ Item {
         interval: root.delay
         onTriggered: {
             if (root.text !== "") {
-                Niri.tooltipText = root.text
-                Niri.tooltipTarget = root.target
+                Compositor.tooltipText = root.text
+                Compositor.tooltipTarget = root.target
             }
         }
     }
@@ -29,14 +29,14 @@ Item {
                 showTimer.start()
             } else {
                 showTimer.stop()
-                if (Niri.tooltipTarget === root.target)
-                    Niri.tooltipTarget = null
+                if (Compositor.tooltipTarget === root.target)
+                    Compositor.tooltipTarget = null
             }
         }
     }
 
     Component.onDestruction: {
-        if (Niri.tooltipTarget === root.target)
-            Niri.tooltipTarget = null
+        if (Compositor.tooltipTarget === root.target)
+            Compositor.tooltipTarget = null
     }
 }

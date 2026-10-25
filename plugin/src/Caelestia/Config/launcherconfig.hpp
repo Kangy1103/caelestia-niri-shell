@@ -114,9 +114,10 @@ class LauncherConfig : public settings::ObjectNode {
                 { u"name"_s, markCtx(u"Logout"_s, u"launcher action"_s) },
                 { u"icon"_s, u"exit_to_app"_s },
                 { u"description"_s, mark(u"Log out of the current session"_s) },
-                // CNS: upstream's "logout" is a Hyprland helper script. Niri has no
-                // equivalent, so quit the session through niri msg directly.
-                { u"command"_s, QStringList{ u"niri"_s, u"msg"_s, u"action"_s, u"quit"_s, u"-s"_s } },
+                // CNS: dispatch through the compositor-neutral service so both
+                // Niri and Umbriel can quit their own sessions.
+                { u"command"_s,
+                  QStringList{ u"qs"_s, u"-c"_s, u"caelestia-niri-shell"_s, u"ipc"_s, u"call"_s, u"compositor"_s, u"quit"_s } },
                 { u"dangerous"_s, true },
             }),
             vmap({

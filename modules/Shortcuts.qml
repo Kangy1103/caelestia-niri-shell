@@ -16,7 +16,7 @@ Scope {
     property bool launcherInterrupted
     // Niri doesn't expose per-window fullscreen state via IPC.
     // TODO: add when Niri IPC gains fullscreen tracking.
-    readonly property bool hasFullscreen: Niri.hasFullscreen
+    readonly property bool hasFullscreen: Compositor.hasFullscreen
 
     // ── CustomShortcut: nexus ──
     CustomShortcut {
@@ -180,7 +180,7 @@ Scope {
                 if (root.hasFullscreen && ["launcher", "session", "dashboard"].includes(drawer))
                     return;
                 const screenState = ShellState.forActive();
-                // CNS: forActive() resolves via Niri.focusedMonitorName, which is
+                // CNS: forActive() resolves via Compositor.focusedMonitorName, which is
                 // empty until the first Niri IPC reply lands - measured at ~5s
                 // after shell start. Dereferencing it unguarded threw a TypeError
                 // for any drawer toggled in that window, which is every keybind

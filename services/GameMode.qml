@@ -20,13 +20,19 @@ Singleton {
 
     onEnabledChanged: {
         if (enabled) {
-            writeRunner.running = true;
+            if (Compositor.isNiri)
+                writeRunner.running = true;
             if (GlobalConfig.utilities.toasts.gameModeChanged)
-                Toaster.toast(qsTr("Gaming mode enabled"), qsTr("Niri animations + blur disabled, shell effects reduced"), "sports_esports");
+                Toaster.toast(qsTr("Gaming mode enabled"), Compositor.isNiri
+                    ? qsTr("Niri animations + blur disabled, shell effects reduced")
+                    : qsTr("Shell effects reduced; Umbriel compositor settings unchanged"), "sports_esports");
         } else {
-            cleanupRunner.running = true;
+            if (Compositor.isNiri)
+                cleanupRunner.running = true;
             if (GlobalConfig.utilities.toasts.gameModeChanged)
-                Toaster.toast(qsTr("Gaming mode disabled"), qsTr("Niri settings and shell effects restored"), "sports_esports");
+                Toaster.toast(qsTr("Gaming mode disabled"), Compositor.isNiri
+                    ? qsTr("Niri settings and shell effects restored")
+                    : qsTr("Shell effects restored"), "sports_esports");
         }
     }
 

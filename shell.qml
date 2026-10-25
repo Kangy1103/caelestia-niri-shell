@@ -20,6 +20,7 @@ import "modules/background"
 import "modules/polkit"
 import "modules/clipboard"
 import "modules/notepad"
+import "modules/appswitcher"
 import "modules/wallpaperfan"
 import qs.services
 import CNS.Config
@@ -54,6 +55,7 @@ ShellRoot {
     Shortcuts {}
     ClipboardPanel {}
     NotepadPanel {}
+    AppSwitcher {}
 
     // CNS: fan wallpaper picker. Opens on its own IPC target (wallpaperFan),
     // Mod+Shift+W, or the ">wallpaperfan" launcher entry — not on startup.

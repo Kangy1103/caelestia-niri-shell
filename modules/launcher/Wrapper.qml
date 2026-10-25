@@ -23,12 +23,15 @@ Item {
     }
 
     property real offsetScale: shouldBeActive ? 0 : 1
+    property bool hasBeenOpened: false
 
     onShouldBeActiveChanged: {
-        if (shouldBeActive)
+        if (shouldBeActive) {
+            hasBeenOpened = true;
             implicitHeight = Qt.binding(() => content.implicitHeight);
-        else
+        } else {
             implicitHeight = implicitHeight; // Break binding during close anim
+        }
     }
 
     visible: offsetScale < 1
@@ -49,7 +52,8 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
 
-        active: root.shouldBeActive || root.visible
+        // Build lazily on first use, then keep the app list and its icons warm.
+        active: root.hasBeenOpened || root.shouldBeActive || root.visible
 
         sourceComponent: Content {
             screenState: root.screenState

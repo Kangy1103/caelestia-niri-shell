@@ -35,7 +35,7 @@ Singleton {
     }
 
     function hasFullscreen(): bool {
-        return Niri.hasFullscreen;
+        return Compositor.hasFullscreen;
     }
 
     function shouldShowPopup(): bool {

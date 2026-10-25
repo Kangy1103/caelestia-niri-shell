@@ -9,7 +9,7 @@ import CNS.Config
 // 3 Styled Radial buttons
 RowLayout {
     id: root
-    property var client: Niri.focusedWindow
+    property var client: Compositor.focusedWindow
     property int implicitSize: Tokens.font.body.medium.pointSize
 
     spacing: Tokens.padding.extraSmall / 2
@@ -26,7 +26,7 @@ RowLayout {
 
         icon: root.client.is_floating ? "grid_view" : "picture_in_picture"
         onClicked: {
-            Niri.toggleWindowFloating(root.client?.id);
+            Compositor.toggleWindowFloating(root.client?.id);
         }
     }
 
@@ -44,7 +44,7 @@ RowLayout {
 
             icon: "fullscreen"
             onClicked: {
-                Niri.toggleMaximize();
+                Compositor.toggleMaximize();
             }
         }
     }
@@ -58,7 +58,7 @@ RowLayout {
         implicitSize: root.implicitSize
 
         onClicked: {
-            Niri.closeWindow(root.client?.id);
+            Compositor.closeWindow(root.client?.id);
         }
     }
 }

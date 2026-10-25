@@ -39,9 +39,9 @@ MouseArea {
 
     // Get windows in current workspace using Niri service
     property var clients: {
-        if (!Niri.niriAvailable) return [];
+        if (!Compositor.available) return [];
         // Get windows filtered to current workspace
-        const wsWindows = Niri.getActiveWorkspaceWindows();
+        const wsWindows = Compositor.getActiveWorkspaceWindows();
         // Sort by layout position (column, then row)
         return wsWindows.slice().sort((a, b) => {
             const aPos = a.layout?.pos_in_scrolling_layout || [0, 0];
@@ -63,7 +63,7 @@ MouseArea {
         
         // For Niri, we estimate window position based on layout
         // This is approximate since Niri uses scrolling layout
-        const focusedWindow = Niri.focusedWindow;
+        const focusedWindow = Compositor.focusedWindow;
         if (!focusedWindow?.layout?.pos_in_scrolling_layout) {
             // Fallback: center the window
             return {
@@ -234,7 +234,7 @@ MouseArea {
 
     // Listen for workspace changes via Niri service
     Connections {
-        target: Niri
+        target: Compositor
 
         function onFocusedWorkspaceIdChanged(): void {
             root.checkClientRects(root.mouseX, root.mouseY);

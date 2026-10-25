@@ -29,7 +29,7 @@ Item {
     readonly property int headerHeight: 36
 
     readonly property var workspaces: {
-        const all = Niri.allWorkspaces;
+        const all = Compositor.allWorkspaces;
         if (!all || !all.length) return [];
         return all.filter(ws => ws.output === root.screen.name);
     }
@@ -37,7 +37,7 @@ Item {
     readonly property int maxCols: {
         let max = 0;
         for (const ws of workspaces) {
-            const wsWindows = Niri.getWindowsByWorkspaceId(ws.id) || [];
+            const wsWindows = Compositor.getWindowsByWorkspaceId(ws.id) || [];
             let mc = 0;
             for (const w of wsWindows) {
                 const col = (w.layout?.pos_in_scrolling_layout || [0, 0])[0];
@@ -57,10 +57,10 @@ Item {
 
     // Flat window list for sequential capture
     readonly property var captureList: {
-        Niri.windows;
+        Compositor.windows;
         const list = [];
         for (const ws of workspaces)
-            for (const w of Niri.getWindowsByWorkspaceId(ws.id) || [])
+            for (const w of Compositor.getWindowsByWorkspaceId(ws.id) || [])
                 list.push(w);
         return list;
     }
@@ -85,7 +85,7 @@ Item {
             if (localX < 0 || localY < 0 || localX > sec.width || localY > secH) { dIdx++; continue }
             if (localY <= headerHeight)
                 return { type: "workspace", wsIndex: dIdx, wsId: sec.modelData.id, wsName: sec.modelData.name || "" }
-            var wsWindows = Niri.getWindowsByWorkspaceId(sec.modelData.id) || []
+            var wsWindows = Compositor.getWindowsByWorkspaceId(sec.modelData.id) || []
             if (wsWindows.length === 0) { dIdx++; continue }
             var gridTop = headerHeight + Tokens.padding.medium
             var cellY = localY - gridTop
@@ -149,8 +149,12 @@ Item {
                 var wsList = workspaces
                 var sameWs = d.wsId && dropWsIndex < wsList.length && wsList[dropWsIndex].id === d.wsId
                 if (!sameWs && dropWsIndex < wsList.length) {
-                    var ref = wsList[dropWsIndex].name || wsList[dropWsIndex].id.toString()
-                    moveWinProc.exec({ command: ["/usr/bin/niri", "msg", "action", "move-window-to-workspace", "--window-id", d.windowId.toString(), "--focus", "false", ref] })
+                    if (Compositor.isUmbriel) {
+                        Compositor.moveWindowToWorkspaceById(d.windowId, wsList[dropWsIndex].id)
+                    } else {
+                        var ref = wsList[dropWsIndex].name || wsList[dropWsIndex].id.toString()
+                        moveWinProc.exec({ command: ["/usr/bin/niri", "msg", "action", "move-window-to-workspace", "--window-id", d.windowId.toString(), "--focus", "false", ref] })
+                    }
                 }
             } else if (d.type === "workspace" && dropWsIndex >= 1) {
                 var wref = d.wsName || d.wsId.toString()
@@ -174,6 +178,8 @@ Item {
         }
         onPressAndHold: function(mouse) {
             if (!clickTarget || dragData) return
+            if (!Compositor.supportsWindowDrag) return
+            if (clickTarget.type === "workspace" && !Compositor.supportsWorkspaceReorder) return
             dragData = { type: clickTarget.type, wsIndex: clickTarget.wsIndex, wsId: clickTarget.wsId, wsName: clickTarget.wsName, windowId: clickTarget.windowId }
             dragPos = Qt.point(mouse.x, mouse.y); beginDrag()
         }
@@ -184,8 +190,8 @@ Item {
         onReleased: function(mouse) {
             if (dragData) { endDrag(true); clickTarget = null }
             else if (clickTarget) {
-                if (clickTarget.type === "workspace") { var wsList = workspaces; if (clickTarget.wsIndex < wsList.length) Niri.switchToWorkspace(wsList[clickTarget.wsIndex].id) }
-                else if (clickTarget.type === "window") Niri.focusWindow(clickTarget.windowId)
+                if (clickTarget.type === "workspace") { var wsList = workspaces; if (clickTarget.wsIndex < wsList.length) Compositor.switchToWorkspace(wsList[clickTarget.wsIndex].id) }
+                else if (clickTarget.type === "window") Compositor.focusWindow(clickTarget.windowId)
                 clickTarget = null
             }
         }
@@ -210,11 +216,11 @@ Item {
 
     implicitWidth: contentWidth
     implicitHeight: {
-        Niri.windows;
+        Compositor.windows;
         let total = 0;
         const ws = workspaces;
         for (let i = 0; i < ws.length; i++) {
-            const wsWindows = Niri.getWindowsByWorkspaceId(ws[i].id) || [];
+            const wsWindows = Compositor.getWindowsByWorkspaceId(ws[i].id) || [];
             let mc = 0, mr = 0, minC = Infinity, minR = Infinity;
             for (const w of wsWindows) {
                 const pos = w.layout?.pos_in_scrolling_layout || [0, 0];
@@ -265,7 +271,7 @@ Item {
                     required property int index
 
                     readonly property var windows: {
-                        const wsWindows = Niri.getWindowsByWorkspaceId(modelData.id) || [];
+                        const wsWindows = Compositor.getWindowsByWorkspaceId(modelData.id) || [];
                         return wsWindows.map(w => {
                             const pos = w.layout?.pos_in_scrolling_layout || [0, 0];
                             return { col: pos[0], row: pos[1], window: w };
@@ -336,7 +342,7 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Niri.switchToWorkspace(modelData.id)
+                            onClicked: Compositor.switchToWorkspace(modelData.id)
                         }
                     }
 
@@ -369,10 +375,10 @@ Item {
                                 readonly property var win: modelData.window
                                 readonly property int col: modelData.col
                                 readonly property int row: modelData.row
-                                readonly property bool isFocused: Number(Niri.focusedWindowId) === Number(win.id)
+                                readonly property bool isFocused: Compositor.sameId(Compositor.focusedWindowId, win.id)
                                 readonly property string appId: win.app_id || ""
-                                readonly property string displayTitle: Niri.cleanWindowTitle(win.title || "Untitled")
-                                readonly property string previewPath: root.previewDir + "/cns-preview-" + Number(win.id) + ".png"
+                                readonly property string displayTitle: Compositor.cleanWindowTitle(win.title || "Untitled")
+                                readonly property string previewPath: root.previewDir + "/cns-preview-" + String(win.id) + ".png"
                                 property int screenshotRev: 0
 
                                 x: (col - wsSection.gridMetrics.minCol) * (wsSection.cellW + cellGap)
@@ -386,12 +392,12 @@ Item {
 
                                 Behavior on border.width { NumberAnimation { duration: 150 } }
 
-                                Component.onCompleted: { root.cellMap[Number(win.id)] = cell }
+                                Component.onCompleted: { root.cellMap[String(win.id)] = cell }
 
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: Niri.focusWindow(win.id)
+                                    onClicked: Compositor.focusWindow(win.id)
                                 }
 
                                 Image {
@@ -445,7 +451,7 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Niri.switchToWorkspace(modelData.id)
+                            onClicked: Compositor.switchToWorkspace(modelData.id)
                         }
                     }
 
@@ -476,11 +482,14 @@ Item {
 
     Process {
         id: captureProc
-        onExited: {
+        onExited: function(exitCode) {
             // Update cell immediately for this window
             if (captureIndex < captureList.length && exitCode === 0) {
-                const cell = cellMap[Number(captureList[captureIndex].id)]
+                const cell = cellMap[String(captureList[captureIndex].id)]
                 if (cell) cell.screenshotRev += 1
+            } else if (captureIndex < captureList.length) {
+                const cell = cellMap[String(captureList[captureIndex].id)]
+                if (cell) cell.screenshotRev = 0
             }
             captureIndex += 1
             if (captureIndex < captureList.length) {
@@ -499,9 +508,18 @@ Item {
     }
 
     function captureNext() {
+        if (!Compositor.supportsWindowScreenshot) return;
         if (captureIndex >= captureList.length) return
-        const wid = captureList[captureIndex].id
-        const path = previewDir + "/cns-preview-" + wid + ".png"
+        const win = captureList[captureIndex]
+        const wid = win.id
+        const path = previewDir + "/cns-preview-" + String(wid) + ".png"
+        if (Compositor.isUmbriel) {
+            // Umbriel exposes each window as an ext-foreign-toplevel handle.
+            // grim -T captures that window directly, even when it is off-screen
+            // in a scrolling column, hidden on another workspace, or tabbed.
+            captureProc.exec({ command: ["grim", "-T", String(wid), path] })
+            return
+        }
         captureProc.exec({ command: ["sh", "-c",
             "/usr/bin/niri msg action screenshot-window --id " + wid + " --path " + path] })
     }
@@ -517,5 +535,5 @@ Item {
     }
 
     Timer { id: recaptureTimer; interval: 300; onTriggered: startCaptureChain() }
-    Connections { target: Niri; function onWindowsChanged() { recaptureTimer.restart() } }
+    Connections { target: Compositor; function onWindowsChanged() { recaptureTimer.restart() } }
 }
