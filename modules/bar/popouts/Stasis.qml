@@ -8,7 +8,7 @@ import Quickshell
 import CNS.Config
 import qs.components
 import qs.services
-import Quickshell.Io
+import qs.services as Services
 
 
 Column {
@@ -18,37 +18,8 @@ Column {
     width: 200
     topPadding: Tokens.padding.extraSmall
 
-    property string stasisState: "idle_waiting"
-    property string stasisProfile: "default"
-
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: {
-            if (!pollRunner.running)
-                pollRunner.running = true;
-        }
-    }
-
-    Process {
-        id: pollRunner
-        command: ["/usr/bin/stasis", "info", "--json"]
-        running: false
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    var info = JSON.parse(this.text.trim());
-                    if (!info) return;
-                    root.stasisState = info.alt ?? "idle_waiting";
-                    root.stasisProfile = info.profile ?? "default";
-                } catch (e) {}
-            }
-        }
-    }
-
-    Component.onCompleted: pollRunner.running = true
+    readonly property string stasisState: Services.Stasis.state
+    readonly property string stasisProfile: Services.Stasis.profile
 
     StyledText {
         text: stasisState === "manually_inhibited" ? "Paused"
@@ -70,8 +41,7 @@ Column {
 
         StateLayer {
             onClicked: {
-                root.stasisState = root.stasisState === "manually_inhibited" ? "idle_waiting" : "manually_inhibited";
-                Quickshell.execDetached(["stasis", "toggle-inhibit"]);
+                Services.Stasis.toggleInhibit();
             }
         }
 
@@ -120,8 +90,7 @@ Column {
 
         StateLayer {
             onClicked: {
-                root.stasisProfile = "default";
-                Quickshell.execDetached(["stasis", "profile", "default"]);
+                Services.Stasis.selectProfile("default");
             }
         }
 
@@ -169,8 +138,7 @@ Column {
 
         StateLayer {
             onClicked: {
-                root.stasisProfile = "gaming";
-                Quickshell.execDetached(["stasis", "profile", "gaming"]);
+                Services.Stasis.selectProfile("gaming");
             }
         }
 
@@ -218,8 +186,7 @@ Column {
 
         StateLayer {
             onClicked: {
-                root.stasisProfile = "video";
-                Quickshell.execDetached(["stasis", "profile", "video"]);
+                Services.Stasis.selectProfile("video");
             }
         }
 

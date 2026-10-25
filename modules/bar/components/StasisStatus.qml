@@ -5,7 +5,6 @@ import qs.components.controls
 import qs.services
 import CNS.Config
 import Quickshell
-import Quickshell.Io
 import QtQuick
 
 Item {
@@ -14,39 +13,9 @@ Item {
     implicitWidth: icon.implicitHeight + Tokens.padding.extraSmall * 2 + 8
     implicitHeight: icon.implicitHeight + Tokens.padding.extraSmall * 2
 
-    property string stasisState: "idle_waiting"
-    property string stasisTooltip: "Stasis: waiting"
-    property string stasisProfile: "default"
-
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: {
-            if (!pollRunner.running)
-                pollRunner.running = true;
-        }
-    }
-
-    Process {
-        id: pollRunner
-        command: ["/usr/bin/stasis", "info", "--json"]
-        running: false
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    var info = JSON.parse(this.text.trim());
-                    if (!info) return;
-                    root.stasisState = info.alt ?? "idle_waiting";
-                    root.stasisProfile = info.profile ?? "default";
-                    root.stasisTooltip = info.tooltip ?? "Stasis: waiting";
-                } catch (e) {}
-            }
-        }
-    }
-
-    Component.onCompleted: pollRunner.running = true
+    readonly property string stasisState: Stasis.state
+    readonly property string stasisTooltip: Stasis.tooltip
+    readonly property string stasisProfile: Stasis.profile
 
     StyledRect {
         id: bg
@@ -77,8 +46,7 @@ Item {
             if (mouse.button === Qt.RightButton) {
                 contextMenu.expanded = !contextMenu.expanded;
             } else {
-                root.stasisState = root.stasisState === "manually_inhibited" ? "idle_waiting" : "manually_inhibited";
-                Quickshell.execDetached(["stasis", "toggle-inhibit"]);
+                Stasis.toggleInhibit();
             }
         }
     }
@@ -97,8 +65,7 @@ Item {
                 text: "Default"
                 activeIcon: root.stasisProfile === "none" || root.stasisProfile === "default" ? "check" : ""
                 onClicked: {
-                    root.stasisProfile = "default";
-                    Quickshell.execDetached(["stasis", "profile", "default"]);
+                    Stasis.selectProfile("default");
                     contextMenu.expanded = false;
                 }
             },
@@ -107,8 +74,7 @@ Item {
                 icon: "sports_esports"
                 activeIcon: root.stasisProfile === "gaming" ? "check" : ""
                 onClicked: {
-                    root.stasisProfile = "gaming";
-                    Quickshell.execDetached(["stasis", "profile", "gaming"]);
+                    Stasis.selectProfile("gaming");
                     contextMenu.expanded = false;
                 }
             },
@@ -117,8 +83,7 @@ Item {
                 icon: "movie"
                 activeIcon: root.stasisProfile === "video" ? "check" : ""
                 onClicked: {
-                    root.stasisProfile = "video";
-                    Quickshell.execDetached(["stasis", "profile", "video"]);
+                    Stasis.selectProfile("video");
                     contextMenu.expanded = false;
                 }
             }
