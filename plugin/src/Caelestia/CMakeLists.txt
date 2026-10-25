@@ -33,3 +33,5 @@ add_subdirectory(Services)
 add_subdirectory(Blobs)
 add_subdirectory(Images)
 add_subdirectory(I18n)
+
+add_subdirectory(Multimedia)

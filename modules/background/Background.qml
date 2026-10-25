@@ -48,7 +48,7 @@ Variants {
                 anchors.fill: parent
                 active: Config.background.wallpaperEnabled
 
-                sourceComponent: Wallpaper {}
+                sourceComponent: Wallpaper { screenName: win.modelData.name }
             }
 
             // CNS: restored the Loader gate from main. Upstream's rewrite
