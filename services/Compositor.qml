@@ -164,7 +164,9 @@ Singleton {
             "focus-workspace-down": "workspace-next",
             "switch-layout": "keyboard-layout-next",
             "dpms off": "dpms-off",
-            "dpms on": "dpms-on"
+            "dpms on": "dpms-on",
+            "power-off-monitors": "dpms-off",
+            "power-on-monitors": "dpms-on"
         };
         return UmbrielIpc.action(aliases[name] ?? name);
     }
@@ -184,6 +186,8 @@ Singleton {
     IpcHandler {
         target: "compositor"
         function quit(): void { root.quitSession(); }
+        function powerOffMonitors(): bool { return root.action("power-off-monitors"); }
+        function powerOnMonitors(): bool { return root.action("power-on-monitors"); }
     }
     
     // --- Keyboard ---
