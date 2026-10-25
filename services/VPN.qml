@@ -217,8 +217,18 @@ Singleton {
             Toaster.toast(Tr.tr("VPN disconnection failed"), reason, "vpn_key_alert");
     }
 
+    function reportStatusFailure(): void {
+        // A failed exec has no stdout or exit signal. Do not leave the UI
+        // showing the preceding provider's connection state indefinitely.
+        autoConnectPending = false;
+        updateStatus({connected: false, state: "error",
+            reason: Tr.mark("Could not start %1. Is it installed?", [active.displayName]),
+            authUrl: "", server: ""});
+    }
+
     function checkStatus(): void {
         if (root.selectedProvider.length > 0) {
+            statusProc.didExit = false;
             statusProc.running = true;
         }
     }
@@ -615,6 +625,13 @@ Singleton {
 
     Process {
         id: statusProc
+        property bool didExit: false
+
+        onExited: didExit = true
+        onRunningChanged: {
+            if (!running && !didExit)
+                root.reportStatusFailure();
+        }
 
         command: root.active.statusCmd
         // qmllint disable incompatible-type
