@@ -22,20 +22,20 @@ Scope {
     property bool requested: false
     property bool openOnStart: false
 
-    // The picker on the screen the pointer is on.
+    // The output selected when the picker is opened.
     property string targetScreen: ""
 
     // The loaded picker on the screen it was opened on, or null.
     function targetItem(): var {
-        for (let i = 0; i < windows.count; i++) {
-            const w = windows.itemAt(i);
-            if (w?.mine && w?.presenter?.item)
-                return w.presenter.item;
+        for (const w of windows.instances) {
+            if (w.mine && w.pickerItem)
+                return w.pickerItem;
         }
         return null;
     }
 
     function open(): void {
+        teardownTimer.stop();
         // Compositor.focusedMonitorName is the output with the focused workspace. It
         // is reliably populated once the event stream has settled; screens[0]
         // is an arbitrary fallback that can land on a monitor nobody is on.
@@ -53,11 +53,11 @@ Scope {
     }
 
     function close(): void {
-        requested = false;
-        for (let i = 0; i < windows.count; i++)
-            windows.itemAt(i)?.presenter?.item?.close();
-        // Nothing should be holding the keyboard once it's gone.
-        root.targetScreen = "";
+        for (const w of windows.instances)
+            w.pickerItem?.close();
+        // Keep the window and content alive through the existing close animation.
+        if (!showing)
+            teardownTimer.restart();
     }
 
     // Keyed off what is actually on screen, not off `requested`: Escape inside
@@ -65,9 +65,8 @@ Scope {
     // `requested` true with nothing showing — so a press closed an already
     // closed picker and the bind looked dead.
     readonly property bool showing: {
-        for (let i = 0; i < windows.count; i++) {
-            const w = windows.itemAt(i);
-            if (w?.presenter?.item?.visible)
+        for (const w of windows.instances) {
+            if (w.showing)
                 return true;
         }
         return false;
@@ -115,26 +114,18 @@ Scope {
             // which locked the whole session up.
             readonly property bool mine: root.requested && modelData.name === root.targetScreen
 
-            // ALWAYS mapped, never gated on the content's own `visible`.
-            // PanelWindow applies its anchors when the surface is created, so a
-            // window first shown hidden stays stuck at the 500x500 default with
-            // a 0x0 content item and never draws anything — which is why the
-            // picker appeared to do nothing at all. Background, Drawers and
-            // AreaPicker all keep their windows mapped for the same reason and
-            // hide content with `mask` instead; this does the same.
-            visible: true
+            // Umbriel can release the surface while idle. Retain the Niri
+            // mapping behaviour until hidden-first geometry is tested there.
+            visible: !Compositor.isUmbriel || mine
             anchors.top: true
             anchors.bottom: true
             anchors.left: true
             anchors.right: true
 
-            // The picker's own `visible` starts false and is set by
-            // item.open(), so hiding on it would leave a 500x500 window up
-            // instead of a full-screen one. Follow the content and use it for
-            // both the input region and the keyboard focus: before open() has
-            // run the window is masked to nothing and takes no keyboard, so it
-            // can't swallow input with nothing drawn on it.
-            readonly property bool showing: mine && (presenter.item?.visible ?? false)
+            // Expose the Loader item to the root lifecycle helpers; QML ids
+            // are scoped names, not properties of their containing window.
+            readonly property Item pickerItem: presenter.item
+            readonly property bool showing: mine && (pickerItem?.visible ?? false)
 
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.exclusionMode: ExclusionMode.Ignore
@@ -181,7 +172,7 @@ Scope {
 
                 function onVisibleChanged(): void {
                     if (presenter.item && !presenter.item.visible)
-                        teardownTimer.start();
+                        teardownTimer.restart();
                 }
             }
         }
@@ -191,7 +182,12 @@ Scope {
         id: teardownTimer
         interval: 600
         // unless it was opened again in the meantime
-        onTriggered: if (!root.showing) root.requested = false
+        onTriggered: {
+            if (!root.showing) {
+                root.requested = false;
+                root.targetScreen = "";
+            }
+        }
     }
 
     IpcHandler {

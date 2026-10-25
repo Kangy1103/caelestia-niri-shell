@@ -97,6 +97,9 @@ Scope {
             required property ShellScreen modelData
             readonly property bool ownsOverlay: root.showing && modelData.name === root.targetScreen
 
+            // Keep the closing fade mapped, then release Umbriel's surface.
+            visible: !Compositor.isUmbriel || ownsOverlay || card.opacity > 0
+
             name: "app-switcher"
             screen: modelData
             anchors.top: true
