@@ -1,5 +1,7 @@
 # CNS optimisation implementation and validation
 
+**Status, 26 October:** conservative optimisation pass completed; native wallpaper deployment is active. Final verification and residual diagnostics are in the completion section below.
+
 25 October 2026 · Umbriel · work restricted to `optimisation`
 
 ## Decisions
@@ -151,3 +153,66 @@ The system installation and activation are now complete. All four native module 
 A clean start with the ordinary `cns-start` succeeded. `/proc` mappings confirm both multimedia libraries load from `/usr/lib/qt6/qml/CNS`, with no staged QML import path, profiler preload or allocator profiling flags. A temporary read-only probe verified the actual selected wallpaper is ready and settled on all four outputs; background captures were visually inspected. The probe was removed and ordinary startup verified again. No configuration errors were logged.
 
 Evidence: `installed-verification/checks.json`, normal startup/runtime logs and four output captures. This verification did not resume the unfinished optimisation/soak work listed above.
+
+## Completion pass — 26 October 2026
+
+This closes the conservative optimisation pass. The rendering/default-quality decisions above remain in force: threaded rendering, unchanged effects and animation curves, useful caches retained, and lossless wallpaper caching by default.
+
+### Final code changes
+
+Commit `7669a37d`:
+
+- Notification delegates tolerate their `NotifData` being destroyed first. Text/icon/action bindings have safe empty states; handlers do not call deleted objects. Cached notifications with no persisted hints also have a safe progress-value fallback. Live notification colours, sizing, actions and animations are retained.
+- Workspace refreshes use a zero-interval, single-shot timer owned by the bar item. It still coalesces event bursts, but its callback is cancelled with the bar, preventing a delayed function from entering a destroyed QML context.
+- Menus tolerate a missing window during teardown; tray entries stop dereferencing deleted menu objects. Disabled/deleted entries cannot be activated.
+- Fullscreen toast policy reads `GlobalConfig`, matching its global schema instead of accessing it through a screen overlay.
+- Shell-root teardown stops the old generation's SystemClock before its QML engine is interrupted. In the final repeated-reload suite, the earlier Time.qml assignment warnings did not recur.
+
+### Targeted checks
+
+The final suite completed ten hot reloads in one process with notifications and launcher/wallpaper overlays in use. It checked compositor availability and usable time fields after each reload, notification action-list preservation, eight exact launcher typing/clear cycles, and two open/close cycles for each of four application tray menus. The notification, menu, workspace-callback and Time.qml warnings reproduced earlier did not recur in that suite. This does not mean all reload diagnostics disappeared.
+
+The first synthetic typing attempts were invalid as input-quality claims: immediate virtual-keyboard sequences lost input, including in a separate minimal Qt TextInput config without CNS. Allowing virtual-keyboard initialisation and using a 15 ms inter-key delay made all eight CNS typing/clear cycles pass. The minimal fixture still lost zero-delay strings; that is retained as a test limitation, not attributed to CNS. This does not measure physical keyboard latency or prove that every input-method issue is fixed.
+
+### Residual diagnostics and limits
+
+- Some hot reloads still emit undefined-assignment warnings from the retiring compositor facade. Each checked new generation recovered correct compositor availability and state. Adding nullish fallbacks did not resolve those warnings, so that trial was reverted. They are **not claimed fixed**. A windowless facade fixture, fed changing snapshots by a fake local IPC server, reproduced the same four typed-binding warnings on all twenty reloads, immediately after its `RETIRING ROOT` marker. Every replacement generation answered fresh state queries. The installed Quickshell generation teardown interrupts JavaScript after root destruction and before engine-owned singletons finish retiring; the reproduction isolates the warnings to that retirement path rather than the full CNS UI. A simpler clock-only fixture completed twenty reloads without warnings. This does not establish a safe patch for Quickshell or the native client, so no broad facade rewrite or warning suppression was shipped.
+- Qt Wayland text-input focus warnings still occur during focus changes. Exact typed text passed with the settled virtual keyboard. The warnings alone do not establish physical input loss.
+- Vesktop's StatusNotifierItem `IconName` getter returns `org.freedesktop.DBus.Error.Failed` when called directly with `gdbus`, without CNS in the call path. CNS's tray menu opens/closes; no unrelated application was restarted to hide that provider error.
+- Early diagnostic attachment encountered unavailable compositor state in an already-reloaded process. A clean ordinary launch recovered it; the final controlled ten-reload suite retained availability. No source fix for that earlier state is claimed.
+
+The installed Quickshell revision is `9b0f339b19057f4731bf3b48293307d7ef241671`. Its [generation teardown](https://github.com/quickshell-mirror/quickshell/blob/9b0f339b19057f4731bf3b48293307d7ef241671/src/core/generation.cpp) and [SystemClock implementation](https://github.com/quickshell-mirror/quickshell/blob/9b0f339b19057f4731bf3b48293307d7ef241671/src/core/clock.cpp) were read for the lifetime investigation.
+
+### Whole-shell soak
+
+Completed an 18.7-minute ordinary-launch run, including the 120-second initial idle baseline and a 600-second final idle observation. There were 4,456 resource samples and 39 recorded checks. The same CNS process survived throughout.
+
+Exercised three cycles of each of ten drawers, three real Alt+Tab/Alt-release cycles, three wallpaper-picker cycles, three freeze-capture/cancel cycles across all four outputs, toasts and three silent notification/close cycles. Drawer and overlay close conditions passed, and no TypeError, undefined-assignment warning, invalid-context callback or configuration error appeared in the normal-use run. Qt text-input focus warnings and the externally reproduced Vesktop getter error remained.
+
+The final values below use the last 120 seconds after settling. GPU allocation and host memory describe different accounting pools; these are not additive savings.
+
+| Metric | Initial 120-second idle | Settled final 120 seconds |
+|---|---:|---:|
+| CNS GPU allocation, median | 910.0 MiB | 852.0 MiB |
+| Host RSS, median | 1155.9 MiB | 1268.9 MiB |
+| Host PSS, median | 927.2 MiB | 1014.9 MiB |
+| CNS CPU, mean / one core | 0.78% | 0.73% |
+| Exited-helper CPU, mean / one core | 0.22% | 0.22% |
+| Threads | 47 | 47 |
+| File descriptors | 349 | 350 |
+| Swap | 0 MiB | 0 MiB |
+
+Across the full final ten minutes, mean CNS plus exited-helper CPU was 1.00% of one logical core, compared with 0.99% in the initial baseline. RSS varied between 1224.9 and 1273.2 MiB; the apparent late increase in the spot checks was a bounded step, followed by a plateau. The final 120-second RSS range was only 0.21 MiB, while GPU allocation was constant at 852.0 MiB. This short run does not establish the absence of long-duration leaks.
+
+Host RSS ended about 113 MiB above the fresh initial state after broad feature use. That retained memory is reported, not described as a saving. The earlier allocator profiling found bounded retained feature allocations; this run alone does not identify the owner of every RSS change or justify aggressive cache flushing. A brief windowless fixture also ran during the earlier part of final idle; settled final samples were collected after it exited. Device-wide GPU utilisation/free-memory samples include the rest of the desktop and are not attributed solely to CNS.
+
+A launcher capture was visually spot-checked. This is not a pixel comparison of every panel or a human responsiveness verdict. The larger wallpaper visual/fitting/playback checks are described above. No wallpaper, theme, effect quality, refresh rate or user content was changed by this final soak.
+
+UI overlays were closed and the original focus and idle-inhibitor state restored. Test notifications did not remain in notification history. Local evidence: `whole-shell-completed/summary.json`, `samples.csv`, `details.json`, `checks.json` and `final-completion/`.
+
+
+### Delivery
+
+The new multimedia module's installed hashes and committed wallpaper QML were rechecked. Runtime mappings point to the system module under `/usr/lib/qt6/qml/CNS`, with no staged import path or allocator preload. Temporary diagnostics are removed. Changes remain on `optimisation`; `main` is not merged.
+
+Profiler output and runtime logs stay local; temporary full-desktop captures are removed after review. The public report contains measurements and methods, not desktop screenshots or notification content.
