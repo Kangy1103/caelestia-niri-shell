@@ -145,8 +145,16 @@ StyledRect {
 
     // ===== Sync logic =====
 
+    // Coalesce snapshots with an item-owned callback. It is cancelled when
+    // this bar is destroyed during a reload.
+    Timer {
+        id: refreshTimer
+        interval: 0
+        onTriggered: root.refreshWorkspaces()
+    }
+
     function scheduleRefresh() {
-        Qt.callLater(root.refreshWorkspaces);
+        refreshTimer.restart();
     }
 
     function refreshWorkspaces() {

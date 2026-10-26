@@ -33,6 +33,9 @@ ShellRoot {
 
     settings.watchFiles: true
 
+    // Stop the old generation's clock before Quickshell interrupts its engine.
+    Component.onDestruction: Time.enabled = false
+
     Binding {
         target: ShellState
         property: "shellRoot"

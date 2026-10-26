@@ -48,9 +48,9 @@ Item {
             return false;
         if (!Notifs.hasFullscreen())
             return true;
-        if (Config.utilities.toasts.fullscreen === "all")
+        if (GlobalConfig.utilities.toasts.fullscreen === "all")
             return true;
-        if (Config.utilities.toasts.fullscreen === "important")
+        if (GlobalConfig.utilities.toasts.fullscreen === "important")
             return toast.type === Toast.Warning || toast.type === Toast.Error;
         return false;
     }
